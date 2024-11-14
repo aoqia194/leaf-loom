@@ -29,9 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.jetbrains.annotations.Nullable;
-
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerRemapper;
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
@@ -41,60 +38,62 @@ import net.fabricmc.loom.util.LazyCloseable;
 import net.fabricmc.loom.util.fmj.FabricModJson;
 import net.fabricmc.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * {@link AccessWidenerEntry} implementation for a {@link FabricModJson}.
  */
-public record ModAccessWidenerEntry(FabricModJson mod, String path, ModEnvironment environment, boolean transitiveOnly) implements AccessWidenerEntry {
-	public static List<ModAccessWidenerEntry> readAll(FabricModJson modJson, boolean transitiveOnly) {
-		var entries = new ArrayList<ModAccessWidenerEntry>();
+public record ModAccessWidenerEntry(FabricModJson mod, String path, ModEnvironment environment, boolean transitiveOnly)
+        implements AccessWidenerEntry {
+    public static List<ModAccessWidenerEntry> readAll(FabricModJson modJson, boolean transitiveOnly) {
+        var entries = new ArrayList<ModAccessWidenerEntry>();
 
-		for (Map.Entry<String, ModEnvironment> entry : modJson.getClassTweakers().entrySet()) {
-			entries.add(new ModAccessWidenerEntry(modJson, entry.getKey(), entry.getValue(), transitiveOnly));
-		}
+        for (Map.Entry<String, ModEnvironment> entry :
+                modJson.getClassTweakers().entrySet()) {
+            entries.add(new ModAccessWidenerEntry(modJson, entry.getKey(), entry.getValue(), transitiveOnly));
+        }
 
-		return Collections.unmodifiableList(entries);
-	}
+        return Collections.unmodifiableList(entries);
+    }
 
-	@Override
-	public @Nullable String mappingId() {
-		return transitiveOnly ? mod.getId() : null;
-	}
+    @Override
+    public @Nullable String mappingId() {
+        return transitiveOnly ? mod.getId() : null;
+    }
 
-	@Override
-	public String getSortKey() {
-		return mod.getId() + ":" + path;
-	}
+    @Override
+    public String getSortKey() {
+        return mod.getId() + ":" + path;
+    }
 
-	@Override
-	public void read(AccessWidenerVisitor visitor, LazyCloseable<TinyRemapper> remapper) throws IOException {
-		if (transitiveOnly) {
-			// Filter for only transitive rules
-			visitor = new TransitiveOnlyFilter(visitor);
-		}
+    @Override
+    public void read(AccessWidenerVisitor visitor, LazyCloseable<TinyRemapper> remapper) throws IOException {
+        if (transitiveOnly) {
+            // Filter for only transitive rules
+            visitor = new TransitiveOnlyFilter(visitor);
+        }
 
-		final byte[] data = readRaw();
-		final AccessWidenerReader.Header header = AccessWidenerReader.readHeader(data);
+        final byte[] data = readRaw();
+        final AccessWidenerReader.Header header = AccessWidenerReader.readHeader(data);
 
-		if (!header.getNamespace().equals(MappingsNamespace.NAMED.toString())) {
-			// Remap the AW if needed
-			visitor = getRemapper(visitor, remapper.get());
-		}
+        if (!header.getNamespace().equals(MappingsNamespace.NAMED.toString())) {
+            // Remap the AW if needed
+            visitor = getRemapper(visitor, remapper.get());
+        }
 
-		var reader = new AccessWidenerReader(visitor);
-		reader.read(data);
-	}
+        var reader = new AccessWidenerReader(visitor);
+        reader.read(data);
+    }
 
-	private static AccessWidenerRemapper getRemapper(AccessWidenerVisitor visitor, TinyRemapper tinyRemapper) {
-		return new AccessWidenerRemapper(
-				visitor,
-				tinyRemapper.getEnvironment().getRemapper(),
-				MappingsNamespace.INTERMEDIARY.toString(),
-				MappingsNamespace.NAMED.toString()
-		);
-	}
+    private static AccessWidenerRemapper getRemapper(AccessWidenerVisitor visitor, TinyRemapper tinyRemapper) {
+        return new AccessWidenerRemapper(
+                visitor,
+                tinyRemapper.getEnvironment().getRemapper(),
+                MappingsNamespace.INTERMEDIARY.toString(),
+                MappingsNamespace.NAMED.toString());
+    }
 
-	private byte[] readRaw() throws IOException {
-		return mod.getSource().read(path);
-	}
+    private byte[] readRaw() throws IOException {
+        return mod.getSource().read(path);
+    }
 }

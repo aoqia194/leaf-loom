@@ -24,62 +24,59 @@
 
 package net.fabricmc.loom.task.service;
 
+import com.google.common.base.Suppliers;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.function.Supplier;
-
-import com.google.common.base.Suppliers;
-import org.cadixdev.lorenz.MappingSet;
-import org.gradle.api.Project;
-import org.gradle.api.provider.Property;
-import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.Nested;
-
 import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.loom.configuration.providers.mappings.MappingConfiguration;
 import net.fabricmc.loom.util.service.Service;
 import net.fabricmc.loom.util.service.ServiceFactory;
 import net.fabricmc.loom.util.service.ServiceType;
 import net.fabricmc.lorenztiny.TinyMappingsReader;
+import org.cadixdev.lorenz.MappingSet;
+import org.gradle.api.Project;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.Nested;
 
 public final class LorenzMappingService extends Service<LorenzMappingService.Options> {
-	public static final ServiceType<Options, LorenzMappingService> TYPE = new ServiceType<>(Options.class, LorenzMappingService.class);
+    public static final ServiceType<Options, LorenzMappingService> TYPE =
+            new ServiceType<>(Options.class, LorenzMappingService.class);
 
-	public interface Options extends Service.Options {
-		@Nested
-		Property<MappingsService.Options> getMappings();
-	}
+    public interface Options extends Service.Options {
+        @Nested
+        Property<MappingsService.Options> getMappings();
+    }
 
-	public static Provider<Options> createOptions(Project project, MappingConfiguration mappingConfiguration, MappingsNamespace from, MappingsNamespace to) {
-		return TYPE.create(project, options -> options.getMappings().set(
-			MappingsService.createOptions(
-				project,
-				mappingConfiguration.tinyMappings,
-				from.toString(),
-				to.toString(),
-				false)
-		));
-	}
+    public static Provider<Options> createOptions(
+            Project project, MappingConfiguration mappingConfiguration, MappingsNamespace from, MappingsNamespace to) {
+        return TYPE.create(project, options -> options.getMappings()
+                .set(MappingsService.createOptions(
+                        project, mappingConfiguration.tinyMappings, from.toString(), to.toString(), false)));
+    }
 
-	private final Supplier<MappingSet> mappings = Suppliers.memoize(this::readMappings);
+    private final Supplier<MappingSet> mappings = Suppliers.memoize(this::readMappings);
 
-	public LorenzMappingService(Options options, ServiceFactory serviceFactory) {
-		super(options, serviceFactory);
-	}
+    public LorenzMappingService(Options options, ServiceFactory serviceFactory) {
+        super(options, serviceFactory);
+    }
 
-	private MappingSet readMappings() {
-		MappingsService mappingsService = getServiceFactory().get(getOptions().getMappings().get());
+    private MappingSet readMappings() {
+        MappingsService mappingsService =
+                getServiceFactory().get(getOptions().getMappings().get());
 
-		try {
-			try (var reader = new TinyMappingsReader(mappingsService.getMemoryMappingTree(), mappingsService.getFrom(), mappingsService.getTo())) {
-				return reader.read();
-			}
-		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to read lorenz mappings", e);
-		}
-	}
+        try {
+            try (var reader = new TinyMappingsReader(
+                    mappingsService.getMemoryMappingTree(), mappingsService.getFrom(), mappingsService.getTo())) {
+                return reader.read();
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to read lorenz mappings", e);
+        }
+    }
 
-	public MappingSet getMappings() {
-		return mappings.get();
-	}
+    public MappingSet getMappings() {
+        return mappings.get();
+    }
 }

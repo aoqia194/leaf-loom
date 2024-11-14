@@ -26,18 +26,17 @@ package net.fabricmc.loom.api.processor;
 
 import java.util.List;
 import java.util.stream.Stream;
-
 import net.fabricmc.loom.util.fmj.FabricModJson;
 
 public interface SpecContext {
-	List<FabricModJson> modDependencies();
+    List<FabricModJson> modDependencies();
 
-	List<FabricModJson> localMods();
+    List<FabricModJson> localMods();
 
-	// Returns mods that are both on the compile and runtime classpath
-	List<FabricModJson> modDependenciesCompileRuntime();
+    // Returns mods that are both on the compile and runtime classpath
+    List<FabricModJson> modDependenciesCompileRuntime();
 
-	default List<FabricModJson> allMods() {
-		return Stream.concat(modDependencies().stream(), localMods().stream()).toList();
-	}
+    default List<FabricModJson> allMods() {
+        return Stream.concat(modDependencies().stream(), localMods().stream()).toList();
+    }
 }

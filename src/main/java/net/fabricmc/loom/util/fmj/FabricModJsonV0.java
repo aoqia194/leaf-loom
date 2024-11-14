@@ -24,67 +24,68 @@
 
 package net.fabricmc.loom.util.fmj;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
 @Deprecated
 public final class FabricModJsonV0 extends FabricModJson {
-	FabricModJsonV0(JsonObject jsonObject, FabricModJsonSource source) {
-		super(jsonObject, source);
-	}
+    FabricModJsonV0(JsonObject jsonObject, FabricModJsonSource source) {
+        super(jsonObject, source);
+    }
 
-	@Override
-	public int getVersion() {
-		return 0;
-	}
+    @Override
+    public int getVersion() {
+        return 0;
+    }
 
-	@Override
-	@Nullable
-	public JsonElement getCustom(String key) {
-		return null;
-	}
+    @Override
+    @Nullable
+    public JsonElement getCustom(String key) {
+        return null;
+    }
 
-	@Override
-	public List<String> getMixinConfigurations() {
-		final JsonObject mixinsObject = jsonObject.getAsJsonObject("mixins");
+    @Override
+    public List<String> getMixinConfigurations() {
+        final JsonObject mixinsObject = jsonObject.getAsJsonObject("mixins");
 
-		if (mixinsObject == null) {
-			return Collections.emptyList();
-		}
+        if (mixinsObject == null) {
+            return Collections.emptyList();
+        }
 
-		final List<String> mixins = new ArrayList<>();
+        final List<String> mixins = new ArrayList<>();
 
-		for (String key : mixinsObject.keySet()) {
-			final JsonElement jsonElement = mixinsObject.get(key);
+        for (String key : mixinsObject.keySet()) {
+            final JsonElement jsonElement = mixinsObject.get(key);
 
-			if (jsonElement instanceof JsonArray jsonArray) {
-				for (JsonElement arrayElement : jsonArray) {
-					if (arrayElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
-						mixins.add(jsonPrimitive.getAsString());
-					} else {
-						throw new FabricModJsonUtils.ParseException("Expected entries in mixin %s to be an array of strings", key);
-					}
-				}
-			} else if (jsonElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
-				mixins.add(jsonPrimitive.getAsString());
-			} else {
-				throw new FabricModJsonUtils.ParseException("Expected mixin %s to be a string or an array of strings", key);
-			}
-		}
+            if (jsonElement instanceof JsonArray jsonArray) {
+                for (JsonElement arrayElement : jsonArray) {
+                    if (arrayElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
+                        mixins.add(jsonPrimitive.getAsString());
+                    } else {
+                        throw new FabricModJsonUtils.ParseException(
+                                "Expected entries in mixin %s to be an array of strings", key);
+                    }
+                }
+            } else if (jsonElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
+                mixins.add(jsonPrimitive.getAsString());
+            } else {
+                throw new FabricModJsonUtils.ParseException(
+                        "Expected mixin %s to be a string or an array of strings", key);
+            }
+        }
 
-		return Collections.unmodifiableList(mixins);
-	}
+        return Collections.unmodifiableList(mixins);
+    }
 
-	@Override
-	public Map<String, ModEnvironment> getClassTweakers() {
-		return Collections.emptyMap();
-	}
+    @Override
+    public Map<String, ModEnvironment> getClassTweakers() {
+        return Collections.emptyMap();
+    }
 }

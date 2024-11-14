@@ -31,70 +31,71 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-
 import org.jetbrains.annotations.Nullable;
 
 public record LocalMavenHelper(String group, String name, String version, @Nullable String baseClassifier, Path root) {
-	public Path copyToMaven(Path artifact, @Nullable String classifier) throws IOException {
-		if (!artifact.getFileName().toString().endsWith(".jar")) {
-			throw new UnsupportedOperationException();
-		}
+    public Path copyToMaven(Path artifact, @Nullable String classifier) throws IOException {
+        if (!artifact.getFileName().toString().endsWith(".jar")) {
+            throw new UnsupportedOperationException();
+        }
 
-		Files.createDirectories(getDirectory());
-		savePom();
-		return Files.copy(artifact, getOutputFile(classifier), StandardCopyOption.REPLACE_EXISTING);
-	}
+        Files.createDirectories(getDirectory());
+        savePom();
+        return Files.copy(artifact, getOutputFile(classifier), StandardCopyOption.REPLACE_EXISTING);
+    }
 
-	public boolean exists(String classifier) {
-		return Files.exists(getOutputFile(classifier)) && Files.exists(getPomPath());
-	}
+    public boolean exists(String classifier) {
+        return Files.exists(getOutputFile(classifier)) && Files.exists(getPomPath());
+    }
 
-	public String getNotation() {
-		if (baseClassifier != null) {
-			return String.format("%s:%s:%s:%s", group, name, version, baseClassifier);
-		}
+    public String getNotation() {
+        if (baseClassifier != null) {
+            return String.format("%s:%s:%s:%s", group, name, version, baseClassifier);
+        }
 
-		return String.format("%s:%s:%s", group, name, version);
-	}
+        return String.format("%s:%s:%s", group, name, version);
+    }
 
-	public void savePom() {
-		try {
-			String pomTemplate;
+    public void savePom() {
+        try {
+            String pomTemplate;
 
-			try (InputStream input = ModDependency.class.getClassLoader().getResourceAsStream("mod_compile_template.pom")) {
-				pomTemplate = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-			}
+            try (InputStream input =
+                    ModDependency.class.getClassLoader().getResourceAsStream("mod_compile_template.pom")) {
+                pomTemplate = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            }
 
-			pomTemplate = pomTemplate
-					.replace("%GROUP%", group)
-					.replace("%NAME%", name)
-					.replace("%VERSION%", version);
+            pomTemplate = pomTemplate
+                    .replace("%GROUP%", group)
+                    .replace("%NAME%", name)
+                    .replace("%VERSION%", version);
 
-			Files.writeString(getPomPath(), pomTemplate, StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to write mod pom", e);
-		}
-	}
+            Files.writeString(getPomPath(), pomTemplate, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to write mod pom", e);
+        }
+    }
 
-	private Path getDirectory() {
-		return root.resolve("%s/%s/%s".formatted(group.replace(".", "/"), name, version));
-	}
+    private Path getDirectory() {
+        return root.resolve("%s/%s/%s".formatted(group.replace(".", "/"), name, version));
+    }
 
-	private Path getPomPath() {
-		return getDirectory().resolve("%s-%s.pom".formatted(name, version));
-	}
+    private Path getPomPath() {
+        return getDirectory().resolve("%s-%s.pom".formatted(name, version));
+    }
 
-	public Path getOutputFile(@Nullable String classifier) {
-		if (classifier == null) {
-			classifier = baseClassifier;
-		}
+    public Path getOutputFile(@Nullable String classifier) {
+        if (classifier == null) {
+            classifier = baseClassifier;
+        }
 
-		final String fileName = classifier == null ? String.format("%s-%s.jar", name, version)
-													: String.format("%s-%s-%s.jar", name, version, classifier);
-		return getDirectory().resolve(fileName);
-	}
+        final String fileName = classifier == null
+                ? String.format("%s-%s.jar", name, version)
+                : String.format("%s-%s-%s.jar", name, version, classifier);
+        return getDirectory().resolve(fileName);
+    }
 
-	public LocalMavenHelper withClassifier(String classifier) {
-		return new LocalMavenHelper(group, name, version, classifier, root);
-	}
+    public LocalMavenHelper withClassifier(String classifier) {
+        return new LocalMavenHelper(group, name, version, classifier, root);
+    }
 }

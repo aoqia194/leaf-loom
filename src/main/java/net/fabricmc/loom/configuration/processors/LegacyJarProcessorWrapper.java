@@ -26,46 +26,42 @@ package net.fabricmc.loom.configuration.processors;
 
 import java.io.IOException;
 import java.nio.file.Path;
-
 import javax.inject.Inject;
-
-import org.gradle.api.Project;
-import org.jetbrains.annotations.Nullable;
-
 import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
 import net.fabricmc.loom.api.processor.ProcessorContext;
 import net.fabricmc.loom.api.processor.SpecContext;
+import org.gradle.api.Project;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Wrapper around the deprecated API.
  */
 public abstract class LegacyJarProcessorWrapper implements MinecraftJarProcessor<LegacyJarProcessorWrapper.Spec> {
-	private final JarProcessor delegate;
+    private final JarProcessor delegate;
 
-	@Inject
-	public LegacyJarProcessorWrapper(JarProcessor delegate) {
-		this.delegate = delegate;
-	}
+    @Inject
+    public LegacyJarProcessorWrapper(JarProcessor delegate) {
+        this.delegate = delegate;
+    }
 
-	@Inject
-	public abstract Project getProject();
+    @Inject
+    public abstract Project getProject();
 
-	@Override
-	public String getName() {
-		return "legacy:" + delegate.getClass().getCanonicalName();
-	}
+    @Override
+    public String getName() {
+        return "legacy:" + delegate.getClass().getCanonicalName();
+    }
 
-	@Override
-	public @Nullable LegacyJarProcessorWrapper.Spec buildSpec(SpecContext context) {
-		delegate.setup();
-		return new Spec(delegate.getId());
-	}
+    @Override
+    public @Nullable LegacyJarProcessorWrapper.Spec buildSpec(SpecContext context) {
+        delegate.setup();
+        return new Spec(delegate.getId());
+    }
 
-	@Override
-	public void processJar(Path jar, Spec spec, ProcessorContext context) throws IOException {
-		delegate.process(jar.toFile());
-	}
+    @Override
+    public void processJar(Path jar, Spec spec, ProcessorContext context) throws IOException {
+        delegate.process(jar.toFile());
+    }
 
-	public record Spec(String cacheValue) implements MinecraftJarProcessor.Spec {
-	}
+    public record Spec(String cacheValue) implements MinecraftJarProcessor.Spec {}
 }

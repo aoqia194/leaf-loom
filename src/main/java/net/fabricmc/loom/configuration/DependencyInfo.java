@@ -27,7 +27,6 @@ package net.fabricmc.loom.configuration;
 import java.io.File;
 import java.util.Optional;
 import java.util.Set;
-
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
@@ -38,114 +37,119 @@ import org.gradle.api.artifacts.component.ComponentIdentifier;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
 
 public class DependencyInfo {
-	final Project project;
-	final Dependency dependency;
-	final Configuration sourceConfiguration;
+    final Project project;
+    final Dependency dependency;
+    final Configuration sourceConfiguration;
 
-	private String resolvedVersion = null;
+    private String resolvedVersion = null;
 
-	public static DependencyInfo create(Project project, String configuration) {
-		return create(project, project.getConfigurations().getByName(configuration));
-	}
+    public static DependencyInfo create(Project project, String configuration) {
+        return create(project, project.getConfigurations().getByName(configuration));
+    }
 
-	public static DependencyInfo create(Project project, Configuration configuration) {
-		DependencySet dependencies = configuration.getDependencies();
+    public static DependencyInfo create(Project project, Configuration configuration) {
+        DependencySet dependencies = configuration.getDependencies();
 
-		if (dependencies.isEmpty()) {
-			throw new IllegalArgumentException(String.format("Configuration '%s' has no dependencies", configuration.getName()));
-		}
+        if (dependencies.isEmpty()) {
+            throw new IllegalArgumentException(
+                    String.format("Configuration '%s' has no dependencies", configuration.getName()));
+        }
 
-		if (dependencies.size() != 1) {
-			throw new IllegalArgumentException(String.format("Configuration '%s' must only have 1 dependency", configuration.getName()));
-		}
+        if (dependencies.size() != 1) {
+            throw new IllegalArgumentException(
+                    String.format("Configuration '%s' must only have 1 dependency", configuration.getName()));
+        }
 
-		return create(project, dependencies.iterator().next(), configuration);
-	}
+        return create(project, dependencies.iterator().next(), configuration);
+    }
 
-	public static DependencyInfo create(Project project, Dependency dependency, Configuration sourceConfiguration) {
-		if (dependency instanceof FileCollectionDependency fileCollectionDependency) {
-			return new FileDependencyInfo(project, fileCollectionDependency, sourceConfiguration);
-		} else {
-			return new DependencyInfo(project, dependency, sourceConfiguration);
-		}
-	}
+    public static DependencyInfo create(Project project, Dependency dependency, Configuration sourceConfiguration) {
+        if (dependency instanceof FileCollectionDependency fileCollectionDependency) {
+            return new FileDependencyInfo(project, fileCollectionDependency, sourceConfiguration);
+        } else {
+            return new DependencyInfo(project, dependency, sourceConfiguration);
+        }
+    }
 
-	DependencyInfo(Project project, Dependency dependency, Configuration sourceConfiguration) {
-		this.project = project;
-		this.dependency = dependency;
-		this.sourceConfiguration = sourceConfiguration;
-	}
+    DependencyInfo(Project project, Dependency dependency, Configuration sourceConfiguration) {
+        this.project = project;
+        this.dependency = dependency;
+        this.sourceConfiguration = sourceConfiguration;
+    }
 
-	public Dependency getDependency() {
-		return dependency;
-	}
+    public Dependency getDependency() {
+        return dependency;
+    }
 
-	public String getResolvedVersion() {
-		if (resolvedVersion != null) {
-			return resolvedVersion;
-		}
+    public String getResolvedVersion() {
+        if (resolvedVersion != null) {
+            return resolvedVersion;
+        }
 
-		for (ResolvedDependency rd : sourceConfiguration.getResolvedConfiguration().getFirstLevelModuleDependencies()) {
-			if (rd.getModuleGroup().equals(dependency.getGroup()) && rd.getModuleName().equals(dependency.getName())) {
-				resolvedVersion = rd.getModuleVersion();
-				return resolvedVersion;
-			}
-		}
+        for (ResolvedDependency rd :
+                sourceConfiguration.getResolvedConfiguration().getFirstLevelModuleDependencies()) {
+            if (rd.getModuleGroup().equals(dependency.getGroup())
+                    && rd.getModuleName().equals(dependency.getName())) {
+                resolvedVersion = rd.getModuleVersion();
+                return resolvedVersion;
+            }
+        }
 
-		resolvedVersion = dependency.getVersion();
-		return resolvedVersion;
-	}
+        resolvedVersion = dependency.getVersion();
+        return resolvedVersion;
+    }
 
-	public Configuration getSourceConfiguration() {
-		return sourceConfiguration;
-	}
+    public Configuration getSourceConfiguration() {
+        return sourceConfiguration;
+    }
 
-	private boolean matches(ComponentIdentifier identifier) {
-		if (identifier instanceof ModuleComponentIdentifier moduleComponentIdentifier) {
-			return moduleComponentIdentifier.getGroup().equals(dependency.getGroup())
-					&& moduleComponentIdentifier.getModule().equals(dependency.getName())
-					&& moduleComponentIdentifier.getVersion().equals(dependency.getVersion());
-		}
+    private boolean matches(ComponentIdentifier identifier) {
+        if (identifier instanceof ModuleComponentIdentifier moduleComponentIdentifier) {
+            return moduleComponentIdentifier.getGroup().equals(dependency.getGroup())
+                    && moduleComponentIdentifier.getModule().equals(dependency.getName())
+                    && moduleComponentIdentifier.getVersion().equals(dependency.getVersion());
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public Set<File> resolve() {
-		return sourceConfiguration.getIncoming()
-				.artifactView(view -> view.componentFilter(this::matches))
-				.getFiles()
-				.getFiles();
-	}
+    public Set<File> resolve() {
+        return sourceConfiguration
+                .getIncoming()
+                .artifactView(view -> view.componentFilter(this::matches))
+                .getFiles()
+                .getFiles();
+    }
 
-	public Optional<File> resolveFile() {
-		Set<File> files = resolve();
+    public Optional<File> resolveFile() {
+        Set<File> files = resolve();
 
-		if (files.isEmpty()) {
-			return Optional.empty();
-		} else if (files.size() > 1) {
-			StringBuilder builder = new StringBuilder(this.toString());
-			builder.append(" resolves to more than one file:");
+        if (files.isEmpty()) {
+            return Optional.empty();
+        } else if (files.size() > 1) {
+            StringBuilder builder = new StringBuilder(this.toString());
+            builder.append(" resolves to more than one file:");
 
-			for (File f : files) {
-				builder.append("\n\t-").append(f.getAbsolutePath());
-			}
+            for (File f : files) {
+                builder.append("\n\t-").append(f.getAbsolutePath());
+            }
 
-			throw new RuntimeException(builder.toString());
-		} else {
-			return files.stream().findFirst();
-		}
-	}
+            throw new RuntimeException(builder.toString());
+        } else {
+            return files.stream().findFirst();
+        }
+    }
 
-	@Override
-	public String toString() {
-		return getDepString();
-	}
+    @Override
+    public String toString() {
+        return getDepString();
+    }
 
-	public String getDepString() {
-		return dependency.getGroup() + ":" + dependency.getName() + ":" + dependency.getVersion();
-	}
+    public String getDepString() {
+        return dependency.getGroup() + ":" + dependency.getName() + ":" + dependency.getVersion();
+    }
 
-	public String getResolvedDepString() {
-		return dependency.getGroup() + ":" + dependency.getName() + ":" + getResolvedVersion();
-	}
+    public String getResolvedDepString() {
+        return dependency.getGroup() + ":" + dependency.getName() + ":" + getResolvedVersion();
+    }
 }

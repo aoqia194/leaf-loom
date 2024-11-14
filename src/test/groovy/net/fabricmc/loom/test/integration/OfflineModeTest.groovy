@@ -46,8 +46,8 @@ class OfflineModeTest extends Specification implements GradleProjectTestTrait {
                 modImplementation 'net.fabricmc.fabric-api:fabric-api:0.95.4+1.20.4'
             }
 
-			import net.fabricmc.loom.util.Checksum
-			def projectHash = Checksum.projectHash(getProject())
+            import net.fabricmc.loom.util.Checksum
+            def projectHash = Checksum.projectHash(getProject())
             println("%%" + projectHash + "%%")
 
             """.stripIndent()

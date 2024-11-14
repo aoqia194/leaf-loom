@@ -27,9 +27,10 @@ package net.fabricmc.loom.task;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-
 import javax.inject.Inject;
-
+import net.fabricmc.loom.task.service.ClientEntriesService;
+import net.fabricmc.loom.task.service.SourceRemapperService;
+import net.fabricmc.loom.util.service.ScopedServiceFactory;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
@@ -39,71 +40,70 @@ import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.task.service.ClientEntriesService;
-import net.fabricmc.loom.task.service.SourceRemapperService;
-import net.fabricmc.loom.util.service.ScopedServiceFactory;
-
 public abstract class RemapSourcesJarTask extends AbstractRemapJarTask {
-	@Nested
-	abstract Property<SourceRemapperService.Options> getSourcesRemapperServiceOptions();
+    @Nested
+    abstract Property<SourceRemapperService.Options> getSourcesRemapperServiceOptions();
 
-	@Inject
-	public RemapSourcesJarTask() {
-		super();
-		getClasspath().from(getProject().getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME));
-		getJarType().set("sources");
+    @Inject
+    public RemapSourcesJarTask() {
+        super();
+        getClasspath()
+                .from(getProject().getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME));
+        getJarType().set("sources");
 
-		getSourcesRemapperServiceOptions().set(SourceRemapperService.createOptions(this));
-	}
+        getSourcesRemapperServiceOptions().set(SourceRemapperService.createOptions(this));
+    }
 
-	@TaskAction
-	public void run() {
-		submitWork(RemapSourcesAction.class, params -> {
-			if (!params.namespacesMatch()) {
-				params.getSourcesRemapperServiceOptions().set(getSourcesRemapperServiceOptions());
-			}
-		});
-	}
+    @TaskAction
+    public void run() {
+        submitWork(RemapSourcesAction.class, params -> {
+            if (!params.namespacesMatch()) {
+                params.getSourcesRemapperServiceOptions().set(getSourcesRemapperServiceOptions());
+            }
+        });
+    }
 
-	@Override
-	protected Provider<? extends ClientEntriesService.Options> getClientOnlyEntriesOptionsProvider(SourceSet clientSourceSet) {
-		return ClientEntriesService.Source.createOptions(getProject(), clientSourceSet);
-	}
+    @Override
+    protected Provider<? extends ClientEntriesService.Options> getClientOnlyEntriesOptionsProvider(
+            SourceSet clientSourceSet) {
+        return ClientEntriesService.Source.createOptions(getProject(), clientSourceSet);
+    }
 
-	public interface RemapSourcesParams extends AbstractRemapParams {
-		Property<SourceRemapperService.Options> getSourcesRemapperServiceOptions();
-	}
+    public interface RemapSourcesParams extends AbstractRemapParams {
+        Property<SourceRemapperService.Options> getSourcesRemapperServiceOptions();
+    }
 
-	public abstract static class RemapSourcesAction extends AbstractRemapAction<RemapSourcesParams> {
-		private static final Logger LOGGER = LoggerFactory.getLogger(RemapSourcesAction.class);
+    public abstract static class RemapSourcesAction extends AbstractRemapAction<RemapSourcesParams> {
+        private static final Logger LOGGER = LoggerFactory.getLogger(RemapSourcesAction.class);
 
-		public RemapSourcesAction() {
-			super();
-		}
+        public RemapSourcesAction() {
+            super();
+        }
 
-		@Override
-		public void execute() {
-			try {
-				if (!getParameters().namespacesMatch()) {
-					try (var serviceFactory = new ScopedServiceFactory()) {
-						SourceRemapperService sourceRemapperService = serviceFactory.get(getParameters().getSourcesRemapperServiceOptions());
-						sourceRemapperService.remapSourcesJar(inputFile, outputFile);
-					}
-				} else {
-					Files.copy(inputFile, outputFile, StandardCopyOption.REPLACE_EXISTING);
-				}
+        @Override
+        public void execute() {
+            try {
+                if (!getParameters().namespacesMatch()) {
+                    try (var serviceFactory = new ScopedServiceFactory()) {
+                        SourceRemapperService sourceRemapperService =
+                                serviceFactory.get(getParameters().getSourcesRemapperServiceOptions());
+                        sourceRemapperService.remapSourcesJar(inputFile, outputFile);
+                    }
+                } else {
+                    Files.copy(inputFile, outputFile, StandardCopyOption.REPLACE_EXISTING);
+                }
 
-				modifyJarManifest();
-				rewriteJar();
-			} catch (Exception e) {
-				try {
-					Files.deleteIfExists(outputFile);
-				} catch (IOException ex) {
-					LOGGER.error("Failed to delete output file", ex);
-				}
+                modifyJarManifest();
+                rewriteJar();
+            } catch (Exception e) {
+                try {
+                    Files.deleteIfExists(outputFile);
+                } catch (IOException ex) {
+                    LOGGER.error("Failed to delete output file", ex);
+                }
 
-				throw new RuntimeException("Failed to remap sources", e);
-			}
-		}
-	}
+                throw new RuntimeException("Failed to remap sources", e);
+            }
+        }
+    }
 }

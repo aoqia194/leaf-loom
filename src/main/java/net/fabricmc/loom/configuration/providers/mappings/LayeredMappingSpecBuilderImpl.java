@@ -27,68 +27,42 @@ package net.fabricmc.loom.configuration.providers.mappings;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.gradle.api.Action;
-
 import net.fabricmc.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
 import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
 import net.fabricmc.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
 import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
-import net.fabricmc.loom.api.mappings.layered.spec.MojangMappingsSpecBuilder;
-import net.fabricmc.loom.api.mappings.layered.spec.ParchmentMappingsSpecBuilder;
 import net.fabricmc.loom.configuration.providers.mappings.extras.signatures.SignatureFixesSpec;
 import net.fabricmc.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl;
 import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec;
-import net.fabricmc.loom.configuration.providers.mappings.mojmap.MojangMappingsSpecBuilderImpl;
-import net.fabricmc.loom.configuration.providers.mappings.parchment.ParchmentMappingsSpecBuilderImpl;
+import org.gradle.api.Action;
 
 public class LayeredMappingSpecBuilderImpl implements LayeredMappingSpecBuilder {
-	private final List<MappingsSpec<?>> layers = new LinkedList<>();
+    private final List<MappingsSpec<?>> layers = new LinkedList<>();
 
-	@Override
-	public LayeredMappingSpecBuilder addLayer(MappingsSpec<?> mappingSpec) {
-		layers.add(mappingSpec);
-		return this;
-	}
+    public LayeredMappingSpec build() {
+        List<MappingsSpec<?>> builtLayers = new LinkedList<>();
+        // Intermediary is always the base layer
+        builtLayers.add(new IntermediaryMappingsSpec());
+        builtLayers.addAll(layers);
 
-	@Override
-	public LayeredMappingSpecBuilder officialMojangMappings(Action<MojangMappingsSpecBuilder> action) {
-		MojangMappingsSpecBuilderImpl builder = MojangMappingsSpecBuilderImpl.builder();
-		action.execute(builder);
-		return addLayer(builder.build());
-	}
+        return new LayeredMappingSpec(Collections.unmodifiableList(builtLayers));
+    }
 
-	@Override
-	public LayeredMappingSpecBuilder parchment(Object object, Action<ParchmentMappingsSpecBuilder> action) {
-		ParchmentMappingsSpecBuilderImpl builder = ParchmentMappingsSpecBuilderImpl.builder(FileSpec.create(object));
-		action.execute(builder);
-		return addLayer(builder.build());
-	}
+    @Override
+    public LayeredMappingSpecBuilder addLayer(MappingsSpec<?> mappingSpec) {
+        layers.add(mappingSpec);
+        return this;
+    }
 
-	@Override
-	public LayeredMappingSpecBuilder signatureFix(Object object) {
-		return addLayer(new SignatureFixesSpec(FileSpec.create(object)));
-	}
+    @Override
+    public LayeredMappingSpecBuilder signatureFix(Object object) {
+        return addLayer(new SignatureFixesSpec(FileSpec.create(object)));
+    }
 
-	@Override
-	public LayeredMappingSpecBuilder mappings(Object file, Action<? super FileMappingsSpecBuilder> action) {
-		FileMappingsSpecBuilderImpl builder = FileMappingsSpecBuilderImpl.builder(FileSpec.create(file));
-		action.execute(builder);
-		return addLayer(builder.build());
-	}
-
-	public LayeredMappingSpec build() {
-		List<MappingsSpec<?>> builtLayers = new LinkedList<>();
-		// Intermediary is always the base layer
-		builtLayers.add(new IntermediaryMappingsSpec());
-		builtLayers.addAll(layers);
-
-		return new LayeredMappingSpec(Collections.unmodifiableList(builtLayers));
-	}
-
-	public static LayeredMappingSpec buildOfficialMojangMappings() {
-		var builder = new LayeredMappingSpecBuilderImpl();
-		builder.officialMojangMappings();
-		return builder.build();
-	}
+    @Override
+    public LayeredMappingSpecBuilder mappings(Object file, Action<? super FileMappingsSpecBuilder> action) {
+        FileMappingsSpecBuilderImpl builder = FileMappingsSpecBuilderImpl.builder(FileSpec.create(file));
+        action.execute(builder);
+        return addLayer(builder.build());
+    }
 }

@@ -28,14 +28,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-
-import org.gradle.api.Project;
-import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.provider.Property;
-import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFile;
-
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.configuration.providers.mappings.MappingConfiguration;
 import net.fabricmc.loom.util.TinyRemapperHelper;
@@ -45,104 +37,117 @@ import net.fabricmc.loom.util.service.ServiceType;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.IMappingProvider;
+import org.gradle.api.Project;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFile;
 
 /**
  * A service that provides mappings for remapping.
  */
 public final class MappingsService extends Service<MappingsService.Options> implements Closeable {
-	public static ServiceType<Options, MappingsService> TYPE = new ServiceType<>(Options.class, MappingsService.class);
+    public static ServiceType<Options, MappingsService> TYPE = new ServiceType<>(Options.class, MappingsService.class);
 
-	// TODO use a nested TinyMappingsService instead of duplicating it
-	public interface Options extends Service.Options {
-		@InputFile
-		RegularFileProperty getMappingsFile();
-		@Input
-		Property<String> getFrom();
-		@Input
-		Property<String> getTo();
-		@Input
-		Property<Boolean> getRemapLocals();
-	}
+    // TODO use a nested TinyMappingsService instead of duplicating it
+    public interface Options extends Service.Options {
+        @InputFile
+        RegularFileProperty getMappingsFile();
 
-	/**
-	 * Returns options for creating a new mappings service, with a given mappings file.
-	 */
-	public static Provider<Options> createOptions(Project project, Path mappingsFile, String from, String to, boolean remapLocals) {
-		return createOptions(project, mappingsFile, project.provider(() -> from), project.provider(() -> to), remapLocals);
-	}
+        @Input
+        Property<String> getFrom();
 
-	/**
-	 * Returns options for creating a new mappings service, with a given mappings file.
-	 */
-	public static Provider<Options> createOptions(Project project, Path mappingsFile, Provider<String> from, Provider<String> to, boolean remapLocals) {
-		return TYPE.create(project, o -> {
-			o.getMappingsFile().set(mappingsFile.toFile());
-			o.getFrom().set(from);
-			o.getTo().set(to);
-			o.getRemapLocals().set(remapLocals);
-		});
-	}
+        @Input
+        Property<String> getTo();
 
-	/**
-	 * Returns options for creating a new mappings service, using the mappings as specified in the project's mapping configuration.
-	 */
-	public static Provider<Options> createOptionsWithProjectMappings(Project project, Provider<String> from, Provider<String> to) {
-		final MappingConfiguration mappingConfiguration = LoomGradleExtension.get(project).getMappingConfiguration();
-		return createOptions(project, mappingConfiguration.tinyMappings, from, to, false);
-	}
+        @Input
+        Property<Boolean> getRemapLocals();
+    }
 
-	public MappingsService(Options options, ServiceFactory serviceFactory) {
-		super(options, serviceFactory);
-	}
+    /**
+     * Returns options for creating a new mappings service, with a given mappings file.
+     */
+    public static Provider<Options> createOptions(
+            Project project, Path mappingsFile, String from, String to, boolean remapLocals) {
+        return createOptions(
+                project, mappingsFile, project.provider(() -> from), project.provider(() -> to), remapLocals);
+    }
 
-	private IMappingProvider mappingProvider = null;
-	private MemoryMappingTree memoryMappingTree = null;
+    /**
+     * Returns options for creating a new mappings service, with a given mappings file.
+     */
+    public static Provider<Options> createOptions(
+            Project project, Path mappingsFile, Provider<String> from, Provider<String> to, boolean remapLocals) {
+        return TYPE.create(project, o -> {
+            o.getMappingsFile().set(mappingsFile.toFile());
+            o.getFrom().set(from);
+            o.getTo().set(to);
+            o.getRemapLocals().set(remapLocals);
+        });
+    }
 
-	public IMappingProvider getMappingsProvider() {
-		if (mappingProvider == null) {
-			try {
-				mappingProvider = TinyRemapperHelper.create(
-						getMappingsPath(),
-						getFrom(),
-						getTo(),
-						getOptions().getRemapLocals().get()
-				);
-			} catch (IOException e) {
-				throw new UncheckedIOException("Failed to read mappings from: " + getMappingsPath(), e);
-			}
-		}
+    /**
+     * Returns options for creating a new mappings service, using the mappings as specified in the project's mapping configuration.
+     */
+    public static Provider<Options> createOptionsWithProjectMappings(
+            Project project, Provider<String> from, Provider<String> to) {
+        final MappingConfiguration mappingConfiguration =
+                LoomGradleExtension.get(project).getMappingConfiguration();
+        return createOptions(project, mappingConfiguration.tinyMappings, from, to, false);
+    }
 
-		return mappingProvider;
-	}
+    public MappingsService(Options options, ServiceFactory serviceFactory) {
+        super(options, serviceFactory);
+    }
 
-	public MemoryMappingTree getMemoryMappingTree() {
-		if (memoryMappingTree == null) {
-			memoryMappingTree = new MemoryMappingTree();
+    private IMappingProvider mappingProvider = null;
+    private MemoryMappingTree memoryMappingTree = null;
 
-			try {
-				MappingReader.read(getMappingsPath(), memoryMappingTree);
-			} catch (IOException e) {
-				throw new UncheckedIOException("Failed to read mappings from: " + getMappingsPath(), e);
-			}
-		}
+    public IMappingProvider getMappingsProvider() {
+        if (mappingProvider == null) {
+            try {
+                mappingProvider = TinyRemapperHelper.create(
+                        getMappingsPath(),
+                        getFrom(),
+                        getTo(),
+                        getOptions().getRemapLocals().get());
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed to read mappings from: " + getMappingsPath(), e);
+            }
+        }
 
-		return memoryMappingTree;
-	}
+        return mappingProvider;
+    }
 
-	public String getFrom() {
-		return getOptions().getFrom().get();
-	}
+    public MemoryMappingTree getMemoryMappingTree() {
+        if (memoryMappingTree == null) {
+            memoryMappingTree = new MemoryMappingTree();
 
-	public String getTo() {
-		return getOptions().getTo().get();
-	}
+            try {
+                MappingReader.read(getMappingsPath(), memoryMappingTree);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed to read mappings from: " + getMappingsPath(), e);
+            }
+        }
 
-	public Path getMappingsPath() {
-		return getOptions().getMappingsFile().get().getAsFile().toPath();
-	}
+        return memoryMappingTree;
+    }
 
-	@Override
-	public void close() {
-		mappingProvider = null;
-	}
+    public String getFrom() {
+        return getOptions().getFrom().get();
+    }
+
+    public String getTo() {
+        return getOptions().getTo().get();
+    }
+
+    public Path getMappingsPath() {
+        return getOptions().getMappingsFile().get().getAsFile().toPath();
+    }
+
+    @Override
+    public void close() {
+        mappingProvider = null;
+    }
 }

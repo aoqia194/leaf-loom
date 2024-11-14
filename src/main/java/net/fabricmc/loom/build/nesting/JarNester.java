@@ -24,76 +24,84 @@
 
 package net.fabricmc.loom.build.nesting;
 
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import org.gradle.api.UncheckedIOException;
-import org.slf4j.Logger;
-
 import net.fabricmc.loom.util.Pair;
 import net.fabricmc.loom.util.ZipUtils;
 import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
+import org.gradle.api.UncheckedIOException;
+import org.slf4j.Logger;
 
 public class JarNester {
-	public static void nestJars(Collection<File> jars, File modJar, Logger logger) {
-		if (jars.isEmpty()) {
-			logger.debug("Nothing to nest into " + modJar.getName());
-			return;
-		}
+    public static void nestJars(Collection<File> jars, File modJar, Logger logger) {
+        if (jars.isEmpty()) {
+            logger.debug("Nothing to nest into " + modJar.getName());
+            return;
+        }
 
-		Preconditions.checkArgument(FabricModJsonFactory.isModJar(modJar), "Cannot nest jars into none mod jar " + modJar.getName());
+        Preconditions.checkArgument(
+                FabricModJsonFactory.isModJar(modJar), "Cannot nest jars into none mod jar " + modJar.getName());
 
-		try {
-			ZipUtils.add(modJar.toPath(), jars.stream().map(file -> {
-				try {
-					return new Pair<>("META-INF/jars/" + file.getName(), Files.readAllBytes(file.toPath()));
-				} catch (IOException e) {
-					throw new UncheckedIOException(e);
-				}
-			}).collect(Collectors.toList()));
+        try {
+            ZipUtils.add(
+                    modJar.toPath(),
+                    jars.stream()
+                            .map(file -> {
+                                try {
+                                    return new Pair<>(
+                                            "META-INF/jars/" + file.getName(), Files.readAllBytes(file.toPath()));
+                                } catch (IOException e) {
+                                    throw new UncheckedIOException(e);
+                                }
+                            })
+                            .collect(Collectors.toList()));
 
-			int count = ZipUtils.transformJson(JsonObject.class, modJar.toPath(), Stream.of(new Pair<>("fabric.mod.json", json -> {
-				JsonArray nestedJars = json.getAsJsonArray("jars");
+            int count = ZipUtils.transformJson(
+                    JsonObject.class, modJar.toPath(), Stream.of(new Pair<>("fabric.mod.json", json -> {
+                        JsonArray nestedJars = json.getAsJsonArray("jars");
 
-				if (nestedJars == null || !json.has("jars")) {
-					nestedJars = new JsonArray();
-				}
+                        if (nestedJars == null || !json.has("jars")) {
+                            nestedJars = new JsonArray();
+                        }
 
-				for (File file : jars) {
-					String nestedJarPath = "META-INF/jars/" + file.getName();
-					Preconditions.checkArgument(FabricModJsonFactory.isModJar(file), "Cannot nest none mod jar: " + file.getName());
+                        for (File file : jars) {
+                            String nestedJarPath = "META-INF/jars/" + file.getName();
+                            Preconditions.checkArgument(
+                                    FabricModJsonFactory.isModJar(file), "Cannot nest none mod jar: " + file.getName());
 
-					for (JsonElement nestedJar : nestedJars) {
-						JsonObject jsonObject = nestedJar.getAsJsonObject();
+                            for (JsonElement nestedJar : nestedJars) {
+                                JsonObject jsonObject = nestedJar.getAsJsonObject();
 
-						if (jsonObject.has("file") && jsonObject.get("file").getAsString().equals(nestedJarPath)) {
-							throw new IllegalStateException("Cannot nest 2 jars at the same path: " + nestedJarPath);
-						}
-					}
+                                if (jsonObject.has("file")
+                                        && jsonObject.get("file").getAsString().equals(nestedJarPath)) {
+                                    throw new IllegalStateException(
+                                            "Cannot nest 2 jars at the same path: " + nestedJarPath);
+                                }
+                            }
 
-					JsonObject jsonObject = new JsonObject();
-					jsonObject.addProperty("file", nestedJarPath);
-					nestedJars.add(jsonObject);
+                            JsonObject jsonObject = new JsonObject();
+                            jsonObject.addProperty("file", nestedJarPath);
+                            nestedJars.add(jsonObject);
 
-					logger.debug("Nested " + nestedJarPath + " into " + modJar.getName());
-				}
+                            logger.debug("Nested " + nestedJarPath + " into " + modJar.getName());
+                        }
 
-				json.add("jars", nestedJars);
+                        json.add("jars", nestedJars);
 
-				return json;
-			})));
+                        return json;
+                    })));
 
-			Preconditions.checkState(count > 0, "Failed to transform fabric.mod.json");
-		} catch (IOException e) {
-			throw new java.io.UncheckedIOException("Failed to nest jars into " + modJar.getName(), e);
-		}
-	}
+            Preconditions.checkState(count > 0, "Failed to transform fabric.mod.json");
+        } catch (IOException e) {
+            throw new java.io.UncheckedIOException("Failed to nest jars into " + modJar.getName(), e);
+        }
+    }
 }

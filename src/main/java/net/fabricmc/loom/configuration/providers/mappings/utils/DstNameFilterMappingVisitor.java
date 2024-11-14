@@ -26,7 +26,6 @@ package net.fabricmc.loom.configuration.providers.mappings.utils;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
-
 import net.fabricmc.mappingio.MappedElementKind;
 import net.fabricmc.mappingio.MappingVisitor;
 import net.fabricmc.mappingio.adapter.ForwardingMappingVisitor;
@@ -35,20 +34,21 @@ import net.fabricmc.mappingio.adapter.ForwardingMappingVisitor;
  * Filters out method and field names based on the provided regex pattern.
  */
 public class DstNameFilterMappingVisitor extends ForwardingMappingVisitor {
-	private final Pattern pattern;
+    private final Pattern pattern;
 
-	public DstNameFilterMappingVisitor(MappingVisitor next, Pattern pattern) {
-		super(next);
+    public DstNameFilterMappingVisitor(MappingVisitor next, Pattern pattern) {
+        super(next);
 
-		this.pattern = pattern;
-	}
+        this.pattern = pattern;
+    }
 
-	@Override
-	public void visitDstName(MappedElementKind targetKind, int namespace, String name) throws IOException {
-		if ((targetKind == MappedElementKind.FIELD || targetKind == MappedElementKind.METHOD) && pattern.matcher(name).matches()) {
-			return;
-		}
+    @Override
+    public void visitDstName(MappedElementKind targetKind, int namespace, String name) throws IOException {
+        if ((targetKind == MappedElementKind.FIELD || targetKind == MappedElementKind.METHOD)
+                && pattern.matcher(name).matches()) {
+            return;
+        }
 
-		super.visitDstName(targetKind, namespace, name);
-	}
+        super.visitDstName(targetKind, namespace, name);
+    }
 }

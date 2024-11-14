@@ -27,39 +27,41 @@ package net.fabricmc.loom.api.mappings.layered;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidProvider;
+import net.fabricmc.loom.util.copygamefile.CopyGameFileBuilder;
+import net.fabricmc.loom.util.download.DownloadBuilder;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.MinimalExternalModuleDependency;
 import org.gradle.api.logging.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider;
-import net.fabricmc.loom.util.download.DownloadBuilder;
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
-
 @ApiStatus.Experimental /* Very Experimental and not cleanly separated from the impl atm */
 public interface MappingContext {
-	Path resolveDependency(Dependency dependency);
+    Path resolveDependency(Dependency dependency);
 
-	Path resolveDependency(MinimalExternalModuleDependency dependency);
+    Path resolveDependency(MinimalExternalModuleDependency dependency);
 
-	Path resolveMavenDependency(String mavenNotation);
+    Path resolveMavenDependency(String mavenNotation);
 
-	Supplier<MemoryMappingTree> intermediaryTree();
+    Supplier<MemoryMappingTree> intermediaryTree();
 
-	MinecraftProvider minecraftProvider();
+    default String minecraftVersion() {
+        return zomboidProvider().zomboidVersion();
+    }
 
-	default String minecraftVersion() {
-		return minecraftProvider().minecraftVersion();
-	}
+    ZomboidProvider zomboidProvider();
 
-	/**
-	 * Creates a temporary working dir to be used to store working files.
-	 */
-	Path workingDirectory(String name);
+    /**
+     * Creates a temporary working dir to be used to store working files.
+     */
+    Path workingDirectory(String name);
 
-	Logger getLogger();
+    Logger getLogger();
 
-	DownloadBuilder download(String url);
+    CopyGameFileBuilder copyGameFile(String url);
 
-	boolean refreshDeps();
+    DownloadBuilder download(String url);
+
+    boolean refreshDeps();
 }

@@ -25,7 +25,7 @@
 package net.fabricmc.loom.test.unit;
 
 public class LineNumberSource {
-	public static void main(String[] args) {
-		System.out.println("Hello World!");
-	}
+    public static void main(String[] args) {
+        System.out.println("Hello World!");
+    }
 }

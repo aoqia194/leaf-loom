@@ -87,10 +87,10 @@ class SimpleProjectTest extends Specification implements GradleProjectTestTrait 
 		setup:
 		def gradle = gradleProject(project: "simple", version: PRE_RELEASE_GRADLE)
 		gradle.buildGradle << """
-				allprojects {
-					loom.mixin.useLegacyMixinAp = false
-				}
-				""".stripIndent()
+                allprojects {
+                    loom.mixin.useLegacyMixinAp = false
+                }
+                """.stripIndent()
 
 		when:
 		def result = gradle.run(task: "build")

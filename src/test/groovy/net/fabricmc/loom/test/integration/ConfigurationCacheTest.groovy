@@ -76,20 +76,20 @@ class ConfigurationCacheTest extends Specification implements GradleProjectTestT
                 modImplementation 'net.fabricmc:fabric-loader:0.15.6'
             }
 
-			abstract class TestTask extends DefaultTask {
-				@Input
-				abstract Property<String> getModVersion()
+            abstract class TestTask extends DefaultTask {
+                @Input
+                abstract Property<String> getModVersion()
 
-				@TaskAction
-				void run() {
-					println "Version: " + modVersion.get()
-				}
-			}
+                @TaskAction
+                void run() {
+                    println "Version: " + modVersion.get()
+                }
+            }
 
-			println "Configuring task testTask"
+            println "Configuring task testTask"
             tasks.register('testTask', TestTask) {
-            	modVersion.set(loom.getModVersion()) // loom.getModVersion() returns a String
-			}
+                modVersion.set(loom.getModVersion()) // loom.getModVersion() returns a String
+            }
             """.stripIndent()
 
 		def fabricModJson = new File(gradle.projectDir, "src/main/resources/fabric.mod.json")
@@ -127,11 +127,11 @@ class ConfigurationCacheTest extends Specification implements GradleProjectTestT
 
 	static def fmj(String version) {
 		return """
-		{
-			"schemaVersion": 1,
-			"id": "test",
-			"version": "${version}"
-		}
-		"""
+        {
+            "schemaVersion": 1,
+            "id": "test",
+            "version": "${version}"
+        }
+        """
 	}
 }

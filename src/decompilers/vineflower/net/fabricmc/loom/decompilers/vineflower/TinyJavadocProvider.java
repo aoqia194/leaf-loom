@@ -30,159 +30,160 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jetbrains.java.decompiler.struct.StructClass;
-import org.jetbrains.java.decompiler.struct.StructField;
-import org.jetbrains.java.decompiler.struct.StructMethod;
-import org.jetbrains.java.decompiler.struct.StructRecordComponent;
-
 import net.fabricmc.fernflower.api.IFabricJavadocProvider;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.jetbrains.java.decompiler.struct.StructClass;
+import org.jetbrains.java.decompiler.struct.StructField;
+import org.jetbrains.java.decompiler.struct.StructMethod;
+import org.jetbrains.java.decompiler.struct.StructRecordComponent;
 
 public class TinyJavadocProvider implements IFabricJavadocProvider {
-	private static final int ACC_STATIC = 0x0008;
-	private static final int ACC_RECORD = 0x10000;
+    private static final int ACC_STATIC = 0x0008;
+    private static final int ACC_RECORD = 0x10000;
 
-	private final MappingTree mappingTree;
+    private final MappingTree mappingTree;
 
-	public TinyJavadocProvider(File tinyFile) {
-		mappingTree = readMappings(tinyFile);
-	}
+    public TinyJavadocProvider(File tinyFile) {
+        mappingTree = readMappings(tinyFile);
+    }
 
-	@Override
-	public String getClassDoc(StructClass structClass) {
-		MappingTree.ClassMapping classMapping = mappingTree.getClass(structClass.qualifiedName);
+    @Override
+    public String getClassDoc(StructClass structClass) {
+        MappingTree.ClassMapping classMapping = mappingTree.getClass(structClass.qualifiedName);
 
-		if (classMapping == null) {
-			return null;
-		}
+        if (classMapping == null) {
+            return null;
+        }
 
-		if (!isRecord(structClass)) {
-			return classMapping.getComment();
-		}
+        if (!isRecord(structClass)) {
+            return classMapping.getComment();
+        }
 
-		/**
-		 * Handle the record component docs here.
-		 *
-		 * Record components are mapped via the field name, thus take the docs from the fields and display them on then class.
-		 */
-		List<String> parts = new ArrayList<>();
+        /**
+         * Handle the record component docs here.
+         *
+         * Record components are mapped via the field name, thus take the docs from the fields and display them on then class.
+         */
+        List<String> parts = new ArrayList<>();
 
-		if (classMapping.getComment() != null) {
-			parts.add(classMapping.getComment());
-		}
+        if (classMapping.getComment() != null) {
+            parts.add(classMapping.getComment());
+        }
 
-		boolean addedParam = false;
+        boolean addedParam = false;
 
-		for (StructRecordComponent component : structClass.getRecordComponents()) {
-			// The component will always match the field name and descriptor
-			MappingTree.FieldMapping fieldMapping = classMapping.getField(component.getName(), component.getDescriptor());
+        for (StructRecordComponent component : structClass.getRecordComponents()) {
+            // The component will always match the field name and descriptor
+            MappingTree.FieldMapping fieldMapping =
+                    classMapping.getField(component.getName(), component.getDescriptor());
 
-			if (fieldMapping == null) {
-				continue;
-			}
+            if (fieldMapping == null) {
+                continue;
+            }
 
-			String comment = fieldMapping.getComment();
+            String comment = fieldMapping.getComment();
 
-			if (comment != null) {
-				if (!addedParam && classMapping.getComment() != null) {
-					//Add a blank line before components when the class has a comment
-					parts.add("");
-					addedParam = true;
-				}
+            if (comment != null) {
+                if (!addedParam && classMapping.getComment() != null) {
+                    // Add a blank line before components when the class has a comment
+                    parts.add("");
+                    addedParam = true;
+                }
 
-				parts.add(String.format("@param %s %s", fieldMapping.getName("named"), comment));
-			}
-		}
+                parts.add(String.format("@param %s %s", fieldMapping.getName("named"), comment));
+            }
+        }
 
-		if (parts.isEmpty()) {
-			return null;
-		}
+        if (parts.isEmpty()) {
+            return null;
+        }
 
-		return String.join("\n", parts);
-	}
+        return String.join("\n", parts);
+    }
 
-	@Override
-	public String getFieldDoc(StructClass structClass, StructField structField) {
-		// None static fields in records are handled in the class javadoc.
-		if (isRecord(structClass) && !isStatic(structField)) {
-			return null;
-		}
+    @Override
+    public String getFieldDoc(StructClass structClass, StructField structField) {
+        // None static fields in records are handled in the class javadoc.
+        if (isRecord(structClass) && !isStatic(structField)) {
+            return null;
+        }
 
-		MappingTree.ClassMapping classMapping = mappingTree.getClass(structClass.qualifiedName);
+        MappingTree.ClassMapping classMapping = mappingTree.getClass(structClass.qualifiedName);
 
-		if (classMapping == null) {
-			return null;
-		}
+        if (classMapping == null) {
+            return null;
+        }
 
-		MappingTree.FieldMapping fieldMapping = classMapping.getField(structField.getName(), structField.getDescriptor());
+        MappingTree.FieldMapping fieldMapping =
+                classMapping.getField(structField.getName(), structField.getDescriptor());
 
-		return fieldMapping != null ? fieldMapping.getComment() : null;
-	}
+        return fieldMapping != null ? fieldMapping.getComment() : null;
+    }
 
-	@Override
-	public String getMethodDoc(StructClass structClass, StructMethod structMethod) {
-		MappingTree.ClassMapping classMapping = mappingTree.getClass(structClass.qualifiedName);
+    @Override
+    public String getMethodDoc(StructClass structClass, StructMethod structMethod) {
+        MappingTree.ClassMapping classMapping = mappingTree.getClass(structClass.qualifiedName);
 
-		if (classMapping == null) {
-			return null;
-		}
+        if (classMapping == null) {
+            return null;
+        }
 
-		MappingTree.MethodMapping methodMapping = classMapping.getMethod(structMethod.getName(), structMethod.getDescriptor());
+        MappingTree.MethodMapping methodMapping =
+                classMapping.getMethod(structMethod.getName(), structMethod.getDescriptor());
 
-		if (methodMapping != null) {
-			List<String> parts = new ArrayList<>();
+        if (methodMapping != null) {
+            List<String> parts = new ArrayList<>();
 
-			if (methodMapping.getComment() != null) {
-				parts.add(methodMapping.getComment());
-			}
+            if (methodMapping.getComment() != null) {
+                parts.add(methodMapping.getComment());
+            }
 
-			boolean addedParam = false;
+            boolean addedParam = false;
 
-			for (MappingTree.MethodArgMapping argMapping : methodMapping.getArgs()) {
-				String comment = argMapping.getComment();
+            for (MappingTree.MethodArgMapping argMapping : methodMapping.getArgs()) {
+                String comment = argMapping.getComment();
 
-				if (comment != null) {
-					if (!addedParam && methodMapping.getComment() != null) {
-						//Add a blank line before params when the method has a comment
-						parts.add("");
-						addedParam = true;
-					}
+                if (comment != null) {
+                    if (!addedParam && methodMapping.getComment() != null) {
+                        // Add a blank line before params when the method has a comment
+                        parts.add("");
+                        addedParam = true;
+                    }
 
-					parts.add(String.format("@param %s %s", argMapping.getName("named"), comment));
-				}
-			}
+                    parts.add(String.format("@param %s %s", argMapping.getName("named"), comment));
+                }
+            }
 
-			if (parts.isEmpty()) {
-				return null;
-			}
+            if (parts.isEmpty()) {
+                return null;
+            }
 
-			return String.join("\n", parts);
-		}
+            return String.join("\n", parts);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private static MappingTree readMappings(File input) {
-		try (BufferedReader reader = Files.newBufferedReader(input.toPath())) {
-			MemoryMappingTree mappingTree = new MemoryMappingTree();
-			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(mappingTree, "named");
-			MappingReader.read(reader, nsSwitch);
+    private static MappingTree readMappings(File input) {
+        try (BufferedReader reader = Files.newBufferedReader(input.toPath())) {
+            MemoryMappingTree mappingTree = new MemoryMappingTree();
+            MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(mappingTree, "named");
+            MappingReader.read(reader, nsSwitch);
 
-			return mappingTree;
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to read mappings", e);
-		}
-	}
+            return mappingTree;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read mappings", e);
+        }
+    }
 
-	public static boolean isRecord(StructClass structClass) {
-		return (structClass.getAccessFlags() & ACC_RECORD) != 0;
-	}
+    public static boolean isRecord(StructClass structClass) {
+        return (structClass.getAccessFlags() & ACC_RECORD) != 0;
+    }
 
-	public static boolean isStatic(StructField structField) {
-		return (structField.getAccessFlags() & ACC_STATIC) != 0;
-	}
+    public static boolean isStatic(StructField structField) {
+        return (structField.getAccessFlags() & ACC_STATIC) != 0;
+    }
 }

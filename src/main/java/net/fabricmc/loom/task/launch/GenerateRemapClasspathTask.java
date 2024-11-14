@@ -31,7 +31,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import net.fabricmc.loom.api.RemapConfigurationSettings;
+import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
+import net.fabricmc.loom.task.AbstractLoomTask;
+import net.fabricmc.loom.util.Constants;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
@@ -39,46 +42,39 @@ import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
-import net.fabricmc.loom.api.RemapConfigurationSettings;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.task.AbstractLoomTask;
-import net.fabricmc.loom.util.Constants;
-
 public abstract class GenerateRemapClasspathTask extends AbstractLoomTask {
-	@InputFiles
-	public abstract ConfigurableFileCollection getRemapClasspath();
+    @InputFiles
+    public abstract ConfigurableFileCollection getRemapClasspath();
 
-	@OutputFile
-	public abstract RegularFileProperty getRemapClasspathFile();
+    @OutputFile
+    public abstract RegularFileProperty getRemapClasspathFile();
 
-	public GenerateRemapClasspathTask() {
-		final ConfigurationContainer configurations = getProject().getConfigurations();
+    public GenerateRemapClasspathTask() {
+        final ConfigurationContainer configurations = getProject().getConfigurations();
 
-		getRemapClasspath().from(configurations.named(Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES));
-		getExtension().getRuntimeRemapConfigurations().stream()
-				.map(RemapConfigurationSettings::getName)
-				.map(configurations::named)
-				.forEach(getRemapClasspath()::from);
+        getRemapClasspath().from(configurations.named(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
+        getExtension().getRuntimeRemapConfigurations().stream()
+                .map(RemapConfigurationSettings::getName)
+                .map(configurations::named)
+                .forEach(getRemapClasspath()::from);
 
-		for (Path minecraftJar : getExtension().getMinecraftJars(MappingsNamespace.INTERMEDIARY)) {
-			getRemapClasspath().from(minecraftJar.toFile());
-		}
+        for (Path minecraftJar : getExtension().getMinecraftJars(MappingsNamespace.INTERMEDIARY)) {
+            getRemapClasspath().from(minecraftJar.toFile());
+        }
 
-		getRemapClasspathFile().set(getExtension().getFiles().getRemapClasspathFile());
-	}
+        getRemapClasspathFile().set(getExtension().getFiles().getRemapClasspathFile());
+    }
 
-	@TaskAction
-	public void run() {
-		final List<File> remapClasspath = new ArrayList<>(getRemapClasspath().getFiles());
+    @TaskAction
+    public void run() {
+        final List<File> remapClasspath = new ArrayList<>(getRemapClasspath().getFiles());
 
-		String str = remapClasspath.stream()
-				.map(File::getAbsolutePath)
-				.collect(Collectors.joining(File.pathSeparator));
+        String str = remapClasspath.stream().map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
 
-		try {
-			Files.writeString(getRemapClasspathFile().getAsFile().get().toPath(), str);
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to generate remap classpath", e);
-		}
-	}
+        try {
+            Files.writeString(getRemapClasspathFile().getAsFile().get().toPath(), str);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to generate remap classpath", e);
+        }
+    }
 }

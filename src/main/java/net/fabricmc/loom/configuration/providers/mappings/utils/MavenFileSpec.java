@@ -25,13 +25,12 @@
 package net.fabricmc.loom.configuration.providers.mappings.utils;
 
 import java.nio.file.Path;
-
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
 import net.fabricmc.loom.api.mappings.layered.MappingContext;
+import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
 
 public record MavenFileSpec(String dependencyNotation) implements FileSpec {
-	@Override
-	public Path get(MappingContext context) {
-		return context.resolveMavenDependency(dependencyNotation);
-	}
+    @Override
+    public Path get(MappingContext context) {
+        return context.resolveMavenDependency(dependencyNotation);
+    }
 }

@@ -25,87 +25,91 @@
 package net.fabricmc.loom.extension;
 
 import java.io.File;
-
+import net.fabricmc.loom.LoomGradleExtension;
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.LoomGradleExtension;
-
 public abstract class LoomFilesBaseImpl implements LoomFiles {
-	protected abstract File getGradleUserHomeDir();
-	protected abstract File getRootDir();
-	protected abstract File getProjectDir();
-	protected abstract File getBuildDir();
+    protected abstract File getGradleUserHomeDir();
 
-	public LoomFilesBaseImpl() { }
+    protected abstract File getRootDir();
 
-	private static File createFile(File parent, String child) {
-		File file = new File(parent, child);
-		file.mkdirs();
-		return file;
-	}
+    protected abstract File getProjectDir();
 
-	@Override
-	public File getUserCache() {
-		return createFile(getGradleUserHomeDir(), "caches" + File.separator + "fabric-loom");
-	}
+    protected abstract File getBuildDir();
 
-	@Override
-	public File getRootProjectPersistentCache() {
-		return createFile(getRootDir(), ".gradle" + File.separator + "loom-cache");
-	}
+    public LoomFilesBaseImpl() {}
 
-	@Override
-	public File getProjectPersistentCache() {
-		return createFile(getProjectDir(), ".gradle" + File.separator + "loom-cache");
-	}
+    private static File createFile(File parent, String child) {
+        File file = new File(parent, child);
+        file.mkdirs();
+        return file;
+    }
 
-	@Override
-	public File getProjectBuildCache() {
-		return createFile(getBuildDir(), "loom-cache");
-	}
+    @Override
+    public File getUserCache() {
+        return createFile(getGradleUserHomeDir(), "caches" + File.separator + "fabric-loom");
+    }
 
-	@Override
-	public File getRemappedModCache() {
-		return createFile(getRootProjectPersistentCache(), "remapped_mods");
-	}
+    @Override
+    public File getRootProjectPersistentCache() {
+        return createFile(getRootDir(), ".gradle" + File.separator + "loom-cache");
+    }
 
-	@Override
-	public File getNativesDirectory(Project project) {
-		return createFile(getRootProjectPersistentCache(), "natives/" + LoomGradleExtension.get(project).getMinecraftProvider().minecraftVersion());
-	}
+    @Override
+    public File getProjectPersistentCache() {
+        return createFile(getProjectDir(), ".gradle" + File.separator + "loom-cache");
+    }
 
-	@Override
-	public File getDefaultLog4jConfigFile() {
-		return new File(getProjectPersistentCache(), "log4j.xml");
-	}
+    @Override
+    public File getProjectBuildCache() {
+        return createFile(getBuildDir(), "loom-cache");
+    }
 
-	@Override
-	public File getDevLauncherConfig() {
-		return new File(getProjectPersistentCache(), "launch.cfg");
-	}
+    @Override
+    public File getRemappedModCache() {
+        return createFile(getRootProjectPersistentCache(), "remapped_mods");
+    }
 
-	@Override
-	public File getUnpickLoggingConfigFile() {
-		return new File(getProjectPersistentCache(), "unpick-logging.properties");
-	}
+    @Override
+    public File getNativesDirectory(Project project) {
+        return createFile(
+                getRootProjectPersistentCache(),
+                "natives/"
+                        + LoomGradleExtension.get(project).getZomboidProvider().zomboidVersion());
+    }
 
-	@Override
-	public File getRemapClasspathFile() {
-		return new File(getProjectPersistentCache(), "remapClasspath.txt");
-	}
+    @Override
+    public File getDefaultLog4jConfigFile() {
+        return new File(getProjectPersistentCache(), "log4j.xml");
+    }
 
-	@Override
-	public File getGlobalMinecraftRepo() {
-		return new File(getUserCache(), "minecraftMaven");
-	}
+    @Override
+    public File getDevLauncherConfig() {
+        return new File(getProjectPersistentCache(), "launch.cfg");
+    }
 
-	@Override
-	public File getLocalMinecraftRepo() {
-		return new File(getRootProjectPersistentCache(), "minecraftMaven");
-	}
+    @Override
+    public File getUnpickLoggingConfigFile() {
+        return new File(getProjectPersistentCache(), "unpick-logging.properties");
+    }
 
-	@Override
-	public File getDecompileCache(String version) {
-		return new File(getUserCache(), "decompile/" + version + ".zip");
-	}
+    @Override
+    public File getRemapClasspathFile() {
+        return new File(getProjectPersistentCache(), "remapClasspath.txt");
+    }
+
+    @Override
+    public File getGlobalMinecraftRepo() {
+        return new File(getUserCache(), "minecraftMaven");
+    }
+
+    @Override
+    public File getLocalMinecraftRepo() {
+        return new File(getRootProjectPersistentCache(), "minecraftMaven");
+    }
+
+    @Override
+    public File getDecompileCache(String version) {
+        return new File(getUserCache(), "decompile/" + version + ".zip");
+    }
 }

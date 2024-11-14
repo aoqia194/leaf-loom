@@ -43,7 +43,7 @@ import org.mockito.stubbing.Answer
 import net.fabricmc.loom.LoomGradleExtension
 import net.fabricmc.loom.extension.LoomFiles
 import net.fabricmc.loom.test.LoomTestConstants
-import net.fabricmc.loom.util.download.Download
+import net.fabricmc.loom.util.copygamefile.CopyGameFile
 
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.*
@@ -82,8 +82,8 @@ class GradleTestUtil {
 		def loomFiles = mockLoomFiles()
 		when(mock.refreshDeps()).thenReturn(false)
 		when(mock.getFiles()).thenReturn(loomFiles)
-		when(mock.download(any())).thenAnswer {
-			Download.create(it.getArgument(0))
+		when(mock.copyGameFile(any())).thenAnswer {
+			CopyGameFile.create(it.getArgument(0))
 		}
 		return mock
 	}

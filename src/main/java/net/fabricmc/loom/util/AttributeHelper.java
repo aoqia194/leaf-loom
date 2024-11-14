@@ -35,59 +35,60 @@ import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.Optional;
 
 public final class AttributeHelper {
-	private AttributeHelper() {
-	}
+    private AttributeHelper() {}
 
-	public static Optional<String> readAttribute(Path path, String key) throws IOException {
-		final Path attributesFile = getFallbackPath(path, key);
+    public static Optional<String> readAttribute(Path path, String key) throws IOException {
+        final Path attributesFile = getFallbackPath(path, key);
 
-		if (exists(attributesFile)) {
-			// Use the fallback file if it exists.
-			return Optional.of(Files.readString(attributesFile, StandardCharsets.UTF_8));
-		}
+        if (exists(attributesFile)) {
+            // Use the fallback file if it exists.
+            return Optional.of(Files.readString(attributesFile, StandardCharsets.UTF_8));
+        }
 
-		try {
-			final UserDefinedFileAttributeView attributeView = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+        try {
+            final UserDefinedFileAttributeView attributeView =
+                    Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
 
-			if (!attributeView.list().contains(key)) {
-				return Optional.empty();
-			}
+            if (!attributeView.list().contains(key)) {
+                return Optional.empty();
+            }
 
-			final ByteBuffer buffer = ByteBuffer.allocate(attributeView.size(key));
-			attributeView.read(key, buffer);
-			buffer.flip();
-			final String value = StandardCharsets.UTF_8.decode(buffer).toString();
-			return Optional.of(value);
-		} catch (FileSystemException ignored) {
-			return Optional.empty();
-		}
-	}
+            final ByteBuffer buffer = ByteBuffer.allocate(attributeView.size(key));
+            attributeView.read(key, buffer);
+            buffer.flip();
+            final String value = StandardCharsets.UTF_8.decode(buffer).toString();
+            return Optional.of(value);
+        } catch (FileSystemException ignored) {
+            return Optional.empty();
+        }
+    }
 
-	public static void writeAttribute(Path path, String key, String value) throws IOException {
-		final Path attributesFile = getFallbackPath(path, key);
+    public static void writeAttribute(Path path, String key, String value) throws IOException {
+        final Path attributesFile = getFallbackPath(path, key);
 
-		try {
-			final UserDefinedFileAttributeView attributeView = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
-			final byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
-			final ByteBuffer buffer = ByteBuffer.wrap(bytes);
-			final int written = attributeView.write(key, buffer);
-			assert written == bytes.length;
+        try {
+            final UserDefinedFileAttributeView attributeView =
+                    Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+            final byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+            final ByteBuffer buffer = ByteBuffer.wrap(bytes);
+            final int written = attributeView.write(key, buffer);
+            assert written == bytes.length;
 
-			if (exists(attributesFile)) {
-				Files.delete(attributesFile);
-			}
-		} catch (FileSystemException ignored) {
-			// Fallback to a separate file when using a file system that does not attributes.
-			Files.writeString(attributesFile, value, StandardCharsets.UTF_8);
-		}
-	}
+            if (exists(attributesFile)) {
+                Files.delete(attributesFile);
+            }
+        } catch (FileSystemException ignored) {
+            // Fallback to a separate file when using a file system that does not attributes.
+            Files.writeString(attributesFile, value, StandardCharsets.UTF_8);
+        }
+    }
 
-	private static Path getFallbackPath(Path path, String key) {
-		return path.resolveSibling(path.getFileName() + "." + key + ".att");
-	}
+    private static Path getFallbackPath(Path path, String key) {
+        return path.resolveSibling(path.getFileName() + "." + key + ".att");
+    }
 
-	// A faster exists check
-	private static boolean exists(Path path) {
-		return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists() : Files.exists(path);
-	}
+    // A faster exists check
+    private static boolean exists(Path path) {
+        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists() : Files.exists(path);
+    }
 }

@@ -29,58 +29,60 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-
+import net.fabricmc.fernflower.api.IFabricJavadocProvider;
+import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
 import org.jetbrains.java.decompiler.main.Fernflower;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 import org.jetbrains.java.decompiler.util.InterpreterUtil;
 
-import net.fabricmc.fernflower.api.IFabricJavadocProvider;
-import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
-
 public final class FabricFernFlowerDecompiler implements LoomInternalDecompiler {
-	@Override
-	public void decompile(LoomInternalDecompiler.Context context) {
-		Path sourcesDestination = context.sourcesDestination();
-		Path linemapDestination = context.linemapDestination();
+    @Override
+    public void decompile(LoomInternalDecompiler.Context context) {
+        Path sourcesDestination = context.sourcesDestination();
+        Path linemapDestination = context.linemapDestination();
 
-		final Map<String, Object> options = new HashMap<>(
-				Map.of(
-					IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1",
-					IFernflowerPreferences.BYTECODE_SOURCE_MAPPING, "1",
-					IFernflowerPreferences.REMOVE_SYNTHETIC, "1",
-					IFernflowerPreferences.LOG_LEVEL, "trace",
-					IFernflowerPreferences.THREADS, String.valueOf(context.numberOfThreads()),
-					IFernflowerPreferences.INDENT_STRING, "\t",
-					IFabricJavadocProvider.PROPERTY_NAME, new TinyJavadocProvider(context.javaDocs().toFile())
-				)
-		);
+        final Map<String, Object> options = new HashMap<>(Map.of(
+                IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1",
+                IFernflowerPreferences.BYTECODE_SOURCE_MAPPING, "1",
+                IFernflowerPreferences.REMOVE_SYNTHETIC, "1",
+                IFernflowerPreferences.LOG_LEVEL, "trace",
+                IFernflowerPreferences.THREADS, String.valueOf(context.numberOfThreads()),
+                IFernflowerPreferences.INDENT_STRING, "\t",
+                IFabricJavadocProvider.PROPERTY_NAME,
+                        new TinyJavadocProvider(context.javaDocs().toFile())));
 
-		options.putAll(context.options());
+        options.putAll(context.options());
 
-		IResultSaver saver = new ThreadSafeResultSaver(sourcesDestination::toFile, linemapDestination::toFile);
-		Fernflower ff = new Fernflower((externalPath, internalPath) -> FabricFernFlowerDecompiler.this.getBytecode(externalPath, internalPath, context), saver, options, new FernflowerLogger(context.logger()));
+        IResultSaver saver = new ThreadSafeResultSaver(sourcesDestination::toFile, linemapDestination::toFile);
+        Fernflower ff = new Fernflower(
+                (externalPath, internalPath) ->
+                        FabricFernFlowerDecompiler.this.getBytecode(externalPath, internalPath, context),
+                saver,
+                options,
+                new FernflowerLogger(context.logger()));
 
-		for (Path library : context.libraries()) {
-			ff.addLibrary(library.toFile());
-		}
+        for (Path library : context.libraries()) {
+            ff.addLibrary(library.toFile());
+        }
 
-		ff.addSource(context.compiledJar().toFile());
+        ff.addSource(context.compiledJar().toFile());
 
-		try {
-			ff.decompileContext();
-		} finally {
-			ff.clearContext();
-		}
-	}
+        try {
+            ff.decompileContext();
+        } finally {
+            ff.clearContext();
+        }
+    }
 
-	private byte[] getBytecode(String externalPath, String internalPath, LoomInternalDecompiler.Context context) throws IOException {
-		File file = new File(externalPath);
+    private byte[] getBytecode(String externalPath, String internalPath, LoomInternalDecompiler.Context context)
+            throws IOException {
+        File file = new File(externalPath);
 
-		if (internalPath == null) {
-			return InterpreterUtil.getBytes(file);
-		} else {
-			return context.unpackZip(file.toPath(), internalPath);
-		}
-	}
+        if (internalPath == null) {
+            return InterpreterUtil.getBytes(file);
+        } else {
+            return context.unpackZip(file.toPath(), internalPath);
+        }
+    }
 }

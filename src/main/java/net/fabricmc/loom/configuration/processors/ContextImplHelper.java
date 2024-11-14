@@ -27,7 +27,6 @@ package net.fabricmc.loom.configuration.processors;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-
 import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.loom.configuration.ConfigContext;
 import net.fabricmc.loom.util.LazyCloseable;
@@ -35,22 +34,29 @@ import net.fabricmc.loom.util.TinyRemapperHelper;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public final class ContextImplHelper {
-	private ContextImplHelper() {
-	}
+    private ContextImplHelper() {}
 
-	public static LazyCloseable<TinyRemapper> createRemapper(ConfigContext configContext, MappingsNamespace from, MappingsNamespace to) {
-		return new LazyCloseable<>(() -> {
-			try {
-				TinyRemapper tinyRemapper = TinyRemapperHelper.getTinyRemapper(configContext.project(), configContext.serviceFactory(), from.toString(), to.toString());
+    public static LazyCloseable<TinyRemapper> createRemapper(
+            ConfigContext configContext, MappingsNamespace from, MappingsNamespace to) {
+        return new LazyCloseable<>(
+                () -> {
+                    try {
+                        TinyRemapper tinyRemapper = TinyRemapperHelper.getTinyRemapper(
+                                configContext.project(),
+                                configContext.serviceFactory(),
+                                from.toString(),
+                                to.toString());
 
-				for (Path minecraftJar : configContext.extension().getMinecraftJars(MappingsNamespace.INTERMEDIARY)) {
-					tinyRemapper.readClassPath(minecraftJar);
-				}
+                        for (Path minecraftJar :
+                                configContext.extension().getMinecraftJars(MappingsNamespace.INTERMEDIARY)) {
+                            tinyRemapper.readClassPath(minecraftJar);
+                        }
 
-				return tinyRemapper;
-			} catch (IOException e) {
-				throw new UncheckedIOException("Failed to create tiny remapper", e);
-			}
-		}, TinyRemapper::finish);
-	}
+                        return tinyRemapper;
+                    } catch (IOException e) {
+                        throw new UncheckedIOException("Failed to create tiny remapper", e);
+                    }
+                },
+                TinyRemapper::finish);
+    }
 }

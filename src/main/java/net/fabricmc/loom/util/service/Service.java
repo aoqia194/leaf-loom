@@ -34,38 +34,38 @@ import org.jetbrains.annotations.ApiStatus;
  * @param <O> The options type.
  */
 public abstract class Service<O extends Service.Options> {
-	private final O options;
-	private final ServiceFactory serviceFactory;
+    private final O options;
+    private final ServiceFactory serviceFactory;
 
-	public Service(O options, ServiceFactory serviceFactory) {
-		this.options = options;
-		this.serviceFactory = serviceFactory;
-	}
+    public Service(O options, ServiceFactory serviceFactory) {
+        this.options = options;
+        this.serviceFactory = serviceFactory;
+    }
 
-	/**
-	 * Gets the options for this service.
-	 *
-	 * @return The options.
-	 */
-	protected final O getOptions() {
-		return options;
-	}
+    /**
+     * Gets the options for this service.
+     *
+     * @return The options.
+     */
+    protected final O getOptions() {
+        return options;
+    }
 
-	/**
-	 * Return the factory that created this service, this can be used to get nested services.
-	 *
-	 * @return The {@link ServiceFactory} instance.
-	 */
-	protected ServiceFactory getServiceFactory() {
-		return serviceFactory;
-	}
+    /**
+     * Return the factory that created this service, this can be used to get nested services.
+     *
+     * @return The {@link ServiceFactory} instance.
+     */
+    protected ServiceFactory getServiceFactory() {
+        return serviceFactory;
+    }
 
-	/**
-	 * The base type of options class for a service.
-	 */
-	public interface Options {
-		@Input
-		@ApiStatus.Internal
-		Property<String> getServiceClass();
-	}
+    /**
+     * The base type of options class for a service.
+     */
+    public interface Options {
+        @Input
+        @ApiStatus.Internal
+        Property<String> getServiceClass();
+    }
 }

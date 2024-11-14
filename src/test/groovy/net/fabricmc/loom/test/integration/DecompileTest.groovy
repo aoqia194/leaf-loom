@@ -84,7 +84,7 @@ class DecompileTest extends Specification implements GradleProjectTestTrait {
                     minecraft "com.mojang:minecraft:1.20.4"
                     mappings "net.fabricmc:yarn:1.20.4+build.3:v2"
                 }
-		'''
+        '''
 
 		when:
 		def result = gradle.run(tasks: ["genSourcesWithVineflower"], args: ["--use-cache", "--info"])
@@ -94,7 +94,7 @@ class DecompileTest extends Specification implements GradleProjectTestTrait {
                 dependencies {
                     modImplementation "net.fabricmc.fabric-api:fabric-api:0.96.4+1.20.4"
                 }
-		'''
+        '''
 
 		def result2 = gradle.run(tasks: ["genSourcesWithVineflower"], args: ["--use-cache", "--info"])
 

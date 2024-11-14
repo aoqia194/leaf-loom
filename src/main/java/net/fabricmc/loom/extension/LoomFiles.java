@@ -25,30 +25,41 @@
 package net.fabricmc.loom.extension;
 
 import java.io.File;
-
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
 
 public interface LoomFiles {
-	static LoomFiles create(Project project) {
-		return new LoomFilesProjectImpl(project);
-	}
+    static LoomFiles create(Project project) {
+        return new LoomFilesProjectImpl(project);
+    }
 
-	static LoomFiles create(Settings settings) {
-		return new LoomFilesSettingsImpl(settings);
-	}
+    static LoomFiles create(Settings settings) {
+        return new LoomFilesSettingsImpl(settings);
+    }
 
-	File getUserCache();
-	File getRootProjectPersistentCache();
-	File getProjectPersistentCache();
-	File getProjectBuildCache();
-	File getRemappedModCache();
-	File getNativesDirectory(Project project);
-	File getDefaultLog4jConfigFile();
-	File getDevLauncherConfig();
-	File getUnpickLoggingConfigFile();
-	File getRemapClasspathFile();
-	File getGlobalMinecraftRepo();
-	File getLocalMinecraftRepo();
-	File getDecompileCache(String version);
+    File getUserCache();
+
+    File getRootProjectPersistentCache();
+
+    File getProjectPersistentCache();
+
+    File getProjectBuildCache();
+
+    File getRemappedModCache();
+
+    File getNativesDirectory(Project project);
+
+    File getDefaultLog4jConfigFile();
+
+    File getDevLauncherConfig();
+
+    File getUnpickLoggingConfigFile();
+
+    File getRemapClasspathFile();
+
+    File getGlobalMinecraftRepo();
+
+    File getLocalMinecraftRepo();
+
+    File getDecompileCache(String version);
 }

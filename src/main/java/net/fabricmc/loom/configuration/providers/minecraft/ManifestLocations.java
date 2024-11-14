@@ -30,54 +30,53 @@ import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
-
 import net.fabricmc.loom.api.manifest.VersionsManifestsAPI;
 import net.fabricmc.loom.configuration.providers.minecraft.ManifestLocations.ManifestLocation;
 
 public class ManifestLocations implements VersionsManifestsAPI, Iterable<ManifestLocation> {
-	private final Queue<ManifestLocation> locations = new PriorityQueue<>();
-	private final Set<String> manifestNames = new HashSet<>();
+    private final Queue<ManifestLocation> locations = new PriorityQueue<>();
+    private final Set<String> manifestNames = new HashSet<>();
 
-	@Override
-	public void add(String name, String url, int priority) {
-		if (manifestNames.add(name)) {
-			locations.add(new ManifestLocation(name, url, priority));
-		} else {
-			throw new IllegalStateException("cannot add multiple versions manifests with the same name!");
-		}
-	}
+    @Override
+    public void add(String name, String url, int priority) {
+        if (manifestNames.add(name)) {
+            locations.add(new ManifestLocation(name, url, priority));
+        } else {
+            throw new IllegalStateException("cannot add multiple versions manifests with the same name!");
+        }
+    }
 
-	@Override
-	public Iterator<ManifestLocation> iterator() {
-		return locations.iterator();
-	}
+    @Override
+    public Iterator<ManifestLocation> iterator() {
+        return locations.iterator();
+    }
 
-	public class ManifestLocation implements Comparable<ManifestLocation> {
-		private final String name;
-		private final String url;
-		private final int priority;
+    public class ManifestLocation implements Comparable<ManifestLocation> {
+        private final String name;
+        private final String url;
+        private final int priority;
 
-		private ManifestLocation(String name, String url, int priority) {
-			this.name = name;
-			this.url = url;
-			this.priority = priority;
-		}
+        private ManifestLocation(String name, String url, int priority) {
+            this.name = name;
+            this.url = url;
+            this.priority = priority;
+        }
 
-		public String name() {
-			return name;
-		}
+        public String name() {
+            return name;
+        }
 
-		public String url() {
-			return url;
-		}
+        public String url() {
+            return url;
+        }
 
-		public Path cacheFile(Path dir) {
-			return dir.resolve(name + "_versions_manifest.json");
-		}
+        public Path cacheFile(Path dir) {
+            return dir.resolve(name + "_versions_manifest.json");
+        }
 
-		@Override
-		public int compareTo(ManifestLocation o) {
-			return Integer.compare(priority, o.priority);
-		}
-	}
+        @Override
+        public int compareTo(ManifestLocation o) {
+            return Integer.compare(priority, o.priority);
+        }
+    }
 }

@@ -30,38 +30,37 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-
 import net.fabricmc.loom.util.IOStringConsumer;
 
 public final class IPCClient implements IOStringConsumer, AutoCloseable {
-	private final Path path;
-	private final SocketChannel socketChannel;
+    private final Path path;
+    private final SocketChannel socketChannel;
 
-	public IPCClient(Path path) throws IOException {
-		this.path = path;
-		socketChannel = setupChannel();
-	}
+    public IPCClient(Path path) throws IOException {
+        this.path = path;
+        socketChannel = setupChannel();
+    }
 
-	private SocketChannel setupChannel() throws IOException {
-		final UnixDomainSocketAddress address = UnixDomainSocketAddress.of(path);
-		return SocketChannel.open(address);
-	}
+    private SocketChannel setupChannel() throws IOException {
+        final UnixDomainSocketAddress address = UnixDomainSocketAddress.of(path);
+        return SocketChannel.open(address);
+    }
 
-	@Override
-	public void accept(String s) throws IOException {
-		synchronized (socketChannel) {
-			ByteBuffer buf = ByteBuffer.wrap((s + "\n").getBytes(StandardCharsets.UTF_8));
+    @Override
+    public void accept(String s) throws IOException {
+        synchronized (socketChannel) {
+            ByteBuffer buf = ByteBuffer.wrap((s + "\n").getBytes(StandardCharsets.UTF_8));
 
-			while (buf.hasRemaining()) {
-				socketChannel.write(buf);
-			}
-		}
-	}
+            while (buf.hasRemaining()) {
+                socketChannel.write(buf);
+            }
+        }
+    }
 
-	@Override
-	public void close() throws Exception {
-		synchronized (socketChannel) {
-			socketChannel.close();
-		}
-	}
+    @Override
+    public void close() throws Exception {
+        synchronized (socketChannel) {
+            socketChannel.close();
+        }
+    }
 }

@@ -25,10 +25,9 @@
 package net.fabricmc.loom.configuration.providers.mappings.extras.signatures;
 
 import java.util.Map;
-
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public interface SignatureFixesLayer {
-	Map<String, String> getSignatureFixes();
+    Map<String, String> getSignatureFixes();
 }

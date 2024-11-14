@@ -28,8 +28,8 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public interface ParchmentMappingsSpecBuilder {
-	/**
-	 * When enabled the "p" prefix will be stripped from parameter names.
-	 */
-	ParchmentMappingsSpecBuilder setRemovePrefix(boolean removePrefix);
+    /**
+     * When enabled the "p" prefix will be stripped from parameter names.
+     */
+    ParchmentMappingsSpecBuilder setRemovePrefix(boolean removePrefix);
 }

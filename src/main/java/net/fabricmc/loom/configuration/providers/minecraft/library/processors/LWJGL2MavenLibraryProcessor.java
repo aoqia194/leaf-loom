@@ -25,39 +25,37 @@
 package net.fabricmc.loom.configuration.providers.minecraft.library.processors;
 
 import java.util.List;
-
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
-
 import net.fabricmc.loom.LoomRepositoryPlugin;
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext;
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessor;
 import net.fabricmc.loom.util.Platform;
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
 /**
  * 1.4.7 contains an LWJGL version with an invalid maven pom, set the metadata sources to not use the pom for this version.
  */
 public class LWJGL2MavenLibraryProcessor extends LibraryProcessor {
-	private static final List<String> LWJGL_LIST = List.of(
-			"org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20130708-debug3",
-			"org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20131017"
-	);
+    private static final List<String> LWJGL_LIST = List.of(
+            "org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20130708-debug3", "org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20131017");
 
-	public LWJGL2MavenLibraryProcessor(Platform platform, LibraryContext context) {
-		super(platform, context);
-	}
+    public LWJGL2MavenLibraryProcessor(Platform platform, LibraryContext context) {
+        super(platform, context);
+    }
 
-	@Override
-	public ApplicationResult getApplicationResult() {
-		if (context.usesLWJGL3()) {
-			// Does not support LWJGL 3
-			return ApplicationResult.DONT_APPLY;
-		}
+    @Override
+    public ApplicationResult getApplicationResult() {
+        if (context.usesLWJGL3()) {
+            // Does not support LWJGL 3
+            return ApplicationResult.DONT_APPLY;
+        }
 
-		return LWJGL_LIST.stream().anyMatch(context::hasLibrary) ? ApplicationResult.MUST_APPLY : ApplicationResult.DONT_APPLY;
-	}
+        return LWJGL_LIST.stream().anyMatch(context::hasLibrary)
+                ? ApplicationResult.MUST_APPLY
+                : ApplicationResult.DONT_APPLY;
+    }
 
-	@Override
-	public void applyRepositories(RepositoryHandler repositories) {
-		LoomRepositoryPlugin.setupForLegacyVersions(repositories);
-	}
+    @Override
+    public void applyRepositories(RepositoryHandler repositories) {
+        LoomRepositoryPlugin.setupForLegacyVersions(repositories);
+    }
 }

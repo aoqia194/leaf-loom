@@ -26,49 +26,48 @@ package net.fabricmc.loom.util.gradle;
 
 import java.io.Closeable;
 import java.io.IOException;
-
 import org.gradle.api.Project;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.internal.logging.progress.ProgressLogger;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 
 public class ProgressGroup implements Closeable {
-	private final String name;
-	private final ProgressLoggerFactory progressLoggerFactory;
+    private final String name;
+    private final ProgressLoggerFactory progressLoggerFactory;
 
-	private ProgressLogger progressGroup;
+    private ProgressLogger progressGroup;
 
-	public ProgressGroup(Project project, String name) {
-		this.name = name;
-		this.progressLoggerFactory = ((ProjectInternal) project).getServices().get(ProgressLoggerFactory.class);
-	}
+    public ProgressGroup(Project project, String name) {
+        this.name = name;
+        this.progressLoggerFactory = ((ProjectInternal) project).getServices().get(ProgressLoggerFactory.class);
+    }
 
-	public ProgressGroup(String name, ProgressLoggerFactory progressLoggerFactory) {
-		this.name = name;
-		this.progressLoggerFactory = progressLoggerFactory;
-	}
+    public ProgressGroup(String name, ProgressLoggerFactory progressLoggerFactory) {
+        this.name = name;
+        this.progressLoggerFactory = progressLoggerFactory;
+    }
 
-	private void start() {
-		this.progressGroup = this.progressLoggerFactory.newOperation(name).setDescription(name);
-		this.progressGroup.started();
-	}
+    private void start() {
+        this.progressGroup = this.progressLoggerFactory.newOperation(name).setDescription(name);
+        this.progressGroup.started();
+    }
 
-	public ProgressLogger createProgressLogger(String name) {
-		if (progressGroup == null) {
-			start();
-		}
+    public ProgressLogger createProgressLogger(String name) {
+        if (progressGroup == null) {
+            start();
+        }
 
-		ProgressLogger progressLogger = this.progressLoggerFactory.newOperation(getClass(), progressGroup);
-		progressLogger.setDescription(name);
-		progressLogger.start(name, null);
-		return progressLogger;
-	}
+        ProgressLogger progressLogger = this.progressLoggerFactory.newOperation(getClass(), progressGroup);
+        progressLogger.setDescription(name);
+        progressLogger.start(name, null);
+        return progressLogger;
+    }
 
-	@Override
-	public void close() throws IOException {
-		if (this.progressGroup != null) {
-			this.progressGroup.completed();
-			this.progressGroup = null;
-		}
-	}
+    @Override
+    public void close() throws IOException {
+        if (this.progressGroup != null) {
+            this.progressGroup.completed();
+            this.progressGroup = null;
+        }
+    }
 }

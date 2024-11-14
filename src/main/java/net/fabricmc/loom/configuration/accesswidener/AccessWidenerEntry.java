@@ -25,24 +25,22 @@
 package net.fabricmc.loom.configuration.accesswidener;
 
 import java.io.IOException;
-
-import org.jetbrains.annotations.Nullable;
-
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
 import net.fabricmc.loom.util.LazyCloseable;
 import net.fabricmc.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
+import org.jetbrains.annotations.Nullable;
 
 public interface AccessWidenerEntry {
-	ModEnvironment environment();
+    ModEnvironment environment();
 
-	/**
-	 * @return The mod id to be used in {@link TransitiveAccessWidenerMappingsProcessor} or null when this entry does not contain transitive entries.
-	 */
-	@Nullable
-	String mappingId();
+    /**
+     * @return The mod id to be used in {@link TransitiveAccessWidenerMappingsProcessor} or null when this entry does not contain transitive entries.
+     */
+    @Nullable
+    String mappingId();
 
-	String getSortKey();
+    String getSortKey();
 
-	void read(AccessWidenerVisitor visitor, LazyCloseable<TinyRemapper> remapper) throws IOException;
+    void read(AccessWidenerVisitor visitor, LazyCloseable<TinyRemapper> remapper) throws IOException;
 }

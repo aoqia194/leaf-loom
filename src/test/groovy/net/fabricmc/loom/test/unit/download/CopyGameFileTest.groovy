@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2021 FabricMC
+ * Copyright (c) 2022 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,32 +22,17 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings.mojmap;
+package net.fabricmc.loom.test.unit.download
 
-import net.fabricmc.loom.api.mappings.layered.spec.MojangMappingsSpecBuilder;
+import io.javalin.Javalin
+import spock.lang.Specification
 
-public class MojangMappingsSpecBuilderImpl implements MojangMappingsSpecBuilder {
-	private boolean nameSyntheticMembers = false;
+abstract class CopyGameFileTest extends Specification {
+	static final String PATH = "http://127.0.0.1:9081"
 
-	private MojangMappingsSpecBuilderImpl() {
-	}
+	Javalin server = Javalin.create().start(9081)
 
-	public static MojangMappingsSpecBuilderImpl builder() {
-		return new MojangMappingsSpecBuilderImpl();
-	}
-
-	@Override
-	public MojangMappingsSpecBuilder setNameSyntheticMembers(boolean value) {
-		nameSyntheticMembers = value;
-		return this;
-	}
-
-	@Override
-	public boolean getNameSyntheticMembers() {
-		return nameSyntheticMembers;
-	}
-
-	public MojangMappingsSpec build() {
-		return new MojangMappingsSpec(nameSyntheticMembers);
+	def cleanup() {
+		server.stop()
 	}
 }

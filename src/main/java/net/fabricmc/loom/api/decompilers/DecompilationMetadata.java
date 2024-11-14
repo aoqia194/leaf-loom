@@ -27,8 +27,11 @@ package net.fabricmc.loom.api.decompilers;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
-
 import net.fabricmc.loom.util.IOStringConsumer;
 
-public record DecompilationMetadata(int numberOfThreads, Path javaDocs, Collection<Path> libraries, IOStringConsumer logger, Map<String, String> options) {
-}
+public record DecompilationMetadata(
+        int numberOfThreads,
+        Path javaDocs,
+        Collection<Path> libraries,
+        IOStringConsumer logger,
+        Map<String, String> options) {}

@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2018-2021 FabricMC
+ * Copyright (c) 2024 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,40 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings.parchment;
+package net.fabricmc.loom.util.copygamefile;
 
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
-import net.fabricmc.loom.api.mappings.layered.spec.ParchmentMappingsSpecBuilder;
+import javax.inject.Inject;
+import java.nio.file.Path;
 
-public class ParchmentMappingsSpecBuilderImpl implements ParchmentMappingsSpecBuilder {
-	private final FileSpec fileSpec;
+import net.fabricmc.loom.LoomGradleExtension;
+import org.gradle.api.Project;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
 
-	private boolean removePrefix;
+/**
+ * Can be used to create a {@link CopyGameFileBuilder} with the correct settings for the project within a task.
+ */
+public abstract class CopyGameFileFactory {
+    @Inject
+    public CopyGameFileFactory() {
+        getIsManualRefreshDependencies()
+            .set(LoomGradleExtension.get(getProject()).refreshDeps());
+    }
 
-	private ParchmentMappingsSpecBuilderImpl(FileSpec fileSpec) {
-		this.fileSpec = fileSpec;
-	}
+    @Input
+    protected abstract Property<Boolean> getIsManualRefreshDependencies();
 
-	public static ParchmentMappingsSpecBuilderImpl builder(FileSpec fileSpec) {
-		return new ParchmentMappingsSpecBuilderImpl(fileSpec);
-	}
+    @Inject
+    public abstract Project getProject();
 
-	@Override
-	public ParchmentMappingsSpecBuilder setRemovePrefix(boolean removePrefix) {
-		this.removePrefix = removePrefix;
-		return this;
-	}
+    // Matches the logic in LoomGradleExtensionImpl
+    public CopyGameFileBuilder copyGameFile(String path) {
+        CopyGameFileBuilder builder = CopyGameFile.create(Path.of(path));
 
-	public ParchmentMappingsSpec build() {
-		return new ParchmentMappingsSpec(fileSpec, removePrefix);
-	}
+        if (getIsManualRefreshDependencies().get()) {
+            builder.forced();
+        }
+
+        return builder;
+    }
 }

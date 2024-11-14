@@ -26,28 +26,26 @@ package net.fabricmc.loom.api.processor;
 
 import java.io.IOException;
 import java.nio.file.Path;
-
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.gradle.api.Named;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
-
 public interface MinecraftJarProcessor<S extends MinecraftJarProcessor.Spec> extends Named {
-	@Nullable
-	S buildSpec(SpecContext context);
+    @Nullable
+    S buildSpec(SpecContext context);
 
-	void processJar(Path jar, S spec, ProcessorContext context) throws IOException;
+    void processJar(Path jar, S spec, ProcessorContext context) throws IOException;
 
-	@Nullable
-	default MappingsProcessor<S> processMappings() {
-		return null;
-	}
+    @Nullable
+    default MappingsProcessor<S> processMappings() {
+        return null;
+    }
 
-	interface Spec {
-		// Must make sure hashCode is correctly implemented.
-	}
+    interface Spec {
+        // Must make sure hashCode is correctly implemented.
+    }
 
-	interface MappingsProcessor<S> {
-		boolean transform(MemoryMappingTree mappings, S spec, MappingProcessorContext context);
-	}
+    interface MappingsProcessor<S> {
+        boolean transform(MemoryMappingTree mappings, S spec, MappingProcessorContext context);
+    }
 }

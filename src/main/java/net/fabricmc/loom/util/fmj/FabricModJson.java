@@ -26,60 +26,61 @@ package net.fabricmc.loom.util.fmj;
 
 import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.readString;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
-public abstract sealed class FabricModJson permits FabricModJsonV0, FabricModJsonV1, FabricModJsonV2, FabricModJson.Mockable {
-	protected final JsonObject jsonObject;
-	private final FabricModJsonSource source;
+public abstract sealed class FabricModJson
+        permits FabricModJsonV0, FabricModJsonV1, FabricModJsonV2, FabricModJson.Mockable {
+    protected final JsonObject jsonObject;
+    private final FabricModJsonSource source;
 
-	protected FabricModJson(JsonObject jsonObject, FabricModJsonSource source) {
-		this.jsonObject = Objects.requireNonNull(jsonObject);
-		this.source = Objects.requireNonNull(source);
-	}
+    protected FabricModJson(JsonObject jsonObject, FabricModJsonSource source) {
+        this.jsonObject = Objects.requireNonNull(jsonObject);
+        this.source = Objects.requireNonNull(source);
+    }
 
-	public abstract int getVersion();
+    public abstract int getVersion();
 
-	public String getId() {
-		return readString(jsonObject, "id");
-	}
+    public String getId() {
+        return readString(jsonObject, "id");
+    }
 
-	public String getModVersion() {
-		return readString(jsonObject, "version");
-	}
+    public String getModVersion() {
+        return readString(jsonObject, "version");
+    }
 
-	@Nullable
-	public abstract JsonElement getCustom(String key);
+    @Nullable
+    public abstract JsonElement getCustom(String key);
 
-	public abstract List<String> getMixinConfigurations();
+    public abstract List<String> getMixinConfigurations();
 
-	public abstract Map<String, ModEnvironment> getClassTweakers();
+    public abstract Map<String, ModEnvironment> getClassTweakers();
 
-	public final FabricModJsonSource getSource() {
-		return source;
-	}
+    public final FabricModJsonSource getSource() {
+        return source;
+    }
 
-	@Override
-	public final String toString() {
-		return getClass().getName() + "[id=%s, version=%s, classTweakers=%s]".formatted(getId(), getVersion(), getClassTweakers());
-	}
+    @Override
+    public final String toString() {
+        return getClass().getName()
+                + "[id=%s, version=%s, classTweakers=%s]".formatted(getId(), getVersion(), getClassTweakers());
+    }
 
-	@Override
-	public final int hashCode() {
-		return Objects.hash(getId(), getVersion());
-	}
+    @Override
+    public final int hashCode() {
+        return Objects.hash(getId(), getVersion());
+    }
 
-	@VisibleForTesting
-	public abstract non-sealed class Mockable extends FabricModJson {
-		private Mockable() {
-			super(null, null);
-			throw new AssertionError();
-		}
-	}
+    @VisibleForTesting
+    public abstract non-sealed class Mockable extends FabricModJson {
+        private Mockable() {
+            super(null, null);
+            throw new AssertionError();
+        }
+    }
 }

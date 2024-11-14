@@ -28,8 +28,8 @@ import net.fabricmc.loom.api.mappings.layered.MappingContext;
 import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
 
 public record IntermediaryMappingsSpec() implements MappingsSpec<IntermediaryMappingLayer> {
-	@Override
-	public IntermediaryMappingLayer createLayer(MappingContext context) {
-		return new IntermediaryMappingLayer(context.intermediaryTree());
-	}
+    @Override
+    public IntermediaryMappingLayer createLayer(MappingContext context) {
+        return new IntermediaryMappingLayer(context.intermediaryTree());
+    }
 }

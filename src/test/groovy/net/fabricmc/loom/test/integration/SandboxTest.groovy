@@ -47,8 +47,8 @@ class SandboxTest extends Specification implements GradleProjectTestTrait {
 		def gradle = gradleProject(project: "minimalBase", version: version)
 		gradle.buildGradle << '''
                 repositories {
-					mavenLocal()
-				}
+                    mavenLocal()
+                }
 
                 dependencies {
                     minecraft "com.mojang:minecraft:1.20.4"
@@ -90,23 +90,23 @@ class SandboxTest extends Specification implements GradleProjectTestTrait {
 	// Ensure that all platforms that the test may run on are listed here
 	@Language("json")
 	private static String METADATA_JSON = """
-		{
-			"version": 1,
-			"mainClass": "net.fabricmc.loom.test.unit.sandbox.SandboxEntrypoint",
-			"platforms": {
-				"windows": [
-					"arm64",
-					"x86_64"
-				],
-				"macos": [
-					"arm64",
-					"x86_64"
-				],
-				"linux": [
-					"arm64",
-					"x86_64"
-				]
-			}
-		}
-	"""
+        {
+            "version": 1,
+            "mainClass": "net.fabricmc.loom.test.unit.sandbox.SandboxEntrypoint",
+            "platforms": {
+                "windows": [
+                    "arm64",
+                    "x86_64"
+                ],
+                "macos": [
+                    "arm64",
+                    "x86_64"
+                ],
+                "linux": [
+                    "arm64",
+                    "x86_64"
+                ]
+            }
+        }
+    """
 }

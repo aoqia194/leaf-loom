@@ -24,6 +24,8 @@
 
 package net.fabricmc.loom.task;
 
+import net.fabricmc.loom.task.service.MigrateMappingsService;
+import net.fabricmc.loom.util.service.ScopedServiceFactory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
@@ -34,37 +36,36 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
 import org.gradle.work.DisableCachingByDefault;
 
-import net.fabricmc.loom.task.service.MigrateMappingsService;
-import net.fabricmc.loom.util.service.ScopedServiceFactory;
-
 @DisableCachingByDefault(because = "Always rerun this task.")
 public abstract class MigrateMappingsTask extends AbstractLoomTask {
-	@Input
-	@Option(option = "mappings", description = "Target mappings")
-	public abstract Property<String> getMappings();
+    @Input
+    @Option(option = "mappings", description = "Target mappings")
+    public abstract Property<String> getMappings();
 
-	@InputDirectory
-	@Option(option = "input", description = "Java source file directory")
-	public abstract DirectoryProperty getInputDir();
+    @InputDirectory
+    @Option(option = "input", description = "Java source file directory")
+    public abstract DirectoryProperty getInputDir();
 
-	@OutputDirectory
-	@Option(option = "output", description = "Remapped source output directory")
-	public abstract DirectoryProperty getOutputDir();
+    @OutputDirectory
+    @Option(option = "output", description = "Remapped source output directory")
+    public abstract DirectoryProperty getOutputDir();
 
-	@Nested
-	protected abstract Property<MigrateMappingsService.Options> getMigrationServiceOptions();
+    @Nested
+    protected abstract Property<MigrateMappingsService.Options> getMigrationServiceOptions();
 
-	public MigrateMappingsTask() {
-		getInputDir().convention(getProject().getLayout().getProjectDirectory().dir("src/main/java"));
-		getOutputDir().convention(getProject().getLayout().getProjectDirectory().dir("remappedSrc"));
-		getMigrationServiceOptions().set(MigrateMappingsService.createOptions(getProject(), getMappings(), getInputDir(), getOutputDir()));
-	}
+    public MigrateMappingsTask() {
+        getInputDir().convention(getProject().getLayout().getProjectDirectory().dir("src/main/java"));
+        getOutputDir().convention(getProject().getLayout().getProjectDirectory().dir("remappedSrc"));
+        getMigrationServiceOptions()
+                .set(MigrateMappingsService.createOptions(getProject(), getMappings(), getInputDir(), getOutputDir()));
+    }
 
-	@TaskAction
-	public void doTask() throws Throwable {
-		try (var serviceFactory = new ScopedServiceFactory()) {
-			MigrateMappingsService service = serviceFactory.get(getMigrationServiceOptions().get());
-			service.migrateMapppings();
-		}
-	}
+    @TaskAction
+    public void doTask() throws Throwable {
+        try (var serviceFactory = new ScopedServiceFactory()) {
+            MigrateMappingsService service =
+                    serviceFactory.get(getMigrationServiceOptions().get());
+            service.migrateMapppings();
+        }
+    }
 }

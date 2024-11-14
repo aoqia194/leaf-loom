@@ -26,56 +26,63 @@ package net.fabricmc.loom.configuration.decompile;
 
 import java.io.File;
 import java.util.List;
-
-import org.gradle.api.Project;
-
 import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidJar;
+import net.fabricmc.loom.configuration.providers.minecraft.mapped.MappedZomboidProvider;
 import net.fabricmc.loom.task.GenerateSourcesTask;
 import net.fabricmc.loom.util.Constants;
+import org.gradle.api.Project;
 
-public class SingleJarDecompileConfiguration extends DecompileConfiguration<MappedMinecraftProvider> {
-	public SingleJarDecompileConfiguration(Project project, MappedMinecraftProvider minecraftProvider) {
-		super(project, minecraftProvider);
-	}
+public class SingleJarDecompileConfiguration extends DecompileConfiguration<MappedZomboidProvider> {
+    public SingleJarDecompileConfiguration(Project project, MappedZomboidProvider minecraftProvider) {
+        super(project, minecraftProvider);
+    }
 
-	@Override
-	public String getTaskName(MinecraftJar.Type type) {
-		return "genSources";
-	}
+    @Override
+    public String getTaskName(ZomboidJar.Type type) {
+        return "genSources";
+    }
 
-	@Override
-	public final void afterEvaluation() {
-		final List<MinecraftJar> minecraftJars = minecraftProvider.getMinecraftJars();
-		assert minecraftJars.size() == 1;
-		final MinecraftJar minecraftJar = minecraftJars.get(0);
-		final String taskBaseName = getTaskName(minecraftJar.getType());
+    @Override
+    public final void afterEvaluation() {
+        final List<ZomboidJar> zomboidJars = minecraftProvider.getMinecraftJars();
+        assert zomboidJars.size() == 1;
+        final ZomboidJar zomboidJar = zomboidJars.get(0);
+        final String taskBaseName = getTaskName(zomboidJar.getType());
 
-		LoomGradleExtension.get(project).getDecompilerOptions().forEach(options -> {
-			final String decompilerName = options.getFormattedName();
-			String taskName = "%sWith%s".formatted(taskBaseName, decompilerName);
-			// Decompiler will be passed to the constructor of GenerateSourcesTask
-			project.getTasks().register(taskName, GenerateSourcesTask.class, options).configure(task -> {
-				task.getInputJarName().set(minecraftJar.getName());
-				task.getSourcesOutputJar().fileValue(GenerateSourcesTask.getJarFileWithSuffix("-sources.jar", minecraftJar.getPath()));
+        LoomGradleExtension.get(project).getDecompilerOptions().forEach(options -> {
+            final String decompilerName = options.getFormattedName();
+            String taskName = "%sWith%s".formatted(taskBaseName, decompilerName);
+            // Decompiler will be passed to the constructor of GenerateSourcesTask
+            project.getTasks()
+                    .register(taskName, GenerateSourcesTask.class, options)
+                    .configure(task -> {
+                        task.getInputJarName().set(zomboidJar.getName());
+                        task.getSourcesOutputJar()
+                                .fileValue(GenerateSourcesTask.getJarFileWithSuffix(
+                                        "-sources.jar", zomboidJar.getPath()));
 
-				task.dependsOn(project.getTasks().named("validateAccessWidener"));
-				task.setDescription("Decompile minecraft using %s.".formatted(decompilerName));
-				task.setGroup(Constants.TaskGroup.FABRIC);
+                        task.dependsOn(project.getTasks().named("validateAccessWidener"));
+                        task.setDescription("Decompile minecraft using %s.".formatted(decompilerName));
+                        task.setGroup(Constants.TaskGroup.FABRIC);
 
-				if (mappingConfiguration.hasUnpickDefinitions()) {
-					final File outputJar = new File(extension.getMappingConfiguration().mappingsWorkingDir().toFile(), "minecraft-unpicked.jar");
-					configureUnpick(task, outputJar);
-				}
-			});
-		});
+                        if (mappingConfiguration.hasUnpickDefinitions()) {
+                            final File outputJar = new File(
+                                    extension
+                                            .getMappingConfiguration()
+                                            .mappingsWorkingDir()
+                                            .toFile(),
+                                    "minecraft-unpicked.jar");
+                            configureUnpick(task, outputJar);
+                        }
+                    });
+        });
 
-		project.getTasks().register(taskBaseName, task -> {
-			task.setDescription("Decompile minecraft using the default decompiler.");
-			task.setGroup(Constants.TaskGroup.FABRIC);
+        project.getTasks().register(taskBaseName, task -> {
+            task.setDescription("Decompile minecraft using the default decompiler.");
+            task.setGroup(Constants.TaskGroup.FABRIC);
 
-			task.dependsOn(project.getTasks().named("genSourcesWith" + DecompileConfiguration.DEFAULT_DECOMPILER));
-		});
-	}
+            task.dependsOn(project.getTasks().named("genSourcesWith" + DecompileConfiguration.DEFAULT_DECOMPILER));
+        });
+    }
 }

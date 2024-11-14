@@ -29,47 +29,45 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.gradle.api.tasks.SourceSet;
-
 import net.fabricmc.loom.util.ZipUtils;
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import org.gradle.api.tasks.SourceSet;
 
 /**
  * A mod may be a zip, directory or Gradle {@link SourceSet}
  * This abstraction allows easily reading a contained file from the mod.
  */
 public interface FabricModJsonSource {
-	byte[] read(String path) throws IOException;
+    byte[] read(String path) throws IOException;
 
-	record ZipSource(Path zipPath) implements FabricModJsonSource {
-		@Override
-		public byte[] read(String path) throws IOException {
-			return ZipUtils.unpack(zipPath, path);
-		}
-	}
+    record ZipSource(Path zipPath) implements FabricModJsonSource {
+        @Override
+        public byte[] read(String path) throws IOException {
+            return ZipUtils.unpack(zipPath, path);
+        }
+    }
 
-	record DirectorySource(Path directoryPath) implements FabricModJsonSource {
-		@Override
-		public byte[] read(String path) throws IOException {
-			return Files.readAllBytes(directoryPath.resolve(path));
-		}
-	}
+    record DirectorySource(Path directoryPath) implements FabricModJsonSource {
+        @Override
+        public byte[] read(String path) throws IOException {
+            return Files.readAllBytes(directoryPath.resolve(path));
+        }
+    }
 
-	record SourceSetSource(SourceSet... sourceSets) implements FabricModJsonSource {
-		@Override
-		public byte[] read(String path) throws IOException {
-			return Files.readAllBytes(findFile(path).toPath());
-		}
+    record SourceSetSource(SourceSet... sourceSets) implements FabricModJsonSource {
+        @Override
+        public byte[] read(String path) throws IOException {
+            return Files.readAllBytes(findFile(path).toPath());
+        }
 
-		private File findFile(String path) throws IOException {
-			final File file = SourceSetHelper.findFirstFileInResource(path, sourceSets);
+        private File findFile(String path) throws IOException {
+            final File file = SourceSetHelper.findFirstFileInResource(path, sourceSets);
 
-			if (file == null) {
-				throw new FileNotFoundException("Could not find: " + path);
-			}
+            if (file == null) {
+                throw new FileNotFoundException("Could not find: " + path);
+            }
 
-			return file;
-		}
-	}
+            return file;
+        }
+    }
 }

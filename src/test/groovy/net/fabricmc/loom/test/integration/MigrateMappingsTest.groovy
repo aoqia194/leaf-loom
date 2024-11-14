@@ -47,16 +47,16 @@ class MigrateMappingsTest extends Specification implements GradleProjectTestTrai
 		def sourceFile = new File(gradle.projectDir, "src/main/java/example/Test.java")
 		sourceFile.parentFile.mkdirs()
 		sourceFile.text = """
-		package example;
+        package example;
 
-		import net.minecraft.class_10184;
+        import net.minecraft.class_10184;
 
-		public class Test {
-			public static void main(String[] args) {
-			    class_10184 cls = null;
-			}
-		}
-		"""
+        public class Test {
+            public static void main(String[] args) {
+                class_10184 cls = null;
+            }
+        }
+        """
 
 		when:
 		def result = gradle.run(tasks: [
@@ -89,16 +89,16 @@ class MigrateMappingsTest extends Specification implements GradleProjectTestTrai
 		def sourceFile = new File(gradle.projectDir, "src/main/java/example/Test.java")
 		sourceFile.parentFile.mkdirs()
 		sourceFile.text = """
-		package example;
+        package example;
 
-		import net.minecraft.class_10184;
+        import net.minecraft.class_10184;
 
-		public class Test {
-			public static void main(String[] args) {
-			    class_10184 cls = null;
-			}
-		}
-		"""
+        public class Test {
+            public static void main(String[] args) {
+                class_10184 cls = null;
+            }
+        }
+        """
 
 		when:
 		def result = gradle.run(tasks: [
@@ -131,16 +131,16 @@ class MigrateMappingsTest extends Specification implements GradleProjectTestTrai
 		def sourceFile = new File(gradle.projectDir, "src/main/java/example/Test.java")
 		sourceFile.parentFile.mkdirs()
 		sourceFile.text = """
-		package example;
+        package example;
 
-		import net.minecraft.predicate.entity.InputPredicate;
+        import net.minecraft.predicate.entity.InputPredicate;
 
-		public class Test {
-			public static void main(String[] args) {
-			    InputPredicate cls = null;
-			}
-		}
-		"""
+        public class Test {
+            public static void main(String[] args) {
+                InputPredicate cls = null;
+            }
+        }
+        """
 
 		when:
 		def result = gradle.run(tasks: [

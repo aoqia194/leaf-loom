@@ -31,8 +31,8 @@ import net.fabricmc.loom.util.LazyCloseable;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public record MappingProcessorContextImpl(ConfigContext configContext) implements MappingProcessorContext {
-	@Override
-	public LazyCloseable<TinyRemapper> createRemapper(MappingsNamespace from, MappingsNamespace to) {
-		return ContextImplHelper.createRemapper(configContext, from, to);
-	}
+    @Override
+    public LazyCloseable<TinyRemapper> createRemapper(MappingsNamespace from, MappingsNamespace to) {
+        return ContextImplHelper.createRemapper(configContext, from, to);
+    }
 }

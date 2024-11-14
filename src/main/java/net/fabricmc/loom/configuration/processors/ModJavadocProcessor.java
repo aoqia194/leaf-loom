@@ -24,6 +24,7 @@
 
 package net.fabricmc.loom.configuration.processors;
 
+import com.google.gson.JsonElement;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -35,14 +36,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-
 import javax.inject.Inject;
-
-import com.google.gson.JsonElement;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
 import net.fabricmc.loom.api.processor.ProcessorContext;
@@ -53,165 +47,183 @@ import net.fabricmc.loom.util.fmj.FabricModJson;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ModJavadocProcessor implements MinecraftJarProcessor<ModJavadocProcessor.Spec> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ModJavadocProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModJavadocProcessor.class);
 
-	private final String name;
+    private final String name;
 
-	@Inject
-	public ModJavadocProcessor(String name) {
-		this.name = name;
-	}
+    @Inject
+    public ModJavadocProcessor(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public @Nullable ModJavadocProcessor.Spec buildSpec(SpecContext context) {
-		List<ModJavadoc> javadocs = new ArrayList<>();
+    @Override
+    public @Nullable ModJavadocProcessor.Spec buildSpec(SpecContext context) {
+        List<ModJavadoc> javadocs = new ArrayList<>();
 
-		for (FabricModJson fabricModJson : context.allMods()) {
-			ModJavadoc javadoc = ModJavadoc.create(fabricModJson);
+        for (FabricModJson fabricModJson : context.allMods()) {
+            ModJavadoc javadoc = ModJavadoc.create(fabricModJson);
 
-			if (javadoc != null) {
-				javadocs.add(javadoc);
-			}
-		}
+            if (javadoc != null) {
+                javadocs.add(javadoc);
+            }
+        }
 
-		if (javadocs.isEmpty()) {
-			return null;
-		}
+        if (javadocs.isEmpty()) {
+            return null;
+        }
 
-		javadocs.sort(Comparator.comparing(ModJavadoc::modId));
-		return new Spec(Collections.unmodifiableList(javadocs));
-	}
+        javadocs.sort(Comparator.comparing(ModJavadoc::modId));
+        return new Spec(Collections.unmodifiableList(javadocs));
+    }
 
-	public record Spec(List<ModJavadoc> javadocs) implements MinecraftJarProcessor.Spec {
-	}
+    public record Spec(List<ModJavadoc> javadocs) implements MinecraftJarProcessor.Spec {}
 
-	@Override
-	public void processJar(Path jar, Spec spec, ProcessorContext context) {
-		// Nothing to do for the jar
-	}
+    @Override
+    public void processJar(Path jar, Spec spec, ProcessorContext context) {
+        // Nothing to do for the jar
+    }
 
-	@Override
-	public @Nullable MappingsProcessor<Spec> processMappings() {
-		return (mappings, spec, context) -> {
-			for (ModJavadoc javadoc : spec.javadocs()) {
-				javadoc.apply(mappings);
-			}
+    @Override
+    public @Nullable MappingsProcessor<Spec> processMappings() {
+        return (mappings, spec, context) -> {
+            for (ModJavadoc javadoc : spec.javadocs()) {
+                javadoc.apply(mappings);
+            }
 
-			return true;
-		};
-	}
+            return true;
+        };
+    }
 
-	public record ModJavadoc(String modId, MemoryMappingTree mappingTree, String mappingsHash) {
-		@Nullable
-		public static ModJavadoc create(FabricModJson fabricModJson) {
-			final String modId = fabricModJson.getId();
-			final JsonElement customElement = fabricModJson.getCustom(Constants.CustomModJsonKeys.PROVIDED_JAVADOC);
+    public record ModJavadoc(String modId, MemoryMappingTree mappingTree, String mappingsHash) {
+        @Nullable
+        public static ModJavadoc create(FabricModJson fabricModJson) {
+            final String modId = fabricModJson.getId();
+            final JsonElement customElement = fabricModJson.getCustom(Constants.CustomModJsonKeys.PROVIDED_JAVADOC);
 
-			if (customElement == null) {
-				return null;
-			}
+            if (customElement == null) {
+                return null;
+            }
 
-			final String javaDocPath = customElement.getAsString();
-			final MemoryMappingTree mappings = new MemoryMappingTree();
-			final String mappingsHash;
+            final String javaDocPath = customElement.getAsString();
+            final MemoryMappingTree mappings = new MemoryMappingTree();
+            final String mappingsHash;
 
-			try {
-				final byte[] data = fabricModJson.getSource().read(javaDocPath);
-				mappingsHash = Checksum.sha1Hex(data);
+            try {
+                final byte[] data = fabricModJson.getSource().read(javaDocPath);
+                mappingsHash = Checksum.sha1Hex(data);
 
-				try (Reader reader = new InputStreamReader(new ByteArrayInputStream(data))) {
-					MappingReader.read(reader, mappings);
-				}
-			} catch (IOException e) {
-				throw new UncheckedIOException("Failed to read javadoc from mod: " + modId, e);
-			}
+                try (Reader reader = new InputStreamReader(new ByteArrayInputStream(data))) {
+                    MappingReader.read(reader, mappings);
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed to read javadoc from mod: " + modId, e);
+            }
 
-			if (!mappings.getSrcNamespace().equals(MappingsNamespace.INTERMEDIARY.toString())) {
-				throw new IllegalStateException("Javadoc provided by mod (%s) must be have an intermediary source namespace".formatted(modId));
-			}
+            if (!mappings.getSrcNamespace().equals(MappingsNamespace.INTERMEDIARY.toString())) {
+                throw new IllegalStateException(
+                        "Javadoc provided by mod (%s) must be have an intermediary source namespace".formatted(modId));
+            }
 
-			if (!mappings.getDstNamespaces().isEmpty()) {
-				throw new IllegalStateException("Javadoc provided by mod (%s) must not contain any dst names".formatted(modId));
-			}
+            if (!mappings.getDstNamespaces().isEmpty()) {
+                throw new IllegalStateException(
+                        "Javadoc provided by mod (%s) must not contain any dst names".formatted(modId));
+            }
 
-			return new ModJavadoc(modId, mappings, mappingsHash);
-		}
+            return new ModJavadoc(modId, mappings, mappingsHash);
+        }
 
-		public void apply(MemoryMappingTree target) {
-			if (!mappingTree.getSrcNamespace().equals(target.getSrcNamespace())) {
-				throw new IllegalStateException("Cannot apply mappings to differing namespaces. source: %s target: %s".formatted(mappingTree.getSrcNamespace(), target.getSrcNamespace()));
-			}
+        public void apply(MemoryMappingTree target) {
+            if (!mappingTree.getSrcNamespace().equals(target.getSrcNamespace())) {
+                throw new IllegalStateException("Cannot apply mappings to differing namespaces. source: %s target: %s"
+                        .formatted(mappingTree.getSrcNamespace(), target.getSrcNamespace()));
+            }
 
-			for (MappingTree.ClassMapping sourceClass : mappingTree.getClasses()) {
-				final MappingTree.ClassMapping targetClass = target.getClass(sourceClass.getSrcName());
+            for (MappingTree.ClassMapping sourceClass : mappingTree.getClasses()) {
+                final MappingTree.ClassMapping targetClass = target.getClass(sourceClass.getSrcName());
 
-				if (targetClass == null) {
-					LOGGER.warn("Could not find provided javadoc target class {} from mod {}", sourceClass.getSrcName(), modId);
-					continue;
-				}
+                if (targetClass == null) {
+                    LOGGER.warn(
+                            "Could not find provided javadoc target class {} from mod {}",
+                            sourceClass.getSrcName(),
+                            modId);
+                    continue;
+                }
 
-				applyComment(sourceClass, targetClass);
+                applyComment(sourceClass, targetClass);
 
-				for (MappingTree.FieldMapping sourceField : sourceClass.getFields()) {
-					final MappingTree.FieldMapping targetField = targetClass.getField(sourceField.getSrcName(), sourceField.getSrcDesc());
+                for (MappingTree.FieldMapping sourceField : sourceClass.getFields()) {
+                    final MappingTree.FieldMapping targetField =
+                            targetClass.getField(sourceField.getSrcName(), sourceField.getSrcDesc());
 
-					if (targetField == null) {
-						LOGGER.warn("Could not find provided javadoc target field {}{} from mod {}", sourceField.getSrcName(), sourceField.getSrcDesc(), modId);
-						continue;
-					}
+                    if (targetField == null) {
+                        LOGGER.warn(
+                                "Could not find provided javadoc target field {}{} from mod {}",
+                                sourceField.getSrcName(),
+                                sourceField.getSrcDesc(),
+                                modId);
+                        continue;
+                    }
 
-					applyComment(sourceField, targetField);
-				}
+                    applyComment(sourceField, targetField);
+                }
 
-				for (MappingTree.MethodMapping sourceMethod : sourceClass.getMethods()) {
-					final MappingTree.MethodMapping targetMethod = targetClass.getMethod(sourceMethod.getSrcName(), sourceMethod.getSrcDesc());
+                for (MappingTree.MethodMapping sourceMethod : sourceClass.getMethods()) {
+                    final MappingTree.MethodMapping targetMethod =
+                            targetClass.getMethod(sourceMethod.getSrcName(), sourceMethod.getSrcDesc());
 
-					if (targetMethod == null) {
-						LOGGER.warn("Could not find provided javadoc target method {}{} from mod {}", sourceMethod.getSrcName(), sourceMethod.getSrcDesc(), modId);
-						continue;
-					}
+                    if (targetMethod == null) {
+                        LOGGER.warn(
+                                "Could not find provided javadoc target method {}{} from mod {}",
+                                sourceMethod.getSrcName(),
+                                sourceMethod.getSrcDesc(),
+                                modId);
+                        continue;
+                    }
 
-					applyComment(sourceMethod, targetMethod);
-				}
-			}
-		}
+                    applyComment(sourceMethod, targetMethod);
+                }
+            }
+        }
 
-		private <T extends MappingTree.ElementMapping> void applyComment(T source, T target) {
-			String sourceComment = source.getComment();
+        private <T extends MappingTree.ElementMapping> void applyComment(T source, T target) {
+            String sourceComment = source.getComment();
 
-			if (sourceComment == null) {
-				LOGGER.warn("Mod {} provided javadoc has mapping for {}, without comment", modId, source);
-				return;
-			}
+            if (sourceComment == null) {
+                LOGGER.warn("Mod {} provided javadoc has mapping for {}, without comment", modId, source);
+                return;
+            }
 
-			String targetComment = target.getComment();
+            String targetComment = target.getComment();
 
-			if (targetComment == null) {
-				targetComment = "";
-			} else {
-				targetComment += "\n";
-			}
+            if (targetComment == null) {
+                targetComment = "";
+            } else {
+                targetComment += "\n";
+            }
 
-			targetComment += sourceComment;
-			target.setComment(targetComment);
-		}
+            targetComment += sourceComment;
+            target.setComment(targetComment);
+        }
 
-		// Must override as not to include MemoryMappingTree
-		@Override
-		public int hashCode() {
-			return Objects.hash(modId, mappingsHash);
-		}
+        // Must override as not to include MemoryMappingTree
+        @Override
+        public int hashCode() {
+            return Objects.hash(modId, mappingsHash);
+        }
 
-		@Override
-		public String toString() {
-			return "ModJavadoc{modId='%s', mappingsHash='%s'}".formatted(modId, mappingsHash);
-		}
-	}
+        @Override
+        public String toString() {
+            return "ModJavadoc{modId='%s', mappingsHash='%s'}".formatted(modId, mappingsHash);
+        }
+    }
 }

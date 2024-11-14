@@ -26,5 +26,5 @@ package net.fabricmc.loom.util.kotlin;
 
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public interface KotlinMetadataTinyRemapperExtension extends TinyRemapper.ApplyVisitorProvider, TinyRemapper.Extension {
-}
+public interface KotlinMetadataTinyRemapperExtension
+        extends TinyRemapper.ApplyVisitorProvider, TinyRemapper.Extension {}

@@ -24,42 +24,36 @@
 
 package net.fabricmc.loom.build.mixin;
 
+import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableList;
+import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.extension.MixinExtension;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.GroovyCompile;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.extension.MixinExtension;
-
 public class GroovyApInvoker extends AnnotationProcessorInvoker<GroovyCompile> {
-	public GroovyApInvoker(Project project) {
-		super(
-				project,
-				ImmutableList.of(),
-				getInvokerTasks(project),
-				AnnotationProcessorInvoker.GROOVY);
-	}
+    public GroovyApInvoker(Project project) {
+        super(project, ImmutableList.of(), getInvokerTasks(project), AnnotationProcessorInvoker.GROOVY);
+    }
 
-	private static Map<SourceSet, GroovyCompile> getInvokerTasks(Project project) {
-		MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
-		return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.GROOVY).collect(
-				Collectors.toMap(Map.Entry::getKey,
-						entry -> Objects.requireNonNull((GroovyCompile) entry.getValue())));
-	}
+    private static Map<SourceSet, GroovyCompile> getInvokerTasks(Project project) {
+        MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
+        return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.GROOVY)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, entry -> Objects.requireNonNull((GroovyCompile) entry.getValue())));
+    }
 
-	@Override
-	protected void passArgument(GroovyCompile compileTask, String key, String value) {
-		compileTask.getOptions().getCompilerArgs().add("-A" + key + "=" + value);
-	}
+    @Override
+    protected void passArgument(GroovyCompile compileTask, String key, String value) {
+        compileTask.getOptions().getCompilerArgs().add("-A" + key + "=" + value);
+    }
 
-	@Override
-	protected File getRefmapDestinationDir(GroovyCompile task) {
-		return task.getDestinationDirectory().getAsFile().get();
-	}
+    @Override
+    protected File getRefmapDestinationDir(GroovyCompile task) {
+        return task.getDestinationDirectory().getAsFile().get();
+    }
 }

@@ -24,62 +24,61 @@
 
 package net.fabricmc.loom.api.decompilers;
 
+import com.google.common.base.Preconditions;
 import java.io.Serializable;
 import java.util.Map;
-
-import com.google.common.base.Preconditions;
 import org.gradle.api.Named;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 
 public abstract class DecompilerOptions implements Named {
-	/**
-	 * Class name for to the {@link LoomDecompiler}.
-	 */
-	public abstract Property<String> getDecompilerClassName();
+    /**
+     * Class name for to the {@link LoomDecompiler}.
+     */
+    public abstract Property<String> getDecompilerClassName();
 
-	/**
-	 * Additional classpath entries for the decompiler jvm.
-	 */
-	public abstract ConfigurableFileCollection getClasspath();
+    /**
+     * Additional classpath entries for the decompiler jvm.
+     */
+    public abstract ConfigurableFileCollection getClasspath();
 
-	/**
-	 * Additional options to be passed to the decompiler.
-	 */
-	public abstract MapProperty<String, String> getOptions();
+    /**
+     * Additional options to be passed to the decompiler.
+     */
+    public abstract MapProperty<String, String> getOptions();
 
-	/**
-	 * Memory used for forked JVM in megabytes.
-	 */
-	public abstract Property<Long> getMemory();
+    /**
+     * Memory used for forked JVM in megabytes.
+     */
+    public abstract Property<Long> getMemory();
 
-	/**
-	 * Maximum number of threads the decompiler is allowed to use.
-	 */
-	public abstract Property<Integer> getMaxThreads();
+    /**
+     * Maximum number of threads the decompiler is allowed to use.
+     */
+    public abstract Property<Integer> getMaxThreads();
 
-	public DecompilerOptions() {
-		getDecompilerClassName().finalizeValueOnRead();
-		getClasspath().finalizeValueOnRead();
-		getOptions().finalizeValueOnRead();
-		getMemory().convention(4096L).finalizeValueOnRead();
-		getMaxThreads().convention(Runtime.getRuntime().availableProcessors()).finalizeValueOnRead();
-	}
+    public DecompilerOptions() {
+        getDecompilerClassName().finalizeValueOnRead();
+        getClasspath().finalizeValueOnRead();
+        getOptions().finalizeValueOnRead();
+        getMemory().convention(4096L).finalizeValueOnRead();
+        getMaxThreads().convention(Runtime.getRuntime().availableProcessors()).finalizeValueOnRead();
+    }
 
-	public String getFormattedName() {
-		return getName().substring(0, 1).toUpperCase() + getName().substring(1);
-	}
+    public String getFormattedName() {
+        return getName().substring(0, 1).toUpperCase() + getName().substring(1);
+    }
 
-	// Done to work around weird issues with the workers, possibly https://github.com/gradle/gradle/issues/13422
-	public record Dto(String className, Map<String, String> options, int maxThreads) implements Serializable { }
+    // Done to work around weird issues with the workers, possibly https://github.com/gradle/gradle/issues/13422
+    public record Dto(String className, Map<String, String> options, int maxThreads) implements Serializable {}
 
-	public Dto toDto() {
-		Preconditions.checkArgument(getDecompilerClassName().isPresent(), "No decompiler classname specified for decompiler: " + getName());
-		return new Dto(
-				getDecompilerClassName().get(),
-				getOptions().get(),
-				getMaxThreads().get()
-		);
-	}
+    public Dto toDto() {
+        Preconditions.checkArgument(
+                getDecompilerClassName().isPresent(), "No decompiler classname specified for decompiler: " + getName());
+        return new Dto(
+                getDecompilerClassName().get(),
+                getOptions().get(),
+                getMaxThreads().get());
+    }
 }

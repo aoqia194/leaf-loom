@@ -26,12 +26,12 @@ package net.fabricmc.loom.util.gradle;
 
 import java.io.IOException;
 import java.util.Locale;
-
 import net.fabricmc.loom.util.IOStringConsumer;
 
 public record ThreadedSimpleProgressLogger(IOStringConsumer parent) implements IOStringConsumer {
-	@Override
-	public void accept(String data) throws IOException {
-		parent.accept(String.format(Locale.ENGLISH, "%d::%s", Thread.currentThread().getId(), data));
-	}
+    @Override
+    public void accept(String data) throws IOException {
+        parent.accept(
+                String.format(Locale.ENGLISH, "%d::%s", Thread.currentThread().getId(), data));
+    }
 }

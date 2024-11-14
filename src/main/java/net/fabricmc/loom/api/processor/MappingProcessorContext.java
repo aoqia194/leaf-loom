@@ -29,5 +29,5 @@ import net.fabricmc.loom.util.LazyCloseable;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public interface MappingProcessorContext {
-	LazyCloseable<TinyRemapper> createRemapper(MappingsNamespace from, MappingsNamespace to);
+    LazyCloseable<TinyRemapper> createRemapper(MappingsNamespace from, MappingsNamespace to);
 }

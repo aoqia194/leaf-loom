@@ -197,10 +197,10 @@ class ZipUtilsTest extends Specification {
 		def dir = File.createTempDir()
 		def zip = File.createTempFile("loom-zip-test", ".zip").toPath()
 		new File(dir, "test.json").text = """
-		{
-			"test": "This is a test of transforming"
-		}
-		"""
+        {
+            "test": "This is a test of transforming"
+        }
+        """
 		ZipUtils.pack(dir.toPath(), zip)
 
 		when:
@@ -222,10 +222,10 @@ class ZipUtilsTest extends Specification {
 		def dir = File.createTempDir()
 		def zip = File.createTempFile("loom-zip-test", ".zip").toPath()
 		new File(dir, "test.json").text = """
-		{
-			"test": "This is a test of transforming"
-		}
-		"""
+        {
+            "test": "This is a test of transforming"
+        }
+        """
 		ZipUtils.pack(dir.toPath(), zip)
 
 		when:

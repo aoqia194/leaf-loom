@@ -30,7 +30,7 @@ import net.fabricmc.loom.api.processor.SpecContext
 import net.fabricmc.loom.configuration.processors.MinecraftJarProcessorManager
 import net.fabricmc.loom.test.util.processor.TestMinecraftJarProcessor
 
-class MinecraftJarProcessorManagerTest extends Specification {
+class ZomboidJarProcessorManagerTest extends Specification {
 	def "Cache value matches"() {
 		when:
 		def specContext = Mock(SpecContext)

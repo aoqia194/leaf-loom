@@ -24,15 +24,16 @@
 
 package net.fabricmc.loom.configuration.providers.mappings;
 
+import com.google.common.net.UrlEscapers;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-
 import javax.inject.Inject;
-
-import com.google.common.net.UrlEscapers;
+import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
+import net.fabricmc.loom.extension.LoomGradleExtensionApiImpl;
+import net.fabricmc.loom.util.Checksum;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -46,78 +47,70 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
-import net.fabricmc.loom.extension.LoomGradleExtensionApiImpl;
-import net.fabricmc.loom.util.Checksum;
-
 @ApiStatus.Internal
 public abstract class IntermediaryMappingsProvider extends IntermediateMappingsProviderInternal {
-	public static final String NAME = "intermediary-v2";
-	private static final String FABRIC_INTERMEDIARY_GROUP_NAME = "net.fabricmc:intermediary";
-	private static final Logger LOGGER = LoggerFactory.getLogger(IntermediateMappingsProvider.class);
+    public static final String NAME = "intermediary-v2";
+    private static final String FABRIC_INTERMEDIARY_GROUP_NAME = "net.fabricmc:intermediary";
+    private static final Logger LOGGER = LoggerFactory.getLogger(IntermediateMappingsProvider.class);
 
-	public abstract Property<String> getIntermediaryUrl();
+    public abstract Property<String> getIntermediaryUrl();
 
-	public abstract Property<Boolean> getRefreshDeps();
+    public abstract Property<Boolean> getRefreshDeps();
 
-	@Inject
-	public abstract DependencyFactory getDependencyFactory();
+    @Inject
+    public abstract DependencyFactory getDependencyFactory();
 
-	@Override
-	public void provide(Path tinyMappings, @Nullable Project project) throws IOException {
-		if (Files.exists(tinyMappings) && !getRefreshDeps().get()) {
-			return;
-		}
+    @Override
+    public void provide(Path tinyMappings, @Nullable Project project) throws IOException {
+        if (Files.exists(tinyMappings) && !getRefreshDeps().get()) {
+            return;
+        }
 
-		// Download and extract intermediary
-		final Path intermediaryJarPath = Files.createTempFile(getName(), ".jar");
-		final String encodedMcVersion = UrlEscapers.urlFragmentEscaper().escape(getMinecraftVersion().get());
-		final String urlRaw = getIntermediaryUrl().get();
+        // Download and extract intermediary
+        final Path intermediaryJarPath = Files.createTempFile(getName(), ".jar");
+        final String encodedMcVersion =
+                UrlEscapers.urlFragmentEscaper().escape(getMinecraftVersion().get());
+        final String urlRaw = getIntermediaryUrl().get();
 
-		if (project != null && urlRaw.equals(LoomGradleExtensionApiImpl.DEFAULT_INTERMEDIARY_URL)) {
-			final ModuleDependency intermediaryDep = getDependencyFactory()
-					.create(FABRIC_INTERMEDIARY_GROUP_NAME + ':' + encodedMcVersion);
-			intermediaryDep.artifact(new Action<DependencyArtifact>() {
-				@Override
-				public void execute(final DependencyArtifact dependencyArtifact) {
-					dependencyArtifact.setClassifier("v2");
-				}
-			});
-			final Configuration config = project.getConfigurations().detachedConfiguration(intermediaryDep);
+        if (project != null && urlRaw.equals(LoomGradleExtensionApiImpl.DEFAULT_INTERMEDIARY_URL)) {
+            final ModuleDependency intermediaryDep =
+                    getDependencyFactory().create(FABRIC_INTERMEDIARY_GROUP_NAME + ':' + encodedMcVersion);
+            intermediaryDep.artifact(new Action<DependencyArtifact>() {
+                @Override
+                public void execute(final DependencyArtifact dependencyArtifact) {
+                    dependencyArtifact.setClassifier("v2");
+                }
+            });
+            final Configuration config = project.getConfigurations().detachedConfiguration(intermediaryDep);
 
-			Files.copy(
-					config.getSingleFile().toPath(),
-					intermediaryJarPath,
-					StandardCopyOption.REPLACE_EXISTING
-			);
-			Files.deleteIfExists(tinyMappings);
-		} else {
-			final String url = urlRaw.formatted(encodedMcVersion);
+            Files.copy(config.getSingleFile().toPath(), intermediaryJarPath, StandardCopyOption.REPLACE_EXISTING);
+            Files.deleteIfExists(tinyMappings);
+        } else {
+            final String url = urlRaw.formatted(encodedMcVersion);
 
-			LOGGER.info("Downloading intermediary from {}", url);
+            LOGGER.info("Downloading intermediary from {}", url);
 
-			Files.deleteIfExists(tinyMappings);
-			Files.deleteIfExists(intermediaryJarPath);
+            Files.deleteIfExists(tinyMappings);
+            Files.deleteIfExists(intermediaryJarPath);
 
-			getDownloader().get().apply(url)
-					.defaultCache()
-					.downloadPath(intermediaryJarPath);
-		}
+            getDownloader().get().apply(url).defaultCache().copyGameFileFromPath(intermediaryJarPath);
+        }
 
-		MappingConfiguration.extractMappings(intermediaryJarPath, tinyMappings);
-	}
+        MappingConfiguration.extractMappings(intermediaryJarPath, tinyMappings);
+    }
 
-	@Override
-	public @NotNull String getName() {
-		final String encodedMcVersion = UrlEscapers.urlFragmentEscaper().escape(getMinecraftVersion().get());
-		final String urlRaw = getIntermediaryUrl().get();
+    @Override
+    public @NotNull String getName() {
+        final String encodedMcVersion =
+                UrlEscapers.urlFragmentEscaper().escape(getMinecraftVersion().get());
+        final String urlRaw = getIntermediaryUrl().get();
 
-		if (!LoomGradleExtensionApiImpl.DEFAULT_INTERMEDIARY_URL.equals(urlRaw)) {
-			final String url = getIntermediaryUrl().get().formatted(encodedMcVersion);
+        if (!LoomGradleExtensionApiImpl.DEFAULT_INTERMEDIARY_URL.equals(urlRaw)) {
+            final String url = getIntermediaryUrl().get().formatted(encodedMcVersion);
 
-			return NAME + "-" + Checksum.sha1Hex(url.getBytes(StandardCharsets.UTF_8));
-		}
+            return NAME + "-" + Checksum.sha1Hex(url.getBytes(StandardCharsets.UTF_8));
+        }
 
-		return NAME;
-	}
+        return NAME;
+    }
 }

@@ -29,34 +29,33 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
-
 public class FabricModJsonHelpers {
-	// Returns a list of Mods found in the provided project's main or client sourcesets
-	public static List<FabricModJson> getModsInProject(Project project) {
-		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		var sourceSets = new ArrayList<SourceSet>();
-		sourceSets.add(SourceSetHelper.getMainSourceSet(project));
+    // Returns a list of Mods found in the provided project's main or client sourcesets
+    public static List<FabricModJson> getModsInProject(Project project) {
+        final LoomGradleExtension extension = LoomGradleExtension.get(project);
+        var sourceSets = new ArrayList<SourceSet>();
+        sourceSets.add(SourceSetHelper.getMainSourceSet(project));
 
-		if (extension.areEnvironmentSourceSetsSplit()) {
-			sourceSets.add(SourceSetHelper.getSourceSetByName("client", project));
-		}
+        if (extension.areEnvironmentSourceSetsSplit()) {
+            sourceSets.add(SourceSetHelper.getSourceSetByName("client", project));
+        }
 
-		try {
-			final FabricModJson fabricModJson = FabricModJsonFactory.createFromSourceSetsNullable(sourceSets.toArray(SourceSet[]::new));
+        try {
+            final FabricModJson fabricModJson =
+                    FabricModJsonFactory.createFromSourceSetsNullable(sourceSets.toArray(SourceSet[]::new));
 
-			if (fabricModJson != null) {
-				return List.of(fabricModJson);
-			}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
+            if (fabricModJson != null) {
+                return List.of(fabricModJson);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
 
-		return Collections.emptyList();
-	}
+        return Collections.emptyList();
+    }
 }

@@ -24,16 +24,15 @@
 
 package net.fabricmc.loom.configuration.providers.mappings.extras.signatures;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import net.fabricmc.loom.api.mappings.layered.MappingContext;
 import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
 import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
+import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public record SignatureFixesSpec(FileSpec fileSpec) implements MappingsSpec<SignatureFixesLayerImpl> {
-	@Override
-	public SignatureFixesLayerImpl createLayer(MappingContext context) {
-		return new SignatureFixesLayerImpl(fileSpec.get(context));
-	}
+    @Override
+    public SignatureFixesLayerImpl createLayer(MappingContext context) {
+        return new SignatureFixesLayerImpl(fileSpec.get(context));
+    }
 }

@@ -27,43 +27,40 @@ package net.fabricmc.loom.configuration.providers.minecraft.library;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
+import net.fabricmc.loom.util.Platform;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
-import net.fabricmc.loom.util.Platform;
-
 public abstract class LibraryProcessor {
-	protected static final Predicate<Library> ALLOW_ALL = library -> true;
+    protected static final Predicate<Library> ALLOW_ALL = library -> true;
 
-	protected final Platform platform;
-	protected final LibraryContext context;
+    protected final Platform platform;
+    protected final LibraryContext context;
 
-	public LibraryProcessor(Platform platform, LibraryContext context) {
-		this.platform = Objects.requireNonNull(platform);
-		this.context = Objects.requireNonNull(context);
-	}
+    public LibraryProcessor(Platform platform, LibraryContext context) {
+        this.platform = Objects.requireNonNull(platform);
+        this.context = Objects.requireNonNull(context);
+    }
 
-	public abstract ApplicationResult getApplicationResult();
+    public abstract ApplicationResult getApplicationResult();
 
-	public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
-		return ALLOW_ALL;
-	}
+    public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
+        return ALLOW_ALL;
+    }
 
-	public void applyRepositories(RepositoryHandler repositories) {
-	}
+    public void applyRepositories(RepositoryHandler repositories) {}
 
-	public enum ApplicationResult {
-		/**
-		 * This processor should be applied automatically to enable Minecraft to run on the current platform.
-		 */
-		MUST_APPLY,
-		/**
-		 * This processor can optionally be applied on the current platform.
-		 */
-		CAN_APPLY,
-		/**
-		 * This processor is incompatible with the current platform and should not be applied on the current platform.
-		 */
-		DONT_APPLY
-	}
+    public enum ApplicationResult {
+        /**
+         * This processor should be applied automatically to enable Minecraft to run on the current platform.
+         */
+        MUST_APPLY,
+        /**
+         * This processor can optionally be applied on the current platform.
+         */
+        CAN_APPLY,
+        /**
+         * This processor is incompatible with the current platform and should not be applied on the current platform.
+         */
+        DONT_APPLY
+    }
 }

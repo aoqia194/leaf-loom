@@ -30,15 +30,15 @@ import spock.lang.Specification
 import net.fabricmc.loom.configuration.providers.minecraft.library.Library
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessorManager
-import net.fabricmc.loom.configuration.providers.minecraft.library.MinecraftLibraryHelper
+import net.fabricmc.loom.configuration.providers.minecraft.library.ZomboidLibraryHelper
 import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.test.util.MinecraftTestUtils
+import net.fabricmc.loom.test.util.ZomboidTestUtils
 import net.fabricmc.loom.util.Platform
 
 abstract class LibraryProcessorTest extends Specification {
 	def getLibs(String id, Platform platform, JavaVersion javaVersion = JavaVersion.VERSION_17) {
-		def meta = MinecraftTestUtils.getVersionMeta(id)
-		def libraries = MinecraftLibraryHelper.getLibrariesForPlatform(meta, platform)
+		def meta = ZomboidTestUtils.getVersionMeta(id)
+		def libraries = ZomboidLibraryHelper.getLibrariesForPlatform(meta, platform)
 		def context = new LibraryContext(meta, javaVersion)
 		return [libraries, context]
 	}

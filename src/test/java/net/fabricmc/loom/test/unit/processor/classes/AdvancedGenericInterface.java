@@ -25,7 +25,7 @@
 package net.fabricmc.loom.test.unit.processor.classes;
 
 public interface AdvancedGenericInterface<F, S> {
-	default AdvancedGenericTargetClass.Pair<F, S> advancedGenericInjectedMethod() {
-		return new AdvancedGenericTargetClass.Pair<>(null, null);
-	}
+    default AdvancedGenericTargetClass.Pair<F, S> advancedGenericInjectedMethod() {
+        return new AdvancedGenericTargetClass.Pair<>(null, null);
+    }
 }

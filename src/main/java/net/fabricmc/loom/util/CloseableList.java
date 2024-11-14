@@ -29,24 +29,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class CloseableList<T extends Closeable> extends ArrayList<T> implements Closeable {
-	@Override
-	public void close() throws IOException {
-		IOException exception = null;
+    @Override
+    public void close() throws IOException {
+        IOException exception = null;
 
-		for (T t : this) {
-			try {
-				t.close();
-			} catch (IOException e) {
-				if (exception == null) {
-					exception = new IOException("Failed to close list");
-				}
+        for (T t : this) {
+            try {
+                t.close();
+            } catch (IOException e) {
+                if (exception == null) {
+                    exception = new IOException("Failed to close list");
+                }
 
-				exception.addSuppressed(e);
-			}
-		}
+                exception.addSuppressed(e);
+            }
+        }
 
-		if (exception != null) {
-			throw exception;
-		}
-	}
+        if (exception != null) {
+            throw exception;
+        }
+    }
 }

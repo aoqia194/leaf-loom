@@ -26,33 +26,32 @@ package net.fabricmc.loom.configuration.providers.minecraft.library.processors;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
 import net.fabricmc.loom.configuration.providers.minecraft.library.Library;
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext;
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessor;
 import net.fabricmc.loom.util.Platform;
 
 public class RuntimeLog4jLibraryProcessor extends LibraryProcessor {
-	private static final String LOG4J_GROUP = "org.apache.logging.log4j";
+    private static final String LOG4J_GROUP = "org.apache.logging.log4j";
 
-	public RuntimeLog4jLibraryProcessor(Platform platform, LibraryContext context) {
-		super(platform, context);
-	}
+    public RuntimeLog4jLibraryProcessor(Platform platform, LibraryContext context) {
+        super(platform, context);
+    }
 
-	@Override
-	public ApplicationResult getApplicationResult() {
-		return ApplicationResult.CAN_APPLY;
-	}
+    @Override
+    public ApplicationResult getApplicationResult() {
+        return ApplicationResult.CAN_APPLY;
+    }
 
-	@Override
-	public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
-		return library -> {
-			if (library.is(LOG4J_GROUP)) {
-				dependencyConsumer.accept(library.withTarget(Library.Target.RUNTIME));
-				return false;
-			}
+    @Override
+    public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
+        return library -> {
+            if (library.is(LOG4J_GROUP)) {
+                dependencyConsumer.accept(library.withTarget(Library.Target.RUNTIME));
+                return false;
+            }
 
-			return true;
-		};
-	}
+            return true;
+        };
+    }
 }

@@ -27,15 +27,15 @@ package net.fabricmc.loom.test.unit.library
 import org.gradle.api.JavaVersion
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidVersionMeta
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext
-import net.fabricmc.loom.test.util.MinecraftTestUtils
+import net.fabricmc.loom.test.util.ZomboidTestUtils
 import net.fabricmc.loom.util.Platform
 
 class LibraryContextTest extends Specification {
 	def "Supports ARM64 macOS"() {
 		when:
-		def context = new LibraryContext(MinecraftTestUtils.getVersionMeta(id), JavaVersion.VERSION_17)
+		def context = new LibraryContext(ZomboidTestUtils.getVersionMeta(id), JavaVersion.VERSION_17)
 
 		then:
 		context.supportsArm64(Platform.OperatingSystem.MAC_OS) == supported
@@ -50,7 +50,7 @@ class LibraryContextTest extends Specification {
 
 	def "Supports ARM64 windows"() {
 		when:
-		def context = new LibraryContext(MinecraftTestUtils.getVersionMeta(id), JavaVersion.VERSION_17)
+		def context = new LibraryContext(ZomboidTestUtils.getVersionMeta(id), JavaVersion.VERSION_17)
 
 		then:
 		context.supportsArm64(Platform.OperatingSystem.WINDOWS) == supported
@@ -66,7 +66,7 @@ class LibraryContextTest extends Specification {
 
 	def "Uses LWJGL 3"() {
 		when:
-		def context = new LibraryContext(MinecraftTestUtils.getVersionMeta(id), JavaVersion.VERSION_17)
+		def context = new LibraryContext(ZomboidTestUtils.getVersionMeta(id), JavaVersion.VERSION_17)
 
 		then:
 		context.usesLWJGL3() == lwjgl3
@@ -83,7 +83,7 @@ class LibraryContextTest extends Specification {
 
 	def "Has classpath natives"() {
 		when:
-		def context = new LibraryContext(MinecraftTestUtils.getVersionMeta(id), JavaVersion.VERSION_17)
+		def context = new LibraryContext(ZomboidTestUtils.getVersionMeta(id), JavaVersion.VERSION_17)
 
 		then:
 		context.hasClasspathNatives() == hasClasspathNatives
@@ -100,7 +100,7 @@ class LibraryContextTest extends Specification {
 
 	def "Has library"() {
 		when:
-		def context = new LibraryContext(MinecraftTestUtils.getVersionMeta("1.19.4"), JavaVersion.VERSION_17)
+		def context = new LibraryContext(ZomboidTestUtils.getVersionMeta("1.19.4"), JavaVersion.VERSION_17)
 
 		then:
 		context.hasLibrary("commons-io:commons-io:2.11.0")
@@ -109,7 +109,7 @@ class LibraryContextTest extends Specification {
 
 	def "Is runtime Java 19 or later"() {
 		when:
-		def context = new LibraryContext(MinecraftTestUtils.getVersionMeta("1.19.4"), javaVersion)
+		def context = new LibraryContext(ZomboidTestUtils.getVersionMeta("1.19.4"), javaVersion)
 
 		then:
 		context.isJava19OrLater() == isJava19OrLater
@@ -124,14 +124,14 @@ class LibraryContextTest extends Specification {
 	def "Supports Java 19 or later"() {
 		when:
 		def metaJson = """
-				{
-				  "libraries": [
-					{
-					  "name": "org.lwjgl:lwjgl:${lwjglVersion}"
-					}
-				  ]
-				}"""
-		def context = new LibraryContext(MinecraftTestUtils.GSON.fromJson(metaJson, MinecraftVersionMeta.class), JavaVersion.VERSION_17)
+                {
+                  "libraries": [
+                    {
+                      "name": "org.lwjgl:lwjgl:${lwjglVersion}"
+                    }
+                  ]
+                }"""
+		def context = new LibraryContext(ZomboidTestUtils.GSON.fromJson(metaJson, ZomboidVersionMeta.class), JavaVersion.VERSION_17)
 
 		then:
 		context.supportsJava19OrLater() == supportsJava19OrLater

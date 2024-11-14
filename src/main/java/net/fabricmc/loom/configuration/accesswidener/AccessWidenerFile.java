@@ -24,67 +24,61 @@
 
 package net.fabricmc.loom.configuration.accesswidener;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 import net.fabricmc.loom.util.ZipUtils;
 
-public record AccessWidenerFile(
-		String path,
-		String modId,
-		byte[] content
-) {
-	/**
-	 * Reads the access-widener contained in a mod jar, or returns null if there is none.
-	 */
-	public static AccessWidenerFile fromModJar(Path modJarPath) {
-		byte[] modJsonBytes;
+public record AccessWidenerFile(String path, String modId, byte[] content) {
+    /**
+     * Reads the access-widener contained in a mod jar, or returns null if there is none.
+     */
+    public static AccessWidenerFile fromModJar(Path modJarPath) {
+        byte[] modJsonBytes;
 
-		try {
-			modJsonBytes = ZipUtils.unpackNullable(modJarPath, "fabric.mod.json");
-		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to read access-widener file from: " + modJarPath.toAbsolutePath(), e);
-		}
+        try {
+            modJsonBytes = ZipUtils.unpackNullable(modJarPath, "fabric.mod.json");
+        } catch (IOException e) {
+            throw new UncheckedIOException(
+                    "Failed to read access-widener file from: " + modJarPath.toAbsolutePath(), e);
+        }
 
-		if (modJsonBytes == null) {
-			return null;
-		}
+        if (modJsonBytes == null) {
+            return null;
+        }
 
-		JsonObject jsonObject = new Gson().fromJson(new String(modJsonBytes, StandardCharsets.UTF_8), JsonObject.class);
+        JsonObject jsonObject = new Gson().fromJson(new String(modJsonBytes, StandardCharsets.UTF_8), JsonObject.class);
 
-		if (!jsonObject.has("accessWidener")) {
-			return null;
-		}
+        if (!jsonObject.has("accessWidener")) {
+            return null;
+        }
 
-		String awPath = jsonObject.get("accessWidener").getAsString();
-		String modId = jsonObject.get("id").getAsString();
+        String awPath = jsonObject.get("accessWidener").getAsString();
+        String modId = jsonObject.get("id").getAsString();
 
-		byte[] content;
+        byte[] content;
 
-		try {
-			content = ZipUtils.unpack(modJarPath, awPath);
-		} catch (IOException e) {
-			throw new UncheckedIOException("Could not find access widener file (%s) defined in the fabric.mod.json file of %s".formatted(awPath, modJarPath.toAbsolutePath()), e);
-		}
+        try {
+            content = ZipUtils.unpack(modJarPath, awPath);
+        } catch (IOException e) {
+            throw new UncheckedIOException(
+                    "Could not find access widener file (%s) defined in the fabric.mod.json file of %s"
+                            .formatted(awPath, modJarPath.toAbsolutePath()),
+                    e);
+        }
 
-		return new AccessWidenerFile(
-				awPath,
-				modId,
-				content
-		);
-	}
+        return new AccessWidenerFile(awPath, modId, content);
+    }
 
-	@Override
-	public int hashCode() {
-		int result = Objects.hash(path, modId);
-		result = 31 * result + Arrays.hashCode(content);
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(path, modId);
+        result = 31 * result + Arrays.hashCode(content);
+        return result;
+    }
 }

@@ -56,19 +56,19 @@ class LegacyProjectTest extends Specification implements GradleProjectTestTrait 
 		setup:
 		def gradle = gradleProject(project: "minimalBase", version: PRE_RELEASE_GRADLE)
 		gradle.buildGradle << """
-				loom {
+                loom {
                     noIntermediateMappings()
                 }
 
                 dependencies {
                     minecraft "com.mojang:minecraft:${version}"
                     mappings loom.layered() {
-						// No names
-					}
+                        // No names
+                    }
 
                     modImplementation "net.fabricmc:fabric-loader:0.12.12"
                 }
-			"""
+            """
 
 		when:
 		def result = gradle.run(task: "configureClientLaunch")
@@ -93,20 +93,20 @@ class LegacyProjectTest extends Specification implements GradleProjectTestTrait 
 		setup:
 		def gradle = gradleProject(project: "minimalBase", version: PRE_RELEASE_GRADLE)
 		gradle.buildGradle << """
-				loom {
+                loom {
                     noIntermediateMappings()
-					clientOnlyMinecraftJar()
+                    clientOnlyMinecraftJar()
                 }
 
                 dependencies {
                     minecraft "com.mojang:minecraft:${version}"
                     mappings loom.layered() {
-						// No names
-					}
+                        // No names
+                    }
 
                     modImplementation "net.fabricmc:fabric-loader:0.12.12"
                 }
-			"""
+            """
 
 		when:
 		def result = gradle.run(task: "configureClientLaunch")
@@ -131,12 +131,12 @@ class LegacyProjectTest extends Specification implements GradleProjectTestTrait 
                 dependencies {
                     minecraft "com.mojang:minecraft:1.2.5"
                     mappings loom.layered() {
-						// No names
-					}
+                        // No names
+                    }
 
                     modImplementation "net.fabricmc:fabric-loader:0.15.7"
                 }
-			"""
+            """
 		gradle.buildSrc("legacyMergedIntermediary")
 
 		when:

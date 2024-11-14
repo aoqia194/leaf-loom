@@ -26,77 +26,76 @@ package net.fabricmc.loom.util.fmj;
 
 import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.readString;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.Nullable;
 
 public final class FabricModJsonV1 extends FabricModJson {
-	FabricModJsonV1(JsonObject jsonObject, FabricModJsonSource source) {
-		super(jsonObject, source);
-	}
+    FabricModJsonV1(JsonObject jsonObject, FabricModJsonSource source) {
+        super(jsonObject, source);
+    }
 
-	@Override
-	public int getVersion() {
-		return 1;
-	}
+    @Override
+    public int getVersion() {
+        return 1;
+    }
 
-	@Override
-	@Nullable
-	public JsonElement getCustom(String key) {
-		return getCustom(jsonObject, key);
-	}
+    @Override
+    @Nullable
+    public JsonElement getCustom(String key) {
+        return getCustom(jsonObject, key);
+    }
 
-	static JsonElement getCustom(JsonObject jsonObject, String key) {
-		if (!jsonObject.has("custom")) {
-			return null;
-		}
+    static JsonElement getCustom(JsonObject jsonObject, String key) {
+        if (!jsonObject.has("custom")) {
+            return null;
+        }
 
-		final JsonObject custom = jsonObject.getAsJsonObject("custom");
+        final JsonObject custom = jsonObject.getAsJsonObject("custom");
 
-		if (!custom.has(key)) {
-			return null;
-		}
+        if (!custom.has(key)) {
+            return null;
+        }
 
-		return custom.get(key);
-	}
+        return custom.get(key);
+    }
 
-	@Override
-	public List<String> getMixinConfigurations() {
-		final JsonArray mixinArray = jsonObject.getAsJsonArray("mixins");
+    @Override
+    public List<String> getMixinConfigurations() {
+        final JsonArray mixinArray = jsonObject.getAsJsonArray("mixins");
 
-		if (mixinArray == null) {
-			return Collections.emptyList();
-		}
+        if (mixinArray == null) {
+            return Collections.emptyList();
+        }
 
-		return StreamSupport.stream(mixinArray.spliterator(), false)
-				.map(FabricModJsonV1::readMixinElement)
-				.collect(Collectors.toList());
-	}
+        return StreamSupport.stream(mixinArray.spliterator(), false)
+                .map(FabricModJsonV1::readMixinElement)
+                .collect(Collectors.toList());
+    }
 
-	private static String readMixinElement(JsonElement jsonElement) {
-		if (jsonElement instanceof JsonPrimitive str) {
-			return str.getAsString();
-		} else if (jsonElement instanceof JsonObject obj) {
-			return obj.get("config").getAsString();
-		} else {
-			throw new FabricModJsonUtils.ParseException("Expected mixin element to be an object or string");
-		}
-	}
+    private static String readMixinElement(JsonElement jsonElement) {
+        if (jsonElement instanceof JsonPrimitive str) {
+            return str.getAsString();
+        } else if (jsonElement instanceof JsonObject obj) {
+            return obj.get("config").getAsString();
+        } else {
+            throw new FabricModJsonUtils.ParseException("Expected mixin element to be an object or string");
+        }
+    }
 
-	@Override
-	public Map<String, ModEnvironment> getClassTweakers() {
-		if (!jsonObject.has("accessWidener")) {
-			return Collections.emptyMap();
-		}
+    @Override
+    public Map<String, ModEnvironment> getClassTweakers() {
+        if (!jsonObject.has("accessWidener")) {
+            return Collections.emptyMap();
+        }
 
-		return Map.of(readString(jsonObject, "accessWidener"), ModEnvironment.UNIVERSAL);
-	}
+        return Map.of(readString(jsonObject, "accessWidener"), ModEnvironment.UNIVERSAL);
+    }
 }

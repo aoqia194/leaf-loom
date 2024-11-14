@@ -25,39 +25,39 @@
 package net.fabricmc.loom.util;
 
 public interface Platform {
-	Platform CURRENT = CurrentPlatform.INSTANCE;
+    Platform CURRENT = CurrentPlatform.INSTANCE;
 
-	enum OperatingSystem {
-		WINDOWS,
-		MAC_OS,
-		LINUX; // Or Unknown
+    enum OperatingSystem {
+        WINDOWS,
+        MAC_OS,
+        LINUX; // Or Unknown
 
-		public boolean isWindows() {
-			return this == WINDOWS;
-		}
+        public boolean isWindows() {
+            return this == WINDOWS;
+        }
 
-		public boolean isMacOS() {
-			return this == MAC_OS;
-		}
+        public boolean isMacOS() {
+            return this == MAC_OS;
+        }
 
-		public boolean isLinux() {
-			return this == LINUX;
-		}
-	}
+        public boolean isLinux() {
+            return this == LINUX;
+        }
+    }
 
-	OperatingSystem getOperatingSystem();
+    OperatingSystem getOperatingSystem();
 
-	interface Architecture {
-		boolean is64Bit();
+    interface Architecture {
+        boolean is64Bit();
 
-		boolean isArm();
+        boolean isArm();
 
-		boolean isRiscV();
-	}
+        boolean isRiscV();
+    }
 
-	Architecture getArchitecture();
+    Architecture getArchitecture();
 
-	boolean supportsUnixDomainSockets();
+    boolean supportsUnixDomainSockets();
 
-	boolean isRaspberryPi();
+    boolean isRaspberryPi();
 }

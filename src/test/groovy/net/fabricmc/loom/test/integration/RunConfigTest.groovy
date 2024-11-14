@@ -117,8 +117,8 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
                 }
 
                 loom {
-    				runs.clear()
-				}
+                    runs.clear()
+                }
             '''
 
 		when:

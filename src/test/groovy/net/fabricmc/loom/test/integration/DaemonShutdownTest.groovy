@@ -43,7 +43,7 @@ class DaemonShutdownTest extends Specification implements GradleProjectTestTrait
                     minecraft "com.mojang:minecraft:1.20.4"
                     mappings "net.fabricmc:yarn:1.20.4+build.3:v2"
                 }
-		'''
+        '''
 		when:
 		def result = gradle.run(task: "help")
 

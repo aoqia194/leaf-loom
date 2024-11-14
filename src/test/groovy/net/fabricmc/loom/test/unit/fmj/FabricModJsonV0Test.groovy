@@ -38,18 +38,18 @@ class FabricModJsonV0Test extends Specification {
 	@Language("json")
 	static String JSON = """
 {
-	"id": "example-mod-id",
-	"name": "Example mod name for testing",
-	"version": "1.0.0",
-	"side": "universal",
-	"initializers": [
-	],
-	"mixins": {
-		"client": "mixins.client.json",
-		"common": [
-			"mixins.common.json"
-		]
-	}
+    "id": "example-mod-id",
+    "name": "Example mod name for testing",
+    "version": "1.0.0",
+    "side": "universal",
+    "initializers": [
+    ],
+    "mixins": {
+        "client": "mixins.client.json",
+        "common": [
+            "mixins.common.json"
+        ]
+    }
 }
 """
 

@@ -28,36 +28,36 @@ import java.io.File;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
+import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.extension.MixinExtension;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.JavaCompile;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.extension.MixinExtension;
-
 public class JavaApInvoker extends AnnotationProcessorInvoker<JavaCompile> {
-	public JavaApInvoker(Project project) {
-		super(
-				project,
-				AnnotationProcessorInvoker.getApConfigurations(project, SourceSet::getAnnotationProcessorConfigurationName),
-				getInvokerTasks(project),
-				AnnotationProcessorInvoker.JAVA);
-	}
+    public JavaApInvoker(Project project) {
+        super(
+                project,
+                AnnotationProcessorInvoker.getApConfigurations(
+                        project, SourceSet::getAnnotationProcessorConfigurationName),
+                getInvokerTasks(project),
+                AnnotationProcessorInvoker.JAVA);
+    }
 
-	private static Map<SourceSet, JavaCompile> getInvokerTasks(Project project) {
-		MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
-		return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.JAVA)
-				.collect(Collectors.toMap(Map.Entry::getKey, entry -> Objects.requireNonNull((JavaCompile) entry.getValue())));
-	}
+    private static Map<SourceSet, JavaCompile> getInvokerTasks(Project project) {
+        MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
+        return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.JAVA)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, entry -> Objects.requireNonNull((JavaCompile) entry.getValue())));
+    }
 
-	@Override
-	protected void passArgument(JavaCompile compileTask, String key, String value) {
-		compileTask.getOptions().getCompilerArgs().add("-A" + key + "=" + value);
-	}
+    @Override
+    protected void passArgument(JavaCompile compileTask, String key, String value) {
+        compileTask.getOptions().getCompilerArgs().add("-A" + key + "=" + value);
+    }
 
-	@Override
-	protected File getRefmapDestinationDir(JavaCompile task) {
-		return task.getDestinationDirectory().getAsFile().get();
-	}
+    @Override
+    protected File getRefmapDestinationDir(JavaCompile task) {
+        return task.getDestinationDirectory().getAsFile().get();
+    }
 }

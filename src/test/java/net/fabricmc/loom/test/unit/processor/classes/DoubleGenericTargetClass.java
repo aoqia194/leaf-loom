@@ -24,5 +24,4 @@
 
 package net.fabricmc.loom.test.unit.processor.classes;
 
-public class DoubleGenericTargetClass<T> {
-}
+public class DoubleGenericTargetClass<T> {}

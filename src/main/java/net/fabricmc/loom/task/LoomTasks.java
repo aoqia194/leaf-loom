@@ -27,183 +27,224 @@ package net.fabricmc.loom.task;
 import javax.inject.Inject;
 
 import com.google.common.base.Preconditions;
+import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.configuration.ide.RunConfigSettings;
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidJarConfiguration;
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidVersionMeta;
+import net.fabricmc.loom.task.launch.GenerateDLIConfigTask;
+import net.fabricmc.loom.task.launch.GenerateLog4jConfigTask;
+import net.fabricmc.loom.task.launch.GenerateRemapClasspathTask;
+import net.fabricmc.loom.util.Constants;
+import net.fabricmc.loom.util.gradle.GradleUtils;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.task.launch.GenerateDLIConfigTask;
-import net.fabricmc.loom.task.launch.GenerateLog4jConfigTask;
-import net.fabricmc.loom.task.launch.GenerateRemapClasspathTask;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.gradle.GradleUtils;
-
 public abstract class LoomTasks implements Runnable {
-	@Inject
-	protected abstract Project getProject();
+    @Override
+    public void run() {
+        getTasks().register("migrateMappings", MigrateMappingsTask.class, t -> {
+            t.setDescription("Migrates mappings to a new version.");
+            t.getOutputs().upToDateWhen(o -> false);
+        });
 
-	@Inject
-	protected abstract TaskContainer getTasks();
+        var generateLog4jConfig = getTasks().register("generateLog4jConfig", GenerateLog4jConfigTask.class, t -> {
+            t.setDescription("Generate the log4j config file");
+        });
+        var generateRemapClasspath = getTasks()
+            .register("generateRemapClasspath", GenerateRemapClasspathTask.class, t -> {
+                t.setDescription("Generate the remap classpath file");
+            });
+        getTasks().register("generateDLIConfig", GenerateDLIConfigTask.class, t -> {
+            t.setDescription("Generate the DevLaunchInjector config file");
 
-	@Override
-	public void run() {
-		getTasks().register("migrateMappings", MigrateMappingsTask.class, t -> {
-			t.setDescription("Migrates mappings to a new version.");
-			t.getOutputs().upToDateWhen(o -> false);
-		});
+            // Must allow these IDE files to be generated first
+            t.mustRunAfter("eclipse");
 
-		var generateLog4jConfig = getTasks().register("generateLog4jConfig", GenerateLog4jConfigTask.class, t -> {
-			t.setDescription("Generate the log4j config file");
-		});
-		var generateRemapClasspath = getTasks().register("generateRemapClasspath", GenerateRemapClasspathTask.class, t -> {
-			t.setDescription("Generate the remap classpath file");
-		});
-		getTasks().register("generateDLIConfig", GenerateDLIConfigTask.class, t -> {
-			t.setDescription("Generate the DevLaunchInjector config file");
+            t.dependsOn(generateLog4jConfig);
+            t.getRemapClasspathFile().set(generateRemapClasspath.get().getRemapClasspathFile());
+        });
 
-			// Must allow these IDE files to be generated first
-			t.mustRunAfter("eclipse");
+        getTasks().register("configureLaunch", task -> {
+            task.dependsOn(getTasks().named("generateDLIConfig"));
+            task.dependsOn(getTasks().named("generateLog4jConfig"));
+            task.dependsOn(getTasks().named("generateRemapClasspath"));
 
-			t.dependsOn(generateLog4jConfig);
-			t.getRemapClasspathFile().set(generateRemapClasspath.get().getRemapClasspathFile());
-		});
+            task.setDescription("Setup the required files to launch Minecraft");
+            task.setGroup(Constants.TaskGroup.FABRIC);
+        });
 
-		getTasks().register("configureLaunch", task -> {
-			task.dependsOn(getTasks().named("generateDLIConfig"));
-			task.dependsOn(getTasks().named("generateLog4jConfig"));
-			task.dependsOn(getTasks().named("generateRemapClasspath"));
+        TaskProvider<ValidateAccessWidenerTask> validateAccessWidener = getTasks()
+            .register("validateAccessWidener", ValidateAccessWidenerTask.class, t -> {
+                t.setDescription("Validate all the rules in the access widener against the Minecraft jar");
+                t.setGroup("verification");
+            });
 
-			task.setDescription("Setup the required files to launch Minecraft");
-			task.setGroup(Constants.TaskGroup.FABRIC);
-		});
+        getTasks().named("check").configure(task -> task.dependsOn(validateAccessWidener));
 
-		TaskProvider<ValidateAccessWidenerTask> validateAccessWidener = getTasks().register("validateAccessWidener", ValidateAccessWidenerTask.class, t -> {
-			t.setDescription("Validate all the rules in the access widener against the Minecraft jar");
-			t.setGroup("verification");
-		});
+        registerIDETasks();
+        registerRunTasks();
 
-		getTasks().named("check").configure(task -> task.dependsOn(validateAccessWidener));
+        // Must be done in afterEvaluate to allow time for the build script to configure the jar config.
+        GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
+            LoomGradleExtension extension = LoomGradleExtension.get(getProject());
 
-		registerIDETasks();
-		registerRunTasks();
+            if (extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY) {
+                // Server only, nothing more to do.
+//                final ZomboidVersionMeta serverVersionInfo = extension.getZomboidProvider().getServerVersionInfo();
+//                registerServerSetupTasks(getTasks(), serverVersionInfo.hasNativesToExtract());
+                return;
+            }
 
-		// Must be done in afterEvaluate to allow time for the build script to configure the jar config.
-		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
-			LoomGradleExtension extension = LoomGradleExtension.get(getProject());
+            final ZomboidVersionMeta versionInfo =
+                extension.getZomboidProvider().getVersionInfo();
 
-			if (extension.getMinecraftJarConfiguration().get() == MinecraftJarConfiguration.SERVER_ONLY) {
-				// Server only, nothing more to do.
-				return;
-			}
+            if (versionInfo == null) {
+                // Something has gone wrong, don't register the task.
+                return;
+            }
 
-			final MinecraftVersionMeta versionInfo = extension.getMinecraftProvider().getVersionInfo();
+            registerClientSetupTasks(getTasks(), versionInfo.hasNativesToExtract());
+        });
+    }
 
-			if (versionInfo == null) {
-				// Something has gone wrong, don't register the task.
-				return;
-			}
+    @Inject
+    protected abstract TaskContainer getTasks();
 
-			registerClientSetupTasks(getTasks(), versionInfo.hasNativesToExtract());
-		});
-	}
+    private void registerIDETasks() {
+        getTasks().register("genEclipseRuns", GenEclipseRunsTask.class, t -> {
+            t.setDescription("Generates Eclipse run configurations for this project.");
+            t.dependsOn(getIDELaunchConfigureTaskName(getProject()));
+            t.setGroup(Constants.TaskGroup.IDE);
+        });
 
-	private void registerIDETasks() {
-		getTasks().register("genEclipseRuns", GenEclipseRunsTask.class, t -> {
-			t.setDescription("Generates Eclipse run configurations for this project.");
-			t.dependsOn(getIDELaunchConfigureTaskName(getProject()));
-			t.setGroup(Constants.TaskGroup.IDE);
-		});
+        getTasks().register("vscode", GenVsCodeProjectTask.class, t -> {
+            t.setDescription("Generates VSCode launch configurations.");
+            t.dependsOn(getIDELaunchConfigureTaskName(getProject()));
+            t.setGroup(Constants.TaskGroup.IDE);
+        });
+    }
 
-		getTasks().register("vscode", GenVsCodeProjectTask.class, t -> {
-			t.setDescription("Generates VSCode launch configurations.");
-			t.dependsOn(getIDELaunchConfigureTaskName(getProject()));
-			t.setGroup(Constants.TaskGroup.IDE);
-		});
-	}
+    @Inject
+    protected abstract Project getProject();
 
-	private static String getRunConfigTaskName(RunConfigSettings config) {
-		String configName = config.getName();
-		return "run" + configName.substring(0, 1).toUpperCase() + configName.substring(1);
-	}
+    public static Provider<Task> getIDELaunchConfigureTaskName(Project project) {
+        return project.provider(() -> {
+            final ZomboidJarConfiguration jarConfiguration = LoomGradleExtension.get(project)
+                .getZomboidJarConfiguration()
+                .get();
+            final String name = jarConfiguration == ZomboidJarConfiguration.SERVER_ONLY
+                ? "configureLaunch"
+                : "configureClientLaunch";
+            return project.getTasks().getByName(name);
+        });
+    }
 
-	private void registerRunTasks() {
-		LoomGradleExtension extension = LoomGradleExtension.get(getProject());
+    private void registerRunTasks() {
+        LoomGradleExtension extension = LoomGradleExtension.get(getProject());
 
-		Preconditions.checkArgument(extension.getRunConfigs().size() == 0, "Run configurations must not be registered before loom");
+        Preconditions.checkArgument(
+            extension.getRunConfigs().size() == 0, "Run configurations must not be registered before loom");
 
-		extension.getRunConfigs().whenObjectAdded(config -> {
-			getTasks().register(getRunConfigTaskName(config), RunGameTask.class, config).configure(t -> {
-				t.setDescription("Starts the '" + config.getConfigName() + "' run configuration");
+        extension.getRunConfigs().whenObjectAdded(config -> {
+            getTasks()
+                .register(getRunConfigTaskName(config), RunGameTask.class, config)
+                .configure(t -> {
+                    t.setDescription("Starts the '" + config.getConfigName() + "' run configuration");
 
-				t.dependsOn(config.getEnvironment().equals("client") ? "configureClientLaunch" : "configureLaunch");
-			});
-		});
+                    t.dependsOn(
+                        config.getEnvironment().equals("client") ? "configureClientLaunch" : "configureLaunch");
+                });
+        });
 
-		extension.getRunConfigs().whenObjectRemoved(runConfigSettings -> {
-			getTasks().named(getRunConfigTaskName(runConfigSettings), task -> {
-				// Disable the task so it can't be run
-				task.setEnabled(false);
-			});
-		});
+        extension.getRunConfigs().whenObjectRemoved(runConfigSettings -> {
+            getTasks().named(getRunConfigTaskName(runConfigSettings), task -> {
+                // Disable the task so it can't be run
+                task.setEnabled(false);
+            });
+        });
 
-		extension.getRunConfigs().create("client", RunConfigSettings::client);
-		extension.getRunConfigs().create("server", RunConfigSettings::server);
+        extension.getRunConfigs().create("client", RunConfigSettings::client);
+        extension.getRunConfigs().create("server", RunConfigSettings::server);
 
-		// Remove the client or server run config when not required. Done by name to not remove any possible custom run configs
-		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
-			String taskName;
+        // Remove the client or server run config when not required. Done by name to not remove any possible custom run
+        // configs
+        GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
+            String taskName;
 
-			boolean serverOnly = extension.getMinecraftJarConfiguration().get() == MinecraftJarConfiguration.SERVER_ONLY;
-			boolean clientOnly = extension.getMinecraftJarConfiguration().get() == MinecraftJarConfiguration.CLIENT_ONLY;
+            boolean serverOnly = extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY;
+            boolean clientOnly = extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.CLIENT_ONLY;
 
-			if (serverOnly) {
-				// Server only, remove the client run config
-				taskName = "client";
-			} else if (clientOnly) {
-				// Client only, remove the server run config
-				taskName = "server";
-			} else {
-				return;
-			}
+            if (serverOnly) {
+                // Server only, remove the client run config
+                taskName = "client";
+            } else if (clientOnly) {
+                // Client only, remove the server run config
+                taskName = "server";
+            } else {
+                return;
+            }
 
-			extension.getRunConfigs().removeIf(settings -> settings.getName().equals(taskName));
-		});
-	}
+            extension.getRunConfigs().removeIf(settings -> settings.getName().equals(taskName));
+        });
+    }
 
-	private static void registerClientSetupTasks(TaskContainer tasks, boolean extractNatives) {
-		tasks.register("downloadAssets", DownloadAssetsTask.class, t -> {
-			t.setDescription("Downloads required game assets for Minecraft.");
-		});
+    private static String getRunConfigTaskName(RunConfigSettings config) {
+        String configName = config.getName();
+        return "run" + configName.substring(0, 1).toUpperCase() + configName.substring(1);
+    }
 
-		if (extractNatives) {
-			tasks.register("extractNatives", ExtractNativesTask.class, t -> {
-				t.setDescription("Extracts the Minecraft platform specific natives.");
-			});
-		}
+    private static void registerClientSetupTasks(TaskContainer tasks, boolean extractNatives) {
+        tasks.register("copyAssets", CopyAssetsTask.class, t -> {
+            t.setDescription(
+                "Copies the required game assets for Zomboid and also does file hash verification to make sure the " +
+                "files aren't corrupted from the official Steam depot.");
+        });
 
-		tasks.register("configureClientLaunch", task -> {
-			task.dependsOn(tasks.named("downloadAssets"));
-			task.dependsOn(tasks.named("configureLaunch"));
+        if (extractNatives) {
+            tasks.register("extractNatives", ExtractNativesTask.class, t -> {
+                t.setDescription("Extracts the Minecraft platform specific natives.");
+            });
+        }
 
-			if (extractNatives) {
-				task.dependsOn(tasks.named("extractNatives"));
-			}
+        tasks.register("configureClientLaunch", task -> {
+            task.dependsOn(tasks.named("copyAssets"));
+            task.dependsOn(tasks.named("configureLaunch"));
 
-			task.setDescription("Setup the required files to launch the Minecraft client");
-			task.setGroup(Constants.TaskGroup.FABRIC);
-		});
-	}
+            if (extractNatives) {
+                task.dependsOn(tasks.named("extractNatives"));
+            }
 
-	public static Provider<Task> getIDELaunchConfigureTaskName(Project project) {
-		return project.provider(() -> {
-			final MinecraftJarConfiguration jarConfiguration = LoomGradleExtension.get(project).getMinecraftJarConfiguration().get();
-			final String name = jarConfiguration == MinecraftJarConfiguration.SERVER_ONLY ? "configureLaunch" : "configureClientLaunch";
-			return project.getTasks().getByName(name);
-		});
-	}
+            task.setDescription("Setup the required files to launch the Minecraft client");
+            task.setGroup(Constants.TaskGroup.FABRIC);
+        });
+    }
+
+    private static void registerServerSetupTasks(TaskContainer tasks, boolean extractNatives) {
+        tasks.register("copyServerAssets", CopyAssetsTask.class, t -> {
+            t.setDescription(
+                "Copies the required game assets for Zomboid Server and also does file hash verification to make sure the " +
+                "files aren't corrupted from the official Steam depot.");
+        });
+
+        if (extractNatives) {
+            tasks.register("extractServerNatives", ExtractNativesTask.class, t -> {
+                t.setDescription("Extracts the platform specific natives.");
+            });
+        }
+
+        tasks.register("configureServerLaunch", task -> {
+            task.dependsOn(tasks.named("copyServerAssets"));
+            task.dependsOn(tasks.named("configureLaunch"));
+
+            if (extractNatives) {
+                task.dependsOn(tasks.named("extractServerNatives"));
+            }
+
+            task.setDescription("Setup the required files to launch the Zomboid Dedicated Server");
+            task.setGroup(Constants.TaskGroup.FABRIC);
+        });
+    }
 }

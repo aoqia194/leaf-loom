@@ -55,10 +55,10 @@ class MojangMappingsProjectTest extends Specification implements GradleProjectTe
 		setup:
 		def gradle = gradleProject(project: "mojangMappings", version: version)
 		gradle.buildGradle << '''
-			loom {
-				noIntermediateMappings()
-			}
-		'''
+            loom {
+                noIntermediateMappings()
+            }
+        '''
 
 		when:
 		def result = gradle.run(task: "build")
@@ -79,10 +79,10 @@ class MojangMappingsProjectTest extends Specification implements GradleProjectTe
                 dependencies {
                     minecraft "com.mojang:minecraft:1.18-pre5"
                     mappings loom.layered {
-						officialMojangMappings {
-							nameSyntheticMembers = false
-						}
-					}
+                        officialMojangMappings {
+                            nameSyntheticMembers = false
+                        }
+                    }
                 }
             '''
 
@@ -102,14 +102,14 @@ class MojangMappingsProjectTest extends Specification implements GradleProjectTe
 		def gradle = gradleProject(project: "minimalBase", version: version)
 
 		gradle.buildGradle << '''
-				dependencies {
-					minecraft "com.mojang:minecraft:1.18.2"
-					mappings loom.layered {
-						// This is the wrong method to call!
-						loom.officialMojangMappings()
-					}
-				}
-			'''
+                dependencies {
+                    minecraft "com.mojang:minecraft:1.18.2"
+                    mappings loom.layered {
+                        // This is the wrong method to call!
+                        loom.officialMojangMappings()
+                    }
+                }
+            '''
 
 		when:
 		def result = gradle.run(task: "build", expectFailure: true)

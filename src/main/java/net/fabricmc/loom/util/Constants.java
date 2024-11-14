@@ -28,137 +28,144 @@ import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Opcodes;
 
 public class Constants {
-	public static final String LIBRARIES_BASE = "https://libraries.minecraft.net/";
-	public static final String RESOURCES_BASE = "https://resources.download.minecraft.net/";
-	public static final String VERSION_MANIFESTS = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
-	public static final String EXPERIMENTAL_VERSIONS = "https://maven.fabricmc.net/net/minecraft/experimental_versions.json";
-	public static final String FABRIC_REPOSITORY = "https://maven.fabricmc.net/";
+    public static final String RESOURCES_BASE = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\ProjectZomboid";
+    public static final String RESOURCES_BASE_SERVER =
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Project Zomboid Dedicated Server";
+    public static final String INDEX_MANIFEST_PATH =
+        "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/indexes/";
+    public static final String VERSION_MANIFESTS =
+        "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests/";
+    public static final String FABRIC_REPOSITORY = "https://maven.fabricmc.net/";
 
-	public static final int ASM_VERSION = Opcodes.ASM9;
-	public static final String RELEASE_TIME_1_3 = "2012-07-25T22:00:00+00:00";
+    public static final int ASM_VERSION = Opcodes.ASM9;
 
-	private Constants() {
-	}
+    private Constants() {
+    }
 
-	/**
-	 * Constants related to configurations.
-	 */
-	public static final class Configurations {
-		public static final String MOD_COMPILE_CLASSPATH = "modCompileClasspath";
-		public static final String MOD_COMPILE_CLASSPATH_MAPPED = "modCompileClasspathMapped";
-		public static final String INCLUDE = "include";
-		public static final String INCLUDE_INTERNAL = "includeInternal";
-		public static final String MINECRAFT = "minecraft";
+    /**
+     * Constants related to configurations.
+     */
+    public static final class Configurations {
+        public static final String MOD_COMPILE_CLASSPATH = "modCompileClasspath";
+        public static final String MOD_COMPILE_CLASSPATH_MAPPED = "modCompileClasspathMapped";
+        public static final String INCLUDE = "include";
+        public static final String INCLUDE_INTERNAL = "includeInternal";
+        public static final String ZOMBOID = "zomboid";
 
-		public static final String MINECRAFT_COMPILE_LIBRARIES = "minecraftLibraries";
-		public static final String MINECRAFT_RUNTIME_LIBRARIES = "minecraftRuntimeLibraries";
+        public static final String ZOMBOID_COMPILE_LIBRARIES = "zomboidLibraries";
+        public static final String ZOMBOID_RUNTIME_LIBRARIES = "zomboidRuntimeLibraries";
 
-		/**
-		 * These configurations contain the minecraft client libraries.
-		 */
-		public static final String MINECRAFT_CLIENT_COMPILE_LIBRARIES = "minecraftClientLibraries";
-		public static final String MINECRAFT_CLIENT_RUNTIME_LIBRARIES = "minecraftClientRuntimeLibraries";
+        /**
+         * These configurations contain the zomboid client libraries.
+         */
+        public static final String ZOMBOID_CLIENT_COMPILE_LIBRARIES = "zomboidClientLibraries";
 
-		/**
-		 * The server specific configurations will be empty when using a legacy (pre 21w38a server jar)
-		 * find the client only dependencies on the "minecraftLibraries" config.
-		 */
-		public static final String MINECRAFT_SERVER_COMPILE_LIBRARIES = "minecraftServerLibraries";
-		public static final String MINECRAFT_SERVER_RUNTIME_LIBRARIES = "minecraftServerRuntimeLibraries";
-		/**
-		 * Before Minecraft 1.19-pre1 this contains libraries that need to be extracted otherwise this goes on the runtime classpath.
-		 */
-		public static final String MINECRAFT_NATIVES = "minecraftNatives";
-		public static final String MAPPINGS = "mappings";
-		public static final String MAPPINGS_FINAL = "mappingsFinal";
-		public static final String LOADER_DEPENDENCIES = "loaderLibraries";
-		public static final String LOOM_DEVELOPMENT_DEPENDENCIES = "loomDevelopmentDependencies";
-		public static final String MAPPING_CONSTANTS = "mappingsConstants";
-		public static final String UNPICK_CLASSPATH = "unpick";
-		/**
-		 * A configuration that behaves like {@code runtimeOnly} but is not
-		 * exposed in {@code runtimeElements} to dependents. A bit like
-		 * {@code testRuntimeOnly}, but for mods.
-		 */
-		public static final String LOCAL_RUNTIME = "localRuntime";
-		public static final String NAMED_ELEMENTS = "namedElements";
+        public static final String ZOMBOID_CLIENT_RUNTIME_LIBRARIES = "zomboidClientRuntimeLibraries";
 
-		private Configurations() {
-		}
-	}
+        /**
+         * Find the client only dependencies on the "zomboidLibraries" config.
+         */
+        public static final String ZOMBOID_SERVER_COMPILE_LIBRARIES = "zomboidServerLibraries";
 
-	public static final class MixinArguments {
-		public static final String IN_MAP_FILE_NAMED_INTERMEDIARY = "inMapFileNamedIntermediary";
-		public static final String OUT_MAP_FILE_NAMED_INTERMEDIARY = "outMapFileNamedIntermediary";
-		public static final String OUT_REFMAP_FILE = "outRefMapFile";
-		public static final String DEFAULT_OBFUSCATION_ENV = "defaultObfuscationEnv";
-		public static final String QUIET = "quiet";
-		public static final String SHOW_MESSAGE_TYPES = "showMessageTypes";
+        public static final String ZOMBOID_SERVER_RUNTIME_LIBRARIES = "zomboidServerRuntimeLibraries";
+        /**
+         * Before Minecraft 1.19-pre1 this contains libraries that need to be extracted otherwise this goes on the
+         * runtime classpath.
+         */
+        public static final String ZOMBOID_NATIVES = "zomboidNatives";
 
-		private MixinArguments() {
-		}
-	}
+        public static final String MAPPINGS = "mappings";
+        public static final String MAPPINGS_FINAL = "mappingsFinal";
+        public static final String LOADER_DEPENDENCIES = "loaderLibraries";
+        public static final String LOOM_DEVELOPMENT_DEPENDENCIES = "loomDevelopmentDependencies";
+        public static final String MAPPING_CONSTANTS = "mappingsConstants";
+        public static final String UNPICK_CLASSPATH = "unpick";
+        /**
+         * A configuration that behaves like {@code runtimeOnly} but is not exposed in {@code runtimeElements} to
+         * dependents. A bit like {@code testRuntimeOnly}, but for mods.
+         */
+        public static final String LOCAL_RUNTIME = "localRuntime";
 
-	public static final class Knot {
-		public static final String KNOT_CLIENT = "net.fabricmc.loader.launch.knot.KnotClient";
-		public static final String KNOT_SERVER = "net.fabricmc.loader.launch.knot.KnotServer";
+        public static final String NAMED_ELEMENTS = "namedElements";
 
-		private Knot() {
-		}
-	}
+        private Configurations() {
+        }
+    }
 
-	public static final class TaskGroup {
-		public static final String FABRIC = "fabric";
-		public static final String IDE = "ide";
+    public static final class MixinArguments {
+        public static final String IN_MAP_FILE_NAMED_INTERMEDIARY = "inMapFileNamedIntermediary";
+        public static final String OUT_MAP_FILE_NAMED_INTERMEDIARY = "outMapFileNamedIntermediary";
+        public static final String OUT_REFMAP_FILE = "outRefMapFile";
+        public static final String DEFAULT_OBFUSCATION_ENV = "defaultObfuscationEnv";
+        public static final String QUIET = "quiet";
+        public static final String SHOW_MESSAGE_TYPES = "showMessageTypes";
 
-		private TaskGroup() {
-		}
-	}
+        private MixinArguments() {
+        }
+    }
 
-	public static final class Task {
-		public static final String PROCESS_INCLUDE_JARS = "processIncludeJars";
+    public static final class Knot {
+        public static final String KNOT_CLIENT = "net.fabricmc.loader.launch.knot.KnotClient";
+        public static final String KNOT_SERVER = "net.fabricmc.loader.launch.knot.KnotServer";
 
-		private Task() {
-		}
-	}
+        private Knot() {
+        }
+    }
 
-	public static final class CustomModJsonKeys {
-		public static final String INJECTED_INTERFACE = "loom:injected_interfaces";
-		public static final String PROVIDED_JAVADOC = "loom:provided_javadoc";
-	}
+    public static final class TaskGroup {
+        public static final String FABRIC = "fabric";
+        public static final String IDE = "ide";
 
-	public static final class Properties {
-		public static final String DONT_REMAP = "fabric.loom.dontRemap";
-		public static final String DISABLE_REMAPPED_VARIANTS = "fabric.loom.disableRemappedVariants";
-		public static final String DISABLE_PROJECT_DEPENDENT_MODS = "fabric.loom.disableProjectDependentMods";
-		public static final String LIBRARY_PROCESSORS = "fabric.loom.libraryProcessors";
-		@ApiStatus.Experimental
-		public static final String SANDBOX = "fabric.loom.experimental.sandbox";
-		/**
-		 * When set the version of java that will be assumed that the game will run on, this defaults to the current java version.
-		 * Only set this when you have a good reason to do so, the default should be fine for almost all cases.
-		 */
-		public static final String RUNTIME_JAVA_COMPATIBILITY_VERSION = "fabric.loom.runtimeJavaCompatibilityVersion";
-	}
+        private TaskGroup() {
+        }
+    }
 
-	public static final class Manifest {
-		public static final String PATH = "META-INF/MANIFEST.MF";
+    public static final class Task {
+        public static final String PROCESS_INCLUDE_JARS = "processIncludeJars";
 
-		public static final String REMAP_KEY = "Fabric-Loom-Remap";
-		public static final String MIXIN_REMAP_TYPE = "Fabric-Loom-Mixin-Remap-Type";
-		public static final String MAPPING_NAMESPACE = "Fabric-Mapping-Namespace";
-		public static final String SPLIT_ENV = "Fabric-Loom-Split-Environment";
-		public static final String SPLIT_ENV_NAME = "Fabric-Loom-Split-Environment-Name";
-		public static final String CLIENT_ENTRIES = "Fabric-Loom-Client-Only-Entries";
-		public static final String JAR_TYPE = "Fabric-Jar-Type";
-		public static final String GRADLE_VERSION = "Fabric-Gradle-Version";
-		public static final String LOOM_VERSION = "Fabric-Loom-Version";
-		public static final String MIXIN_COMPILE_EXTENSIONS_VERSION = "Fabric-Mixin-Compile-Extensions-Version";
-		public static final String MINECRAFT_VERSION = "Fabric-Minecraft-Version";
-		public static final String TINY_REMAPPER_VERSION = "Fabric-Tiny-Remapper-Version";
-		public static final String FABRIC_LOADER_VERSION = "Fabric-Loader-Version";
-		public static final String MIXIN_VERSION = "Fabric-Mixin-Version";
-		public static final String MIXIN_GROUP = "Fabric-Mixin-Group";
-		public static final String KNOWN_IDY_BSMS = "Fabric-Loom-Known-Indy-BSMS";
-	}
+        private Task() {
+        }
+    }
+
+    public static final class CustomModJsonKeys {
+        public static final String INJECTED_INTERFACE = "loom:injected_interfaces";
+        public static final String PROVIDED_JAVADOC = "loom:provided_javadoc";
+    }
+
+    public static final class Properties {
+        public static final String DONT_REMAP = "fabric.loom.dontRemap";
+        public static final String DISABLE_REMAPPED_VARIANTS = "fabric.loom.disableRemappedVariants";
+        public static final String DISABLE_PROJECT_DEPENDENT_MODS = "fabric.loom.disableProjectDependentMods";
+        public static final String LIBRARY_PROCESSORS = "fabric.loom.libraryProcessors";
+
+        @ApiStatus.Experimental
+        public static final String SANDBOX = "fabric.loom.experimental.sandbox";
+        /**
+         * When set the version of java that will be assumed that the game will run on, this defaults to the current
+         * java version. Only set this when you have a good reason to do so, the default should be fine for almost all
+         * cases.
+         */
+        public static final String RUNTIME_JAVA_COMPATIBILITY_VERSION = "fabric.loom.runtimeJavaCompatibilityVersion";
+    }
+
+    public static final class Manifest {
+        public static final String PATH = "META-INF/MANIFEST.MF";
+
+        public static final String REMAP_KEY = "Fabric-Loom-Remap";
+        public static final String MIXIN_REMAP_TYPE = "Fabric-Loom-Mixin-Remap-Type";
+        public static final String MAPPING_NAMESPACE = "Fabric-Mapping-Namespace";
+        public static final String SPLIT_ENV = "Fabric-Loom-Split-Environment";
+        public static final String SPLIT_ENV_NAME = "Fabric-Loom-Split-Environment-Name";
+        public static final String CLIENT_ENTRIES = "Fabric-Loom-Client-Only-Entries";
+        public static final String JAR_TYPE = "Fabric-Jar-Type";
+        public static final String GRADLE_VERSION = "Fabric-Gradle-Version";
+        public static final String LOOM_VERSION = "Fabric-Loom-Version";
+        public static final String MIXIN_COMPILE_EXTENSIONS_VERSION = "Fabric-Mixin-Compile-Extensions-Version";
+        public static final String ZOMBOID_VERSION = "Leaf-Zomboid-Version";
+        public static final String TINY_REMAPPER_VERSION = "Fabric-Tiny-Remapper-Version";
+        public static final String FABRIC_LOADER_VERSION = "Fabric-Loader-Version";
+        public static final String MIXIN_VERSION = "Fabric-Mixin-Version";
+        public static final String MIXIN_GROUP = "Fabric-Mixin-Group";
+        public static final String KNOWN_IDY_BSMS = "Fabric-Loom-Known-Indy-BSMS";
+    }
 }

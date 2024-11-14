@@ -37,20 +37,20 @@ class SandboxMetadataTest extends Specification {
 	def "test sandbox metadata"() {
 		given:
 		def sandboxJar = createSandboxJar("""
-			{
-				"version": 1,
-				"mainClass": "net.fabricmc.loom.test.Main",
-				"platforms": {
-					"windows": [
-						"arm64",
-						"x86_64"
-					],
-					"macos": [
-						"arm64"
-					]
-				}
-			}
-			""")
+            {
+                "version": 1,
+                "mainClass": "net.fabricmc.loom.test.Main",
+                "platforms": {
+                    "windows": [
+                        "arm64",
+                        "x86_64"
+                    ],
+                    "macos": [
+                        "arm64"
+                    ]
+                }
+            }
+            """)
 
 		when:
 		def metadata = SandboxMetadata.readFromJar(sandboxJar)

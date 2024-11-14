@@ -32,15 +32,15 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class DeletingFileVisitor extends SimpleFileVisitor<Path> {
-	@Override
-	public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
-		Files.delete(path);
-		return FileVisitResult.CONTINUE;
-	}
+    @Override
+    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+        Files.delete(path);
+        return FileVisitResult.CONTINUE;
+    }
 
-	@Override
-	public FileVisitResult postVisitDirectory(Path path, IOException e) throws IOException {
-		Files.delete(path);
-		return FileVisitResult.CONTINUE;
-	}
+    @Override
+    public FileVisitResult postVisitDirectory(Path path, IOException e) throws IOException {
+        Files.delete(path);
+        return FileVisitResult.CONTINUE;
+    }
 }

@@ -26,12 +26,11 @@ package net.fabricmc.loom.configuration.providers.mappings;
 
 import java.util.List;
 import java.util.Locale;
-
 import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
 
 public record LayeredMappingSpec(List<MappingsSpec<?>> layers) {
-	public String getVersion() {
-		// TODO something better?
-		return String.format(Locale.ENGLISH, "layered+hash.%d", Math.abs(hashCode()));
-	}
+    public String getVersion() {
+        // TODO something better?
+        return String.format(Locale.ENGLISH, "layered+hash.%d", Math.abs(hashCode()));
+    }
 }

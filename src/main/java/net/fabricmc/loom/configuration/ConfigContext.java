@@ -24,13 +24,14 @@
 
 package net.fabricmc.loom.configuration;
 
-import org.gradle.api.Project;
-
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.util.service.ServiceFactory;
+import org.gradle.api.Project;
 
 public interface ConfigContext {
-	Project project();
-	ServiceFactory serviceFactory();
-	LoomGradleExtension extension();
+    Project project();
+
+    ServiceFactory serviceFactory();
+
+    LoomGradleExtension extension();
 }

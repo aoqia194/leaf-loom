@@ -32,96 +32,101 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import kotlin.Unit;
+import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.extension.MixinExtension;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.extension.MixinExtension;
-
 public class KaptApInvoker extends AnnotationProcessorInvoker<JavaCompile> {
-	private final KaptExtension kaptExtension = project.getExtensions().getByType(KaptExtension.class);
-	// Refmap will be written to here with mixin, then moved after JavaCompile to the correct place
-	private final File dummyRefmapDirectory;
+    private final KaptExtension kaptExtension = project.getExtensions().getByType(KaptExtension.class);
+    // Refmap will be written to here with mixin, then moved after JavaCompile to the correct place
+    private final File dummyRefmapDirectory;
 
-	public KaptApInvoker(Project project) {
-		super(
-				project,
-				AnnotationProcessorInvoker.getApConfigurations(project, KaptApInvoker::getKaptConfigurationName),
-				getInvokerTasks(project),
-				"Kotlin");
+    public KaptApInvoker(Project project) {
+        super(
+                project,
+                AnnotationProcessorInvoker.getApConfigurations(project, KaptApInvoker::getKaptConfigurationName),
+                getInvokerTasks(project),
+                "Kotlin");
 
-		try {
-			dummyRefmapDirectory = Files.createTempDirectory("temp_refmap").toFile();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            dummyRefmapDirectory = Files.createTempDirectory("temp_refmap").toFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-		dummyRefmapDirectory.deleteOnExit();
+        dummyRefmapDirectory.deleteOnExit();
 
-		// Needed for mixin AP to run
-		kaptExtension.setIncludeCompileClasspath(false);
-	}
+        // Needed for mixin AP to run
+        kaptExtension.setIncludeCompileClasspath(false);
+    }
 
-	private static Map<SourceSet, JavaCompile> getInvokerTasks(Project project) {
-		MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
-		return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.JAVA)
-				.collect(Collectors.toMap(Map.Entry::getKey, entry -> Objects.requireNonNull((JavaCompile) entry.getValue())));
-	}
+    private static Map<SourceSet, JavaCompile> getInvokerTasks(Project project) {
+        MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
+        return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.JAVA)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, entry -> Objects.requireNonNull((JavaCompile) entry.getValue())));
+    }
 
-	@Override
-	public void configureMixin() {
-		super.configureMixin();
+    @Override
+    public void configureMixin() {
+        super.configureMixin();
 
-		for (Map.Entry<SourceSet, JavaCompile> entry : invokerTasks.entrySet()) {
-			// Kapt only allows specifying javac args to all annotation processors at once. So we need to specify some dummy
-			// target location for the refmap and then move it to the correct place for each sourceset
-			JavaCompile task = entry.getValue();
-			SourceSet sourceSet = entry.getKey();
-			task.doLast(t -> {
-				try {
-					String refmapName = Objects.requireNonNull(MixinExtension.getMixinInformationContainer(sourceSet)).refmapNameProvider().get();
-					Path src = Paths.get(getRefmapDestination(task, refmapName));
-					Path dest = Paths.get(task.getDestinationDirectory().get().getAsFile().toString(), refmapName);
+        for (Map.Entry<SourceSet, JavaCompile> entry : invokerTasks.entrySet()) {
+            // Kapt only allows specifying javac args to all annotation processors at once. So we need to specify some
+            // dummy
+            // target location for the refmap and then move it to the correct place for each sourceset
+            JavaCompile task = entry.getValue();
+            SourceSet sourceSet = entry.getKey();
+            task.doLast(t -> {
+                try {
+                    String refmapName = Objects.requireNonNull(MixinExtension.getMixinInformationContainer(sourceSet))
+                            .refmapNameProvider()
+                            .get();
+                    Path src = Paths.get(getRefmapDestination(task, refmapName));
+                    Path dest = Paths.get(
+                            task.getDestinationDirectory().get().getAsFile().toString(), refmapName);
 
-					// Possible that no mixin annotations exist
-					if (Files.exists(src)) {
-						project.getLogger().info("Copying refmap from " + src + " to " + dest);
-						Files.move(src, dest);
-					}
-				} catch (IOException e) {
-					project.getLogger().warn("Could not move refmap generated by kapt for task " + task, e);
-				}
-			});
-		}
-	}
+                    // Possible that no mixin annotations exist
+                    if (Files.exists(src)) {
+                        project.getLogger().info("Copying refmap from " + src + " to " + dest);
+                        Files.move(src, dest);
+                    }
+                } catch (IOException e) {
+                    project.getLogger().warn("Could not move refmap generated by kapt for task " + task, e);
+                }
+            });
+        }
+    }
 
-	// Pulled out from the internal class: https://github.com/JetBrains/kotlin/blob/33a0ec9b4f40f3d6f1f96b2db504ade4c2fafe03/libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/internal/kapt/Kapt3KotlinGradleSubplugin.kt#L92
-	private static String getKaptConfigurationName(SourceSet sourceSet) {
-		String sourceSetName = sourceSet.getName();
+    // Pulled out from the internal class:
+    // https://github.com/JetBrains/kotlin/blob/33a0ec9b4f40f3d6f1f96b2db504ade4c2fafe03/libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/internal/kapt/Kapt3KotlinGradleSubplugin.kt#L92
+    private static String getKaptConfigurationName(SourceSet sourceSet) {
+        String sourceSetName = sourceSet.getName();
 
-		if (!sourceSetName.equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
-			return "kapt" + (sourceSetName.substring(0, 1).toUpperCase() + sourceSetName.substring(1));
-		}
+        if (!sourceSetName.equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
+            return "kapt" + (sourceSetName.substring(0, 1).toUpperCase() + sourceSetName.substring(1));
+        }
 
-		return "kapt";
-	}
+        return "kapt";
+    }
 
-	@Override
-	protected void passArgument(JavaCompile compileTask, String key, String value) {
-		// Note: this MUST be run early on, before kapt uses this data, and there is only a point to setting the value once since
-		// kapt shares the options with all java compilers
-		kaptExtension.arguments(args -> {
-			args.arg(key, value);
-			return Unit.INSTANCE;
-		});
-	}
+    @Override
+    protected void passArgument(JavaCompile compileTask, String key, String value) {
+        // Note: this MUST be run early on, before kapt uses this data, and there is only a point to setting the value
+        // once since
+        // kapt shares the options with all java compilers
+        kaptExtension.arguments(args -> {
+            args.arg(key, value);
+            return Unit.INSTANCE;
+        });
+    }
 
-	@Override
-	protected File getRefmapDestinationDir(JavaCompile task) {
-		return dummyRefmapDirectory;
-	}
+    @Override
+    protected File getRefmapDestinationDir(JavaCompile task) {
+        return dummyRefmapDirectory;
+    }
 }

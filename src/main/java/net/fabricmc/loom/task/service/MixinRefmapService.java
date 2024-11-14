@@ -24,21 +24,13 @@
 
 package net.fabricmc.loom.task.service;
 
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.google.gson.JsonObject;
-import org.gradle.api.Project;
-import org.gradle.api.provider.ListProperty;
-import org.gradle.api.provider.Property;
-import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.SourceSet;
-
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.extension.MixinExtension;
 import net.fabricmc.loom.task.RemapJarTask;
@@ -48,84 +40,96 @@ import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
 import net.fabricmc.loom.util.service.Service;
 import net.fabricmc.loom.util.service.ServiceFactory;
 import net.fabricmc.loom.util.service.ServiceType;
+import org.gradle.api.Project;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.SourceSet;
 
 public class MixinRefmapService extends Service<MixinRefmapService.Options> {
-	public static final ServiceType<Options, MixinRefmapService> TYPE = new ServiceType<>(Options.class, MixinRefmapService.class);
+    public static final ServiceType<Options, MixinRefmapService> TYPE =
+            new ServiceType<>(Options.class, MixinRefmapService.class);
 
-	public interface Options extends Service.Options {
-		@Input
-		ListProperty<String> getMixinConfigs();
-		@Input
-		Property<String> getRefmapName();
-	}
+    public interface Options extends Service.Options {
+        @Input
+        ListProperty<String> getMixinConfigs();
 
-	public static Provider<List<Options>> createOptions(RemapJarTask task) {
-		final Project project = task.getProject();
-		return project.provider(() -> {
-			final LoomGradleExtension extension = LoomGradleExtension.get(project);
+        @Input
+        Property<String> getRefmapName();
+    }
 
-			if (!extension.getMixin().getUseLegacyMixinAp().get()) {
-				return List.of();
-			}
+    public static Provider<List<Options>> createOptions(RemapJarTask task) {
+        final Project project = task.getProject();
+        return project.provider(() -> {
+            final LoomGradleExtension extension = LoomGradleExtension.get(project);
 
-			final MixinExtension mixinExtension = extension.getMixin();
+            if (!extension.getMixin().getUseLegacyMixinAp().get()) {
+                return List.of();
+            }
 
-			List<Provider<Options>> options = new ArrayList<>();
+            final MixinExtension mixinExtension = extension.getMixin();
 
-			for (SourceSet sourceSet : mixinExtension.getMixinSourceSets()) {
-				MixinExtension.MixinInformationContainer container = Objects.requireNonNull(
-						MixinExtension.getMixinInformationContainer(sourceSet)
-				);
+            List<Provider<Options>> options = new ArrayList<>();
 
-				final List<String> rootPaths = ClientEntriesService.getRootPaths(sourceSet.getResources().getSrcDirs());
+            for (SourceSet sourceSet : mixinExtension.getMixinSourceSets()) {
+                MixinExtension.MixinInformationContainer container =
+                        Objects.requireNonNull(MixinExtension.getMixinInformationContainer(sourceSet));
 
-				final String refmapName = container.refmapNameProvider().get();
-				final List<String> mixinConfigs = container.sourceSet().getResources()
-						.matching(container.mixinConfigPattern())
-						.getFiles()
-						.stream()
-						.map(ClientEntriesService.relativePath(rootPaths))
-						.toList();
+                final List<String> rootPaths = ClientEntriesService.getRootPaths(
+                        sourceSet.getResources().getSrcDirs());
 
-				options.add(createOptions(project, mixinConfigs, refmapName));
-			}
+                final String refmapName = container.refmapNameProvider().get();
+                final List<String> mixinConfigs =
+                        container
+                                .sourceSet()
+                                .getResources()
+                                .matching(container.mixinConfigPattern())
+                                .getFiles()
+                                .stream()
+                                .map(ClientEntriesService.relativePath(rootPaths))
+                                .toList();
 
-			return options.stream().map(Provider::get).toList();
-		});
-	}
+                options.add(createOptions(project, mixinConfigs, refmapName));
+            }
 
-	private static Provider<Options> createOptions(Project project, List<String> mixinConfigs, String refmapName) {
-		return TYPE.create(project, o -> {
-			o.getMixinConfigs().set(mixinConfigs);
-			o.getRefmapName().set(refmapName);
-		});
-	}
+            return options.stream().map(Provider::get).toList();
+        });
+    }
 
-	public MixinRefmapService(Options options, ServiceFactory serviceFactory) {
-		super(options, serviceFactory);
-	}
+    private static Provider<Options> createOptions(Project project, List<String> mixinConfigs, String refmapName) {
+        return TYPE.create(project, o -> {
+            o.getMixinConfigs().set(mixinConfigs);
+            o.getRefmapName().set(refmapName);
+        });
+    }
 
-	public void applyToJar(Path path) throws IOException {
-		final FabricModJson fabricModJson = FabricModJsonFactory.createFromZipNullable(path);
+    public MixinRefmapService(Options options, ServiceFactory serviceFactory) {
+        super(options, serviceFactory);
+    }
 
-		if (fabricModJson == null) {
-			return;
-		}
+    public void applyToJar(Path path) throws IOException {
+        final FabricModJson fabricModJson = FabricModJsonFactory.createFromZipNullable(path);
 
-		final List<String> allMixinConfigs = fabricModJson.getMixinConfigurations();
-		final List<String> mixinConfigs = getOptions().getMixinConfigs().get().stream()
-				.filter(allMixinConfigs::contains)
-				.toList();
-		final String refmapName = getOptions().getRefmapName().get();
+        if (fabricModJson == null) {
+            return;
+        }
 
-		if (ZipUtils.contains(path, refmapName)) {
-			int transformed = ZipUtils.transformJson(JsonObject.class, path, mixinConfigs.stream().collect(Collectors.toMap(s -> s, s -> json -> {
-				if (!json.has("refmap")) {
-					json.addProperty("refmap", refmapName);
-				}
+        final List<String> allMixinConfigs = fabricModJson.getMixinConfigurations();
+        final List<String> mixinConfigs = getOptions().getMixinConfigs().get().stream()
+                .filter(allMixinConfigs::contains)
+                .toList();
+        final String refmapName = getOptions().getRefmapName().get();
 
-				return json;
-			})));
-		}
-	}
+        if (ZipUtils.contains(path, refmapName)) {
+            int transformed = ZipUtils.transformJson(
+                    JsonObject.class, path, mixinConfigs.stream().collect(Collectors.toMap(s -> s, s -> json -> {
+                        if (!json.has("refmap")) {
+                            json.addProperty("refmap", refmapName);
+                        }
+
+                        return json;
+                    })));
+        }
+    }
 }

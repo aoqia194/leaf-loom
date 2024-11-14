@@ -27,47 +27,43 @@ package net.fabricmc.loom.decompilers.vineflower;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-
+import net.fabricmc.fernflower.api.IFabricJavadocProvider;
+import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
 import org.jetbrains.java.decompiler.main.Fernflower;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 
-import net.fabricmc.fernflower.api.IFabricJavadocProvider;
-import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
-
 public final class VineflowerDecompiler implements LoomInternalDecompiler {
-	@Override
-	public void decompile(Context context) {
-		Path sourcesDestination = context.sourcesDestination();
-		Path linemapDestination = context.linemapDestination();
+    @Override
+    public void decompile(Context context) {
+        Path sourcesDestination = context.sourcesDestination();
+        Path linemapDestination = context.linemapDestination();
 
-		final Map<String, Object> options = new HashMap<>(
-				Map.of(
-					IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1",
-					IFernflowerPreferences.BYTECODE_SOURCE_MAPPING, "1",
-					IFernflowerPreferences.REMOVE_SYNTHETIC, "1",
-					IFernflowerPreferences.LOG_LEVEL, "trace",
-					IFernflowerPreferences.THREADS, String.valueOf(context.numberOfThreads()),
-					IFernflowerPreferences.INDENT_STRING, "\t",
-					IFabricJavadocProvider.PROPERTY_NAME, new TinyJavadocProvider(context.javaDocs().toFile())
-				)
-		);
+        final Map<String, Object> options = new HashMap<>(Map.of(
+                IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1",
+                IFernflowerPreferences.BYTECODE_SOURCE_MAPPING, "1",
+                IFernflowerPreferences.REMOVE_SYNTHETIC, "1",
+                IFernflowerPreferences.LOG_LEVEL, "trace",
+                IFernflowerPreferences.THREADS, String.valueOf(context.numberOfThreads()),
+                IFernflowerPreferences.INDENT_STRING, "\t",
+                IFabricJavadocProvider.PROPERTY_NAME,
+                        new TinyJavadocProvider(context.javaDocs().toFile())));
 
-		options.putAll(context.options());
+        options.putAll(context.options());
 
-		IResultSaver saver = new ThreadSafeResultSaver(sourcesDestination::toFile, linemapDestination::toFile);
-		Fernflower ff = new Fernflower(saver, options, new VineflowerLogger(context.logger()));
+        IResultSaver saver = new ThreadSafeResultSaver(sourcesDestination::toFile, linemapDestination::toFile);
+        Fernflower ff = new Fernflower(saver, options, new VineflowerLogger(context.logger()));
 
-		for (Path library : context.libraries()) {
-			ff.addLibrary(library.toFile());
-		}
+        for (Path library : context.libraries()) {
+            ff.addLibrary(library.toFile());
+        }
 
-		ff.addSource(context.compiledJar().toFile());
+        ff.addSource(context.compiledJar().toFile());
 
-		try {
-			ff.decompileContext();
-		} finally {
-			ff.clearContext();
-		}
-	}
+        try {
+            ff.decompileContext();
+        } finally {
+            ff.clearContext();
+        }
+    }
 }

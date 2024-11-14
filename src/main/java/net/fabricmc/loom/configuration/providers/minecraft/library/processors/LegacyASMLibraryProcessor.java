@@ -26,7 +26,6 @@ package net.fabricmc.loom.configuration.providers.minecraft.library.processors;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
 import net.fabricmc.loom.configuration.providers.minecraft.library.Library;
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext;
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessor;
@@ -36,20 +35,20 @@ import net.fabricmc.loom.util.Platform;
  * Never depend on the legacy "asm-all".
  */
 public class LegacyASMLibraryProcessor extends LibraryProcessor {
-	private static final String LEGACY_ASM = "org.ow2.asm:asm-all";
+    private static final String LEGACY_ASM = "org.ow2.asm:asm-all";
 
-	public LegacyASMLibraryProcessor(Platform platform, LibraryContext context) {
-		super(platform, context);
-	}
+    public LegacyASMLibraryProcessor(Platform platform, LibraryContext context) {
+        super(platform, context);
+    }
 
-	@Override
-	public ApplicationResult getApplicationResult() {
-		// Always attempt to remove
-		return ApplicationResult.MUST_APPLY;
-	}
+    @Override
+    public ApplicationResult getApplicationResult() {
+        // Always attempt to remove
+        return ApplicationResult.MUST_APPLY;
+    }
 
-	@Override
-	public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
-		return library -> !library.is(LEGACY_ASM);
-	}
+    @Override
+    public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
+        return library -> !library.is(LEGACY_ASM);
+    }
 }

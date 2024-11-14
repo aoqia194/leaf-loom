@@ -35,12 +35,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-
-import org.gradle.api.Project;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.processor.MappingProcessorContext;
 import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
@@ -48,131 +42,144 @@ import net.fabricmc.loom.api.processor.ProcessorContext;
 import net.fabricmc.loom.api.processor.SpecContext;
 import net.fabricmc.loom.util.Checksum;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.gradle.api.Project;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class MinecraftJarProcessorManager {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MinecraftJarProcessorManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MinecraftJarProcessorManager.class);
 
-	private final List<ProcessorEntry<?>> jarProcessors;
+    private final List<ProcessorEntry<?>> jarProcessors;
 
-	private MinecraftJarProcessorManager(List<ProcessorEntry<?>> jarProcessors) {
-		this.jarProcessors = Collections.unmodifiableList(jarProcessors);
-	}
+    private MinecraftJarProcessorManager(List<ProcessorEntry<?>> jarProcessors) {
+        this.jarProcessors = Collections.unmodifiableList(jarProcessors);
+    }
 
-	@Nullable
-	public static MinecraftJarProcessorManager create(Project project) {
-		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		List<MinecraftJarProcessor<?>> processors = new ArrayList<>(extension.getMinecraftJarProcessors().get());
+    @Nullable
+    public static MinecraftJarProcessorManager create(Project project) {
+        final LoomGradleExtension extension = LoomGradleExtension.get(project);
+        List<MinecraftJarProcessor<?>> processors =
+                new ArrayList<>(extension.getZomboidJarProcessors().get());
 
-		for (JarProcessor legacyProcessor : extension.getGameJarProcessors().get()) {
-			processors.add(project.getObjects().newInstance(LegacyJarProcessorWrapper.class, legacyProcessor));
-		}
+        for (JarProcessor legacyProcessor : extension.getGameJarProcessors().get()) {
+            processors.add(project.getObjects().newInstance(LegacyJarProcessorWrapper.class, legacyProcessor));
+        }
 
-		return MinecraftJarProcessorManager.create(processors, SpecContextImpl.create(project));
-	}
+        return MinecraftJarProcessorManager.create(processors, SpecContextImpl.create(project));
+    }
 
-	@Nullable
-	public static MinecraftJarProcessorManager create(List<MinecraftJarProcessor<?>> processors, SpecContext context) {
-		List<ProcessorEntry<?>> entries = new ArrayList<>();
+    @Nullable
+    public static MinecraftJarProcessorManager create(List<MinecraftJarProcessor<?>> processors, SpecContext context) {
+        List<ProcessorEntry<?>> entries = new ArrayList<>();
 
-		for (MinecraftJarProcessor<?> processor : processors) {
-			LOGGER.debug("Building processor spec for {}", processor.getName());
-			MinecraftJarProcessor.Spec spec = processor.buildSpec(context);
+        for (MinecraftJarProcessor<?> processor : processors) {
+            LOGGER.debug("Building processor spec for {}", processor.getName());
+            MinecraftJarProcessor.Spec spec = processor.buildSpec(context);
 
-			if (spec != null) {
-				LOGGER.debug("Adding processor entry for {}", processor.getName());
-				entries.add(new ProcessorEntry<>(processor, spec));
-			}
-		}
+            if (spec != null) {
+                LOGGER.debug("Adding processor entry for {}", processor.getName());
+                entries.add(new ProcessorEntry<>(processor, spec));
+            }
+        }
 
-		if (entries.isEmpty()) {
-			LOGGER.debug("No processor entries");
-			return null;
-		}
+        if (entries.isEmpty()) {
+            LOGGER.debug("No processor entries");
+            return null;
+        }
 
-		return new MinecraftJarProcessorManager(entries);
-	}
+        return new MinecraftJarProcessorManager(entries);
+    }
 
-	private String getCacheValue() {
-		return jarProcessors.stream()
-				.sorted(Comparator.comparing(ProcessorEntry::name))
-				.map(ProcessorEntry::cacheValue)
-				.collect(Collectors.joining("::"));
-	}
+    private String getCacheValue() {
+        return jarProcessors.stream()
+                .sorted(Comparator.comparing(ProcessorEntry::name))
+                .map(ProcessorEntry::cacheValue)
+                .collect(Collectors.joining("::"));
+    }
 
-	private String getDebugString() {
-		final var sj = new StringJoiner("\n");
+    private String getDebugString() {
+        final var sj = new StringJoiner("\n");
 
-		for (ProcessorEntry<?> jarProcessor : jarProcessors) {
-			sj.add(jarProcessor.name() + ":");
-			sj.add("\tHash: " + jarProcessor.hashCode());
-			sj.add("\tStr: " + jarProcessor.cacheValue());
-		}
+        for (ProcessorEntry<?> jarProcessor : jarProcessors) {
+            sj.add(jarProcessor.name() + ":");
+            sj.add("\tHash: " + jarProcessor.hashCode());
+            sj.add("\tStr: " + jarProcessor.cacheValue());
+        }
 
-		return sj.toString();
-	}
+        return sj.toString();
+    }
 
-	public String getJarHash() {
-		//fabric-loom:mod-javadoc:-1289977000
-		return Checksum.sha1Hex(getCacheValue().getBytes(StandardCharsets.UTF_8)).substring(0, 10);
-	}
+    public String getJarHash() {
+        // fabric-loom:mod-javadoc:-1289977000
+        return Checksum.sha1Hex(getCacheValue().getBytes(StandardCharsets.UTF_8))
+                .substring(0, 10);
+    }
 
-	public boolean requiresProcessingJar(Path jar) {
-		Objects.requireNonNull(jar);
+    public boolean requiresProcessingJar(Path jar) {
+        Objects.requireNonNull(jar);
 
-		if (Files.notExists(jar)) {
-			LOGGER.debug("{} does not exist, generating", jar);
-			return true;
-		}
+        if (Files.notExists(jar)) {
+            LOGGER.debug("{} does not exist, generating", jar);
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public void processJar(Path jar, ProcessorContext context) throws IOException {
-		for (ProcessorEntry<?> entry : jarProcessors) {
-			try {
-				entry.processJar(jar, context);
-			} catch (IOException e) {
-				throw new IOException("Failed to process jar when running jar processor: %s".formatted(entry.name()), e);
-			}
-		}
-	}
+    public void processJar(Path jar, ProcessorContext context) throws IOException {
+        for (ProcessorEntry<?> entry : jarProcessors) {
+            try {
+                entry.processJar(jar, context);
+            } catch (IOException e) {
+                throw new IOException(
+                        "Failed to process jar when running jar processor: %s".formatted(entry.name()), e);
+            }
+        }
+    }
 
-	public boolean processMappings(MemoryMappingTree mappings, MappingProcessorContext context) {
-		boolean transformed = false;
+    public boolean processMappings(MemoryMappingTree mappings, MappingProcessorContext context) {
+        boolean transformed = false;
 
-		for (ProcessorEntry<?> entry : jarProcessors) {
-			if (entry.processMappings(mappings, context)) {
-				transformed = true;
-			}
-		}
+        for (ProcessorEntry<?> entry : jarProcessors) {
+            if (entry.processMappings(mappings, context)) {
+                transformed = true;
+            }
+        }
 
-		return transformed;
-	}
+        return transformed;
+    }
 
-	record ProcessorEntry<S extends MinecraftJarProcessor.Spec>(S spec, MinecraftJarProcessor<S> processor, @Nullable MinecraftJarProcessor.MappingsProcessor<S> mappingsProcessor) {
-		@SuppressWarnings("unchecked")
-		ProcessorEntry(MinecraftJarProcessor<?> processor, MinecraftJarProcessor.Spec spec) {
-			this((S) Objects.requireNonNull(spec), (MinecraftJarProcessor<S>) processor, (MinecraftJarProcessor.MappingsProcessor<S>) processor.processMappings());
-		}
+    record ProcessorEntry<S extends MinecraftJarProcessor.Spec>(
+            S spec,
+            MinecraftJarProcessor<S> processor,
+            @Nullable MinecraftJarProcessor.MappingsProcessor<S> mappingsProcessor) {
+        @SuppressWarnings("unchecked")
+        ProcessorEntry(MinecraftJarProcessor<?> processor, MinecraftJarProcessor.Spec spec) {
+            this(
+                    (S) Objects.requireNonNull(spec),
+                    (MinecraftJarProcessor<S>) processor,
+                    (MinecraftJarProcessor.MappingsProcessor<S>) processor.processMappings());
+        }
 
-		private void processJar(Path jar, ProcessorContext context) throws IOException {
-			processor().processJar(jar, spec, context);
-		}
+        private void processJar(Path jar, ProcessorContext context) throws IOException {
+            processor().processJar(jar, spec, context);
+        }
 
-		private boolean processMappings(MemoryMappingTree mappings, MappingProcessorContext context) {
-			if (mappingsProcessor() == null) {
-				return false;
-			}
+        private boolean processMappings(MemoryMappingTree mappings, MappingProcessorContext context) {
+            if (mappingsProcessor() == null) {
+                return false;
+            }
 
-			return mappingsProcessor().transform(mappings, spec, context);
-		}
+            return mappingsProcessor().transform(mappings, spec, context);
+        }
 
-		private String name() {
-			return processor.getName();
-		}
+        private String name() {
+            return processor.getName();
+        }
 
-		private String cacheValue() {
-			return processor.getName() + ":" + spec.hashCode();
-		}
-	}
+        private String cacheValue() {
+            return processor.getName() + ":" + spec.hashCode();
+        }
+    }
 }

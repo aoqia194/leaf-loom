@@ -45,11 +45,11 @@ import net.fabricmc.loom.configuration.providers.mappings.LayeredMappingsProcess
 import net.fabricmc.loom.configuration.providers.mappings.extras.unpick.UnpickLayer
 import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingLayer
 import net.fabricmc.loom.configuration.providers.mappings.utils.AddConstructorMappingVisitor
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidProvider
 import net.fabricmc.loom.test.LoomTestConstants
 import net.fabricmc.loom.test.unit.LoomMocks
-import net.fabricmc.loom.util.download.Download
-import net.fabricmc.loom.util.download.DownloadBuilder
+import net.fabricmc.loom.util.copygamefile.CopyGameFile
+import net.fabricmc.loom.util.copygamefile.CopyGameFileBuilder
 import net.fabricmc.mappingio.MappingReader
 import net.fabricmc.mappingio.adapter.MappingDstNsReorder
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch
@@ -58,7 +58,7 @@ import net.fabricmc.mappingio.tree.MemoryMappingTree
 
 abstract class LayeredMappingsSpecification extends Specification implements LayeredMappingsTestConstants {
 	Logger mockLogger = Mock(Logger)
-	MinecraftProvider mockMinecraftProvider = Mock(MinecraftProvider)
+	ZomboidProvider mockMinecraftProvider = Mock(ZomboidProvider)
 	String intermediaryUrl
 	MappingContext mappingContext = new TestMappingContext()
 
@@ -73,9 +73,9 @@ abstract class LayeredMappingsSpecification extends Specification implements Lay
 	File downloadFile(String url, String name) {
 		File dst = new File(tempDir, name)
 		if (!dst.exists()) {
-			Download.create(url)
+			CopyGameFile.create(url)
 					.defaultCache()
-					.downloadPath(dst.toPath())
+					.copyGameFileFromPath(dst.toPath())
 		}
 		return dst
 	}
@@ -166,7 +166,7 @@ abstract class LayeredMappingsSpecification extends Specification implements Lay
 		}
 
 		@Override
-		MinecraftProvider minecraftProvider() {
+		ZomboidProvider zomboidProvider() {
 			return mockMinecraftProvider
 		}
 
@@ -181,8 +181,8 @@ abstract class LayeredMappingsSpecification extends Specification implements Lay
 		}
 
 		@Override
-		DownloadBuilder download(String url) {
-			return Download.create(url)
+		CopyGameFileBuilder download(String url) {
+			return CopyGameFile.create(url)
 		}
 
 		@Override

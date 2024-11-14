@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
 import groovy.transform.Immutable
 
 import net.fabricmc.loom.test.LoomTestVersions
-import net.fabricmc.loom.util.download.Download
+import net.fabricmc.loom.util.copygamefile.CopyGameFile
 
 class ServerRunner {
 	static final String LOADER_VERSION = LoomTestVersions.FABRIC_LOADER.version()
@@ -58,8 +58,8 @@ class ServerRunner {
 
 	def install() {
 		def url = "https://meta.fabricmc.net/v2/versions/loader/${minecraftVersion}/${LOADER_VERSION}/${INSTALLER_VERSION}/server/jar"
-		Download.create(url)
-				.downloadPath(serverDir.toPath().resolve("fabric-server-launch.jar"))
+		CopyGameFile.create(url)
+				.copyGameFileFromPath(serverDir.toPath().resolve("fabric-server-launch.jar"))
 
 		def eulaFile = new File(serverDir, "eula.txt")
 		eulaFile << "eula=true"

@@ -25,55 +25,58 @@
 package net.fabricmc.loom.util;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.gradle.api.Project;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.configuration.WarningMode;
 
 public interface DeprecationHelper {
-	default void replaceWithInLoom2_0(String currentName, String newName) {
-		toBeRemovedIn(currentName, newName, "Loom 2.0");
-	}
+    default void replaceWithInLoom2_0(String currentName, String newName) {
+        toBeRemovedIn(currentName, newName, "Loom 2.0");
+    }
 
-	default void removedInLoom2_0(String currentName) {
-		toBeRemovedIn(currentName, "Loom 2.0");
-	}
+    default void removedInLoom2_0(String currentName) {
+        toBeRemovedIn(currentName, "Loom 2.0");
+    }
 
-	default void toBeRemovedIn(String currentName, String newName, String removalVersion) {
-		warn("The '%s' property has been deprecated, and has been replaced with '%s'. This is scheduled to be removed in %s.".formatted(currentName, newName, removalVersion));
-	}
+    default void toBeRemovedIn(String currentName, String newName, String removalVersion) {
+        warn(
+                "The '%s' property has been deprecated, and has been replaced with '%s'. This is scheduled to be removed in %s."
+                        .formatted(currentName, newName, removalVersion));
+    }
 
-	default void toBeRemovedIn(String currentName, String removalVersion) {
-		warn("The '%s' property has been deprecated, and can be removed. This is scheduled to be removed in %s.".formatted(currentName, removalVersion));
-	}
+    default void toBeRemovedIn(String currentName, String removalVersion) {
+        warn("The '%s' property has been deprecated, and can be removed. This is scheduled to be removed in %s."
+                .formatted(currentName, removalVersion));
+    }
 
-	Project getProject();
+    Project getProject();
 
-	void warn(String warning);
+    void warn(String warning);
 
-	class ProjectBased implements DeprecationHelper {
-		private final Project project;
-		private final AtomicBoolean usingDeprecatedApi = new AtomicBoolean(false);
+    class ProjectBased implements DeprecationHelper {
+        private final Project project;
+        private final AtomicBoolean usingDeprecatedApi = new AtomicBoolean(false);
 
-		public ProjectBased(Project project) {
-			this.project = project;
-		}
+        public ProjectBased(Project project) {
+            this.project = project;
+        }
 
-		@Override
-		public Project getProject() {
-			return project;
-		}
+        @Override
+        public Project getProject() {
+            return project;
+        }
 
-		@Override
-		public void warn(String warning) {
-			WarningMode warningMode = getProject().getGradle().getStartParameter().getWarningMode();
-			getProject().getLogger().log(warningMode == WarningMode.None ? LogLevel.INFO : LogLevel.WARN, warning);
+        @Override
+        public void warn(String warning) {
+            WarningMode warningMode =
+                    getProject().getGradle().getStartParameter().getWarningMode();
+            getProject().getLogger().log(warningMode == WarningMode.None ? LogLevel.INFO : LogLevel.WARN, warning);
 
-			if (warningMode == WarningMode.Fail) {
-				throw new UnsupportedOperationException(warning);
-			}
+            if (warningMode == WarningMode.Fail) {
+                throw new UnsupportedOperationException(warning);
+            }
 
-			usingDeprecatedApi.set(true);
-		}
-	}
+            usingDeprecatedApi.set(true);
+        }
+    }
 }

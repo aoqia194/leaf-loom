@@ -24,10 +24,9 @@
 
 package net.fabricmc.loom.api.mappings.layered.spec;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import net.fabricmc.loom.api.mappings.layered.MappingContext;
 import net.fabricmc.loom.api.mappings.layered.MappingLayer;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * A MappingsSpec is an immutable set of data used to create the MappingLayer.
@@ -38,5 +37,5 @@ import net.fabricmc.loom.api.mappings.layered.MappingLayer;
  */
 @ApiStatus.Experimental
 public interface MappingsSpec<L extends MappingLayer> {
-	L createLayer(MappingContext context);
+    L createLayer(MappingContext context);
 }

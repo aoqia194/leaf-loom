@@ -26,87 +26,94 @@ package net.fabricmc.loom.configuration.mods.dependency;
 
 import java.io.IOException;
 import java.nio.file.Path;
-
-import org.gradle.api.Project;
-import org.jetbrains.annotations.Nullable;
-
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.configuration.mods.ArtifactMetadata;
 import net.fabricmc.loom.configuration.mods.ArtifactRef;
+import org.gradle.api.Project;
+import org.jetbrains.annotations.Nullable;
 
 public abstract sealed class ModDependency permits SplitModDependency, SimpleModDependency {
-	private final ArtifactRef artifact;
-	private final ArtifactMetadata metadata;
-	protected final String group;
-	protected final String name;
-	protected final String version;
-	@Nullable
-	protected final String classifier;
-	protected final String mappingsSuffix;
-	protected final Project project;
+    private final ArtifactRef artifact;
+    private final ArtifactMetadata metadata;
+    protected final String group;
+    protected final String name;
+    protected final String version;
 
-	public ModDependency(ArtifactRef artifact, ArtifactMetadata metadata, String mappingsSuffix, Project project) {
-		this.artifact = artifact;
-		this.metadata = metadata;
-		this.group = artifact.group();
-		this.name = artifact.name();
-		this.version = artifact.version();
-		this.classifier = artifact.classifier();
-		this.mappingsSuffix = mappingsSuffix;
-		this.project = project;
-	}
+    @Nullable
+    protected final String classifier;
 
-	/**
-	 * Returns true when the cache is invalid.
-	 */
-	public abstract boolean isCacheInvalid(Project project, @Nullable String variant);
+    protected final String mappingsSuffix;
+    protected final Project project;
 
-	/**
-	 * Write an artifact to the local cache.
-	 */
-	public abstract void copyToCache(Project project, Path path, @Nullable String variant) throws IOException;
+    public ModDependency(ArtifactRef artifact, ArtifactMetadata metadata, String mappingsSuffix, Project project) {
+        this.artifact = artifact;
+        this.metadata = metadata;
+        this.group = artifact.group();
+        this.name = artifact.name();
+        this.version = artifact.version();
+        this.classifier = artifact.classifier();
+        this.mappingsSuffix = mappingsSuffix;
+        this.project = project;
+    }
 
-	/**
-	 * Apply the dependency to the project.
-	 */
-	public abstract void applyToProject(Project project);
+    /**
+     * Returns true when the cache is invalid.
+     */
+    public abstract boolean isCacheInvalid(Project project, @Nullable String variant);
 
-	protected LocalMavenHelper createMaven(String name) {
-		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		final Path root = extension.getFiles().getRemappedModCache().toPath();
-		return new LocalMavenHelper(getRemappedGroup(), name, this.version, this.classifier, root);
-	}
+    /**
+     * Write an artifact to the local cache.
+     */
+    public abstract void copyToCache(Project project, Path path, @Nullable String variant) throws IOException;
 
-	public ArtifactRef getInputArtifact() {
-		return artifact;
-	}
+    /**
+     * Apply the dependency to the project.
+     */
+    public abstract void applyToProject(Project project);
 
-	public ArtifactMetadata getMetadata() {
-		return metadata;
-	}
+    protected LocalMavenHelper createMaven(String name) {
+        final LoomGradleExtension extension = LoomGradleExtension.get(project);
+        final Path root = extension.getFiles().getRemappedModCache().toPath();
+        return new LocalMavenHelper(getRemappedGroup(), name, this.version, this.classifier, root);
+    }
 
-	protected String getRemappedGroup() {
-		return getMappingsPrefix() + "." + group;
-	}
+    public ArtifactRef getInputArtifact() {
+        return artifact;
+    }
 
-	private String getMappingsPrefix() {
-		return mappingsSuffix.replace(".", "_").replace("-", "_").replace("+", "_");
-	}
+    public ArtifactMetadata getMetadata() {
+        return metadata;
+    }
 
-	public Path getInputFile() {
-		return artifact.path();
-	}
+    protected String getRemappedGroup() {
+        return getMappingsPrefix() + "." + group;
+    }
 
-	public Path getWorkingFile(@Nullable String classifier) {
-		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		final String fileName = classifier == null ? String.format("%s-%s-%s.jar", getRemappedGroup(), name, version)
-													: String.format("%s-%s-%s-%s.jar", getRemappedGroup(), name, version, classifier);
+    private String getMappingsPrefix() {
+        return mappingsSuffix.replace(".", "_").replace("-", "_").replace("+", "_");
+    }
 
-		return extension.getFiles().getProjectBuildCache().toPath().resolve("remapped_working").resolve(fileName);
-	}
+    public Path getInputFile() {
+        return artifact.path();
+    }
 
-	@Override
-	public String toString() {
-		return "ModDependency{" + "group='" + group + '\'' + ", name='" + name + '\'' + ", version='" + version + '\'' + ", classifier='" + classifier + '\'' + '}';
-	}
+    public Path getWorkingFile(@Nullable String classifier) {
+        final LoomGradleExtension extension = LoomGradleExtension.get(project);
+        final String fileName = classifier == null
+                ? String.format("%s-%s-%s.jar", getRemappedGroup(), name, version)
+                : String.format("%s-%s-%s-%s.jar", getRemappedGroup(), name, version, classifier);
+
+        return extension
+                .getFiles()
+                .getProjectBuildCache()
+                .toPath()
+                .resolve("remapped_working")
+                .resolve(fileName);
+    }
+
+    @Override
+    public String toString() {
+        return "ModDependency{" + "group='" + group + '\'' + ", name='" + name + '\'' + ", version='" + version + '\''
+                + ", classifier='" + classifier + '\'' + '}';
+    }
 }

@@ -34,11 +34,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
+import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.api.ModSettings;
+import net.fabricmc.loom.configuration.ide.idea.IdeaUtils;
+import net.fabricmc.loom.util.Constants;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
@@ -51,262 +53,258 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.xml.sax.InputSource;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.ModSettings;
-import net.fabricmc.loom.configuration.ide.idea.IdeaUtils;
-import net.fabricmc.loom.util.Constants;
-
 public final class SourceSetHelper {
-	@VisibleForTesting
-	@Language("xpath")
-	public static final String IDEA_OUTPUT_XPATH = "/project/component[@name='ProjectRootManager']/output/@url";
+    @VisibleForTesting
+    @Language("xpath")
+    public static final String IDEA_OUTPUT_XPATH = "/project/component[@name='ProjectRootManager']/output/@url";
 
-	private SourceSetHelper() {
-	}
+    private SourceSetHelper() {}
 
-	public static SourceSetContainer getSourceSets(Project project) {
-		final JavaPluginExtension javaExtension = project.getExtensions().getByType(JavaPluginExtension.class);
-		return javaExtension.getSourceSets();
-	}
+    public static SourceSetContainer getSourceSets(Project project) {
+        final JavaPluginExtension javaExtension = project.getExtensions().getByType(JavaPluginExtension.class);
+        return javaExtension.getSourceSets();
+    }
 
-	/**
-	 * Returns true when the provided project contains the {@link SourceSet}.
-	 */
-	public static boolean isSourceSetOfProject(SourceSet sourceSet, Project project) {
-		if (System.getProperty("fabric-loom.unit.testing") != null) return true;
+    /**
+     * Returns true when the provided project contains the {@link SourceSet}.
+     */
+    public static boolean isSourceSetOfProject(SourceSet sourceSet, Project project) {
+        if (System.getProperty("fabric-loom.unit.testing") != null) return true;
 
-		return getSourceSets(project).stream()
-				.anyMatch(test -> test == sourceSet); // Ensure we have an identical reference
-	}
+        return getSourceSets(project).stream()
+                .anyMatch(test -> test == sourceSet); // Ensure we have an identical reference
+    }
 
-	public static SourceSet getSourceSetByName(String name, Project project) {
-		return getSourceSets(project).getByName(name);
-	}
+    public static SourceSet getSourceSetByName(String name, Project project) {
+        return getSourceSets(project).getByName(name);
+    }
 
-	public static SourceSet getMainSourceSet(Project project) {
-		return getSourceSetByName(SourceSet.MAIN_SOURCE_SET_NAME, project);
-	}
+    public static SourceSet getMainSourceSet(Project project) {
+        return getSourceSetByName(SourceSet.MAIN_SOURCE_SET_NAME, project);
+    }
 
-	public static SourceSet createSourceSet(String name, Project project) {
-		return getSourceSets(project).create(name);
-	}
+    public static SourceSet createSourceSet(String name, Project project) {
+        return getSourceSets(project).create(name);
+    }
 
-	/**
-	 * Attempts to compute the owning project for the {@link SourceSet}
-	 *
-	 * <p>A bit of a hack, would be nice for this to be added to the Gradle API.
-	 */
-	public static Project getSourceSetProject(SourceSet sourceSet) {
-		final Project project = getProjectFromSourceSetOutput(sourceSet.getOutput());
+    /**
+     * Attempts to compute the owning project for the {@link SourceSet}
+     *
+     * <p>A bit of a hack, would be nice for this to be added to the Gradle API.
+     */
+    public static Project getSourceSetProject(SourceSet sourceSet) {
+        final Project project = getProjectFromSourceSetOutput(sourceSet.getOutput());
 
-		if (project == null) {
-			throw new NullPointerException("Unable to determine owning project for SourceSet: " + sourceSet.getName());
-		}
+        if (project == null) {
+            throw new NullPointerException("Unable to determine owning project for SourceSet: " + sourceSet.getName());
+        }
 
-		return project;
-	}
+        return project;
+    }
 
-	@Nullable
-	private static Project getProjectFromSourceSetOutput(SourceSetOutput sourceSetOutput) {
-		Set<? extends Task> dependencies = sourceSetOutput.getBuildDependencies().getDependencies(null);
-		Iterator<? extends Task> it = dependencies.iterator();
-		return it.hasNext() ? it.next().getProject() : null;
-	}
+    @Nullable
+    private static Project getProjectFromSourceSetOutput(SourceSetOutput sourceSetOutput) {
+        Set<? extends Task> dependencies =
+                sourceSetOutput.getBuildDependencies().getDependencies(null);
+        Iterator<? extends Task> it = dependencies.iterator();
+        return it.hasNext() ? it.next().getProject() : null;
+    }
 
-	public static List<File> getClasspath(ModSettings modSettings, Project project) {
-		final List<File> files = new ArrayList<>();
+    public static List<File> getClasspath(ModSettings modSettings, Project project) {
+        final List<File> files = new ArrayList<>();
 
-		files.addAll(modSettings.getModSourceSets().get().stream()
-				.flatMap(sourceSet -> getClasspath(sourceSet, project).stream())
-				.toList());
-		files.addAll(modSettings.getModFiles().getFiles());
+        files.addAll(modSettings.getModSourceSets().get().stream()
+                .flatMap(sourceSet -> getClasspath(sourceSet, project).stream())
+                .toList());
+        files.addAll(modSettings.getModFiles().getFiles());
 
-		return Collections.unmodifiableList(files);
-	}
+        return Collections.unmodifiableList(files);
+    }
 
-	public static List<File> getClasspath(SourceSetReference reference, Project project) {
-		final List<File> classpath = getGradleClasspath(reference, project);
+    public static List<File> getClasspath(SourceSetReference reference, Project project) {
+        final List<File> classpath = getGradleClasspath(reference, project);
 
-		classpath.addAll(getIdeaClasspath(reference, project));
-		classpath.addAll(getIdeaModuleCompileOutput(reference));
-		classpath.addAll(getEclipseClasspath(reference, project));
-		classpath.addAll(getVscodeClasspath(reference, project));
+        classpath.addAll(getIdeaClasspath(reference, project));
+        classpath.addAll(getIdeaModuleCompileOutput(reference));
+        classpath.addAll(getEclipseClasspath(reference, project));
+        classpath.addAll(getVscodeClasspath(reference, project));
 
-		return classpath;
-	}
+        return classpath;
+    }
 
-	private static List<File> getGradleClasspath(SourceSetReference reference, Project project) {
-		final SourceSetOutput output = reference.sourceSet().getOutput();
-		final File resources = output.getResourcesDir();
+    private static List<File> getGradleClasspath(SourceSetReference reference, Project project) {
+        final SourceSetOutput output = reference.sourceSet().getOutput();
+        final File resources = output.getResourcesDir();
 
-		final List<File> classpath = new ArrayList<>();
+        final List<File> classpath = new ArrayList<>();
 
-		classpath.addAll(output.getClassesDirs().getFiles());
+        classpath.addAll(output.getClassesDirs().getFiles());
 
-		if (resources != null) {
-			classpath.add(resources);
-		}
+        if (resources != null) {
+            classpath.add(resources);
+        }
 
-		// Add dev jars from dependency projects if the source set is "main".
-		if (SourceSet.MAIN_SOURCE_SET_NAME.equals(reference.sourceSet().getName()) && !reference.project().getPath().equals(project.getPath())
-				&& GradleUtils.isLoomProject(reference.project())) {
-			final Configuration namedElements = reference.project().getConfigurations().getByName(Constants.Configurations.NAMED_ELEMENTS);
+        // Add dev jars from dependency projects if the source set is "main".
+        if (SourceSet.MAIN_SOURCE_SET_NAME.equals(reference.sourceSet().getName())
+                && !reference.project().getPath().equals(project.getPath())
+                && GradleUtils.isLoomProject(reference.project())) {
+            final Configuration namedElements =
+                    reference.project().getConfigurations().getByName(Constants.Configurations.NAMED_ELEMENTS);
 
-			// Note: We're not looking at the artifacts from configuration variants. It's probably not needed
-			// (certainly not with Loom's setup), but technically someone could add child variants that add additional
-			// dev jars that wouldn't be picked up by this.
-			for (File artifact : namedElements.getOutgoing().getArtifacts().getFiles()) {
-				classpath.add(artifact);
-			}
-		}
+            // Note: We're not looking at the artifacts from configuration variants. It's probably not needed
+            // (certainly not with Loom's setup), but technically someone could add child variants that add additional
+            // dev jars that wouldn't be picked up by this.
+            for (File artifact : namedElements.getOutgoing().getArtifacts().getFiles()) {
+                classpath.add(artifact);
+            }
+        }
 
-		return classpath;
-	}
+        return classpath;
+    }
 
-	@VisibleForTesting
-	public static List<File> getIdeaClasspath(SourceSetReference reference, Project project) {
-		final File projectDir = project.getRootDir();
-		final File dotIdea = new File(projectDir, ".idea");
+    @VisibleForTesting
+    public static List<File> getIdeaClasspath(SourceSetReference reference, Project project) {
+        final File projectDir = project.getRootDir();
+        final File dotIdea = new File(projectDir, ".idea");
 
-		if (!dotIdea.exists()) {
-			return Collections.emptyList();
-		}
+        if (!dotIdea.exists()) {
+            return Collections.emptyList();
+        }
 
-		final File miscXml = new File(dotIdea, "misc.xml");
+        final File miscXml = new File(dotIdea, "misc.xml");
 
-		if (!miscXml.exists()) {
-			return Collections.emptyList();
-		}
+        if (!miscXml.exists()) {
+            return Collections.emptyList();
+        }
 
-		String outputDirUrl = evaluateXpath(miscXml, IDEA_OUTPUT_XPATH);
+        String outputDirUrl = evaluateXpath(miscXml, IDEA_OUTPUT_XPATH);
 
-		if (outputDirUrl == null) {
-			return Collections.emptyList();
-		}
+        if (outputDirUrl == null) {
+            return Collections.emptyList();
+        }
 
-		outputDirUrl = outputDirUrl.replace("$PROJECT_DIR$", projectDir.getAbsolutePath());
-		outputDirUrl = outputDirUrl.replaceAll("^file:", "");
+        outputDirUrl = outputDirUrl.replace("$PROJECT_DIR$", projectDir.getAbsolutePath());
+        outputDirUrl = outputDirUrl.replaceAll("^file:", "");
 
-		final File productionDir = new File(outputDirUrl, "production");
-		final File outputDir = new File(productionDir, IdeaUtils.getIdeaModuleName(reference));
+        final File productionDir = new File(outputDirUrl, "production");
+        final File outputDir = new File(productionDir, IdeaUtils.getIdeaModuleName(reference));
 
-		return Collections.singletonList(outputDir);
-	}
+        return Collections.singletonList(outputDir);
+    }
 
-	private static List<File> getIdeaModuleCompileOutput(SourceSetReference reference) {
-		final File dotIdea = new File(reference.project().getRootDir(), ".idea");
+    private static List<File> getIdeaModuleCompileOutput(SourceSetReference reference) {
+        final File dotIdea = new File(reference.project().getRootDir(), ".idea");
 
-		if (!dotIdea.exists()) {
-			// Not an intellij project
-			return Collections.emptyList();
-		}
+        if (!dotIdea.exists()) {
+            // Not an intellij project
+            return Collections.emptyList();
+        }
 
-		final String name = reference.sourceSet().getName();
-		final File projectDir = reference.project().getProjectDir();
-		final File outDir = new File(projectDir, "out");
-		final File sourceSetOutDir = new File(outDir, name.equals(SourceSet.MAIN_SOURCE_SET_NAME) ? "production" : name);
+        final String name = reference.sourceSet().getName();
+        final File projectDir = reference.project().getProjectDir();
+        final File outDir = new File(projectDir, "out");
+        final File sourceSetOutDir =
+                new File(outDir, name.equals(SourceSet.MAIN_SOURCE_SET_NAME) ? "production" : name);
 
-		return List.of(
-				new File(sourceSetOutDir, "classes"),
-				new File(sourceSetOutDir, "resources")
-		);
-	}
+        return List.of(new File(sourceSetOutDir, "classes"), new File(sourceSetOutDir, "resources"));
+    }
 
-	@Nullable
-	private static String evaluateXpath(File file, @Language("xpath") String expression) {
-		final XPath xpath = XPathFactory.newInstance().newXPath();
+    @Nullable
+    private static String evaluateXpath(File file, @Language("xpath") String expression) {
+        final XPath xpath = XPathFactory.newInstance().newXPath();
 
-		try (FileInputStream fis = new FileInputStream(file)) {
-			String result = xpath.evaluate(expression, new InputSource(fis));
+        try (FileInputStream fis = new FileInputStream(file)) {
+            String result = xpath.evaluate(expression, new InputSource(fis));
 
-			if (result.isEmpty()) {
-				return null;
-			}
+            if (result.isEmpty()) {
+                return null;
+            }
 
-			return result;
-		} catch (XPathExpressionException e) {
-			return null;
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
+            return result;
+        } catch (XPathExpressionException e) {
+            return null;
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 
-	@VisibleForTesting
-	public static List<File> getEclipseClasspath(SourceSetReference reference, Project project) {
-		// Somewhat of a guess, I'm unsure if this is correct for multi-project builds
-		final File projectDir = project.getProjectDir();
-		final File classpath = new File(projectDir, ".classpath");
+    @VisibleForTesting
+    public static List<File> getEclipseClasspath(SourceSetReference reference, Project project) {
+        // Somewhat of a guess, I'm unsure if this is correct for multi-project builds
+        final File projectDir = project.getProjectDir();
+        final File classpath = new File(projectDir, ".classpath");
 
-		if (!classpath.exists()) {
-			return Collections.emptyList();
-		}
+        if (!classpath.exists()) {
+            return Collections.emptyList();
+        }
 
-		return getBinDirClasspath(projectDir, reference);
-	}
+        return getBinDirClasspath(projectDir, reference);
+    }
 
-	@VisibleForTesting
-	public static List<File> getVscodeClasspath(SourceSetReference reference, Project project) {
-		// Somewhat of a guess, I'm unsure if this is correct for multi-project builds
-		final File projectDir = project.getProjectDir();
-		final File dotVscode = new File(projectDir, ".vscode");
+    @VisibleForTesting
+    public static List<File> getVscodeClasspath(SourceSetReference reference, Project project) {
+        // Somewhat of a guess, I'm unsure if this is correct for multi-project builds
+        final File projectDir = project.getProjectDir();
+        final File dotVscode = new File(projectDir, ".vscode");
 
-		if (!dotVscode.exists()) {
-			return Collections.emptyList();
-		}
+        if (!dotVscode.exists()) {
+            return Collections.emptyList();
+        }
 
-		return getBinDirClasspath(projectDir, reference);
-	}
+        return getBinDirClasspath(projectDir, reference);
+    }
 
-	private static List<File> getBinDirClasspath(File projectDir, SourceSetReference reference) {
-		final File binDir = new File(projectDir, "bin");
+    private static List<File> getBinDirClasspath(File projectDir, SourceSetReference reference) {
+        final File binDir = new File(projectDir, "bin");
 
-		if (!binDir.exists()) {
-			return Collections.emptyList();
-		}
+        if (!binDir.exists()) {
+            return Collections.emptyList();
+        }
 
-		return Collections.singletonList(new File(binDir, reference.sourceSet().getName()));
-	}
+        return Collections.singletonList(new File(binDir, reference.sourceSet().getName()));
+    }
 
-	@Nullable
-	public static File findFileInResource(SourceSet sourceSet, String path) {
-		Objects.requireNonNull(sourceSet);
-		Objects.requireNonNull(path);
+    @Nullable
+    public static File findFileInResource(SourceSet sourceSet, String path) {
+        Objects.requireNonNull(sourceSet);
+        Objects.requireNonNull(path);
 
-		final Project project = getSourceSetProject(sourceSet);
-		final LoomGradleExtension extension = LoomGradleExtension.get(project);
+        final Project project = getSourceSetProject(sourceSet);
+        final LoomGradleExtension extension = LoomGradleExtension.get(project);
 
-		if (extension.isConfigurationCacheActive()) {
-			for (File rootDir: sourceSet.getResources().getSrcDirs()) {
-				final File file = GradleUtils.configurationInputFile(project, new File(rootDir, path));
+        if (extension.isConfigurationCacheActive()) {
+            for (File rootDir : sourceSet.getResources().getSrcDirs()) {
+                final File file = GradleUtils.configurationInputFile(project, new File(rootDir, path));
 
-				if (file.exists()) {
-					return file;
-				}
-			}
+                if (file.exists()) {
+                    return file;
+                }
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		try {
-			return sourceSet.getResources()
-					.matching(patternFilterable -> patternFilterable.include(path))
-					.getSingleFile();
-		} catch (IllegalStateException e) {
-			// File not found
-			return null;
-		}
-	}
+        try {
+            return sourceSet
+                    .getResources()
+                    .matching(patternFilterable -> patternFilterable.include(path))
+                    .getSingleFile();
+        } catch (IllegalStateException e) {
+            // File not found
+            return null;
+        }
+    }
 
-	@Nullable
-	public static File findFirstFileInResource(String path, SourceSet... sourceSets) {
-		for (SourceSet sourceSet : sourceSets) {
-			File file = findFileInResource(sourceSet, path);
+    @Nullable
+    public static File findFirstFileInResource(String path, SourceSet... sourceSets) {
+        for (SourceSet sourceSet : sourceSets) {
+            File file = findFileInResource(sourceSet, path);
 
-			if (file != null) {
-				return file;
-			}
-		}
+            if (file != null) {
+                return file;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

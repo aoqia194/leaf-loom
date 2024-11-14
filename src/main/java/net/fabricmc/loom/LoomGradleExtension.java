@@ -28,12 +28,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
-import org.gradle.api.Project;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.FileCollection;
-import org.gradle.api.provider.ListProperty;
-import org.jetbrains.annotations.ApiStatus;
-
 import net.fabricmc.loom.api.LoomGradleExtensionAPI;
 import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.loom.configuration.InstallerData;
@@ -41,84 +35,95 @@ import net.fabricmc.loom.configuration.LoomDependencyManager;
 import net.fabricmc.loom.configuration.accesswidener.AccessWidenerFile;
 import net.fabricmc.loom.configuration.providers.mappings.LayeredMappingsFactory;
 import net.fabricmc.loom.configuration.providers.mappings.MappingConfiguration;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftMetadataProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider;
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidMetadataProvider;
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidProvider;
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessorManager;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.IntermediaryMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.NamedMinecraftProvider;
+import net.fabricmc.loom.configuration.providers.minecraft.mapped.IntermediaryZomboidProvider;
+import net.fabricmc.loom.configuration.providers.minecraft.mapped.NamedZomboidProvider;
 import net.fabricmc.loom.extension.LoomFiles;
 import net.fabricmc.loom.extension.MixinExtension;
 import net.fabricmc.loom.extension.RemapperExtensionHolder;
+import net.fabricmc.loom.util.copygamefile.CopyGameFileBuilder;
 import net.fabricmc.loom.util.download.DownloadBuilder;
+import org.gradle.api.Project;
+import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.provider.ListProperty;
+import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public interface LoomGradleExtension extends LoomGradleExtensionAPI {
-	static LoomGradleExtension get(Project project) {
-		return (LoomGradleExtension) project.getExtensions().getByName("loom");
-	}
+    static LoomGradleExtension get(Project project) {
+        return (LoomGradleExtension) project.getExtensions().getByName("loom");
+    }
 
-	LoomFiles getFiles();
+    LoomFiles getFiles();
 
-	ConfigurableFileCollection getUnmappedModCollection();
+    ConfigurableFileCollection getUnmappedModCollection();
 
-	void setInstallerData(InstallerData data);
+    InstallerData getInstallerData();
 
-	InstallerData getInstallerData();
+    void setInstallerData(InstallerData data);
 
-	void setDependencyManager(LoomDependencyManager dependencyManager);
+    LoomDependencyManager getDependencyManager();
 
-	LoomDependencyManager getDependencyManager();
+    void setDependencyManager(LoomDependencyManager dependencyManager);
 
-	MinecraftMetadataProvider getMetadataProvider();
+    ZomboidMetadataProvider getMetadataProvider();
 
-	void setMetadataProvider(MinecraftMetadataProvider metadataProvider);
+    void setMetadataProvider(ZomboidMetadataProvider metadataProvider);
 
-	MinecraftProvider getMinecraftProvider();
+    MappingConfiguration getMappingConfiguration();
 
-	void setMinecraftProvider(MinecraftProvider minecraftProvider);
+    void setMappingConfiguration(MappingConfiguration mappingConfiguration);
 
-	MappingConfiguration getMappingConfiguration();
+    default List<Path> getMinecraftJars(MappingsNamespace mappingsNamespace) {
+        return switch (mappingsNamespace) {
+            case NAMED -> getNamedZomboidProvider().getMinecraftJarPaths();
+            case INTERMEDIARY -> getIntermediaryZomboidProvider().getMinecraftJarPaths();
+            case OFFICIAL,
+                 CLIENT_OFFICIAL,
+                 SERVER_OFFICIAL -> getZomboidProvider()
+                .getZomboidJars();
+        };
+    }
 
-	void setMappingConfiguration(MappingConfiguration mappingConfiguration);
+    ZomboidProvider getZomboidProvider();
 
-	NamedMinecraftProvider<?> getNamedMinecraftProvider();
+    void setZomboidProvider(ZomboidProvider zomboidProvider);
 
-	IntermediaryMinecraftProvider<?> getIntermediaryMinecraftProvider();
+    NamedZomboidProvider<?> getNamedZomboidProvider();
 
-	void setNamedMinecraftProvider(NamedMinecraftProvider<?> namedMinecraftProvider);
+    void setNamedZomboidProvider(NamedZomboidProvider<?> namedZomboidProvider);
 
-	void setIntermediaryMinecraftProvider(IntermediaryMinecraftProvider<?> intermediaryMinecraftProvider);
+    IntermediaryZomboidProvider<?> getIntermediaryZomboidProvider();
 
-	default List<Path> getMinecraftJars(MappingsNamespace mappingsNamespace) {
-		return switch (mappingsNamespace) {
-		case NAMED -> getNamedMinecraftProvider().getMinecraftJarPaths();
-		case INTERMEDIARY -> getIntermediaryMinecraftProvider().getMinecraftJarPaths();
-		case OFFICIAL, CLIENT_OFFICIAL, SERVER_OFFICIAL -> getMinecraftProvider().getMinecraftJars();
-		};
-	}
+    void setIntermediaryZomboidProvider(IntermediaryZomboidProvider<?> intermediaryZomboidProvider);
 
-	FileCollection getMinecraftJarsCollection(MappingsNamespace mappingsNamespace);
+    FileCollection getMinecraftJarsCollection(MappingsNamespace mappingsNamespace);
 
-	boolean isRootProject();
+    boolean isRootProject();
 
-	@Override
-	MixinExtension getMixin();
+    @Override
+    MixinExtension getMixin();
 
-	List<AccessWidenerFile> getTransitiveAccessWideners();
+    List<AccessWidenerFile> getTransitiveAccessWideners();
 
-	void addTransitiveAccessWideners(List<AccessWidenerFile> accessWidenerFiles);
+    void addTransitiveAccessWideners(List<AccessWidenerFile> accessWidenerFiles);
 
-	DownloadBuilder download(String url);
+    CopyGameFileBuilder copyGameFile(String url);
 
-	boolean refreshDeps();
+    DownloadBuilder download(String url);
 
-	void setRefreshDeps(boolean refreshDeps);
+    boolean refreshDeps();
 
-	ListProperty<LibraryProcessorManager.LibraryProcessorFactory> getLibraryProcessors();
+    void setRefreshDeps(boolean refreshDeps);
 
-	ListProperty<RemapperExtensionHolder> getRemapperExtensions();
+    ListProperty<LibraryProcessorManager.LibraryProcessorFactory> getLibraryProcessors();
 
-	Collection<LayeredMappingsFactory> getLayeredMappingFactories();
+    ListProperty<RemapperExtensionHolder> getRemapperExtensions();
 
-	boolean isConfigurationCacheActive();
+    Collection<LayeredMappingsFactory> getLayeredMappingFactories();
+
+    boolean isConfigurationCacheActive();
 }

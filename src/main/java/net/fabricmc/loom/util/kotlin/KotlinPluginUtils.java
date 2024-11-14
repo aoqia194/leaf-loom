@@ -28,36 +28,36 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.Properties;
-
 import kotlinx.metadata.jvm.KotlinClassMetadata;
 import org.gradle.api.Project;
 
 public class KotlinPluginUtils {
-	private static final String KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin.jvm";
+    private static final String KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin.jvm";
 
-	public static boolean hasKotlinPlugin(Project project) {
-		return project.getPluginManager().hasPlugin(KOTLIN_PLUGIN_ID);
-	}
+    public static boolean hasKotlinPlugin(Project project) {
+        return project.getPluginManager().hasPlugin(KOTLIN_PLUGIN_ID);
+    }
 
-	public static String getKotlinPluginVersion(Project project) {
-		final Class<?> kotlinPluginClass = project.getPlugins().getPlugin(KOTLIN_PLUGIN_ID).getClass();
-		// See KotlinPluginWrapper.loadKotlinPluginVersionFromResourcesOf
-		return loadPropertyFromResources(kotlinPluginClass, "project.properties", "project.version");
-	}
+    public static String getKotlinPluginVersion(Project project) {
+        final Class<?> kotlinPluginClass =
+                project.getPlugins().getPlugin(KOTLIN_PLUGIN_ID).getClass();
+        // See KotlinPluginWrapper.loadKotlinPluginVersionFromResourcesOf
+        return loadPropertyFromResources(kotlinPluginClass, "project.properties", "project.version");
+    }
 
-	private static String loadPropertyFromResources(Class<?> kotlinPluginClass, String propFileName, String property) {
-		var props = new Properties();
+    private static String loadPropertyFromResources(Class<?> kotlinPluginClass, String propFileName, String property) {
+        var props = new Properties();
 
-		try (InputStream is = kotlinPluginClass.getClassLoader().getResourceAsStream(propFileName)) {
-			props.load(is);
-		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to read: " + propFileName, e);
-		}
+        try (InputStream is = kotlinPluginClass.getClassLoader().getResourceAsStream(propFileName)) {
+            props.load(is);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to read: " + propFileName, e);
+        }
 
-		return props.getProperty(property);
-	}
+        return props.getProperty(property);
+    }
 
-	public static String getKotlinMetadataVersion() {
-		return KotlinClassMetadata.class.getPackage().getImplementationVersion().split("-")[0];
-	}
+    public static String getKotlinMetadataVersion() {
+        return KotlinClassMetadata.class.getPackage().getImplementationVersion().split("-")[0];
+    }
 }

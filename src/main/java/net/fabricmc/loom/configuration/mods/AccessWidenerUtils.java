@@ -27,58 +27,52 @@ package net.fabricmc.loom.configuration.mods;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-
-import org.objectweb.asm.commons.Remapper;
-
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerRemapper;
 import net.fabricmc.accesswidener.AccessWidenerWriter;
 import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.loom.util.fmj.FabricModJson;
 import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
+import org.objectweb.asm.commons.Remapper;
 
 public class AccessWidenerUtils {
-	/**
-	 * Remap a mods access widener from intermediary to named, so that loader can apply it in our dev-env.
-	 */
-	public static byte[] remapAccessWidener(byte[] input, Remapper remapper) {
-		int version = AccessWidenerReader.readVersion(input);
+    /**
+     * Remap a mods access widener from intermediary to named, so that loader can apply it in our dev-env.
+     */
+    public static byte[] remapAccessWidener(byte[] input, Remapper remapper) {
+        int version = AccessWidenerReader.readVersion(input);
 
-		AccessWidenerWriter writer = new AccessWidenerWriter(version);
-		AccessWidenerRemapper awRemapper = new AccessWidenerRemapper(
-				writer,
-				remapper,
-				MappingsNamespace.INTERMEDIARY.toString(),
-				MappingsNamespace.NAMED.toString()
-		);
-		AccessWidenerReader reader = new AccessWidenerReader(awRemapper);
-		reader.read(input);
-		return writer.write();
-	}
+        AccessWidenerWriter writer = new AccessWidenerWriter(version);
+        AccessWidenerRemapper awRemapper = new AccessWidenerRemapper(
+                writer, remapper, MappingsNamespace.INTERMEDIARY.toString(), MappingsNamespace.NAMED.toString());
+        AccessWidenerReader reader = new AccessWidenerReader(awRemapper);
+        reader.read(input);
+        return writer.write();
+    }
 
-	public static AccessWidenerData readAccessWidenerData(Path inputJar) throws IOException {
-		if (!FabricModJsonFactory.isModJar(inputJar)) {
-			return null;
-		}
+    public static AccessWidenerData readAccessWidenerData(Path inputJar) throws IOException {
+        if (!FabricModJsonFactory.isModJar(inputJar)) {
+            return null;
+        }
 
-		final FabricModJson fabricModJson = FabricModJsonFactory.createFromZip(inputJar);
-		final List<String> classTweakers = List.copyOf(fabricModJson.getClassTweakers().keySet());
+        final FabricModJson fabricModJson = FabricModJsonFactory.createFromZip(inputJar);
+        final List<String> classTweakers =
+                List.copyOf(fabricModJson.getClassTweakers().keySet());
 
-		if (classTweakers.isEmpty()) {
-			return null;
-		}
+        if (classTweakers.isEmpty()) {
+            return null;
+        }
 
-		if (classTweakers.size() != 1) {
-			throw new UnsupportedOperationException("TODO: support multiple class tweakers");
-		}
+        if (classTweakers.size() != 1) {
+            throw new UnsupportedOperationException("TODO: support multiple class tweakers");
+        }
 
-		final String accessWidenerPath = classTweakers.get(0);
-		final byte[] accessWidener = fabricModJson.getSource().read(accessWidenerPath);
-		final AccessWidenerReader.Header header = AccessWidenerReader.readHeader(accessWidener);
+        final String accessWidenerPath = classTweakers.get(0);
+        final byte[] accessWidener = fabricModJson.getSource().read(accessWidenerPath);
+        final AccessWidenerReader.Header header = AccessWidenerReader.readHeader(accessWidener);
 
-		return new AccessWidenerData(accessWidenerPath, header, accessWidener);
-	}
+        return new AccessWidenerData(accessWidenerPath, header, accessWidener);
+    }
 
-	public record AccessWidenerData(String path, AccessWidenerReader.Header header, byte[] content) {
-	}
+    public record AccessWidenerData(String path, AccessWidenerReader.Header header, byte[] content) {}
 }

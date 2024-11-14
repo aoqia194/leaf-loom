@@ -25,49 +25,50 @@
 package net.fabricmc.loom.util;
 
 import java.util.Objects;
-
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.RecordComponentVisitor;
 
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
-
 public class RecordComponentFixVisitor extends ClassVisitor {
-	private final MemoryMappingTree mappings;
-	private final int intermediaryNsId;
+    private final MemoryMappingTree mappings;
+    private final int intermediaryNsId;
 
-	private String owner;
-	private boolean hasExistingComponents = false;
+    private String owner;
+    private boolean hasExistingComponents = false;
 
-	public RecordComponentFixVisitor(ClassVisitor classVisitor, MemoryMappingTree mappings, int intermediaryNsId) {
-		super(Constants.ASM_VERSION, classVisitor);
-		this.mappings = mappings;
-		this.intermediaryNsId = intermediaryNsId;
-	}
+    public RecordComponentFixVisitor(ClassVisitor classVisitor, MemoryMappingTree mappings, int intermediaryNsId) {
+        super(Constants.ASM_VERSION, classVisitor);
+        this.mappings = mappings;
+        this.intermediaryNsId = intermediaryNsId;
+    }
 
-	@Override
-	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-		this.owner = name;
+    @Override
+    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+        this.owner = name;
 
-		super.visit(version, access, name, signature, superName, interfaces);
-	}
+        super.visit(version, access, name, signature, superName, interfaces);
+    }
 
-	@Override
-	public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
-		// Should never happen, but let's be safe
-		hasExistingComponents = true;
+    @Override
+    public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
+        // Should never happen, but let's be safe
+        hasExistingComponents = true;
 
-		return super.visitRecordComponent(name, descriptor, signature);
-	}
+        return super.visitRecordComponent(name, descriptor, signature);
+    }
 
-	@Override
-	public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-		String intermediaryName = Objects.requireNonNull(mappings.getField(owner, name, descriptor), "Could not get field for %s:%s%s".formatted(owner, name, descriptor)).getName(intermediaryNsId);
+    @Override
+    public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
+        String intermediaryName = Objects.requireNonNull(
+                        mappings.getField(owner, name, descriptor),
+                        "Could not get field for %s:%s%s".formatted(owner, name, descriptor))
+                .getName(intermediaryNsId);
 
-		if (!hasExistingComponents && intermediaryName != null && intermediaryName.startsWith("comp_")) {
-			super.visitRecordComponent(name, descriptor, signature);
-		}
+        if (!hasExistingComponents && intermediaryName != null && intermediaryName.startsWith("comp_")) {
+            super.visitRecordComponent(name, descriptor, signature);
+        }
 
-		return super.visitField(access, name, descriptor, signature, value);
-	}
+        return super.visitField(access, name, descriptor, signature, value);
+    }
 }

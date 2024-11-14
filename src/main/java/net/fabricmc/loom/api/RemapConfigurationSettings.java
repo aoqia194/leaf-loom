@@ -25,9 +25,7 @@
 package net.fabricmc.loom.api;
 
 import java.util.Set;
-
 import javax.inject.Inject;
-
 import org.gradle.api.Named;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
@@ -44,107 +42,109 @@ import org.jetbrains.annotations.NotNull;
  * A {@link Named} object for configuring "proxy" configurations that remap artifacts.
  */
 public abstract class RemapConfigurationSettings implements Named {
-	private final String name;
+    private final String name;
 
-	@Inject
-	public RemapConfigurationSettings(String name) {
-		this.name = name;
+    @Inject
+    public RemapConfigurationSettings(String name) {
+        this.name = name;
 
-		getSourceSet().finalizeValueOnRead();
-		getTargetConfigurationName().finalizeValueOnRead();
-		getClientSourceConfigurationName().finalizeValueOnRead();
-		getOnCompileClasspath().finalizeValueOnRead();
-		getOnRuntimeClasspath().finalizeValueOnRead();
-		getPublishingMode().convention(PublishingMode.NONE).finalizeValueOnRead();
-		getApplyDependencyTransforms().convention(defaultDependencyTransforms()).finalizeValueOnRead();
-	}
+        getSourceSet().finalizeValueOnRead();
+        getTargetConfigurationName().finalizeValueOnRead();
+        getClientSourceConfigurationName().finalizeValueOnRead();
+        getOnCompileClasspath().finalizeValueOnRead();
+        getOnRuntimeClasspath().finalizeValueOnRead();
+        getPublishingMode().convention(PublishingMode.NONE).finalizeValueOnRead();
+        getApplyDependencyTransforms().convention(defaultDependencyTransforms()).finalizeValueOnRead();
+    }
 
-	@Override
-	public @NotNull String getName() {
-		return name;
-	}
+    @Override
+    public @NotNull String getName() {
+        return name;
+    }
 
-	/**
-	 * @return The target source set
-	 */
-	public abstract Property<SourceSet> getSourceSet();
+    /**
+     * @return The target source set
+     */
+    public abstract Property<SourceSet> getSourceSet();
 
-	/**
-	 * @return The target configuration name
-	 */
-	public abstract Property<String> getTargetConfigurationName();
+    /**
+     * @return The target configuration name
+     */
+    public abstract Property<String> getTargetConfigurationName();
 
-	/**
-	 * Optional, only used when split sourcesets are enabled.
-	 * When not present client only entries should go onto the target configuration.
-	 *
-	 * @return The client source configuration name
-	 */
-	public abstract Property<String> getClientSourceConfigurationName();
+    /**
+     * Optional, only used when split sourcesets are enabled.
+     * When not present client only entries should go onto the target configuration.
+     *
+     * @return The client source configuration name
+     */
+    public abstract Property<String> getClientSourceConfigurationName();
 
-	/**
-	 * @return True if this configuration's artifacts should be exposed for compile operations.
-	 */
-	public abstract Property<Boolean> getOnCompileClasspath();
+    /**
+     * @return True if this configuration's artifacts should be exposed for compile operations.
+     */
+    public abstract Property<Boolean> getOnCompileClasspath();
 
-	/**
-	 * @return True if this configuration's artifacts should be exposed to runtime operations.
-	 */
-	public abstract Property<Boolean> getOnRuntimeClasspath();
+    /**
+     * @return True if this configuration's artifacts should be exposed to runtime operations.
+     */
+    public abstract Property<Boolean> getOnRuntimeClasspath();
 
-	/**
-	 * @return the {@link PublishingMode} for the configuration.
-	 */
-	public abstract Property<PublishingMode> getPublishingMode();
+    /**
+     * @return the {@link PublishingMode} for the configuration.
+     */
+    public abstract Property<PublishingMode> getPublishingMode();
 
-	/**
-	 * @return true when dependencies should be evaluated for minecraft jar transforms such as transitive Access Wideners or Injected interfaces.
-	 */
-	public abstract Property<Boolean> getApplyDependencyTransforms();
+    /**
+     * @return true when dependencies should be evaluated for minecraft jar transforms such as transitive Access Wideners or Injected interfaces.
+     */
+    public abstract Property<Boolean> getApplyDependencyTransforms();
 
-	public enum PublishingMode {
-		NONE,
-		COMPILE_ONLY(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME),
-		RUNTIME_ONLY(JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME),
-		COMPILE_AND_RUNTIME(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME, JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME);
+    public enum PublishingMode {
+        NONE,
+        COMPILE_ONLY(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME),
+        RUNTIME_ONLY(JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME),
+        COMPILE_AND_RUNTIME(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME, JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME);
 
-		private final Set<String> outgoingConfigurations;
+        private final Set<String> outgoingConfigurations;
 
-		PublishingMode(String... outgoingConfigurations) {
-			this.outgoingConfigurations = Set.of(outgoingConfigurations);
-		}
+        PublishingMode(String... outgoingConfigurations) {
+            this.outgoingConfigurations = Set.of(outgoingConfigurations);
+        }
 
-		public Set<String> outgoingConfigurations() {
-			return outgoingConfigurations;
-		}
-	}
+        public Set<String> outgoingConfigurations() {
+            return outgoingConfigurations;
+        }
+    }
 
-	@Inject
-	protected abstract Project getProject();
+    @Inject
+    protected abstract Project getProject();
 
-	@ApiStatus.Internal
-	@Internal
-	public final String getRemappedConfigurationName() {
-		return getName() + "Mapped";
-	}
+    @ApiStatus.Internal
+    @Internal
+    public final String getRemappedConfigurationName() {
+        return getName() + "Mapped";
+    }
 
-	@ApiStatus.Internal
-	@Internal
-	public final NamedDomainObjectProvider<Configuration> getSourceConfiguration() {
-		return getConfigurationByName(getName());
-	}
+    @ApiStatus.Internal
+    @Internal
+    public final NamedDomainObjectProvider<Configuration> getSourceConfiguration() {
+        return getConfigurationByName(getName());
+    }
 
-	@Internal
-	private NamedDomainObjectProvider<Configuration> getConfigurationByName(String name) {
-		return getProject().getConfigurations().named(name);
-	}
+    @Internal
+    private NamedDomainObjectProvider<Configuration> getConfigurationByName(String name) {
+        return getProject().getConfigurations().named(name);
+    }
 
-	private Provider<Boolean> defaultDependencyTransforms() {
-		return getSourceSet().map(sourceSet -> sourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME) || sourceSet.getName().equals("client"));
-	}
+    private Provider<Boolean> defaultDependencyTransforms() {
+        return getSourceSet()
+                .map(sourceSet -> sourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)
+                        || sourceSet.getName().equals("client"));
+    }
 
-	@Override
-	public String toString() {
-		return "RemapConfigurationSettings '" + getName() + "'";
-	}
+    @Override
+    public String toString() {
+        return "RemapConfigurationSettings '" + getName() + "'";
+    }
 }

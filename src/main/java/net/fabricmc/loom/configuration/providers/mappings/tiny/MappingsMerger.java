@@ -24,119 +24,59 @@
 
 package net.fabricmc.loom.configuration.providers.mappings.tiny;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import com.google.common.base.Stopwatch;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.regex.Pattern;
-
-import com.google.common.base.Stopwatch;
-import org.jetbrains.annotations.VisibleForTesting;
+import net.fabricmc.loom.configuration.providers.mappings.IntermediateMappingsService;
+import net.fabricmc.mappingio.tree.MappingTree;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.mappings.IntermediateMappingsService;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider;
-import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.tiny.Tiny2FileReader;
-import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
-import net.fabricmc.mappingio.tree.MappingTree;
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
-
 public final class MappingsMerger {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MappingsMerger.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MappingsMerger.class);
 
-	public static void mergeAndSaveMappings(Path from, Path out, MinecraftProvider minecraftProvider, IntermediateMappingsService intermediateMappingsService) throws IOException {
-		Stopwatch stopwatch = Stopwatch.createStarted();
-		LOGGER.info(":merging mappings");
+    public static void mergeAndSaveMappings(
+            Path from, Path out, IntermediateMappingsService intermediateMappingsService) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
 
-		if (minecraftProvider.isLegacyVersion()) {
-			legacyMergeAndSaveMappings(from, out, intermediateMappingsService);
-		} else {
-			mergeAndSaveMappings(from, out, intermediateMappingsService);
-		}
+        LOGGER.info(":merging mappings");
+        mergeAndSaveMappings(from, out, intermediateMappingsService);
+        LOGGER.info(":merged mappings in " + stopwatch.stop());
+    }
 
-		LOGGER.info(":merged mappings in " + stopwatch.stop());
-	}
+    /**
+     * Searches the mapping tree for inner classes with no mapped name, whose enclosing classes have mapped names.
+     * Currently, Yarn does not export mappings for these inner classes.
+     */
+    private static void inheritMappedNamesOfEnclosingClasses(MemoryMappingTree tree) {
+        int intermediaryIdx = tree.getNamespaceId("intermediary");
+        int namedIdx = tree.getNamespaceId("named");
 
-	@VisibleForTesting
-	public static void mergeAndSaveMappings(Path from, Path out, IntermediateMappingsService intermediateMappingsService) throws IOException {
-		MemoryMappingTree intermediaryTree = new MemoryMappingTree();
-		intermediateMappingsService.getMemoryMappingTree().accept(new MappingSourceNsSwitch(intermediaryTree, MappingsNamespace.INTERMEDIARY.toString()));
+        // The tree does not have an index by intermediary names by default
+        tree.setIndexByDstNames(true);
 
-		try (BufferedReader reader = Files.newBufferedReader(from, StandardCharsets.UTF_8)) {
-			Tiny2FileReader.read(reader, intermediaryTree);
-		}
+        for (MappingTree.ClassMapping classEntry : tree.getClasses()) {
+            String intermediaryName = classEntry.getDstName(intermediaryIdx);
+            String namedName = classEntry.getDstName(namedIdx);
 
-		MemoryMappingTree officialTree = new MemoryMappingTree();
-		UnobfuscatedMappingNsCompleter nsCompleter = new UnobfuscatedMappingNsCompleter(officialTree, MappingsNamespace.NAMED.toString(), Map.of(MappingsNamespace.OFFICIAL.toString(), MappingsNamespace.INTERMEDIARY.toString()));
-		MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, MappingsNamespace.OFFICIAL.toString());
-		intermediaryTree.accept(nsSwitch);
+            if (intermediaryName.equals(namedName) && intermediaryName.contains("$")) {
+                String[] path = intermediaryName.split(Pattern.quote("$"));
+                int parts = path.length;
 
-		inheritMappedNamesOfEnclosingClasses(officialTree);
+                for (int i = parts - 2; i >= 0; i--) {
+                    String currentPath = String.join("$", Arrays.copyOfRange(path, 0, i + 1));
+                    String namedParentClass = tree.mapClassName(currentPath, intermediaryIdx, namedIdx);
 
-		try (var writer = new Tiny2FileWriter(Files.newBufferedWriter(out, StandardCharsets.UTF_8), false)) {
-			officialTree.accept(writer);
-		}
-	}
-
-	@VisibleForTesting
-	public static void legacyMergeAndSaveMappings(Path from, Path out, IntermediateMappingsService intermediateMappingsService) throws IOException {
-		MemoryMappingTree intermediaryTree = new MemoryMappingTree();
-		intermediateMappingsService.getMemoryMappingTree().accept(intermediaryTree);
-
-		try (BufferedReader reader = Files.newBufferedReader(from, StandardCharsets.UTF_8)) {
-			Tiny2FileReader.read(reader, intermediaryTree);
-		}
-
-		MemoryMappingTree officialTree = new MemoryMappingTree();
-		UnobfuscatedMappingNsCompleter nsCompleter = new UnobfuscatedMappingNsCompleter(officialTree, MappingsNamespace.NAMED.toString(), Map.of(MappingsNamespace.CLIENT_OFFICIAL.toString(), MappingsNamespace.INTERMEDIARY.toString(), MappingsNamespace.SERVER_OFFICIAL.toString(), MappingsNamespace.INTERMEDIARY.toString()));
-		intermediaryTree.accept(nsCompleter);
-
-		// versions this old strip inner class attributes
-		// from the obfuscated jars anyway
-		//inheritMappedNamesOfEnclosingClasses(officialTree);
-
-		try (var writer = new Tiny2FileWriter(Files.newBufferedWriter(out, StandardCharsets.UTF_8), false)) {
-			officialTree.accept(writer);
-		}
-	}
-
-	/**
-	 * Searches the mapping tree for inner classes with no mapped name, whose enclosing classes have mapped names.
-	 * Currently, Yarn does not export mappings for these inner classes.
-	 */
-	private static void inheritMappedNamesOfEnclosingClasses(MemoryMappingTree tree) {
-		int intermediaryIdx = tree.getNamespaceId("intermediary");
-		int namedIdx = tree.getNamespaceId("named");
-
-		// The tree does not have an index by intermediary names by default
-		tree.setIndexByDstNames(true);
-
-		for (MappingTree.ClassMapping classEntry : tree.getClasses()) {
-			String intermediaryName = classEntry.getDstName(intermediaryIdx);
-			String namedName = classEntry.getDstName(namedIdx);
-
-			if (intermediaryName.equals(namedName) && intermediaryName.contains("$")) {
-				String[] path = intermediaryName.split(Pattern.quote("$"));
-				int parts = path.length;
-
-				for (int i = parts - 2; i >= 0; i--) {
-					String currentPath = String.join("$", Arrays.copyOfRange(path, 0, i + 1));
-					String namedParentClass = tree.mapClassName(currentPath, intermediaryIdx, namedIdx);
-
-					if (!namedParentClass.equals(currentPath)) {
-						classEntry.setDstName(namedParentClass
-										+ "$" + String.join("$", Arrays.copyOfRange(path, i + 1, path.length)),
-								namedIdx);
-						break;
-					}
-				}
-			}
-		}
-	}
+                    if (!namedParentClass.equals(currentPath)) {
+                        classEntry.setDstName(
+                                namedParentClass + "$" + String.join("$", Arrays.copyOfRange(path, i + 1, path.length)),
+                                namedIdx);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }

@@ -24,10 +24,9 @@
 
 package net.fabricmc.loom.configuration;
 
-import org.gradle.api.Project;
-
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.util.service.ServiceFactory;
+import org.gradle.api.Project;
 
-public record ConfigContextImpl(Project project, ServiceFactory serviceFactory, LoomGradleExtension extension) implements ConfigContext {
-}
+public record ConfigContextImpl(Project project, ServiceFactory serviceFactory, LoomGradleExtension extension)
+        implements ConfigContext {}

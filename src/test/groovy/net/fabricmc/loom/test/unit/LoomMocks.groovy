@@ -30,7 +30,7 @@ import java.util.function.Function
 import net.fabricmc.loom.configuration.providers.mappings.IntermediaryMappingsProvider
 import net.fabricmc.loom.configuration.providers.mappings.IntermediateMappingsService
 import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.download.Download
+import net.fabricmc.loom.util.copygamefile.CopyGameFile
 
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.when
@@ -39,7 +39,7 @@ class LoomMocks {
 	static IntermediaryMappingsProvider intermediaryMappingsProviderMock(String minecraftVersion, String intermediaryUrl) {
 		def minecraftVersionProperty = GradleTestUtil.mockProperty(minecraftVersion)
 		def intermediaryUrlProperty = GradleTestUtil.mockProperty(intermediaryUrl)
-		def downloaderProperty = GradleTestUtil.mockProperty(Download.&create as Function)
+		def downloaderProperty = GradleTestUtil.mockProperty(CopyGameFile.&create as Function)
 		def refreshDeps = GradleTestUtil.mockProperty(false)
 
 		Objects.requireNonNull(minecraftVersionProperty.get())

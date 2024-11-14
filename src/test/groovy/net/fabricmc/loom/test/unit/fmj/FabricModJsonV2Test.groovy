@@ -38,39 +38,39 @@ class FabricModJsonV2Test extends Specification {
 	@Language("json")
 	static String JSON = """
 {
-	"schemaVersion": 2,
-	"id": "example-mod-id",
-	"name": "Example mod name for testing",
-	"version": "1.0.0",
-	"environment": "client",
-	"license": "Apache-2.0",
-	"mixins": [
-		{
-		  "config": "test.client.mixins.json",
-		  "environment": "client"
-		},
-		{
-		  "config": "test.server.mixins.json",
-		  "environment": "server"
-		},
-		"test.mixins.json"
-	],
-	"classTweakers": [
-		{
-		  "config": "client.ct",
-		  "environment": "client"
-		},
-		{
-		  "config": "server.ct",
-		  "environment": "server"
-		},
-		"universal.ct"
-	],
-	"custom": {
-		"loom:injected_interfaces": {
-		  "net/minecraft/class_123": ["net/test/TestClass"]
-		}
-	}
+    "schemaVersion": 2,
+    "id": "example-mod-id",
+    "name": "Example mod name for testing",
+    "version": "1.0.0",
+    "environment": "client",
+    "license": "Apache-2.0",
+    "mixins": [
+        {
+          "config": "test.client.mixins.json",
+          "environment": "client"
+        },
+        {
+          "config": "test.server.mixins.json",
+          "environment": "server"
+        },
+        "test.mixins.json"
+    ],
+    "classTweakers": [
+        {
+          "config": "client.ct",
+          "environment": "client"
+        },
+        {
+          "config": "server.ct",
+          "environment": "server"
+        },
+        "universal.ct"
+    ],
+    "custom": {
+        "loom:injected_interfaces": {
+          "net/minecraft/class_123": ["net/test/TestClass"]
+        }
+    }
 }
 """
 

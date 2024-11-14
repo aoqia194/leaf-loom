@@ -28,41 +28,44 @@ import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.loom.api.processor.ProcessorContext;
 import net.fabricmc.loom.configuration.ConfigContext;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidJar;
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidJarConfiguration;
 import net.fabricmc.loom.util.LazyCloseable;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public record ProcessorContextImpl(ConfigContext configContext, MinecraftJar minecraftJar) implements ProcessorContext {
-	@Override
-	public MinecraftJarConfiguration getJarConfiguration() {
-		return configContext.extension().getMinecraftJarConfiguration().get();
-	}
+public record ProcessorContextImpl(ConfigContext configContext, ZomboidJar zomboidJar) implements ProcessorContext {
+    @Override
+    public ZomboidJarConfiguration getJarConfiguration() {
+        return configContext.extension().getZomboidJarConfiguration().get();
+    }
 
-	@Override
-	public boolean isMerged() {
-		return minecraftJar.isMerged();
-	}
+    @Override
+    public boolean isMerged() {
+        return zomboidJar.isMerged();
+    }
 
-	@Override
-	public boolean includesClient() {
-		return minecraftJar.includesClient();
-	}
+    @Override
+    public boolean includesClient() {
+        return zomboidJar.includesClient();
+    }
 
-	@Override
-	public boolean includesServer() {
-		return minecraftJar.includesServer();
-	}
+    @Override
+    public boolean includesServer() {
+        return zomboidJar.includesServer();
+    }
 
-	@Override
-	public LazyCloseable<TinyRemapper> createRemapper(MappingsNamespace from, MappingsNamespace to) {
-		return ContextImplHelper.createRemapper(configContext, from, to);
-	}
+    @Override
+    public LazyCloseable<TinyRemapper> createRemapper(MappingsNamespace from, MappingsNamespace to) {
+        return ContextImplHelper.createRemapper(configContext, from, to);
+    }
 
-	@Override
-	public MemoryMappingTree getMappings() {
-		LoomGradleExtension extension = LoomGradleExtension.get(configContext().project());
-		return extension.getMappingConfiguration().getMappingsService(configContext().project(), configContext().serviceFactory()).getMappingTree();
-	}
+    @Override
+    public MemoryMappingTree getMappings() {
+        LoomGradleExtension extension = LoomGradleExtension.get(configContext().project());
+        return extension
+                .getMappingConfiguration()
+                .getMappingsService(configContext().project(), configContext().serviceFactory())
+                .getMappingTree();
+    }
 }

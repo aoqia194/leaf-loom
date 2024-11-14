@@ -27,43 +27,56 @@ package net.fabricmc.loom.util;
 import org.gradle.api.plugins.ExtensionAware;
 
 public class MirrorUtil {
-	public static String getLibrariesBase(ExtensionAware aware) {
-		if (aware.getExtensions().getExtraProperties().has("loom_libraries_base")) {
-			return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_libraries_base"));
-		}
+    public static String getResourcesBase(ExtensionAware aware) {
+        if (aware.getExtensions().getExtraProperties().has("loom_resources_base")) {
+            return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_resources_base"));
+        }
 
-		return Constants.LIBRARIES_BASE;
-	}
+        return Constants.RESOURCES_BASE;
+    }
 
-	public static String getResourcesBase(ExtensionAware aware) {
-		if (aware.getExtensions().getExtraProperties().has("loom_resources_base")) {
-			return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_resources_base"));
-		}
+    public static String getServerResourcesBase(ExtensionAware aware) {
+        if (aware.getExtensions().getExtraProperties().has("loom_server_resources_base")) {
+            return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_server_resources_base"));
+        }
 
-		return Constants.RESOURCES_BASE;
-	}
+        return Constants.RESOURCES_BASE_SERVER;
+    }
 
-	public static String getVersionManifests(ExtensionAware aware) {
-		if (aware.getExtensions().getExtraProperties().has("loom_version_manifests")) {
-			return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_version_manifests"));
-		}
+    public static String getVersionManifests(ExtensionAware aware) {
+        if (aware.getExtensions().getExtraProperties().has("loom_version_manifests")) {
+            return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_version_manifests"));
+        }
 
-		return Constants.VERSION_MANIFESTS;
-	}
+        return Constants.VERSION_MANIFESTS + getOsStringForUrl() + "/version_manifest.json";
+    }
 
-	public static String getExperimentalVersions(ExtensionAware aware) {
-		if (aware.getExtensions().getExtraProperties().has("loom_experimental_versions")) {
-			return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_experimental_versions"));
-		}
+    private static String getOsStringForUrl() throws RuntimeException {
+        final Platform.OperatingSystem os = Platform.CURRENT.getOperatingSystem();
+        if (os.isWindows()) {
+            return "win";
+        } else if (os.isMacOS()) {
+            return "mac";
+        } else if (os.isLinux()) {
+            return "linux";
+        } else {
+            throw new RuntimeException("Unsupported operating system: " + os);
+        }
+    }
 
-		return Constants.EXPERIMENTAL_VERSIONS;
-	}
+    public static String getServerVersionManifests(ExtensionAware aware) {
+        if (aware.getExtensions().getExtraProperties().has("loom_server_version_manifests")) {
+            return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_server_version_manifests"));
+        }
 
-	public static String getFabricRepository(ExtensionAware aware) {
-		if (aware.getExtensions().getExtraProperties().has("loom_fabric_repository")) {
-			return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_fabric_repository"));
-		}
+        return Constants.SERVER_VERSION_MANIFESTS + getOsStringForUrl() + "/version_manifest.json";
+    }
 
-		return Constants.FABRIC_REPOSITORY;
-	}
+    public static String getFabricRepository(ExtensionAware aware) {
+        if (aware.getExtensions().getExtraProperties().has("loom_fabric_repository")) {
+            return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_fabric_repository"));
+        }
+
+        return Constants.FABRIC_REPOSITORY;
+    }
 }

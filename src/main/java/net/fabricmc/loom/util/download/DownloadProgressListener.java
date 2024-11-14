@@ -25,23 +25,23 @@
 package net.fabricmc.loom.util.download;
 
 public interface DownloadProgressListener {
-	void onStart();
+    void onStart();
 
-	void onProgress(long bytesTransferred, long contentLength);
+    void onProgress(long bytesTransferred, long contentLength);
 
-	void onEnd();
+    void onEnd();
 
-	DownloadProgressListener NONE = new DownloadProgressListener() {
-		@Override
-		public void onStart() {
-		}
+    DownloadProgressListener NONE = new DownloadProgressListener() {
+        @Override
+        public void onStart() {
+        }
 
-		@Override
-		public void onProgress(long bytesTransferred, long contentLength) {
-		}
+        @Override
+        public void onProgress(long bytesTransferred, long contentLength) {
+        }
 
-		@Override
-		public void onEnd() {
-		}
-	};
+        @Override
+        public void onEnd() {
+        }
+    };
 }

@@ -25,23 +25,23 @@
 package net.fabricmc.loom.util;
 
 public final class Strings {
-	public static String capitalize(String word) {
-		// Don't capitalize empty strings
-		if (word.isBlank()) {
-			return word;
-		}
+    public static String capitalize(String word) {
+        // Don't capitalize empty strings
+        if (word.isBlank()) {
+            return word;
+        }
 
-		final StringBuilder builder = new StringBuilder();
-		final int codePointCount = word.codePointCount(0, word.length());
-		final int first = Character.toUpperCase(word.codePointAt(0));
-		builder.append(Character.toString(first));
+        final StringBuilder builder = new StringBuilder();
+        final int codePointCount = word.codePointCount(0, word.length());
+        final int first = Character.toUpperCase(word.codePointAt(0));
+        builder.append(Character.toString(first));
 
-		if (codePointCount > 1) {
-			for (int codePoint = 1; codePoint < codePointCount; codePoint++) {
-				builder.append(Character.toString(word.codePointAt(codePoint)));
-			}
-		}
+        if (codePointCount > 1) {
+            for (int codePoint = 1; codePoint < codePointCount; codePoint++) {
+                builder.append(Character.toString(word.codePointAt(codePoint)));
+            }
+        }
 
-		return builder.toString();
-	}
+        return builder.toString();
+    }
 }

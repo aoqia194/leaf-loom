@@ -26,19 +26,17 @@ package net.fabricmc.loom.configuration.providers.mappings;
 
 import java.io.IOException;
 import java.nio.file.Path;
-
+import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
-
 @ApiStatus.Internal
 public abstract class IntermediateMappingsProviderInternal extends IntermediateMappingsProvider {
-	public abstract void provide(Path tinyMappings, @Nullable Project project) throws IOException;
+    public abstract void provide(Path tinyMappings, @Nullable Project project) throws IOException;
 
-	@Override
-	public void provide(Path tinyMappings) throws IOException {
-		this.provide(tinyMappings, null);
-	}
+    @Override
+    public void provide(Path tinyMappings) throws IOException {
+        this.provide(tinyMappings, null);
+    }
 }

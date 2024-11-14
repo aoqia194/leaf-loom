@@ -28,9 +28,9 @@ import groovy.lang.Closure;
 import org.gradle.api.Action;
 
 public record ClosureAction<T>(Closure closure) implements Action<T> {
-	@Override
-	public void execute(T t) {
-		closure.setDelegate(t);
-		closure.call(t);
-	}
+    @Override
+    public void execute(T t) {
+        closure.setDelegate(t);
+        closure.call(t);
+    }
 }

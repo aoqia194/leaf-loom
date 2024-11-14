@@ -27,29 +27,27 @@ package net.fabricmc.loom.configuration.providers.mappings.extras.signatures;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
-
-import org.jetbrains.annotations.ApiStatus;
-
 import net.fabricmc.loom.api.mappings.layered.MappingLayer;
 import net.fabricmc.loom.util.ZipUtils;
 import net.fabricmc.mappingio.MappingVisitor;
+import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public record SignatureFixesLayerImpl(Path mappingsFile) implements MappingLayer, SignatureFixesLayer {
-	private static final String SIGNATURE_FIXES_PATH = "extras/record_signatures.json";
+    private static final String SIGNATURE_FIXES_PATH = "extras/record_signatures.json";
 
-	@Override
-	public void visit(MappingVisitor mappingVisitor) throws IOException {
-		// Nothing to do here
-	}
+    @Override
+    public void visit(MappingVisitor mappingVisitor) throws IOException {
+        // Nothing to do here
+    }
 
-	@Override
-	public Map<String, String> getSignatureFixes() {
-		try {
-			//noinspection unchecked
-			return ZipUtils.unpackJson(mappingsFile(), SIGNATURE_FIXES_PATH, Map.class);
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to extract signature fixes", e);
-		}
-	}
+    @Override
+    public Map<String, String> getSignatureFixes() {
+        try {
+            //noinspection unchecked
+            return ZipUtils.unpackJson(mappingsFile(), SIGNATURE_FIXES_PATH, Map.class);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to extract signature fixes", e);
+        }
+    }
 }

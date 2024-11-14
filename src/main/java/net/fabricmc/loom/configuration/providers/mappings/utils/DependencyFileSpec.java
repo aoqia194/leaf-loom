@@ -28,42 +28,43 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Set;
-
+import net.fabricmc.loom.api.mappings.layered.MappingContext;
+import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.FileCollectionDependency;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
-
 public record DependencyFileSpec(Dependency dependency) implements FileSpec {
-	@Override
-	public Path get(MappingContext context) {
-		if (dependency instanceof FileCollectionDependency fileCollectionDependency) {
-			Set<File> files = fileCollectionDependency.getFiles().getFiles();
+    @Override
+    public Path get(MappingContext context) {
+        if (dependency instanceof FileCollectionDependency fileCollectionDependency) {
+            Set<File> files = fileCollectionDependency.getFiles().getFiles();
 
-			if (files.isEmpty()) {
-				throw new RuntimeException("FileCollectionDependency (%s) resolved no files".formatted(fileCollectionDependency.toString()));
-			} else if (files.size() > 1) {
-				throw new RuntimeException("FileCollectionDependency (%s) resolved too many files (%d) only 1 is expected".formatted(fileCollectionDependency.toString(), files.size()));
-			}
+            if (files.isEmpty()) {
+                throw new RuntimeException("FileCollectionDependency (%s) resolved no files"
+                        .formatted(fileCollectionDependency.toString()));
+            } else if (files.size() > 1) {
+                throw new RuntimeException(
+                        "FileCollectionDependency (%s) resolved too many files (%d) only 1 is expected"
+                                .formatted(fileCollectionDependency.toString(), files.size()));
+            }
 
-			return files.iterator().next().toPath();
-		}
+            return files.iterator().next().toPath();
+        }
 
-		return context.resolveDependency(dependency);
-	}
+        return context.resolveDependency(dependency);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(dependency.getGroup(), dependency.getName(), dependency.getVersion());
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(dependency.getGroup(), dependency.getName(), dependency.getVersion());
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof DependencyFileSpec other) {
-			return other.dependency().contentEquals(this.dependency());
-		}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DependencyFileSpec other) {
+            return other.dependency().contentEquals(this.dependency());
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

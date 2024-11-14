@@ -64,7 +64,10 @@ class KotlinClassMetadataRemappingAnnotationVisitorTest {
         classReader.accept(stringWriterVisitor(inputWriter), 0)
 
         val remappedWriter = StringWriter()
-        classReader.accept(KotlinMetadataRemappingClassVisitor(tinyRemapper.environment.remapper, stringWriterVisitor(remappedWriter)), 0)
+        classReader.accept(
+            KotlinMetadataRemappingClassVisitor(tinyRemapper.environment.remapper, stringWriterVisitor(remappedWriter)),
+            0,
+        )
 
         val d2In = d2(inputWriter.toString())
         val d2Out = d2(remappedWriter.toString())
@@ -87,7 +90,10 @@ class KotlinClassMetadataRemappingAnnotationVisitorTest {
         classReader.accept(stringWriterVisitor(inputWriter), 0)
 
         val remappedWriter = StringWriter()
-        classReader.accept(KotlinMetadataRemappingClassVisitor(tinyRemapper.environment.remapper, stringWriterVisitor(remappedWriter)), 0)
+        classReader.accept(
+            KotlinMetadataRemappingClassVisitor(tinyRemapper.environment.remapper, stringWriterVisitor(remappedWriter)),
+            0,
+        )
 
         val d2In = d2(inputWriter.toString())
         val d2Out = d2(remappedWriter.toString())

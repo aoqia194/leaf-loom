@@ -28,22 +28,22 @@ import java.nio.file.Path;
 import java.util.function.Function;
 
 public enum SingleJarEnvType {
-	CLIENT(MinecraftJar.Client::new, MinecraftJar.Type.CLIENT),
-	SERVER(MinecraftJar.Server::new, MinecraftJar.Type.SERVER);
+    CLIENT(ZomboidJar.Client::new, ZomboidJar.Type.CLIENT),
+    SERVER(ZomboidJar.Server::new, ZomboidJar.Type.SERVER);
 
-	private final Function<Path, MinecraftJar> jarFunction;
-	private final MinecraftJar.Type type;
+    private final Function<Path, ZomboidJar> jarFunction;
+    private final ZomboidJar.Type type;
 
-	SingleJarEnvType(Function<Path, MinecraftJar> jarFunction, MinecraftJar.Type type) {
-		this.jarFunction = jarFunction;
-		this.type = type;
-	}
+    SingleJarEnvType(Function<Path, ZomboidJar> jarFunction, ZomboidJar.Type type) {
+        this.jarFunction = jarFunction;
+        this.type = type;
+    }
 
-	public Function<Path, MinecraftJar> getJar() {
-		return jarFunction;
-	}
+    public Function<Path, ZomboidJar> getJar() {
+        return jarFunction;
+    }
 
-	public MinecraftJar.Type getType() {
-		return type;
-	}
+    public ZomboidJar.Type getType() {
+        return type;
+    }
 }

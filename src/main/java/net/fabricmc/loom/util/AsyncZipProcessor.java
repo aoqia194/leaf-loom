@@ -38,51 +38,55 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public interface AsyncZipProcessor {
-	static void processEntries(Path inputZip, Path outputZip, AsyncZipProcessor processor) throws IOException {
-		try (FileSystemUtil.Delegate inFs = FileSystemUtil.getJarFileSystem(inputZip, false);
-				FileSystemUtil.Delegate outFs = FileSystemUtil.getJarFileSystem(outputZip, true)) {
-			final Path inRoot = inFs.get().getPath("/");
-			final Path outRoot = outFs.get().getPath("/");
+    static void processEntries(Path inputZip, Path outputZip, AsyncZipProcessor processor) throws IOException {
+        try (FileSystemUtil.Delegate inFs = FileSystemUtil.getJarFileSystem(inputZip, false);
+                FileSystemUtil.Delegate outFs = FileSystemUtil.getJarFileSystem(outputZip, true)) {
+            final Path inRoot = inFs.get().getPath("/");
+            final Path outRoot = outFs.get().getPath("/");
 
-			List<CompletableFuture<Void>> futures = new ArrayList<>();
-			final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            final ExecutorService executor =
+                    Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-			Files.walkFileTree(inRoot, new SimpleFileVisitor<>() {
-				@Override
-				public FileVisitResult visitFile(Path inputFile, BasicFileAttributes attrs) throws IOException {
-					final CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
-						try {
-							final String rel = inRoot.relativize(inputFile).toString();
-							final Path outputFile = outRoot.resolve(rel);
-							processor.processEntryAsync(inputFile, outputFile);
-						} catch (IOException e) {
-							throw new CompletionException(e);
-						}
+            Files.walkFileTree(inRoot, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path inputFile, BasicFileAttributes attrs) throws IOException {
+                    final CompletableFuture<Void> future = CompletableFuture.supplyAsync(
+                            () -> {
+                                try {
+                                    final String rel =
+                                            inRoot.relativize(inputFile).toString();
+                                    final Path outputFile = outRoot.resolve(rel);
+                                    processor.processEntryAsync(inputFile, outputFile);
+                                } catch (IOException e) {
+                                    throw new CompletionException(e);
+                                }
 
-						return null;
-					}, executor);
+                                return null;
+                            },
+                            executor);
 
-					futures.add(future);
-					return FileVisitResult.CONTINUE;
-				}
-			});
+                    futures.add(future);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
 
-			// Wait for all futures to complete
-			for (CompletableFuture<Void> future : futures) {
-				try {
-					future.join();
-				} catch (CompletionException e) {
-					if (e.getCause() instanceof IOException ioe) {
-						throw ioe;
-					}
+            // Wait for all futures to complete
+            for (CompletableFuture<Void> future : futures) {
+                try {
+                    future.join();
+                } catch (CompletionException e) {
+                    if (e.getCause() instanceof IOException ioe) {
+                        throw ioe;
+                    }
 
-					throw new RuntimeException("Failed to process zip", e.getCause());
-				}
-			}
+                    throw new RuntimeException("Failed to process zip", e.getCause());
+                }
+            }
 
-			executor.shutdown();
-		}
-	}
+            executor.shutdown();
+        }
+    }
 
-	void processEntryAsync(Path inputEntry, Path outputEntry) throws IOException;
+    void processEntryAsync(Path inputEntry, Path outputEntry) throws IOException;
 }

@@ -26,7 +26,20 @@ package net.fabricmc.loom.api;
 
 import java.io.File;
 import java.util.List;
-
+import net.fabricmc.loom.api.decompilers.DecompilerOptions;
+import net.fabricmc.loom.api.manifest.VersionsManifestsAPI;
+import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
+import net.fabricmc.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
+import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
+import net.fabricmc.loom.api.remapping.RemapperExtension;
+import net.fabricmc.loom.api.remapping.RemapperParameters;
+import net.fabricmc.loom.configuration.ide.RunConfigSettings;
+import net.fabricmc.loom.configuration.processors.JarProcessor;
+import net.fabricmc.loom.configuration.providers.mappings.NoOpIntermediateMappingsProvider;
+import net.fabricmc.loom.configuration.providers.minecraft.ManifestLocations;
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidJarConfiguration;
+import net.fabricmc.loom.task.GenerateSourcesTask;
+import net.fabricmc.loom.util.DeprecationHelper;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.NamedDomainObjectList;
@@ -42,218 +55,208 @@ import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.api.decompilers.DecompilerOptions;
-import net.fabricmc.loom.api.manifest.VersionsManifestsAPI;
-import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
-import net.fabricmc.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
-import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
-import net.fabricmc.loom.api.remapping.RemapperExtension;
-import net.fabricmc.loom.api.remapping.RemapperParameters;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.configuration.processors.JarProcessor;
-import net.fabricmc.loom.configuration.providers.mappings.NoOpIntermediateMappingsProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.ManifestLocations;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
-import net.fabricmc.loom.task.GenerateSourcesTask;
-import net.fabricmc.loom.util.DeprecationHelper;
-
 /**
  * This is the public api available exposed to build scripts.
  */
 public interface LoomGradleExtensionAPI {
-	@ApiStatus.Internal
-	DeprecationHelper getDeprecationHelper();
+    @ApiStatus.Internal
+    DeprecationHelper getDeprecationHelper();
 
-	RegularFileProperty getAccessWidenerPath();
+    RegularFileProperty getAccessWidenerPath();
 
-	NamedDomainObjectContainer<DecompilerOptions> getDecompilerOptions();
+    NamedDomainObjectContainer<DecompilerOptions> getDecompilerOptions();
 
-	void decompilers(Action<NamedDomainObjectContainer<DecompilerOptions>> action);
+    void decompilers(Action<NamedDomainObjectContainer<DecompilerOptions>> action);
 
-	@Deprecated()
-	ListProperty<JarProcessor> getGameJarProcessors();
+    @Deprecated()
+    ListProperty<JarProcessor> getGameJarProcessors();
 
-	@Deprecated()
-	default void addJarProcessor(JarProcessor processor) {
-		getGameJarProcessors().add(processor);
-	}
+    @Deprecated()
+    default void addJarProcessor(JarProcessor processor) {
+        getGameJarProcessors().add(processor);
+    }
 
-	ListProperty<MinecraftJarProcessor<?>> getMinecraftJarProcessors();
+    ListProperty<MinecraftJarProcessor<?>> getZomboidJarProcessors();
 
-	void addMinecraftJarProcessor(Class<? extends MinecraftJarProcessor<?>> clazz, Object... parameters);
+    void addMinecraftJarProcessor(Class<? extends MinecraftJarProcessor<?>> clazz, Object... parameters);
 
-	ConfigurableFileCollection getLog4jConfigs();
+    ConfigurableFileCollection getLog4jConfigs();
 
-	Dependency officialMojangMappings();
+    Dependency layered(Action<LayeredMappingSpecBuilder> action);
 
-	Dependency layered(Action<LayeredMappingSpecBuilder> action);
+    void runs(Action<NamedDomainObjectContainer<RunConfigSettings>> action);
 
-	void runs(Action<NamedDomainObjectContainer<RunConfigSettings>> action);
+    NamedDomainObjectContainer<RunConfigSettings> getRunConfigs();
 
-	NamedDomainObjectContainer<RunConfigSettings> getRunConfigs();
+    /**
+     * {@return the value of {@link #getRunConfigs}}
+     * This is an alias for it that matches {@link #runs}.
+     */
+    default NamedDomainObjectContainer<RunConfigSettings> getRuns() {
+        return getRunConfigs();
+    }
 
-	/**
-	 * {@return the value of {@link #getRunConfigs}}
-	 * This is an alias for it that matches {@link #runs}.
-	 */
-	default NamedDomainObjectContainer<RunConfigSettings> getRuns() {
-		return getRunConfigs();
-	}
+    void mixin(Action<MixinExtensionAPI> action);
 
-	void mixin(Action<MixinExtensionAPI> action);
+    /**
+     * Optionally register and configure a {@link ModSettings} object. The name should match the modid.
+     * This is generally only required when the mod spans across multiple classpath directories, such as when using split sourcesets.
+     */
+    void mods(Action<NamedDomainObjectContainer<ModSettings>> action);
 
-	/**
-	 * Optionally register and configure a {@link ModSettings} object. The name should match the modid.
-	 * This is generally only required when the mod spans across multiple classpath directories, such as when using split sourcesets.
-	 */
-	void mods(Action<NamedDomainObjectContainer<ModSettings>> action);
+    NamedDomainObjectContainer<ModSettings> getMods();
 
-	NamedDomainObjectContainer<ModSettings> getMods();
+    NamedDomainObjectList<RemapConfigurationSettings> getRemapConfigurations();
 
-	NamedDomainObjectList<RemapConfigurationSettings> getRemapConfigurations();
+    RemapConfigurationSettings addRemapConfiguration(String name, Action<RemapConfigurationSettings> action);
 
-	RemapConfigurationSettings addRemapConfiguration(String name, Action<RemapConfigurationSettings> action);
+    void createRemapConfigurations(SourceSet sourceSet);
 
-	void createRemapConfigurations(SourceSet sourceSet);
+    default List<RemapConfigurationSettings> getCompileRemapConfigurations() {
+        return getRemapConfigurations().stream()
+                .filter(element -> element.getOnCompileClasspath().get())
+                .toList();
+    }
 
-	default List<RemapConfigurationSettings> getCompileRemapConfigurations() {
-		return getRemapConfigurations().stream().filter(element -> element.getOnCompileClasspath().get()).toList();
-	}
+    default List<RemapConfigurationSettings> getRuntimeRemapConfigurations() {
+        return getRemapConfigurations().stream()
+                .filter(element -> element.getOnRuntimeClasspath().get())
+                .toList();
+    }
 
-	default List<RemapConfigurationSettings> getRuntimeRemapConfigurations() {
-		return getRemapConfigurations().stream().filter(element -> element.getOnRuntimeClasspath().get()).toList();
-	}
+    @ApiStatus.Experimental
+    // TODO: move this from LoomGradleExtensionAPI to LoomGradleExtension once getRefmapName & setRefmapName is removed.
+    MixinExtensionAPI getMixin();
 
-	@ApiStatus.Experimental
-	// TODO: move this from LoomGradleExtensionAPI to LoomGradleExtension once getRefmapName & setRefmapName is removed.
-	MixinExtensionAPI getMixin();
+    default void interfaceInjection(Action<InterfaceInjectionExtensionAPI> action) {
+        action.execute(getInterfaceInjection());
+    }
 
-	default void interfaceInjection(Action<InterfaceInjectionExtensionAPI> action) {
-		action.execute(getInterfaceInjection());
-	}
+    InterfaceInjectionExtensionAPI getInterfaceInjection();
 
-	InterfaceInjectionExtensionAPI getInterfaceInjection();
+    @ApiStatus.Experimental
+    default void versionsManifests(Action<VersionsManifestsAPI> action) {
+        action.execute(getVersionsManifests());
+    }
 
-	@ApiStatus.Experimental
-	default void versionsManifests(Action<VersionsManifestsAPI> action) {
-		action.execute(getVersionsManifests());
-	}
+    @ApiStatus.Experimental
+    ManifestLocations getVersionsManifests();
 
-	@ApiStatus.Experimental
-	ManifestLocations getVersionsManifests();
+    /**
+     * @deprecated use {@linkplain #getCustomMinecraftMetadata} instead
+     */
+    @Deprecated
+    default Property<String> getCustomMinecraftManifest() {
+        return getCustomMinecraftMetadata();
+    }
 
-	/**
-	 * @deprecated use {@linkplain #getCustomMinecraftMetadata} instead
-	 */
-	@Deprecated
-	default Property<String> getCustomMinecraftManifest() {
-		return getCustomMinecraftMetadata();
-	}
+    Property<String> getCustomMinecraftMetadata();
 
-	Property<String> getCustomMinecraftMetadata();
+    SetProperty<String> getKnownIndyBsms();
 
-	SetProperty<String> getKnownIndyBsms();
+    /**
+     * Disables the deprecated POM generation for a publication.
+     * This is useful if you want to suppress deprecation warnings when you're not using software components.
+     *
+     * <p>Experimental API: Will be removed in Loom 0.12 together with the deprecated POM generation functionality.
+     *
+     * @param publication the maven publication
+     */
+    @ApiStatus.Experimental
+    void disableDeprecatedPomGeneration(MavenPublication publication);
 
-	/**
-	 * Disables the deprecated POM generation for a publication.
-	 * This is useful if you want to suppress deprecation warnings when you're not using software components.
-	 *
-	 * <p>Experimental API: Will be removed in Loom 0.12 together with the deprecated POM generation functionality.
-	 *
-	 * @param publication the maven publication
-	 */
-	@ApiStatus.Experimental
-	void disableDeprecatedPomGeneration(MavenPublication publication);
+    /**
+     * Reads the mod version from the fabric.mod.json file located in the main sourcesets resources.
+     * This is useful if you want to set the gradle version based of the version in the fabric.mod.json file.
+     *
+     * @return the version defined in the fabric.mod.json
+     */
+    String getModVersion();
 
-	/**
-	 * Reads the mod version from the fabric.mod.json file located in the main sourcesets resources.
-	 * This is useful if you want to set the gradle version based of the version in the fabric.mod.json file.
-	 *
-	 * @return the version defined in the fabric.mod.json
-	 */
-	String getModVersion();
+    /**
+     * When true loom will apply transitive access wideners from compile dependencies.
+     *
+     * @return the property controlling the transitive access wideners
+     */
+    Property<Boolean> getEnableTransitiveAccessWideners();
 
-	/**
-	 * When true loom will apply transitive access wideners from compile dependencies.
-	 *
-	 * @return the property controlling the transitive access wideners
-	 */
-	Property<Boolean> getEnableTransitiveAccessWideners();
+    /**
+     * When true loom will apply mod provided javadoc from dependencies.
+     *
+     * @return the property controlling the mod provided javadoc
+     */
+    Property<Boolean> getEnableModProvidedJavadoc();
 
-	/**
-	 * When true loom will apply mod provided javadoc from dependencies.
-	 *
-	 * @return the property controlling the mod provided javadoc
-	 */
-	Property<Boolean> getEnableModProvidedJavadoc();
+    @ApiStatus.Experimental
+    IntermediateMappingsProvider getIntermediateMappingsProvider();
 
-	@ApiStatus.Experimental
-	IntermediateMappingsProvider getIntermediateMappingsProvider();
+    @ApiStatus.Experimental
+    void setIntermediateMappingsProvider(IntermediateMappingsProvider intermediateMappingsProvider);
 
-	@ApiStatus.Experimental
-	void setIntermediateMappingsProvider(IntermediateMappingsProvider intermediateMappingsProvider);
+    @ApiStatus.Experimental
+    <T extends IntermediateMappingsProvider> void setIntermediateMappingsProvider(Class<T> clazz, Action<T> action);
 
-	@ApiStatus.Experimental
-	<T extends IntermediateMappingsProvider> void setIntermediateMappingsProvider(Class<T> clazz, Action<T> action);
+    /**
+     * An Experimental option to provide empty intermediate mappings, to be used for game versions without any intermediate mappings.
+     */
+    @ApiStatus.Experimental
+    default void noIntermediateMappings() {
+        setIntermediateMappingsProvider(NoOpIntermediateMappingsProvider.class, p -> {});
+    }
 
-	/**
-	 * An Experimental option to provide empty intermediate mappings, to be used for game versions without any intermediate mappings.
-	 */
-	@ApiStatus.Experimental
-	default void noIntermediateMappings() {
-		setIntermediateMappingsProvider(NoOpIntermediateMappingsProvider.class, p -> { });
-	}
+    /**
+     * Returns the tiny mappings file used to remap the game and mods.
+     */
+    File getMappingsFile();
 
-	/**
-	 * Returns the tiny mappings file used to remap the game and mods.
-	 */
-	File getMappingsFile();
+    /**
+     * Returns the {@link GenerateSourcesTask} for the given {@link DecompilerOptions}.
+     * When env source sets are split and the client param is true the decompile task for the client jar will be returned.
+     */
+    GenerateSourcesTask getDecompileTask(DecompilerOptions options, boolean client);
 
-	/**
-	 * Returns the {@link GenerateSourcesTask} for the given {@link DecompilerOptions}.
-	 * When env source sets are split and the client param is true the decompile task for the client jar will be returned.
-	 */
-	GenerateSourcesTask getDecompileTask(DecompilerOptions options, boolean client);
+    /**
+     * Use "%1$s" as a placeholder for the minecraft version.
+     *
+     * @return the intermediary url template
+     */
+    Property<String> getIntermediaryUrl();
 
-	/**
-	 * Use "%1$s" as a placeholder for the minecraft version.
-	 *
-	 * @return the intermediary url template
-	 */
-	Property<String> getIntermediaryUrl();
+    @ApiStatus.Experimental
+    Property<ZomboidJarConfiguration<?, ?, ?>> getZomboidJarConfiguration();
 
-	@ApiStatus.Experimental
-	Property<MinecraftJarConfiguration<?, ?, ?>> getMinecraftJarConfiguration();
+    default void serverOnlyZomboidJar() {
+        getZomboidJarConfiguration().set(ZomboidJarConfiguration.SERVER_ONLY);
+    }
 
-	default void serverOnlyMinecraftJar() {
-		getMinecraftJarConfiguration().set(MinecraftJarConfiguration.SERVER_ONLY);
-	}
+    default void clientOnlyZomboidJar() {
+        getZomboidJarConfiguration().set(ZomboidJarConfiguration.CLIENT_ONLY);
+    }
 
-	default void clientOnlyMinecraftJar() {
-		getMinecraftJarConfiguration().set(MinecraftJarConfiguration.CLIENT_ONLY);
-	}
+    default void splitZomboidJar() {
+        getZomboidJarConfiguration().set(ZomboidJarConfiguration.SPLIT);
+    }
 
-	default void splitMinecraftJar() {
-		getMinecraftJarConfiguration().set(MinecraftJarConfiguration.SPLIT);
-	}
+    void splitEnvironmentSourceSets();
 
-	void splitEnvironmentSourceSets();
+    boolean areEnvironmentSourceSetsSplit();
 
-	boolean areEnvironmentSourceSetsSplit();
+    Property<Boolean> getRuntimeOnlyLog4j();
 
-	Property<Boolean> getRuntimeOnlyLog4j();
+    Property<Boolean> getSplitModDependencies();
 
-	Property<Boolean> getSplitModDependencies();
+    <T extends RemapperParameters> void addRemapperExtension(
+            Class<? extends RemapperExtension<T>> remapperExtensionClass,
+            Class<T> parametersClass,
+            Action<T> parameterAction);
 
-	<T extends RemapperParameters> void addRemapperExtension(Class<? extends RemapperExtension<T>> remapperExtensionClass, Class<T> parametersClass, Action<T> parameterAction);
+    /**
+     * @return The minecraft version, as a {@link Provider}.
+     */
+    Provider<String> getMinecraftVersion();
 
-	/**
-	 * @return The minecraft version, as a {@link Provider}.
-	 */
-	Provider<String> getMinecraftVersion();
-
-	/**
-	 * @return A lazily evaluated {@link FileCollection} containing the named minecraft jars.
-	 */
-	FileCollection getNamedMinecraftJars();
+    /**
+     * @return A lazily evaluated {@link FileCollection} containing the named minecraft jars.
+     */
+    FileCollection getNamedMinecraftJars();
 }

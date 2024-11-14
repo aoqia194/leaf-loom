@@ -30,78 +30,78 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.gradle.api.Transformer;
 import org.gradle.process.internal.JvmOptions;
 import org.gradle.workers.internal.DaemonForkOptions;
 import org.gradle.workers.internal.WorkerDaemonClientsManager;
 
 public class WorkerDaemonClientsManagerHelper {
-	public static final String MARKER_PROP = "fabric.loom.decompile.worker";
+    public static final String MARKER_PROP = "fabric.loom.decompile.worker";
 
-	public static boolean stopIdleJVM(WorkerDaemonClientsManager manager, String jvmMarkerValue) {
-		AtomicBoolean stopped = new AtomicBoolean(false);
+    public static boolean stopIdleJVM(WorkerDaemonClientsManager manager, String jvmMarkerValue) {
+        AtomicBoolean stopped = new AtomicBoolean(false);
 
-		/* Transformer<List<WorkerDaemonClient>, List<WorkerDaemonClient>> */
-		Transformer<List<Object>, List<Object>> transformer = workerDaemonClients -> {
-			for (Object /* WorkerDaemonClient */ client : workerDaemonClients) {
-				DaemonForkOptions forkOptions = getForkOptions(client);
-				Map<String, Object> systemProperties = getSystemProperties(forkOptions);
+        /* Transformer<List<WorkerDaemonClient>, List<WorkerDaemonClient>> */
+        Transformer<List<Object>, List<Object>> transformer = workerDaemonClients -> {
+            for (Object /* WorkerDaemonClient */ client : workerDaemonClients) {
+                DaemonForkOptions forkOptions = getForkOptions(client);
+                Map<String, Object> systemProperties = getSystemProperties(forkOptions);
 
-				if (systemProperties == null || !jvmMarkerValue.equals(systemProperties.get(MARKER_PROP))) {
-					// Not the JVM we are looking for
-					continue;
-				}
+                if (systemProperties == null || !jvmMarkerValue.equals(systemProperties.get(MARKER_PROP))) {
+                    // Not the JVM we are looking for
+                    continue;
+                }
 
-				stopped.set(true);
-				return Collections.singletonList(client);
-			}
+                stopped.set(true);
+                return Collections.singletonList(client);
+            }
 
-			return Collections.emptyList();
-		};
+            return Collections.emptyList();
+        };
 
-		try {
-			Method selectIdleClientsToStop = manager.getClass().getDeclaredMethod("selectIdleClientsToStop", Transformer.class);
-			selectIdleClientsToStop.setAccessible(true);
-			selectIdleClientsToStop.invoke(manager, transformer);
-		} catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-			throw new RuntimeException("Failed to selectIdleClientsToStop", e);
-		}
+        try {
+            Method selectIdleClientsToStop =
+                    manager.getClass().getDeclaredMethod("selectIdleClientsToStop", Transformer.class);
+            selectIdleClientsToStop.setAccessible(true);
+            selectIdleClientsToStop.invoke(manager, transformer);
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to selectIdleClientsToStop", e);
+        }
 
-		return stopped.get();
-	}
+        return stopped.get();
+    }
 
-	private static Map<String, Object> getSystemProperties(DaemonForkOptions forkOptions) {
-		try {
-			Method getJavaForkOptionsMethod = forkOptions.getClass().getDeclaredMethod("getJavaForkOptions");
-			getJavaForkOptionsMethod.setAccessible(true);
-			Object /* JavaForkOptions */ javaForkOptions = getJavaForkOptionsMethod.invoke(forkOptions);
-			Method getSystemPropertiesMethod = javaForkOptions.getClass().getDeclaredMethod("getSystemProperties");
-			getSystemPropertiesMethod.setAccessible(true);
-			//noinspection unchecked
-			return (Map<String, Object>) getSystemPropertiesMethod.invoke(javaForkOptions);
-		} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-			// Gradle 8.11 and below
-		}
+    private static Map<String, Object> getSystemProperties(DaemonForkOptions forkOptions) {
+        try {
+            Method getJavaForkOptionsMethod = forkOptions.getClass().getDeclaredMethod("getJavaForkOptions");
+            getJavaForkOptionsMethod.setAccessible(true);
+            Object /* JavaForkOptions */ javaForkOptions = getJavaForkOptionsMethod.invoke(forkOptions);
+            Method getSystemPropertiesMethod = javaForkOptions.getClass().getDeclaredMethod("getSystemProperties");
+            getSystemPropertiesMethod.setAccessible(true);
+            //noinspection unchecked
+            return (Map<String, Object>) getSystemPropertiesMethod.invoke(javaForkOptions);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            // Gradle 8.11 and below
+        }
 
-		// Gradle 8.12+
-		try {
-			Method getJvmOptions = forkOptions.getClass().getDeclaredMethod("getJvmOptions");
-			getJvmOptions.setAccessible(true);
-			JvmOptions jvmOptions = (JvmOptions) getJvmOptions.invoke(forkOptions);
-			return jvmOptions.getMutableSystemProperties();
-		} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-			throw new RuntimeException("Failed to daemon system properties", e);
-		}
-	}
+        // Gradle 8.12+
+        try {
+            Method getJvmOptions = forkOptions.getClass().getDeclaredMethod("getJvmOptions");
+            getJvmOptions.setAccessible(true);
+            JvmOptions jvmOptions = (JvmOptions) getJvmOptions.invoke(forkOptions);
+            return jvmOptions.getMutableSystemProperties();
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to daemon system properties", e);
+        }
+    }
 
-	private static DaemonForkOptions getForkOptions(Object /* WorkerDaemonClient */ client) {
-		try {
-			Method getForkOptionsMethod = client.getClass().getDeclaredMethod("getForkOptions");
-			getForkOptionsMethod.setAccessible(true);
-			return (DaemonForkOptions) getForkOptionsMethod.invoke(client);
-		} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    private static DaemonForkOptions getForkOptions(Object /* WorkerDaemonClient */ client) {
+        try {
+            Method getForkOptionsMethod = client.getClass().getDeclaredMethod("getForkOptions");
+            getForkOptionsMethod.setAccessible(true);
+            return (DaemonForkOptions) getForkOptionsMethod.invoke(client);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

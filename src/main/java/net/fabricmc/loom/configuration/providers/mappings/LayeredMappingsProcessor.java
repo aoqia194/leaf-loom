@@ -31,9 +31,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.jetbrains.annotations.Nullable;
-
 import net.fabricmc.loom.api.mappings.layered.MappingContext;
 import net.fabricmc.loom.api.mappings.layered.MappingLayer;
 import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
@@ -43,119 +40,122 @@ import net.fabricmc.loom.configuration.providers.mappings.extras.unpick.UnpickLa
 import net.fabricmc.mappingio.adapter.MappingNsCompleter;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.jetbrains.annotations.Nullable;
 
 public class LayeredMappingsProcessor {
-	private final LayeredMappingSpec layeredMappingSpec;
-	private final boolean noIntermediateMappings;
+    private final LayeredMappingSpec layeredMappingSpec;
+    private final boolean noIntermediateMappings;
 
-	public LayeredMappingsProcessor(LayeredMappingSpec spec, boolean noIntermediateMappings) {
-		this.layeredMappingSpec = spec;
-		this.noIntermediateMappings = noIntermediateMappings;
-	}
+    public LayeredMappingsProcessor(LayeredMappingSpec spec, boolean noIntermediateMappings) {
+        this.layeredMappingSpec = spec;
+        this.noIntermediateMappings = noIntermediateMappings;
+    }
 
-	public List<MappingLayer> resolveLayers(MappingContext context) {
-		List<MappingLayer> layers = new LinkedList<>();
-		List<Class<? extends MappingLayer>> visitedLayers = new ArrayList<>();
+    public List<MappingLayer> resolveLayers(MappingContext context) {
+        List<MappingLayer> layers = new LinkedList<>();
+        List<Class<? extends MappingLayer>> visitedLayers = new ArrayList<>();
 
-		for (MappingsSpec<?> spec : layeredMappingSpec.layers()) {
-			MappingLayer layer = spec.createLayer(context);
+        for (MappingsSpec<?> spec : layeredMappingSpec.layers()) {
+            MappingLayer layer = spec.createLayer(context);
 
-			for (Class<? extends MappingLayer> dependentLayer : layer.dependsOn()) {
-				if (!visitedLayers.contains(dependentLayer)) {
-					throw new RuntimeException("Layer %s depends on %s".formatted(layer.getClass().getName(), dependentLayer.getName()));
-				}
-			}
+            for (Class<? extends MappingLayer> dependentLayer : layer.dependsOn()) {
+                if (!visitedLayers.contains(dependentLayer)) {
+                    throw new RuntimeException(
+                            "Layer %s depends on %s".formatted(layer.getClass().getName(), dependentLayer.getName()));
+                }
+            }
 
-			layers.add(layer);
-			visitedLayers.add(layer.getClass());
-		}
+            layers.add(layer);
+            visitedLayers.add(layer.getClass());
+        }
 
-		return Collections.unmodifiableList(layers);
-	}
+        return Collections.unmodifiableList(layers);
+    }
 
-	public MemoryMappingTree getMappings(List<MappingLayer> layers) throws IOException {
-		MemoryMappingTree mappingTree = new MemoryMappingTree();
+    public MemoryMappingTree getMappings(List<MappingLayer> layers) throws IOException {
+        MemoryMappingTree mappingTree = new MemoryMappingTree();
 
-		for (MappingLayer layer : layers) {
-			// We have to rebuild a new tree to work on when a layer doesnt merge into layered
-			boolean rebuild = layer.getSourceNamespace() != MappingsNamespace.NAMED;
-			MemoryMappingTree workingTree;
+        for (MappingLayer layer : layers) {
+            // We have to rebuild a new tree to work on when a layer doesnt merge into layered
+            boolean rebuild = layer.getSourceNamespace() != MappingsNamespace.NAMED;
+            MemoryMappingTree workingTree;
 
-			if (rebuild) {
-				var tempTree = new MemoryMappingTree();
+            if (rebuild) {
+                var tempTree = new MemoryMappingTree();
 
-				// This can be null on the first layer
-				if (mappingTree.getSrcNamespace() != null) {
-					var sourceNsSwitch = new MappingSourceNsSwitch(tempTree, layer.getSourceNamespace().toString());
-					mappingTree.accept(sourceNsSwitch);
-				}
+                // This can be null on the first layer
+                if (mappingTree.getSrcNamespace() != null) {
+                    var sourceNsSwitch = new MappingSourceNsSwitch(
+                            tempTree, layer.getSourceNamespace().toString());
+                    mappingTree.accept(sourceNsSwitch);
+                }
 
-				workingTree = tempTree;
-			} else {
-				workingTree = mappingTree;
-			}
+                workingTree = tempTree;
+            } else {
+                workingTree = mappingTree;
+            }
 
-			try {
-				layer.visit(workingTree);
-			} catch (IOException e) {
-				throw new IOException("Failed to visit: " + layer.getClass(), e);
-			}
+            try {
+                layer.visit(workingTree);
+            } catch (IOException e) {
+                throw new IOException("Failed to visit: " + layer.getClass(), e);
+            }
 
-			if (rebuild) {
-				mappingTree = new MemoryMappingTree();
-				workingTree.accept(new MappingSourceNsSwitch(mappingTree, MappingsNamespace.NAMED.toString()));
-			}
-		}
+            if (rebuild) {
+                mappingTree = new MemoryMappingTree();
+                workingTree.accept(new MappingSourceNsSwitch(mappingTree, MappingsNamespace.NAMED.toString()));
+            }
+        }
 
-		if (noIntermediateMappings) {
-			// HACK: Populate intermediary with named when there are no intermediary mappings being used.
-			MemoryMappingTree completedTree = new MemoryMappingTree();
-			mappingTree.accept(new MappingNsCompleter(completedTree, Map.of("intermediary", "named")));
-			return completedTree;
-		}
+        if (noIntermediateMappings) {
+            // HACK: Populate intermediary with named when there are no intermediary mappings being used.
+            MemoryMappingTree completedTree = new MemoryMappingTree();
+            mappingTree.accept(new MappingNsCompleter(completedTree, Map.of("intermediary", "named")));
+            return completedTree;
+        }
 
-		return mappingTree;
-	}
+        return mappingTree;
+    }
 
-	@Nullable
-	public Map<String, String> getSignatureFixes(List<MappingLayer> layers) {
-		Map<String, String> signatureFixes = new HashMap<>();
+    @Nullable
+    public Map<String, String> getSignatureFixes(List<MappingLayer> layers) {
+        Map<String, String> signatureFixes = new HashMap<>();
 
-		for (MappingLayer layer : layers) {
-			if (layer instanceof SignatureFixesLayer signatureFixesLayer) {
-				signatureFixes.putAll(signatureFixesLayer.getSignatureFixes());
-			}
-		}
+        for (MappingLayer layer : layers) {
+            if (layer instanceof SignatureFixesLayer signatureFixesLayer) {
+                signatureFixes.putAll(signatureFixesLayer.getSignatureFixes());
+            }
+        }
 
-		if (signatureFixes.isEmpty()) {
-			return null;
-		}
+        if (signatureFixes.isEmpty()) {
+            return null;
+        }
 
-		return Collections.unmodifiableMap(signatureFixes);
-	}
+        return Collections.unmodifiableMap(signatureFixes);
+    }
 
-	@Nullable
-	public UnpickLayer.UnpickData getUnpickData(List<MappingLayer> layers) throws IOException {
-		List<UnpickLayer.UnpickData> unpickDataList = new ArrayList<>();
+    @Nullable
+    public UnpickLayer.UnpickData getUnpickData(List<MappingLayer> layers) throws IOException {
+        List<UnpickLayer.UnpickData> unpickDataList = new ArrayList<>();
 
-		for (MappingLayer layer : layers) {
-			if (layer instanceof UnpickLayer unpickLayer) {
-				UnpickLayer.UnpickData data = unpickLayer.getUnpickData();
-				if (data == null) continue;
+        for (MappingLayer layer : layers) {
+            if (layer instanceof UnpickLayer unpickLayer) {
+                UnpickLayer.UnpickData data = unpickLayer.getUnpickData();
+                if (data == null) continue;
 
-				unpickDataList.add(data);
-			}
-		}
+                unpickDataList.add(data);
+            }
+        }
 
-		if (unpickDataList.isEmpty()) {
-			return null;
-		}
+        if (unpickDataList.isEmpty()) {
+            return null;
+        }
 
-		if (unpickDataList.size() != 1) {
-			// TODO merge
-			throw new UnsupportedOperationException("Only one unpick layer is currently supported.");
-		}
+        if (unpickDataList.size() != 1) {
+            // TODO merge
+            throw new UnsupportedOperationException("Only one unpick layer is currently supported.");
+        }
 
-		return unpickDataList.get(0);
-	}
+        return unpickDataList.get(0);
+    }
 }

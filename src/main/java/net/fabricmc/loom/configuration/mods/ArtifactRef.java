@@ -28,7 +28,7 @@ import static net.fabricmc.loom.configuration.mods.ModConfigurationRemapper.MISS
 import static net.fabricmc.loom.configuration.mods.ModConfigurationRemapper.replaceIfNullOrEmpty;
 
 import java.nio.file.Path;
-
+import net.fabricmc.loom.util.Checksum;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
@@ -37,75 +37,80 @@ import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.util.Checksum;
-
 public interface ArtifactRef {
-	Path path();
+    Path path();
 
-	@Nullable Path sources();
+    @Nullable
+    Path sources();
 
-	String name();
+    String name();
 
-	String group();
+    String group();
 
-	String version();
+    String version();
 
-	@Nullable String classifier();
+    @Nullable
+    String classifier();
 
-	void applyToConfiguration(Project project, Configuration configuration);
+    void applyToConfiguration(Project project, Configuration configuration);
 
-	record ResolvedArtifactRef(ResolvedArtifact artifact, @Nullable Path sources) implements ArtifactRef {
-		@Override
-		public Path path() {
-			return artifact.getFile().toPath();
-		}
+    record ResolvedArtifactRef(ResolvedArtifact artifact, @Nullable Path sources) implements ArtifactRef {
+        @Override
+        public Path path() {
+            return artifact.getFile().toPath();
+        }
 
-		public String group() {
-			return replaceIfNullOrEmpty(artifact.getModuleVersion().getId().getGroup(), () -> MISSING_GROUP);
-		}
+        public String group() {
+            return replaceIfNullOrEmpty(artifact.getModuleVersion().getId().getGroup(), () -> MISSING_GROUP);
+        }
 
-		public String name() {
-			return artifact.getModuleVersion().getId().getName();
-		}
+        public String name() {
+            return artifact.getModuleVersion().getId().getName();
+        }
 
-		public String version() {
-			return replaceIfNullOrEmpty(artifact.getModuleVersion().getId().getVersion(), () -> Checksum.truncatedSha256(artifact.getFile()));
-		}
+        public String version() {
+            return replaceIfNullOrEmpty(
+                    artifact.getModuleVersion().getId().getVersion(),
+                    () -> Checksum.truncatedSha256(artifact.getFile()));
+        }
 
-		public String classifier() {
-			return artifact.getClassifier();
-		}
+        public String classifier() {
+            return artifact.getClassifier();
+        }
 
-		@Override
-		public void applyToConfiguration(Project project, Configuration configuration) {
-			final DependencyHandler dependencies = project.getDependencies();
+        @Override
+        public void applyToConfiguration(Project project, Configuration configuration) {
+            final DependencyHandler dependencies = project.getDependencies();
 
-			Dependency dep = dependencies.create(artifact.getModuleVersion() + (artifact.getClassifier() == null ? "" : ':' + artifact.getClassifier())); // the owning module of the artifact
+            Dependency dep = dependencies.create(artifact.getModuleVersion()
+                    + (artifact.getClassifier() == null
+                            ? ""
+                            : ':' + artifact.getClassifier())); // the owning module of the artifact
 
-			if (dep instanceof ModuleDependency moduleDependency) {
-				moduleDependency.setTransitive(false);
-			}
+            if (dep instanceof ModuleDependency moduleDependency) {
+                moduleDependency.setTransitive(false);
+            }
 
-			dependencies.add(configuration.getName(), dep);
-		}
-	}
+            dependencies.add(configuration.getName(), dep);
+        }
+    }
 
-	record FileArtifactRef(Path path, String group, String name, String version) implements ArtifactRef {
-		@Override
-		public @Nullable Path sources() {
-			return null;
-		}
+    record FileArtifactRef(Path path, String group, String name, String version) implements ArtifactRef {
+        @Override
+        public @Nullable Path sources() {
+            return null;
+        }
 
-		@Override
-		public @Nullable String classifier() {
-			return null;
-		}
+        @Override
+        public @Nullable String classifier() {
+            return null;
+        }
 
-		@Override
-		public void applyToConfiguration(Project project, Configuration configuration) {
-			final DependencyHandler dependencies = project.getDependencies();
+        @Override
+        public void applyToConfiguration(Project project, Configuration configuration) {
+            final DependencyHandler dependencies = project.getDependencies();
 
-			dependencies.add(configuration.getName(), project.files(path.toFile()));
-		}
-	}
+            dependencies.add(configuration.getName(), project.files(path.toFile()));
+        }
+    }
 }

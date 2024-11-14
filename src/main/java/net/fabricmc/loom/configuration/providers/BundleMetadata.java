@@ -33,93 +33,91 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import org.gradle.api.Project;
-import org.jetbrains.annotations.Nullable;
-
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.util.AttributeHelper;
 import net.fabricmc.loom.util.FileSystemUtil;
+import org.gradle.api.Project;
+import org.jetbrains.annotations.Nullable;
 
 public record BundleMetadata(List<Entry> libraries, List<Entry> versions, String mainClass) {
-	private static final String LIBRARIES_LIST_PATH = "META-INF/libraries.list";
-	private static final String VERSIONS_LIST_PATH = "META-INF/versions.list";
-	private static final String MAINCLASS_PATH = "META-INF/main-class";
+    private static final String LIBRARIES_LIST_PATH = "META-INF/libraries.list";
+    private static final String VERSIONS_LIST_PATH = "META-INF/versions.list";
+    private static final String MAINCLASS_PATH = "META-INF/main-class";
 
-	@Nullable
-	public static BundleMetadata fromJar(Path jar) throws IOException {
-		final List<Entry> libraries;
-		final List<Entry> versions;
-		final String mainClass;
+    @Nullable
+    public static BundleMetadata fromJar(Path jar) throws IOException {
+        final List<Entry> libraries;
+        final List<Entry> versions;
+        final String mainClass;
 
-		try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(jar)) {
-			if (!Files.exists(fs.get().getPath(VERSIONS_LIST_PATH))) {
-				// Legacy jar
-				return null;
-			}
+        try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(jar)) {
+            if (!Files.exists(fs.get().getPath(VERSIONS_LIST_PATH))) {
+                // Legacy jar
+                return null;
+            }
 
-			libraries = readEntries(fs.readString(LIBRARIES_LIST_PATH), "META-INF/libraries/");
-			versions = readEntries(fs.readString(VERSIONS_LIST_PATH), "META-INF/versions/");
-			mainClass = fs.readString(MAINCLASS_PATH).trim();
-		}
+            libraries = readEntries(fs.readString(LIBRARIES_LIST_PATH), "META-INF/libraries/");
+            versions = readEntries(fs.readString(VERSIONS_LIST_PATH), "META-INF/versions/");
+            mainClass = fs.readString(MAINCLASS_PATH).trim();
+        }
 
-		return new BundleMetadata(libraries, versions, mainClass);
-	}
+        return new BundleMetadata(libraries, versions, mainClass);
+    }
 
-	private static List<Entry> readEntries(String content, String pathPrefix) {
-		List<Entry> entries = new ArrayList<>();
+    private static List<Entry> readEntries(String content, String pathPrefix) {
+        List<Entry> entries = new ArrayList<>();
 
-		for (String entry : content.split("\n")) {
-			if (entry.isBlank()) {
-				continue;
-			}
+        for (String entry : content.split("\n")) {
+            if (entry.isBlank()) {
+                continue;
+            }
 
-			String[] split = entry.split("\t");
+            String[] split = entry.split("\t");
 
-			if (split.length != 3) {
-				continue;
-			}
+            if (split.length != 3) {
+                continue;
+            }
 
-			entries.add(new Entry(split[0], split[1], pathPrefix + split[2]));
-		}
+            entries.add(new Entry(split[0], split[1], pathPrefix + split[2]));
+        }
 
-		return Collections.unmodifiableList(entries);
-	}
+        return Collections.unmodifiableList(entries);
+    }
 
-	public record Entry(String sha1, String name, String path) {
-		public void unpackEntry(Path jar, Path dest, Project project) throws IOException {
-			final LoomGradleExtension extension = LoomGradleExtension.get(project);
+    public record Entry(String sha1, String name, String path) {
+        public void unpackEntry(Path jar, Path dest, Project project) throws IOException {
+            final LoomGradleExtension extension = LoomGradleExtension.get(project);
 
-			if (!extension.refreshDeps() && Files.exists(dest)) {
-				final String hash = readHash(dest).orElse("");
+            if (!extension.refreshDeps() && Files.exists(dest)) {
+                final String hash = readHash(dest).orElse("");
 
-				if (hash.equals(sha1)) {
-					// File exists with expected hash
-					return;
-				}
-			}
+                if (hash.equals(sha1)) {
+                    // File exists with expected hash
+                    return;
+                }
+            }
 
-			try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(jar)) {
-				Files.copy(fs.get().getPath(path()), dest, StandardCopyOption.REPLACE_EXISTING);
-			}
+            try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(jar)) {
+                Files.copy(fs.get().getPath(path()), dest, StandardCopyOption.REPLACE_EXISTING);
+            }
 
-			writeHash(dest, sha1);
-		}
+            writeHash(dest, sha1);
+        }
 
-		private Optional<String> readHash(Path output) {
-			try {
-				return AttributeHelper.readAttribute(output, "LoomHash");
-			} catch (IOException e) {
-				return Optional.empty();
-			}
-		}
+        private Optional<String> readHash(Path output) {
+            try {
+                return AttributeHelper.readAttribute(output, "LoomHash");
+            } catch (IOException e) {
+                return Optional.empty();
+            }
+        }
 
-		private void writeHash(Path output, String eTag) {
-			try {
-				AttributeHelper.writeAttribute(output, "LoomHash", eTag);
-			} catch (IOException e) {
-				throw new UncheckedIOException("Failed to write hash to (%s)".formatted(output), e);
-			}
-		}
-	}
+        private void writeHash(Path output, String eTag) {
+            try {
+                AttributeHelper.writeAttribute(output, "LoomHash", eTag);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed to write hash to (%s)".formatted(output), e);
+            }
+        }
+    }
 }

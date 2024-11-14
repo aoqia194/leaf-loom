@@ -25,63 +25,61 @@
 package net.fabricmc.loom.decompilers.vineflower;
 
 import java.io.IOException;
-
+import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 
-import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
-
 public class VineflowerLogger extends IFernflowerLogger {
-	private final LoomInternalDecompiler.Logger logger;
+    private final LoomInternalDecompiler.Logger logger;
 
-	public VineflowerLogger(LoomInternalDecompiler.Logger logger) {
-		this.logger = logger;
-	}
+    public VineflowerLogger(LoomInternalDecompiler.Logger logger) {
+        this.logger = logger;
+    }
 
-	@Override
-	public void writeMessage(String message, Severity severity) {
-		if (severity.ordinal() < Severity.ERROR.ordinal()) return;
+    @Override
+    public void writeMessage(String message, Severity severity) {
+        if (severity.ordinal() < Severity.ERROR.ordinal()) return;
 
-		System.err.println(message);
-	}
+        System.err.println(message);
+    }
 
-	@Override
-	public void writeMessage(String message, Severity severity, Throwable t) {
-		if (severity.ordinal() < Severity.ERROR.ordinal()) return;
+    @Override
+    public void writeMessage(String message, Severity severity, Throwable t) {
+        if (severity.ordinal() < Severity.ERROR.ordinal()) return;
 
-		writeMessage(message, severity);
-		t.printStackTrace(System.err);
-	}
+        writeMessage(message, severity);
+        t.printStackTrace(System.err);
+    }
 
-	private void write(String data) {
-		try {
-			logger.accept(data);
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to log", e);
-		}
-	}
+    private void write(String data) {
+        try {
+            logger.accept(data);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to log", e);
+        }
+    }
 
-	@Override
-	public void startReadingClass(String className) {
-		write("Decompiling " + className);
-	}
+    @Override
+    public void startReadingClass(String className) {
+        write("Decompiling " + className);
+    }
 
-	@Override
-	public void startClass(String className) {
-		write("Decompiling " + className);
-	}
+    @Override
+    public void startClass(String className) {
+        write("Decompiling " + className);
+    }
 
-	@Override
-	public void startWriteClass(String className) {
-		// Nope
-	}
+    @Override
+    public void startWriteClass(String className) {
+        // Nope
+    }
 
-	@Override
-	public void startMethod(String methodName) {
-		// Nope
-	}
+    @Override
+    public void startMethod(String methodName) {
+        // Nope
+    }
 
-	@Override
-	public void endMethod() {
-		// Nope
-	}
+    @Override
+    public void endMethod() {
+        // Nope
+    }
 }

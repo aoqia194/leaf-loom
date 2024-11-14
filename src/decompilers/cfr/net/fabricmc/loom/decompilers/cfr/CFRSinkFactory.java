@@ -37,111 +37,109 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
-
+import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
 import org.benf.cfr.reader.api.OutputSinkFactory;
 import org.benf.cfr.reader.api.SinkReturns;
 
-import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
-
 public class CFRSinkFactory implements OutputSinkFactory {
-	private final JarOutputStream outputStream;
-	private final LoomInternalDecompiler.Logger logger;
-	private final Set<String> addedDirectories = new HashSet<>();
-	private final Map<String, Map<Integer, Integer>> lineMap = new TreeMap<>();
+    private final JarOutputStream outputStream;
+    private final LoomInternalDecompiler.Logger logger;
+    private final Set<String> addedDirectories = new HashSet<>();
+    private final Map<String, Map<Integer, Integer>> lineMap = new TreeMap<>();
 
-	public CFRSinkFactory(JarOutputStream outputStream, LoomInternalDecompiler.Logger logger) {
-		this.outputStream = outputStream;
-		this.logger = logger;
-	}
+    public CFRSinkFactory(JarOutputStream outputStream, LoomInternalDecompiler.Logger logger) {
+        this.outputStream = outputStream;
+        this.logger = logger;
+    }
 
-	@Override
-	public List<SinkClass> getSupportedSinks(SinkType sinkType, Collection<SinkClass> available) {
-		return switch (sinkType) {
-		case JAVA -> Collections.singletonList(SinkClass.DECOMPILED);
-		case LINENUMBER -> Collections.singletonList(SinkClass.LINE_NUMBER_MAPPING);
-		default -> Collections.emptyList();
-		};
-	}
+    @Override
+    public List<SinkClass> getSupportedSinks(SinkType sinkType, Collection<SinkClass> available) {
+        return switch (sinkType) {
+            case JAVA -> Collections.singletonList(SinkClass.DECOMPILED);
+            case LINENUMBER -> Collections.singletonList(SinkClass.LINE_NUMBER_MAPPING);
+            default -> Collections.emptyList();
+        };
+    }
 
-	@Override
-	public <T> Sink<T> getSink(SinkType sinkType, SinkClass sinkClass) {
-		return switch (sinkType) {
-		case JAVA -> (Sink<T>) decompiledSink();
-		case LINENUMBER -> (Sink<T>) lineNumberMappingSink();
-		case EXCEPTION -> (e) -> logger.error((String) e);
-		default -> null;
-		};
-	}
+    @Override
+    public <T> Sink<T> getSink(SinkType sinkType, SinkClass sinkClass) {
+        return switch (sinkType) {
+            case JAVA -> (Sink<T>) decompiledSink();
+            case LINENUMBER -> (Sink<T>) lineNumberMappingSink();
+            case EXCEPTION -> (e) -> logger.error((String) e);
+            default -> null;
+        };
+    }
 
-	private Sink<SinkReturns.Decompiled> decompiledSink() {
-		return sinkable -> {
-			String filename = sinkable.getPackageName().replace('.', '/');
-			if (!filename.isEmpty()) filename += "/";
-			filename += sinkable.getClassName() + ".java";
+    private Sink<SinkReturns.Decompiled> decompiledSink() {
+        return sinkable -> {
+            String filename = sinkable.getPackageName().replace('.', '/');
+            if (!filename.isEmpty()) filename += "/";
+            filename += sinkable.getClassName() + ".java";
 
-			byte[] data = sinkable.getJava().getBytes(StandardCharsets.UTF_8);
+            byte[] data = sinkable.getJava().getBytes(StandardCharsets.UTF_8);
 
-			writeToJar(filename, data);
-		};
-	}
+            writeToJar(filename, data);
+        };
+    }
 
-	private Sink<SinkReturns.LineNumberMapping> lineNumberMappingSink() {
-		return sinkable -> {
-			final String className = sinkable.getClassName();
-			final NavigableMap<Integer, Integer> classFileMappings = sinkable.getClassFileMappings();
-			final NavigableMap<Integer, Integer> mappings = sinkable.getMappings();
+    private Sink<SinkReturns.LineNumberMapping> lineNumberMappingSink() {
+        return sinkable -> {
+            final String className = sinkable.getClassName();
+            final NavigableMap<Integer, Integer> classFileMappings = sinkable.getClassFileMappings();
+            final NavigableMap<Integer, Integer> mappings = sinkable.getMappings();
 
-			if (classFileMappings == null || mappings == null) return;
+            if (classFileMappings == null || mappings == null) return;
 
-			for (Map.Entry<Integer, Integer> entry : mappings.entrySet()) {
-				// New line number
-				Integer dstLineNumber = entry.getValue();
+            for (Map.Entry<Integer, Integer> entry : mappings.entrySet()) {
+                // New line number
+                Integer dstLineNumber = entry.getValue();
 
-				// Line mapping in the original jar
-				Integer srcLineNumber = classFileMappings.get(entry.getKey());
+                // Line mapping in the original jar
+                Integer srcLineNumber = classFileMappings.get(entry.getKey());
 
-				if (srcLineNumber == null || dstLineNumber == null) continue;
+                if (srcLineNumber == null || dstLineNumber == null) continue;
 
-				lineMap.computeIfAbsent(className, (c) -> new TreeMap<>()).put(srcLineNumber, dstLineNumber);
-			}
-		};
-	}
+                lineMap.computeIfAbsent(className, (c) -> new TreeMap<>()).put(srcLineNumber, dstLineNumber);
+            }
+        };
+    }
 
-	private synchronized void writeToJar(String filename, byte[] data) {
-		String[] path = filename.split("/");
-		String pathPart = "";
+    private synchronized void writeToJar(String filename, byte[] data) {
+        String[] path = filename.split("/");
+        String pathPart = "";
 
-		for (int i = 0; i < path.length - 1; i++) {
-			pathPart += path[i] + "/";
+        for (int i = 0; i < path.length - 1; i++) {
+            pathPart += path[i] + "/";
 
-			if (addedDirectories.add(pathPart)) {
-				JarEntry entry = new JarEntry(pathPart);
-				entry.setTime(new Date().getTime());
+            if (addedDirectories.add(pathPart)) {
+                JarEntry entry = new JarEntry(pathPart);
+                entry.setTime(new Date().getTime());
 
-				try {
-					outputStream.putNextEntry(entry);
-					outputStream.closeEntry();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
+                try {
+                    outputStream.putNextEntry(entry);
+                    outputStream.closeEntry();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
 
-		JarEntry entry = new JarEntry(filename);
-		entry.setTime(new Date().getTime());
-		entry.setSize(data.length);
+        JarEntry entry = new JarEntry(filename);
+        entry.setTime(new Date().getTime());
+        entry.setSize(data.length);
 
-		try {
-			logger.accept("Writing: " + filename);
-			outputStream.putNextEntry(entry);
-			outputStream.write(data);
-			outputStream.closeEntry();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+        try {
+            logger.accept("Writing: " + filename);
+            outputStream.putNextEntry(entry);
+            outputStream.write(data);
+            outputStream.closeEntry();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public Map<String, Map<Integer, Integer>> getLineMap() {
-		return Collections.unmodifiableMap(lineMap);
-	}
+    public Map<String, Map<Integer, Integer>> getLineMap() {
+        return Collections.unmodifiableMap(lineMap);
+    }
 }

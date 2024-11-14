@@ -24,23 +24,22 @@
 
 package net.fabricmc.loom.configuration.ide.idea;
 
+import net.fabricmc.loom.util.gradle.SourceSetReference;
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.util.gradle.SourceSetReference;
-
 public class IdeaUtils {
-	public static boolean isIdeaSync() {
-		return Boolean.parseBoolean(System.getProperty("idea.sync.active", "false"));
-	}
+    public static boolean isIdeaSync() {
+        return Boolean.parseBoolean(System.getProperty("idea.sync.active", "false"));
+    }
 
-	public static String getIdeaModuleName(SourceSetReference reference) {
-		Project project = reference.project();
-		String module = project.getName() + "." + reference.sourceSet().getName();
+    public static String getIdeaModuleName(SourceSetReference reference) {
+        Project project = reference.project();
+        String module = project.getName() + "." + reference.sourceSet().getName();
 
-		while ((project = project.getParent()) != null) {
-			module = project.getName() + "." + module;
-		}
+        while ((project = project.getParent()) != null) {
+            module = project.getName() + "." + module;
+        }
 
-		return module.replace(' ', '_');
-	}
+        return module.replace(' ', '_');
+    }
 }

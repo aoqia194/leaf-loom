@@ -24,19 +24,18 @@
 
 package net.fabricmc.loom.task;
 
+import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.util.Constants;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Internal;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.util.Constants;
-
 public abstract class AbstractLoomTask extends DefaultTask {
-	public AbstractLoomTask() {
-		setGroup(Constants.TaskGroup.FABRIC);
-	}
+    public AbstractLoomTask() {
+        setGroup(Constants.TaskGroup.FABRIC);
+    }
 
-	@Internal
-	protected LoomGradleExtension getExtension() {
-		return LoomGradleExtension.get(getProject());
-	}
+    @Internal
+    protected LoomGradleExtension getExtension() {
+        return LoomGradleExtension.get(getProject());
+    }
 }

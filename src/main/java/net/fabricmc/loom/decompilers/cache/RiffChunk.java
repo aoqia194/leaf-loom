@@ -36,34 +36,35 @@ import java.nio.charset.StandardCharsets;
  * The chunk size is then written after the chunk data has been written.
  */
 public class RiffChunk implements AutoCloseable {
-	private final long position;
-	private final FileChannel fileChannel;
+    private final long position;
+    private final FileChannel fileChannel;
 
-	public RiffChunk(String id, FileChannel fileChannel) throws IOException {
-		if (id.length() != 4) {
-			throw new IllegalArgumentException("ID must be 4 characters long");
-		}
+    public RiffChunk(String id, FileChannel fileChannel) throws IOException {
+        if (id.length() != 4) {
+            throw new IllegalArgumentException("ID must be 4 characters long");
+        }
 
-		// Write the chunk header and reserve space for the chunk size
-		fileChannel.write(ByteBuffer.wrap(id.getBytes(StandardCharsets.US_ASCII)));
-		this.position = fileChannel.position();
-		fileChannel.write(ByteBuffer.allocate(4));
+        // Write the chunk header and reserve space for the chunk size
+        fileChannel.write(ByteBuffer.wrap(id.getBytes(StandardCharsets.US_ASCII)));
+        this.position = fileChannel.position();
+        fileChannel.write(ByteBuffer.allocate(4));
 
-		// Store the position and file channel for later use
-		this.fileChannel = fileChannel;
-	}
+        // Store the position and file channel for later use
+        this.fileChannel = fileChannel;
+    }
 
-	@Override
-	public void close() throws IOException {
-		long endPosition = fileChannel.position();
-		long chunkSize = endPosition - position - 4;
+    @Override
+    public void close() throws IOException {
+        long endPosition = fileChannel.position();
+        long chunkSize = endPosition - position - 4;
 
-		if (chunkSize > Integer.MAX_VALUE) {
-			throw new IOException("Chunk size is too large");
-		}
+        if (chunkSize > Integer.MAX_VALUE) {
+            throw new IOException("Chunk size is too large");
+        }
 
-		fileChannel.position(position);
-		fileChannel.write(ByteBuffer.allocate(Integer.BYTES).putInt((int) (chunkSize)).flip());
-		fileChannel.position(endPosition);
-	}
+        fileChannel.position(position);
+        fileChannel.write(
+                ByteBuffer.allocate(Integer.BYTES).putInt((int) (chunkSize)).flip());
+        fileChannel.position(endPosition);
+    }
 }

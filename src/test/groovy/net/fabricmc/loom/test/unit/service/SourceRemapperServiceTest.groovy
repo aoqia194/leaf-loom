@@ -83,7 +83,7 @@ class SourceRemapperServiceTest extends ServiceTestBase {
 	static String MAPPINGS = """
     tiny	2	0	intermediary	named
     c	Source Source
-    	m	()V	println	test
+        m	()V	println	test
     """.trim()
 
 	static class TestOptions implements SourceRemapperService.Options {

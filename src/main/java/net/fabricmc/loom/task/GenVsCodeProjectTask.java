@@ -24,6 +24,9 @@
 
 package net.fabricmc.loom.task;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -35,12 +38,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Inject;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import net.fabricmc.loom.LoomGradlePlugin;
+import net.fabricmc.loom.configuration.ide.RunConfig;
+import net.fabricmc.loom.configuration.ide.RunConfigSettings;
+import net.fabricmc.loom.util.Constants;
+import net.fabricmc.loom.util.gradle.SyncTaskBuildService;
 import org.gradle.api.Project;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
@@ -50,131 +53,136 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.configuration.ide.RunConfig;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.gradle.SyncTaskBuildService;
-
 // Recommended vscode plugin pack:
 // https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
 public abstract class GenVsCodeProjectTask extends AbstractLoomTask {
-	// Prevent Gradle from running vscode task asynchronously
-	@ServiceReference(SyncTaskBuildService.NAME)
-	abstract Property<SyncTaskBuildService> getSyncTask();
+    // Prevent Gradle from running vscode task asynchronously
+    @ServiceReference(SyncTaskBuildService.NAME)
+    abstract Property<SyncTaskBuildService> getSyncTask();
 
-	@Input
-	protected abstract ListProperty<VsCodeConfiguration> getLaunchConfigurations();
+    @Input
+    protected abstract ListProperty<VsCodeConfiguration> getLaunchConfigurations();
 
-	@OutputFile
-	protected abstract RegularFileProperty getLaunchJson();
+    @OutputFile
+    protected abstract RegularFileProperty getLaunchJson();
 
-	@Inject
-	public GenVsCodeProjectTask() {
-		setGroup(Constants.TaskGroup.IDE);
-		getLaunchConfigurations().set(getProject().provider(this::getConfigurations));
-		getLaunchJson().convention(getProject().getRootProject().getLayout().getProjectDirectory().file(".vscode/launch.json"));
-	}
+    @Inject
+    public GenVsCodeProjectTask() {
+        setGroup(Constants.TaskGroup.IDE);
+        getLaunchConfigurations().set(getProject().provider(this::getConfigurations));
+        getLaunchJson()
+                .convention(getProject()
+                        .getRootProject()
+                        .getLayout()
+                        .getProjectDirectory()
+                        .file(".vscode/launch.json"));
+    }
 
-	private List<VsCodeConfiguration> getConfigurations() {
-		List<VsCodeConfiguration> configurations = new ArrayList<>();
+    private List<VsCodeConfiguration> getConfigurations() {
+        List<VsCodeConfiguration> configurations = new ArrayList<>();
 
-		for (RunConfigSettings settings : getExtension().getRunConfigs()) {
-			if (!settings.isIdeConfigGenerated()) {
-				continue;
-			}
+        for (RunConfigSettings settings : getExtension().getRunConfigs()) {
+            if (!settings.isIdeConfigGenerated()) {
+                continue;
+            }
 
-			final VsCodeConfiguration configuration = VsCodeConfiguration.fromRunConfig(getProject(), RunConfig.runConfig(getProject(), settings));
-			configurations.add(configuration);
-		}
+            final VsCodeConfiguration configuration =
+                    VsCodeConfiguration.fromRunConfig(getProject(), RunConfig.runConfig(getProject(), settings));
+            configurations.add(configuration);
+        }
 
-		return configurations;
-	}
+        return configurations;
+    }
 
-	@TaskAction
-	public void genRuns() throws IOException {
-		final Path launchJson = getLaunchJson().get().getAsFile().toPath();
+    @TaskAction
+    public void genRuns() throws IOException {
+        final Path launchJson = getLaunchJson().get().getAsFile().toPath();
 
-		if (Files.notExists(launchJson.getParent())) {
-			Files.createDirectories(launchJson.getParent());
-		}
+        if (Files.notExists(launchJson.getParent())) {
+            Files.createDirectories(launchJson.getParent());
+        }
 
-		final JsonObject root;
+        final JsonObject root;
 
-		if (Files.exists(launchJson)) {
-			root = LoomGradlePlugin.GSON.fromJson(Files.readString(launchJson, StandardCharsets.UTF_8), JsonObject.class);
-		} else {
-			root = new JsonObject();
-			root.addProperty("version", "0.2.0");
-		}
+        if (Files.exists(launchJson)) {
+            root = LoomGradlePlugin.GSON.fromJson(
+                    Files.readString(launchJson, StandardCharsets.UTF_8), JsonObject.class);
+        } else {
+            root = new JsonObject();
+            root.addProperty("version", "0.2.0");
+        }
 
-		final JsonArray configurations;
+        final JsonArray configurations;
 
-		if (root.has("configurations")) {
-			configurations = root.getAsJsonArray("configurations");
-		} else {
-			configurations = new JsonArray();
-			root.add("configurations", configurations);
-		}
+        if (root.has("configurations")) {
+            configurations = root.getAsJsonArray("configurations");
+        } else {
+            configurations = new JsonArray();
+            root.add("configurations", configurations);
+        }
 
-		for (VsCodeConfiguration configuration : getLaunchConfigurations().get()) {
-			final JsonElement configurationJson = LoomGradlePlugin.GSON.toJsonTree(configuration);
+        for (VsCodeConfiguration configuration : getLaunchConfigurations().get()) {
+            final JsonElement configurationJson = LoomGradlePlugin.GSON.toJsonTree(configuration);
 
-			final List<JsonElement> toRemove = new LinkedList<>();
+            final List<JsonElement> toRemove = new LinkedList<>();
 
-			// Remove any existing with the same name
-			for (JsonElement jsonElement : configurations) {
-				if (!jsonElement.isJsonObject()) {
-					continue;
-				}
+            // Remove any existing with the same name
+            for (JsonElement jsonElement : configurations) {
+                if (!jsonElement.isJsonObject()) {
+                    continue;
+                }
 
-				final JsonObject jsonObject = jsonElement.getAsJsonObject();
+                final JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-				if (jsonObject.has("name")) {
-					if (jsonObject.get("name").getAsString().equalsIgnoreCase(configuration.name)) {
-						toRemove.add(jsonElement);
-					}
-				}
-			}
+                if (jsonObject.has("name")) {
+                    if (jsonObject.get("name").getAsString().equalsIgnoreCase(configuration.name)) {
+                        toRemove.add(jsonElement);
+                    }
+                }
+            }
 
-			toRemove.forEach(configurations::remove);
-			configurations.add(configurationJson);
+            toRemove.forEach(configurations::remove);
+            configurations.add(configurationJson);
 
-			Files.createDirectories(Paths.get(configuration.runDir));
-		}
+            Files.createDirectories(Paths.get(configuration.runDir));
+        }
 
-		final String json = LoomGradlePlugin.GSON.toJson(root);
-		Files.writeString(launchJson, json, StandardCharsets.UTF_8);
-	}
+        final String json = LoomGradlePlugin.GSON.toJson(root);
+        Files.writeString(launchJson, json, StandardCharsets.UTF_8);
+    }
 
-	public record VsCodeConfiguration(
-			String type,
-			String name,
-			String request,
-			String cwd,
-			String console,
-			boolean stopOnEntry,
-			String mainClass,
-			String vmArgs,
-			String args,
-			Map<String, Object> env,
-			String projectName,
-			String runDir) implements Serializable {
-		public static VsCodeConfiguration fromRunConfig(Project project, RunConfig runConfig) {
-			return new VsCodeConfiguration(
-				"java",
-				runConfig.configName,
-				"launch",
-				"${workspaceFolder}/" + runConfig.runDir,
-				"integratedTerminal",
-				false,
-				runConfig.mainClass,
-				RunConfig.joinArguments(runConfig.vmArgs),
-				RunConfig.joinArguments(runConfig.programArgs),
-				new HashMap<>(runConfig.environmentVariables),
-				runConfig.projectName,
-				project.getProjectDir().toPath().resolve(runConfig.runDir).toAbsolutePath().toString()
-			);
-		}
-	}
+    public record VsCodeConfiguration(
+            String type,
+            String name,
+            String request,
+            String cwd,
+            String console,
+            boolean stopOnEntry,
+            String mainClass,
+            String vmArgs,
+            String args,
+            Map<String, Object> env,
+            String projectName,
+            String runDir)
+            implements Serializable {
+        public static VsCodeConfiguration fromRunConfig(Project project, RunConfig runConfig) {
+            return new VsCodeConfiguration(
+                    "java",
+                    runConfig.configName,
+                    "launch",
+                    "${workspaceFolder}/" + runConfig.runDir,
+                    "integratedTerminal",
+                    false,
+                    runConfig.mainClass,
+                    RunConfig.joinArguments(runConfig.vmArgs),
+                    RunConfig.joinArguments(runConfig.programArgs),
+                    new HashMap<>(runConfig.environmentVariables),
+                    runConfig.projectName,
+                    project.getProjectDir()
+                            .toPath()
+                            .resolve(runConfig.runDir)
+                            .toAbsolutePath()
+                            .toString());
+        }
+    }
 }

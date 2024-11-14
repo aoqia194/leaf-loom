@@ -38,25 +38,25 @@ class FabricModJsonV1Test extends Specification {
 	@Language("json")
 	static String JSON = """
 {
-	"schemaVersion": 1,
-	"id": "example-mod-id",
-	"name": "Example mod name for testing",
-	"version": "1.0.0",
-	"environment": "client",
-	"license": "Apache-2.0",
-	"mixins": [
-		{
-		  "config": "test.client.mixins.json",
-		  "environment": "client"
-		},
-		"test.mixins.json"
-	],
-	"accessWidener" : "modid.accesswidener",
-	"custom": {
-		"loom:injected_interfaces": {
-		  "net/minecraft/class_123": ["net/test/TestClass"]
-		}
-	}
+    "schemaVersion": 1,
+    "id": "example-mod-id",
+    "name": "Example mod name for testing",
+    "version": "1.0.0",
+    "environment": "client",
+    "license": "Apache-2.0",
+    "mixins": [
+        {
+          "config": "test.client.mixins.json",
+          "environment": "client"
+        },
+        "test.mixins.json"
+    ],
+    "accessWidener" : "modid.accesswidener",
+    "custom": {
+        "loom:injected_interfaces": {
+          "net/minecraft/class_123": ["net/test/TestClass"]
+        }
+    }
 }
 """
 

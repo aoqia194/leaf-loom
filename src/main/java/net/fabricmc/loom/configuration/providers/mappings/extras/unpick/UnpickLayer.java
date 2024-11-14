@@ -29,33 +29,31 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
+import net.fabricmc.loom.LoomGradlePlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-
 @ApiStatus.Experimental
 public interface UnpickLayer {
-	@Nullable
-	UnpickData getUnpickData() throws IOException;
+    @Nullable
+    UnpickData getUnpickData() throws IOException;
 
-	record UnpickData(Metadata metadata, byte[] definitions) {
-		public static UnpickData read(Path metadataPath, Path definitionPath) throws IOException {
-			final byte[] definitions = Files.readAllBytes(definitionPath);
-			final Metadata metadata;
+    record UnpickData(Metadata metadata, byte[] definitions) {
+        public static UnpickData read(Path metadataPath, Path definitionPath) throws IOException {
+            final byte[] definitions = Files.readAllBytes(definitionPath);
+            final Metadata metadata;
 
-			try (Reader reader = Files.newBufferedReader(metadataPath, StandardCharsets.UTF_8)) {
-				metadata = LoomGradlePlugin.GSON.fromJson(reader, Metadata.class);
-			}
+            try (Reader reader = Files.newBufferedReader(metadataPath, StandardCharsets.UTF_8)) {
+                metadata = LoomGradlePlugin.GSON.fromJson(reader, Metadata.class);
+            }
 
-			return new UnpickData(metadata, definitions);
-		}
+            return new UnpickData(metadata, definitions);
+        }
 
-		public record Metadata(int version, String unpickGroup, String unpickVersion) {
-			public String asJson() {
-				return LoomGradlePlugin.GSON.toJson(this);
-			}
-		}
-	}
+        public record Metadata(int version, String unpickGroup, String unpickVersion) {
+            public String asJson() {
+                return LoomGradlePlugin.GSON.toJson(this);
+            }
+        }
+    }
 }

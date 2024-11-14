@@ -24,27 +24,27 @@
 
 package net.fabricmc.loom.configuration;
 
-import org.gradle.api.Project;
-
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.configuration.mods.ModConfigurationRemapper;
 import net.fabricmc.loom.util.SourceRemapper;
 import net.fabricmc.loom.util.service.ServiceFactory;
+import org.gradle.api.Project;
 
 public class LoomDependencyManager {
-	public void handleDependencies(Project project, ServiceFactory serviceFactory) {
-		project.getLogger().info(":setting up loom dependencies");
-		LoomGradleExtension extension = LoomGradleExtension.get(project);
+    public void handleDependencies(Project project, ServiceFactory serviceFactory) {
+        project.getLogger().info(":setting up loom dependencies");
+        LoomGradleExtension extension = LoomGradleExtension.get(project);
 
-		SourceRemapper sourceRemapper = new SourceRemapper(project, serviceFactory, true);
-		String mappingsIdentifier = extension.getMappingConfiguration().mappingsIdentifier();
+        SourceRemapper sourceRemapper = new SourceRemapper(project, serviceFactory, true);
+        String mappingsIdentifier = extension.getMappingConfiguration().mappingsIdentifier();
 
-		ModConfigurationRemapper.supplyModConfigurations(project, serviceFactory, mappingsIdentifier, extension, sourceRemapper);
+        ModConfigurationRemapper.supplyModConfigurations(
+                project, serviceFactory, mappingsIdentifier, extension, sourceRemapper);
 
-		sourceRemapper.remapAll();
+        sourceRemapper.remapAll();
 
-		if (extension.getInstallerData() == null) {
-			project.getLogger().info("fabric-installer.json not found in dependencies");
-		}
-	}
+        if (extension.getInstallerData() == null) {
+            project.getLogger().info("fabric-installer.json not found in dependencies");
+        }
+    }
 }

@@ -33,52 +33,52 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class DownloadExecutor implements AutoCloseable {
-	private final ExecutorService executorService;
-	private final List<DownloadException> downloadExceptions = Collections.synchronizedList(new ArrayList<>());
+    private final ExecutorService executorService;
+    private final List<DownloadException> downloadExceptions = Collections.synchronizedList(new ArrayList<>());
 
-	public DownloadExecutor(int threads) {
-		executorService = Executors.newFixedThreadPool(threads);
-	}
+    public DownloadExecutor(int threads) {
+        executorService = Executors.newFixedThreadPool(threads);
+    }
 
-	void runAsync(DownloadRunner downloadRunner) {
-		if (!downloadExceptions.isEmpty()) {
-			return;
-		}
+    void runAsync(DownloadRunner downloadRunner) {
+        if (!downloadExceptions.isEmpty()) {
+            return;
+        }
 
-		executorService.execute(() -> {
-			try {
-				downloadRunner.run();
-			} catch (DownloadException e) {
-				executorService.shutdownNow();
-				downloadExceptions.add(e);
-				throw new UncheckedIOException(e);
-			}
-		});
-	}
+        executorService.execute(() -> {
+            try {
+                downloadRunner.run();
+            } catch (DownloadException e) {
+                executorService.shutdownNow();
+                downloadExceptions.add(e);
+                throw new UncheckedIOException(e);
+            }
+        });
+    }
 
-	@Override
-	public void close() throws DownloadException {
-		executorService.shutdown();
+    @Override
+    public void close() throws DownloadException {
+        executorService.shutdown();
 
-		try {
-			executorService.awaitTermination(1, TimeUnit.DAYS);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            executorService.awaitTermination(1, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-		if (!downloadExceptions.isEmpty()) {
-			DownloadException downloadException = new DownloadException("Failed to download");
+        if (!downloadExceptions.isEmpty()) {
+            DownloadException downloadException = new DownloadException("Failed to download");
 
-			for (DownloadException suppressed : downloadExceptions) {
-				downloadException.addSuppressed(suppressed);
-			}
+            for (DownloadException suppressed : downloadExceptions) {
+                downloadException.addSuppressed(suppressed);
+            }
 
-			throw downloadException;
-		}
-	}
+            throw downloadException;
+        }
+    }
 
-	@FunctionalInterface
-	public interface DownloadRunner {
-		void run() throws DownloadException;
-	}
+    @FunctionalInterface
+    public interface DownloadRunner {
+        void run() throws DownloadException;
+    }
 }

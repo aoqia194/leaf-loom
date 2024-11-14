@@ -41,7 +41,7 @@ import io.reactivex.functions.Function
 import spock.lang.Specification
 import spock.lang.Timeout
 
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidJar
 import net.fabricmc.loom.test.util.GradleProjectTestTrait
 import net.fabricmc.loom.util.ZipUtils
 
@@ -141,7 +141,7 @@ class DebugLineNumbersTest extends Specification implements GradleProjectTestTra
 	}
 
 	private static String getClassSource(GradleProject gradle, String classname, String mappings = MAPPINGS) {
-		File sourcesJar = gradle.getGeneratedSources(mappings, MinecraftJar.Type.SERVER.toString())
+		File sourcesJar = gradle.getGeneratedSources(mappings, ZomboidJar.Type.SERVER.toString())
 
 		if (!sourcesJar.exists()) {
 			throw new IllegalStateException("Sources jar not found: $sourcesJar")

@@ -27,37 +27,40 @@ package net.fabricmc.loom.configuration.mods.dependency;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
-
+import net.fabricmc.loom.configuration.mods.ArtifactMetadata;
+import net.fabricmc.loom.configuration.mods.ArtifactRef;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.configuration.mods.ArtifactMetadata;
-import net.fabricmc.loom.configuration.mods.ArtifactRef;
-
 // Single jar in and out
 public final class SimpleModDependency extends ModDependency {
-	private final Configuration targetConfig;
-	private final LocalMavenHelper maven;
+    private final Configuration targetConfig;
+    private final LocalMavenHelper maven;
 
-	public SimpleModDependency(ArtifactRef artifact, ArtifactMetadata metadata, String mappingsSuffix, Configuration targetConfig, Project project) {
-		super(artifact, metadata, mappingsSuffix, project);
-		this.targetConfig = Objects.requireNonNull(targetConfig);
-		this.maven = createMaven(name);
-	}
+    public SimpleModDependency(
+            ArtifactRef artifact,
+            ArtifactMetadata metadata,
+            String mappingsSuffix,
+            Configuration targetConfig,
+            Project project) {
+        super(artifact, metadata, mappingsSuffix, project);
+        this.targetConfig = Objects.requireNonNull(targetConfig);
+        this.maven = createMaven(name);
+    }
 
-	@Override
-	public boolean isCacheInvalid(Project project, @Nullable String variant) {
-		return !maven.exists(variant);
-	}
+    @Override
+    public boolean isCacheInvalid(Project project, @Nullable String variant) {
+        return !maven.exists(variant);
+    }
 
-	@Override
-	public void copyToCache(Project project, Path path, @Nullable String variant) throws IOException {
-		maven.copyToMaven(path, variant);
-	}
+    @Override
+    public void copyToCache(Project project, Path path, @Nullable String variant) throws IOException {
+        maven.copyToMaven(path, variant);
+    }
 
-	@Override
-	public void applyToProject(Project project) {
-		project.getDependencies().add(targetConfig.getName(), maven.getNotation());
-	}
+    @Override
+    public void applyToProject(Project project) {
+        project.getDependencies().add(targetConfig.getName(), maven.getNotation());
+    }
 }

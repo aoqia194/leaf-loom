@@ -30,13 +30,10 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.gradle.api.Project;
-import org.gradle.api.plugins.PluginAware;
-
 import net.fabricmc.loom.api.LoomGradleExtensionAPI;
 import net.fabricmc.loom.bootstrap.BootstrappedPlugin;
 import net.fabricmc.loom.configuration.CompileConfiguration;
-import net.fabricmc.loom.configuration.FabricApiExtension;
+import net.fabricmc.loom.configuration.LeafApiExtension;
 import net.fabricmc.loom.configuration.LoomConfigurations;
 import net.fabricmc.loom.configuration.MavenPublication;
 import net.fabricmc.loom.configuration.ide.idea.IdeaConfiguration;
@@ -47,48 +44,56 @@ import net.fabricmc.loom.extension.LoomGradleExtensionImpl;
 import net.fabricmc.loom.task.LoomTasks;
 import net.fabricmc.loom.task.RemapTaskConfiguration;
 import net.fabricmc.loom.util.LibraryLocationLogger;
+import org.gradle.api.Project;
+import org.gradle.api.plugins.PluginAware;
 
 public class LoomGradlePlugin implements BootstrappedPlugin {
-	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	public static final String LOOM_VERSION = Objects.requireNonNullElse(LoomGradlePlugin.class.getPackage().getImplementationVersion(), "0.0.0+unknown");
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final String LOOM_VERSION =
+        Objects.requireNonNullElse(LoomGradlePlugin.class.getPackage().getImplementationVersion(), "0.0.0+unknown");
 
-	/**
-	 * An ordered list of setup job classes.
-	 */
-	private static final List<Class<? extends Runnable>> SETUP_JOBS = List.of(
-			LoomConfigurations.class,
-			CompileConfiguration.class,
-			MavenPublication.class,
-			RemapTaskConfiguration.class,
-			LoomTasks.class,
-			DecompilerConfiguration.class,
-			IdeaConfiguration.class,
-			SandboxConfiguration.class
-	);
+    /**
+     * An ordered list of setup job classes.
+     */
+    private static final List<Class<? extends Runnable>> SETUP_JOBS = List.of(
+        LoomConfigurations.class,
+        CompileConfiguration.class,
+        MavenPublication.class,
+        RemapTaskConfiguration.class,
+        LoomTasks.class,
+        DecompilerConfiguration.class,
+        IdeaConfiguration.class,
+        SandboxConfiguration.class);
 
-	@Override
-	public void apply(PluginAware target) {
-		target.getPlugins().apply(LoomRepositoryPlugin.class);
+    @Override
+    public void apply(PluginAware target) {
+        target.getPlugins().apply(LoomRepositoryPlugin.class);
 
-		if (target instanceof Project project) {
-			apply(project);
-		}
-	}
+        if (target instanceof Project project) {
+            apply(project);
+        }
+    }
 
-	public void apply(Project project) {
-		project.getLogger().lifecycle("Fabric Loom: " + LOOM_VERSION);
-		LibraryLocationLogger.logLibraryVersions();
+    public void apply(Project project) {
+        project.getLogger().lifecycle("Fabric Loom: " + LOOM_VERSION);
+        LibraryLocationLogger.logLibraryVersions();
 
-		// Apply default plugins
-		project.apply(ImmutableMap.of("plugin", "java-library"));
-		project.apply(ImmutableMap.of("plugin", "eclipse"));
+        // Apply default plugins
+        project.apply(ImmutableMap.of("plugin", "java-library"));
+        project.apply(ImmutableMap.of("plugin", "eclipse"));
 
-		// Setup extensions
-		project.getExtensions().create(LoomGradleExtensionAPI.class, "loom", LoomGradleExtensionImpl.class, project, LoomFiles.create(project));
-		project.getExtensions().create("fabricApi", FabricApiExtension.class);
+        // Setup extensions
+        project.getExtensions()
+            .create(
+                LoomGradleExtensionAPI.class,
+                "loom",
+                LoomGradleExtensionImpl.class,
+                project,
+                LoomFiles.create(project));
+        project.getExtensions().create("leafApi", LeafApiExtension.class);
 
-		for (Class<? extends Runnable> jobClass : SETUP_JOBS) {
-			project.getObjects().newInstance(jobClass).run();
-		}
-	}
+        for (Class<? extends Runnable> jobClass : SETUP_JOBS) {
+            project.getObjects().newInstance(jobClass).run();
+        }
+    }
 }

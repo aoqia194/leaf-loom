@@ -52,10 +52,10 @@ class FabricAPITest extends Specification implements GradleProjectTestTrait {
 		// Disable the mixin ap if needed. Fabric API is a large enough test project to see if something breaks.
 		if (disableMixinAp) {
 			gradle.buildGradle << """
-				allprojects {
-					loom.mixin.useLegacyMixinAp = false
-				}
-				""".stripIndent()
+                allprojects {
+                    loom.mixin.useLegacyMixinAp = false
+                }
+                """.stripIndent()
 		}
 
 		def minecraftVersion = "1.21"
@@ -65,21 +65,21 @@ class FabricAPITest extends Specification implements GradleProjectTestTrait {
 		// Test that the dependent mod can be built against the previously built fabric-api
 		def dependentMod = gradleProject(project: "minimalBase", version: version)
 		dependentMod.buildGradle << """
-				repositories {
-					mavenLocal()
-				}
+                repositories {
+                    mavenLocal()
+                }
 
-				loom {
-					loom.mixin.useLegacyMixinAp = ${!disableMixinAp}
-				}
+                loom {
+                    loom.mixin.useLegacyMixinAp = ${!disableMixinAp}
+                }
 
-				dependencies {
+                dependencies {
                     minecraft "com.mojang:minecraft:${minecraftVersion}"
                     mappings "net.fabricmc:yarn:${minecraftVersion}+build.1:v2"
 
-					modImplementation "net.fabricmc.fabric-api:fabric-api:999.0.0"
+                    modImplementation "net.fabricmc.fabric-api:fabric-api:999.0.0"
                 }
-		"""
+        """
 		when:
 		def result = gradle.run(tasks: [
 			"clean",

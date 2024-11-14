@@ -25,21 +25,21 @@
 package net.fabricmc.loom.api.processor;
 
 import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidJarConfiguration;
 import net.fabricmc.loom.util.LazyCloseable;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public interface ProcessorContext {
-	MinecraftJarConfiguration getJarConfiguration();
+    ZomboidJarConfiguration getJarConfiguration();
 
-	boolean isMerged();
+    boolean isMerged();
 
-	boolean includesClient();
+    boolean includesClient();
 
-	boolean includesServer();
+    boolean includesServer();
 
-	LazyCloseable<TinyRemapper> createRemapper(MappingsNamespace from, MappingsNamespace to);
+    LazyCloseable<TinyRemapper> createRemapper(MappingsNamespace from, MappingsNamespace to);
 
-	MemoryMappingTree getMappings();
+    MemoryMappingTree getMappings();
 }

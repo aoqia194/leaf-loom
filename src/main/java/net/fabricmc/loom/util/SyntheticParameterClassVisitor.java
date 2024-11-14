@@ -38,76 +38,80 @@ import org.objectweb.asm.Opcodes;
  * parameter annotations.
  */
 public class SyntheticParameterClassVisitor extends ClassVisitor {
-	private static class SyntheticMethodVisitor extends MethodVisitor {
-		private final int offset;
+    private static class SyntheticMethodVisitor extends MethodVisitor {
+        private final int offset;
 
-		SyntheticMethodVisitor(int api, int offset, MethodVisitor methodVisitor) {
-			super(api, methodVisitor);
-			this.offset = offset;
-		}
+        SyntheticMethodVisitor(int api, int offset, MethodVisitor methodVisitor) {
+            super(api, methodVisitor);
+            this.offset = offset;
+        }
 
-		@Override
-		public AnnotationVisitor visitParameterAnnotation(int parameter, String descriptor, boolean visible) {
-			return super.visitParameterAnnotation(parameter - offset, descriptor, visible);
-		}
+        @Override
+        public AnnotationVisitor visitParameterAnnotation(int parameter, String descriptor, boolean visible) {
+            return super.visitParameterAnnotation(parameter - offset, descriptor, visible);
+        }
 
-		@Override
-		public void visitAnnotableParameterCount(int parameterCount, boolean visible) {
-			super.visitAnnotableParameterCount(parameterCount - offset, visible);
-		}
-	}
+        @Override
+        public void visitAnnotableParameterCount(int parameterCount, boolean visible) {
+            super.visitAnnotableParameterCount(parameterCount - offset, visible);
+        }
+    }
 
-	private String className;
-	private int synthetic;
-	private String syntheticArgs;
-	private boolean backoff = false;
+    private String className;
+    private int synthetic;
+    private String syntheticArgs;
+    private boolean backoff = false;
 
-	public SyntheticParameterClassVisitor(int api, ClassVisitor cv) {
-		super(api, cv);
-	}
+    public SyntheticParameterClassVisitor(int api, ClassVisitor cv) {
+        super(api, cv);
+    }
 
-	@Override
-	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-		super.visit(version, access, name, signature, superName, interfaces);
+    @Override
+    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+        super.visit(version, access, name, signature, superName, interfaces);
 
-		this.className = name;
+        this.className = name;
 
-		// Enums will always have a string name and then the ordinal
-		if ((access & Opcodes.ACC_ENUM) != 0) {
-			synthetic = 2;
-			syntheticArgs = "(Ljava/lang/String;I";
-		}
+        // Enums will always have a string name and then the ordinal
+        if ((access & Opcodes.ACC_ENUM) != 0) {
+            synthetic = 2;
+            syntheticArgs = "(Ljava/lang/String;I";
+        }
 
-		if (version >= 55) {
-			// Backoff on java 11 or newer due to nest mates being used.
-			backoff = true;
-		}
-	}
+        if (version >= 55) {
+            // Backoff on java 11 or newer due to nest mates being used.
+            backoff = true;
+        }
+    }
 
-	@Override
-	public void visitInnerClass(String name, String outerName, String innerName, int access) {
-		super.visitInnerClass(name, outerName, innerName, access);
+    @Override
+    public void visitInnerClass(String name, String outerName, String innerName, int access) {
+        super.visitInnerClass(name, outerName, innerName, access);
 
-		// If we're a non-static, non-anonymous inner class then we can assume the first argument
-		// is the parent class.
-		// See https://docs.oracle.com/javase/specs/jls/se11/html/jls-8.html#jls-8.8.1
-		if (synthetic == 0 && name.equals(this.className) && innerName != null && outerName != null && (access & Opcodes.ACC_STATIC) == 0) {
-			this.synthetic = 1;
-			this.syntheticArgs = "(L" + outerName + ";";
-		}
-	}
+        // If we're a non-static, non-anonymous inner class then we can assume the first argument
+        // is the parent class.
+        // See https://docs.oracle.com/javase/specs/jls/se11/html/jls-8.html#jls-8.8.1
+        if (synthetic == 0
+                && name.equals(this.className)
+                && innerName != null
+                && outerName != null
+                && (access & Opcodes.ACC_STATIC) == 0) {
+            this.synthetic = 1;
+            this.syntheticArgs = "(L" + outerName + ";";
+        }
+    }
 
-	@Override
-	public MethodVisitor visitMethod(
-			final int access,
-			final String name,
-			final String descriptor,
-			final String signature,
-			final String[] exceptions) {
-		MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
+    @Override
+    public MethodVisitor visitMethod(
+            final int access,
+            final String name,
+            final String descriptor,
+            final String signature,
+            final String[] exceptions) {
+        MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
 
-		return mv != null && synthetic != 0 && name.equals("<init>") && descriptor.startsWith(syntheticArgs) && !backoff
-				? new SyntheticMethodVisitor(api, synthetic, mv)
-				: mv;
-	}
+        return mv != null && synthetic != 0 && name.equals("<init>") && descriptor.startsWith(syntheticArgs) && !backoff
+                ? new SyntheticMethodVisitor(api, synthetic, mv)
+                : mv;
+    }
 }

@@ -24,84 +24,83 @@
 
 package net.fabricmc.loom.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 
 public class Checksum {
-	private static final Logger log = Logging.getLogger(Checksum.class);
+    private static final Logger log = Logging.getLogger(Checksum.class);
 
-	public static boolean equals(File file, String checksum) {
-		if (file == null || !file.exists()) {
-			return false;
-		}
+    public static boolean equals(File file, String checksum) {
+        if (file == null || !file.exists()) {
+            return false;
+        }
 
-		try {
-			HashCode hash = Files.asByteSource(file).hash(Hashing.sha1());
-			log.debug("Checksum check: '" + hash.toString() + "' == '" + checksum + "'?");
-			return hash.toString().equals(checksum);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        try {
+            HashCode hash = Files.asByteSource(file).hash(Hashing.sha1());
+            log.debug("Checksum check: '" + hash.toString() + "' == '" + checksum + "'?");
+            return hash.toString().equals(checksum);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public static byte[] sha256(File file) {
-		try {
-			HashCode hash = Files.asByteSource(file).hash(Hashing.sha256());
-			return hash.asBytes();
-		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to get file hash", e);
-		}
-	}
+    public static byte[] sha256(File file) {
+        try {
+            HashCode hash = Files.asByteSource(file).hash(Hashing.sha256());
+            return hash.asBytes();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to get file hash", e);
+        }
+    }
 
-	public static String sha256Hex(byte[] input) throws IOException {
-		HashCode hash = ByteSource.wrap(input).hash(Hashing.sha256());
-		return Checksum.toHex(hash.asBytes());
-	}
+    public static String sha256Hex(byte[] input) throws IOException {
+        HashCode hash = ByteSource.wrap(input).hash(Hashing.sha256());
+        return Checksum.toHex(hash.asBytes());
+    }
 
-	public static String sha1Hex(Path path) throws IOException {
-		HashCode hash = Files.asByteSource(path.toFile()).hash(Hashing.sha1());
-		return toHex(hash.asBytes());
-	}
+    public static String sha1Hex(Path path) throws IOException {
+        HashCode hash = Files.asByteSource(path.toFile()).hash(Hashing.sha1());
+        return toHex(hash.asBytes());
+    }
 
-	public static String sha1Hex(byte[] input) {
-		try {
-			HashCode hash = ByteSource.wrap(input).hash(Hashing.sha1());
-			return toHex(hash.asBytes());
-		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to hash", e);
-		}
-	}
+    public static String sha1Hex(byte[] input) {
+        try {
+            HashCode hash = ByteSource.wrap(input).hash(Hashing.sha1());
+            return toHex(hash.asBytes());
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to hash", e);
+        }
+    }
 
-	public static String truncatedSha256(File file) {
-		try {
-			HashCode hash = Files.asByteSource(file).hash(Hashing.sha256());
-			return hash.toString().substring(0, 12);
-		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to get file hash of " + file, e);
-		}
-	}
+    public static String truncatedSha256(File file) {
+        try {
+            HashCode hash = Files.asByteSource(file).hash(Hashing.sha256());
+            return hash.toString().substring(0, 12);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to get file hash of " + file, e);
+        }
+    }
 
-	public static String toHex(byte[] bytes) {
-		return BaseEncoding.base16().lowerCase().encode(bytes);
-	}
+    public static String toHex(byte[] bytes) {
+        return BaseEncoding.base16().lowerCase().encode(bytes);
+    }
 
-	public static String projectHash(Project project) {
-		String str = project.getProjectDir().getAbsolutePath() + ":" + project.getPath();
-		String hex = sha1Hex(str.getBytes(StandardCharsets.UTF_8));
-		return hex.substring(hex.length() - 16);
-	}
+    public static String projectHash(Project project) {
+        String str = project.getProjectDir().getAbsolutePath() + ":" + project.getPath();
+        String hex = sha1Hex(str.getBytes(StandardCharsets.UTF_8));
+        return hex.substring(hex.length() - 16);
+    }
 }

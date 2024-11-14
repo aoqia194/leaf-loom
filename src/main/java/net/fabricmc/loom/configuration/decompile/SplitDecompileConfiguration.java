@@ -25,96 +25,103 @@
 package net.fabricmc.loom.configuration.decompile;
 
 import java.io.File;
-
+import net.fabricmc.loom.api.decompilers.DecompilerOptions;
+import net.fabricmc.loom.configuration.providers.minecraft.ZomboidJar;
+import net.fabricmc.loom.configuration.providers.minecraft.mapped.MappedZomboidProvider;
+import net.fabricmc.loom.task.GenerateSourcesTask;
+import net.fabricmc.loom.util.Constants;
+import net.fabricmc.loom.util.Strings;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.tasks.TaskProvider;
 
-import net.fabricmc.loom.api.decompilers.DecompilerOptions;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
-import net.fabricmc.loom.task.GenerateSourcesTask;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Strings;
+public final class SplitDecompileConfiguration extends DecompileConfiguration<MappedZomboidProvider.Split> {
+    public SplitDecompileConfiguration(Project project, MappedZomboidProvider.Split zomboidProvider) {
+        super(project, zomboidProvider);
+    }
 
-public final class SplitDecompileConfiguration extends DecompileConfiguration<MappedMinecraftProvider.Split> {
-	public SplitDecompileConfiguration(Project project, MappedMinecraftProvider.Split minecraftProvider) {
-		super(project, minecraftProvider);
-	}
+    @Override
+    public String getTaskName(ZomboidJar.Type type) {
+        return "gen%sSources".formatted(Strings.capitalize(type.toString()));
+    }
 
-	@Override
-	public String getTaskName(MinecraftJar.Type type) {
-		return "gen%sSources".formatted(Strings.capitalize(type.toString()));
-	}
+    @Override
+    public void afterEvaluation() {
+        final ZomboidJar commonJar = minecraftProvider.getCommonJar();
+        final ZomboidJar clientOnlyJar = minecraftProvider.getClientOnlyJar();
 
-	@Override
-	public void afterEvaluation() {
-		final MinecraftJar commonJar = minecraftProvider.getCommonJar();
-		final MinecraftJar clientOnlyJar = minecraftProvider.getClientOnlyJar();
+        final TaskProvider<Task> commonDecompileTask = createDecompileTasks("Common", task -> {
+            task.getInputJarName().set(commonJar.getName());
+            task.getSourcesOutputJar()
+                    .fileValue(GenerateSourcesTask.getJarFileWithSuffix("-sources.jar", commonJar.getPath()));
 
-		final TaskProvider<Task> commonDecompileTask = createDecompileTasks("Common", task -> {
-			task.getInputJarName().set(commonJar.getName());
-			task.getSourcesOutputJar().fileValue(GenerateSourcesTask.getJarFileWithSuffix("-sources.jar", commonJar.getPath()));
+            if (mappingConfiguration.hasUnpickDefinitions()) {
+                File unpickJar = new File(
+                        extension.getMappingConfiguration().mappingsWorkingDir().toFile(),
+                        "zomboid-common-unpicked.jar");
+                configureUnpick(task, unpickJar);
+            }
+        });
 
-			if (mappingConfiguration.hasUnpickDefinitions()) {
-				File unpickJar = new File(extension.getMappingConfiguration().mappingsWorkingDir().toFile(), "minecraft-common-unpicked.jar");
-				configureUnpick(task, unpickJar);
-			}
-		});
+        final TaskProvider<Task> clientOnlyDecompileTask = createDecompileTasks("ClientOnly", task -> {
+            task.getInputJarName().set(clientOnlyJar.getName());
+            task.getSourcesOutputJar()
+                    .fileValue(GenerateSourcesTask.getJarFileWithSuffix("-sources.jar", clientOnlyJar.getPath()));
 
-		final TaskProvider<Task> clientOnlyDecompileTask = createDecompileTasks("ClientOnly", task -> {
-			task.getInputJarName().set(clientOnlyJar.getName());
-			task.getSourcesOutputJar().fileValue(GenerateSourcesTask.getJarFileWithSuffix("-sources.jar", clientOnlyJar.getPath()));
+            if (mappingConfiguration.hasUnpickDefinitions()) {
+                File unpickJar = new File(
+                        extension.getMappingConfiguration().mappingsWorkingDir().toFile(),
+                        "zomboid-clientonly-unpicked.jar");
+                configureUnpick(task, unpickJar);
+            }
 
-			if (mappingConfiguration.hasUnpickDefinitions()) {
-				File unpickJar = new File(extension.getMappingConfiguration().mappingsWorkingDir().toFile(), "minecraft-clientonly-unpicked.jar");
-				configureUnpick(task, unpickJar);
-			}
+            // Don't allow them to run at the same time.
+            task.mustRunAfter(commonDecompileTask);
+        });
 
-			// Don't allow them to run at the same time.
-			task.mustRunAfter(commonDecompileTask);
-		});
+        for (DecompilerOptions options : extension.getDecompilerOptions()) {
+            final String decompilerName = options.getFormattedName();
 
-		for (DecompilerOptions options : extension.getDecompilerOptions()) {
-			final String decompilerName = options.getFormattedName();
+            project.getTasks().register("genSourcesWith" + decompilerName, task -> {
+                task.setDescription("Decompile Zomboid using %s.".formatted(decompilerName));
+                task.setGroup(Constants.TaskGroup.FABRIC);
 
-			project.getTasks().register("genSourcesWith" + decompilerName, task -> {
-				task.setDescription("Decompile minecraft using %s.".formatted(decompilerName));
-				task.setGroup(Constants.TaskGroup.FABRIC);
+                task.dependsOn(project.getTasks().named("gen%sSourcesWith%s".formatted("Common", decompilerName)));
+                task.dependsOn(project.getTasks().named("gen%sSourcesWith%s".formatted("ClientOnly", decompilerName)));
+            });
+        }
 
-				task.dependsOn(project.getTasks().named("gen%sSourcesWith%s".formatted("Common", decompilerName)));
-				task.dependsOn(project.getTasks().named("gen%sSourcesWith%s".formatted("ClientOnly", decompilerName)));
-			});
-		}
+        project.getTasks().register("genSources", task -> {
+            task.setDescription("Decompile Zomboid using the default decompiler.");
+            task.setGroup(Constants.TaskGroup.FABRIC);
 
-		project.getTasks().register("genSources", task -> {
-			task.setDescription("Decompile minecraft using the default decompiler.");
-			task.setGroup(Constants.TaskGroup.FABRIC);
+            task.dependsOn(commonDecompileTask);
+            task.dependsOn(clientOnlyDecompileTask);
+        });
+    }
 
-			task.dependsOn(commonDecompileTask);
-			task.dependsOn(clientOnlyDecompileTask);
-		});
-	}
+    private TaskProvider<Task> createDecompileTasks(String name, Action<GenerateSourcesTask> configureAction) {
+        extension.getDecompilerOptions().forEach(options -> {
+            final String decompilerName = options.getFormattedName();
+            final String taskName = "gen%sSourcesWith%s".formatted(name, decompilerName);
 
-	private TaskProvider<Task> createDecompileTasks(String name, Action<GenerateSourcesTask> configureAction) {
-		extension.getDecompilerOptions().forEach(options -> {
-			final String decompilerName = options.getFormattedName();
-			final String taskName = "gen%sSourcesWith%s".formatted(name, decompilerName);
+            project.getTasks()
+                    .register(taskName, GenerateSourcesTask.class, options)
+                    .configure(task -> {
+                        configureAction.execute(task);
+                        task.dependsOn(project.getTasks().named("validateAccessWidener"));
+                        task.setDescription("Decompile Zomboid using %s.".formatted(decompilerName));
+                        task.setGroup(Constants.TaskGroup.FABRIC);
+                    });
+        });
 
-			project.getTasks().register(taskName, GenerateSourcesTask.class, options).configure(task -> {
-				configureAction.execute(task);
-				task.dependsOn(project.getTasks().named("validateAccessWidener"));
-				task.setDescription("Decompile minecraft using %s.".formatted(decompilerName));
-				task.setGroup(Constants.TaskGroup.FABRIC);
-			});
-		});
+        return project.getTasks().register("gen%sSources".formatted(name), task -> {
+            task.setDescription("Decompile minecraft (%s) using the default decompiler.".formatted(name));
+            task.setGroup(Constants.TaskGroup.FABRIC);
 
-		return project.getTasks().register("gen%sSources".formatted(name), task -> {
-			task.setDescription("Decompile minecraft (%s) using the default decompiler.".formatted(name));
-			task.setGroup(Constants.TaskGroup.FABRIC);
-
-			task.dependsOn(project.getTasks().named("gen%sSourcesWith%s".formatted(name, DecompileConfiguration.DEFAULT_DECOMPILER)));
-		});
-	}
+            task.dependsOn(project.getTasks()
+                    .named("gen%sSourcesWith%s".formatted(name, DecompileConfiguration.DEFAULT_DECOMPILER)));
+        });
+    }
 }

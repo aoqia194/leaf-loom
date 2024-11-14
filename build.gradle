@@ -1,51 +1,54 @@
 plugins {
-	id 'java'
-	id 'maven-publish'
-	id 'java-gradle-plugin'
-	id 'idea'
-	id 'eclipse'
-	id 'groovy'
-	id 'checkstyle'
-	id 'codenarc'
-	alias(libs.plugins.kotlin) apply false // Delay this so we can perform magic 🪄 first.
-	alias(libs.plugins.spotless)
-	alias(libs.plugins.retry)
+    id 'java'
+    id 'maven-publish'
+    id 'java-gradle-plugin'
+    id 'idea'
+    id 'eclipse'
+    id 'groovy'
+    id 'codenarc'
+    alias(libs.plugins.kotlin) apply false // Delay this so we can perform magic 🪄 first.
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.retry)
 }
 
 /**
- * Haha this is fun :) The Kotlin gradle plugin triggers deprecation warnings for custom configurations (https://youtrack.jetbrains.com/issue/KT-60879)
- * We need to make DefaultConfiguration.isSpecialCaseOfChangingUsage think that our configurstion is a special case and not deprecated.
+ * Haha this is fun :) The Kotlin gradle plugin triggers deprecation warnings for custom configurations
+ * (https://youtrack.jetbrains.com/issue/KT-60879)
+ * We need to make DefaultConfiguration.isSpecialCaseOfChangingUsage think that our configurstion is a special case
+ * and not deprecated.
  * We do this by setting DefaultConfiguration.roleAtCreation to LEGACY, thus isInLegacyRole will now return true.
  *
- * Yeah I know we can just ignore the deprecation warning, but doing so wouldn't alert us to issues when testing against pre-release Gradle versions. Also this is more fun :)
+ * Yeah I know we can just ignore the deprecation warning, but doing so wouldn't alert us to issues when testing
+ * against pre-release Gradle versions. Also this is more fun :)
  */
 def brokenConfigurations = [
-	"commonDecompilerRuntimeClasspath",
-	"fernflowerRuntimeClasspath",
-	"cfrRuntimeClasspath",
-	"vineflowerRuntimeClasspath"
+    "commonDecompilerRuntimeClasspath",
+    "fernflowerRuntimeClasspath",
+    "cfrRuntimeClasspath",
+    "vineflowerRuntimeClasspath"
 ]
 
 configurations.configureEach {
-	if (brokenConfigurations.contains(it.name)) {
-		// For some reason Gradle stops us from using Groovy magic to do this, so lets do it the boring way.
-		def field = org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.class.getDeclaredField("roleAtCreation")
-		field.setAccessible(true)
-		field.set(it, ConfigurationRoles.LEGACY)
-	}
+    if (brokenConfigurations.contains(it.name)) {
+        // For some reason Gradle stops us from using Groovy magic to do this, so lets do it the boring way.
+        def field = org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.class.getDeclaredField(
+            "roleAtCreation")
+        field.setAccessible(true)
+        field.set(it, ConfigurationRoles.LEGACY)
+    }
 }
 
 // Ensure we apply the Kotlin plugin after, to allow for the above configuration to take place first
 apply plugin: libs.plugins.kotlin.get().pluginId
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = "UTF-8"
+    it.options.encoding = "UTF-8"
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-	kotlinOptions {
-		jvmTarget = "17"
-	}
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 group = 'net.fabricmc'
@@ -53,259 +56,267 @@ def baseVersion = '1.8'
 
 def ENV = System.getenv()
 if (ENV.BUILD_NUMBER) {
-	if (ENV.EXPERIMENTAL) {
-		version = baseVersion + '.0-alpha.' + ENV.BUILD_NUMBER
-	} else {
-		version = baseVersion + '.' + ENV.BUILD_NUMBER
-	}
+    if (ENV.EXPERIMENTAL) {
+        version = baseVersion + '.0-alpha.' + ENV.BUILD_NUMBER
+    } else {
+        version = baseVersion + '.' + ENV.BUILD_NUMBER
+    }
 } else {
-	version = baseVersion + '.local'
+    version = baseVersion + '.local'
 }
 
 // We must build against the version of Kotlin Gradle ships with.
 def props = new Properties()
 Project.class.getClassLoader().getResource("gradle-kotlin-dsl-versions.properties").openStream().withCloseable {
-	props.load(it)
+    props.load(it)
 }
 def kotlinVersion = props.getProperty("kotlin")
 if (libs.versions.kotlin.get() != kotlinVersion) {
-	throw new IllegalStateException("Requires Kotlin version: ${kotlinVersion}")
+    throw new IllegalStateException("Requires Kotlin version: ${kotlinVersion}")
 }
 
 repositories {
-	maven {
-		name = 'Fabric'
-		url = 'https://maven.fabricmc.net/'
-	}
-	mavenCentral()
+    maven {
+        name = 'Fabric'
+        url = 'https://maven.fabricmc.net/'
+    }
+    mavenCentral()
 }
 
 configurations {
-	bootstrap {
-		transitive false
-	}
-	compileClasspath.extendsFrom bootstrap
-	runtimeClasspath.extendsFrom bootstrap
-	testRuntimeClasspath.extendsFrom bootstrap
+    bootstrap {
+        transitive false
+    }
+    compileClasspath.extendsFrom bootstrap
+    runtimeClasspath.extendsFrom bootstrap
+    testRuntimeClasspath.extendsFrom bootstrap
 }
 
 configurations.configureEach {
-	resolutionStrategy {
-		failOnNonReproducibleResolution()
-	}
+    resolutionStrategy {
+        failOnNonReproducibleResolution()
+    }
 
-	if (canBeConsumed)  {
-		attributes {
-			attribute(GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE, objects.named(GradlePluginApiVersion, GradleVersion.current().getVersion()))
-		}
-	}
+    if (canBeConsumed) {
+        attributes {
+            attribute(GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                objects.named(GradlePluginApiVersion, GradleVersion.current().getVersion()))
+        }
+    }
 }
 
 sourceSets {
-	commonDecompiler {
-		java {
-			srcDir("src/decompilers/common")
-		}
-	}
-	fernflower {
-		java {
-			srcDir("src/decompilers/fernflower")
-		}
-	}
-	cfr {
-		java {
-			srcDir("src/decompilers/cfr")
-		}
-	}
-	vineflower {
-		java {
-			srcDir("src/decompilers/vineflower")
-		}
-	}
+    commonDecompiler {
+        java {
+            srcDir("src/decompilers/common")
+        }
+    }
+    fernflower {
+        java {
+            srcDir("src/decompilers/fernflower")
+        }
+    }
+    cfr {
+        java {
+            srcDir("src/decompilers/cfr")
+        }
+    }
+    vineflower {
+        java {
+            srcDir("src/decompilers/vineflower")
+        }
+    }
 }
 
 dependencies {
-	implementation gradleApi()
+    implementation gradleApi()
 
-	bootstrap project(":bootstrap")
+    bootstrap project(":bootstrap")
 
-	// libraries
-	implementation libs.commons.io
-	implementation libs.gson
-	implementation libs.guava
-	implementation libs.bundles.asm
+    // libraries
+    implementation libs.commons.io
+    implementation libs.gson
+    implementation libs.guava
+    implementation libs.bundles.asm
 
-	// game handling utils
-	implementation (libs.fabric.stitch) {
-		exclude module: 'enigma'
-	}
+    // game handling utils
+    implementation(libs.fabric.stitch) {
+        exclude module: 'enigma'
+    }
 
-	// tinyfile management
-	implementation libs.fabric.tiny.remapper
-	implementation libs.fabric.access.widener
-	implementation libs.fabric.mapping.io
-	implementation (libs.fabric.lorenz.tiny) {
-		transitive = false
-	}
+    // tinyfile management
+    implementation libs.fabric.tiny.remapper
+    implementation libs.fabric.access.widener
+    implementation libs.fabric.mapping.io
+    implementation(libs.fabric.lorenz.tiny) {
+        transitive = false
+    }
 
-	implementation libs.fabric.loom.nativelib
+    implementation libs.fabric.loom.nativelib
 
-	// decompilers
-	fernflowerCompileOnly runtimeLibs.fernflower
-	fernflowerCompileOnly libs.fabric.mapping.io
+    // decompilers
+    fernflowerCompileOnly runtimeLibs.fernflower
+    fernflowerCompileOnly libs.fabric.mapping.io
 
-	cfrCompileOnly runtimeLibs.cfr
-	cfrCompileOnly libs.fabric.mapping.io
+    cfrCompileOnly runtimeLibs.cfr
+    cfrCompileOnly libs.fabric.mapping.io
 
-	vineflowerCompileOnly runtimeLibs.vineflower
-	vineflowerCompileOnly libs.fabric.mapping.io
+    vineflowerCompileOnly runtimeLibs.vineflower
+    vineflowerCompileOnly libs.fabric.mapping.io
 
-	fernflowerApi sourceSets.commonDecompiler.output
-	cfrApi sourceSets.commonDecompiler.output
-	vineflowerApi sourceSets.commonDecompiler.output
+    fernflowerApi sourceSets.commonDecompiler.output
+    cfrApi sourceSets.commonDecompiler.output
+    vineflowerApi sourceSets.commonDecompiler.output
 
-	implementation sourceSets.commonDecompiler.output
-	implementation sourceSets.fernflower.output
-	implementation sourceSets.cfr.output
-	implementation sourceSets.vineflower.output
+    implementation sourceSets.commonDecompiler.output
+    implementation sourceSets.fernflower.output
+    implementation sourceSets.cfr.output
+    implementation sourceSets.vineflower.output
 
-	// source code remapping
-	implementation libs.fabric.mercury
+    // source code remapping
+    implementation libs.fabric.mercury
 
-	// Kotlin
-	implementation(libs.kotlin.metadata) {
-		transitive = false
-	}
+    // Kotlin
+    implementation(libs.kotlin.metadata) {
+        transitive = false
+    }
 
-	// Kapt integration
-	compileOnly libs.kotlin.gradle.plugin
+    // Kapt integration
+    compileOnly libs.kotlin.gradle.plugin
 
-	// Testing
-	testImplementation(gradleTestKit())
-	testImplementation(testLibs.spock) {
-		exclude module: 'groovy-all'
-	}
-	testImplementation testLibs.junit.jupiter.engine
-	testRuntimeOnly testLibs.junit.platform.launcher
-	testImplementation (testLibs.javalin) {
-		exclude group: 'org.jetbrains.kotlin'
-	}
-	testImplementation testLibs.mockito
-	testImplementation testLibs.java.debug
+    // Testing
+    testImplementation(gradleTestKit())
+    testImplementation(testLibs.spock) {
+        exclude module: 'groovy-all'
+    }
+    testImplementation testLibs.junit.jupiter.engine
+    testRuntimeOnly testLibs.junit.platform.launcher
+    testImplementation(testLibs.javalin) {
+        exclude group: 'org.jetbrains.kotlin'
+    }
+    testImplementation testLibs.mockito
+    testImplementation testLibs.java.debug
 
-	compileOnly runtimeLibs.jetbrains.annotations
-	testCompileOnly runtimeLibs.jetbrains.annotations
+    compileOnly runtimeLibs.jetbrains.annotations
+    testCompileOnly runtimeLibs.jetbrains.annotations
 
-	testCompileOnly (testLibs.mixin) {
-		transitive = false
-	}
+    testCompileOnly(testLibs.mixin) {
+        transitive = false
+    }
 }
 
 jar {
-	manifest {
-		attributes 'Implementation-Version': project.version
-	}
+    manifest {
+        attributes 'Implementation-Version': project.version
+    }
 
-	from configurations.bootstrap.collect { it.isDirectory() ? it : zipTree(it) }
-	from sourceSets.commonDecompiler.output.classesDirs
-	from sourceSets.cfr.output.classesDirs
-	from sourceSets.fernflower.output.classesDirs
-	from sourceSets.vineflower.output.classesDirs
+    from configurations.bootstrap.collect {
+        it.isDirectory() ? it : zipTree(it)
+    }
+    from sourceSets.commonDecompiler.output.classesDirs
+    from sourceSets.cfr.output.classesDirs
+    from sourceSets.fernflower.output.classesDirs
+    from sourceSets.vineflower.output.classesDirs
 }
 
 base {
-	archivesName = project.name
+    archivesName = project.name
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+    it.options.release = 17
 }
 
 java {
-	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 spotless {
-	lineEndings = com.diffplug.spotless.LineEnding.UNIX
+    setLineEndings(com.diffplug.spotless.LineEnding.UNIX)
 
-	java {
-		licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
-		targetExclude("**/loom/util/DownloadUtil.java")
-	}
+    java {
+        targetExclude("**/loom/util/DownloadUtil.java")
+        targetExclude("**/generated/**")
+        removeUnusedImports()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+        licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
+        //palantirJavaFormat()
+    }
 
-	groovy {
-		importOrder('java', 'javax', '', 'net.fabricmc', '\\#')
-		licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
-		greclipse()
-	}
+    groovy {
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+        importOrder('java', 'javax', '', 'net.fabricmc', '\\#')
+        licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
+        greclipse()
+    }
 
-	groovyGradle {
-		target 'src/**/*.gradle', '*.gradle'
-		greclipse()
-	}
+    groovyGradle {
+        target('src/**/*.gradle', '*.gradle')
+        // Exclude build.gradle because it keeps pestering me about it!
+        targetExclude("**/build.gradle")
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+        greclipse()
+    }
 
-	kotlin {
-		licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
-		targetExclude("**/build.gradle.kts")
-		targetExclude("src/test/resources/projects/*/**")
-		ktlint()
-	}
-}
-
-checkstyle {
-	configFile = file('checkstyle.xml')
-	toolVersion = libs.versions.checkstyle.get()
-}
-
-// Workaround https://github.com/gradle/gradle/issues/27035
-configurations.checkstyle {
-	resolutionStrategy.capabilitiesResolution.withCapability("com.google.collections:google-collections") {
-		select("com.google.guava:guava:0")
-	}
+    kotlin {
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+        licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
+        targetExclude("**/build.gradle.kts")
+        targetExclude("src/test/resources/projects/*/**")
+        ktlint()
+    }
 }
 
 codenarc {
-	toolVersion = libs.versions.codenarc.get()
-	configFile = file("codenarc.groovy")
+    toolVersion = libs.versions.codenarc.get()
+    configFile = file("codenarc.groovy")
 }
 
 gradlePlugin {
-	plugins {
-		fabricLoom {
-			id = 'fabric-loom'
-			implementationClass = 'net.fabricmc.loom.bootstrap.LoomGradlePluginBootstrap'
-		}
-	}
+    plugins {
+        fabricLoom {
+            id = 'fabric-loom'
+            implementationClass = 'net.fabricmc.loom.bootstrap.LoomGradlePluginBootstrap'
+        }
+    }
 }
 
 test {
-	maxHeapSize = "2560m"
-	jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
-	useJUnitPlatform()
+    maxHeapSize = "2560m"
+    jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+    useJUnitPlatform()
 
-	// Forward system prop onto tests.
-	if (System.getProperty("fabric.loom.test.homeDir")) {
-		systemProperty "fabric.loom.test.homeDir", System.getProperty("fabric.loom.test.homeDir")
-	}
+    // Forward system prop onto tests.
+    if (System.getProperty("fabric.loom.test.homeDir")) {
+        systemProperty "fabric.loom.test.homeDir", System.getProperty("fabric.loom.test.homeDir")
+    }
 
 
-	if (ENV.CI) {
-		retry {
-			maxRetries = 3
-		}
-	}
+    if (ENV.CI) {
+        retry {
+            maxRetries = 3
+        }
+    }
 }
 
 // Workaround https://github.com/gradle/gradle/issues/25898
 tasks.withType(Test).configureEach {
-	jvmArgs = [
-		'--add-opens=java.base/java.lang=ALL-UNNAMED',
-		'--add-opens=java.base/java.util=ALL-UNNAMED',
-		'--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
-		'--add-opens=java.base/java.net=ALL-UNNAMED'
-	]
+    jvmArgs = [
+        '--add-opens=java.base/java.lang=ALL-UNNAMED',
+        '--add-opens=java.base/java.util=ALL-UNNAMED',
+        '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
+        '--add-opens=java.base/java.net=ALL-UNNAMED'
+    ]
 }
 
 
@@ -316,124 +327,124 @@ import org.w3c.dom.Element
 import org.w3c.dom.Node
 
 publishing {
-	publications {
-		if (!ENV.EXPERIMENTAL) {
-			// Also publish a snapshot so people can use the latest version if they wish
-			snapshot(MavenPublication) { publication ->
-				groupId project.group
-				artifactId project.base.archivesName.get()
-				version baseVersion + '-SNAPSHOT'
+    publications {
+        if (!ENV.EXPERIMENTAL) {
+            // Also publish a snapshot so people can use the latest version if they wish
+            snapshot(MavenPublication) { publication ->
+                groupId project.group
+                artifactId project.base.archivesName.get()
+                version baseVersion + '-SNAPSHOT'
 
-				from components.java
-			}
+                from components.java
+            }
 
-			// Manually crate the plugin marker for snapshot versions
-			snapshotPlugin(MavenPublication) { publication ->
-				groupId 'fabric-loom'
-				artifactId 'fabric-loom.gradle.plugin'
-				version baseVersion + '-SNAPSHOT'
+            // Manually crate the plugin marker for snapshot versions
+            snapshotPlugin(MavenPublication) { publication ->
+                groupId 'fabric-loom'
+                artifactId 'fabric-loom.gradle.plugin'
+                version baseVersion + '-SNAPSHOT'
 
-				pom.withXml({
-					// Based off org.gradle.plugin.devel.plugins.MavenPluginPublishPlugin
-					Element root = asElement()
-					Document document = root.getOwnerDocument()
-					Node dependencies = root.appendChild(document.createElement('dependencies'))
-					Node dependency = dependencies.appendChild(document.createElement('dependency'))
-					Node groupId = dependency.appendChild(document.createElement('groupId'))
-					groupId.setTextContent('net.fabricmc')
-					Node artifactId = dependency.appendChild(document.createElement('artifactId'))
-					artifactId.setTextContent('fabric-loom')
-					Node version = dependency.appendChild(document.createElement('version'))
-					version.setTextContent(baseVersion + '-SNAPSHOT')
-				})
-			}
-		}
-	}
-	repositories {
-		maven {
-			if (ENV.MAVEN_URL) {
-				url ENV.MAVEN_URL
-				credentials {
-					username ENV.MAVEN_USERNAME
-					password ENV.MAVEN_PASSWORD
-				}
-			}
-		}
-	}
+                pom.withXml({
+                    // Based off org.gradle.plugin.devel.plugins.MavenPluginPublishPlugin
+                    Element root = asElement()
+                    Document document = root.getOwnerDocument()
+                    Node dependencies = root.appendChild(document.createElement('dependencies'))
+                    Node dependency = dependencies.appendChild(document.createElement('dependency'))
+                    Node groupId = dependency.appendChild(document.createElement('groupId'))
+                    groupId.setTextContent('net.fabricmc')
+                    Node artifactId = dependency.appendChild(document.createElement('artifactId'))
+                    artifactId.setTextContent('fabric-loom')
+                    Node version = dependency.appendChild(document.createElement('version'))
+                    version.setTextContent(baseVersion + '-SNAPSHOT')
+                })
+            }
+        }
+    }
+    repositories {
+        maven {
+            if (ENV.MAVEN_URL) {
+                url ENV.MAVEN_URL
+                credentials {
+                    username ENV.MAVEN_USERNAME
+                    password ENV.MAVEN_PASSWORD
+                }
+            }
+        }
+    }
 }
 
 // Need to tweak this file to pretend we are compatible with j8 so the bootstrap will run.
 tasks.withType(GenerateModuleMetadata).configureEach {
-	doLast {
-		def file = outputFile.get().asFile
+    doLast {
+        def file = outputFile.get().asFile
 
-		def metadata = new groovy.json.JsonSlurper().parseText(file.text)
+        def metadata = new groovy.json.JsonSlurper().parseText(file.text)
 
-		metadata.variants.each {
-			it.attributes["org.gradle.jvm.version"] = 8
-		}
+        metadata.variants.each {
+            it.attributes["org.gradle.jvm.version"] = 8
+        }
 
-		file.text = groovy.json.JsonOutput.toJson(metadata)
-	}
+        file.text = groovy.json.JsonOutput.toJson(metadata)
+    }
 }
 
 // A task to output a json file with a list of all the test to run
 tasks.register('writeActionsTestMatrix') {
-	doLast {
-		def testMatrix = []
-		file('src/test/groovy/net/fabricmc/loom/test/integration').eachFile {
-			if (it.name.endsWith("Test.groovy")) {
-				if (it.name.endsWith("ReproducibleBuildTest.groovy")) {
-					// This test gets a special case to run across all os's
-					return
-				}
+    doLast {
+        def testMatrix = []
+        file('src/test/groovy/net/fabricmc/loom/test/integration').eachFile {
+            if (it.name.endsWith("Test.groovy")) {
+                if (it.name.endsWith("ReproducibleBuildTest.groovy")) {
+                    // This test gets a special case to run across all os's
+                    return
+                }
 
-				if (it.name.endsWith("DebugLineNumbersTest.groovy")) {
-					// Known flakey test
-					return
-				}
+                if (it.name.endsWith("DebugLineNumbersTest.groovy")) {
+                    // Known flakey test
+                    return
+                }
 
-				def className = it.name.replace(".groovy", "")
-				testMatrix.add("net.fabricmc.loom.test.integration.${className}")
-			}
-		}
+                def className = it.name.replace(".groovy", "")
+                testMatrix.add("net.fabricmc.loom.test.integration.${className}")
+            }
+        }
 
-		// Run all the unit tests together
-		testMatrix.add("net.fabricmc.loom.test.unit.*")
+        // Run all the unit tests together
+        testMatrix.add("net.fabricmc.loom.test.unit.*")
 
-		// Kotlin tests
-		testMatrix.add("net.fabricmc.loom.test.kotlin.*")
+        // Kotlin tests
+        testMatrix.add("net.fabricmc.loom.test.kotlin.*")
 
-		def json = groovy.json.JsonOutput.toJson(testMatrix)
-		def output = file("build/test_matrix.json")
-		output.parentFile.mkdir()
-		output.text = json
-	}
+        def json = groovy.json.JsonOutput.toJson(testMatrix)
+        def output = file("build/test_matrix.json")
+        output.parentFile.mkdir()
+        output.text = json
+    }
 }
 
 tasks.named('wrapper') {
-	distributionType = Wrapper.DistributionType.ALL
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 /**
  * Run this task to download the gradle sources next to the api jar, you may need to manually attach the sources jar
  */
 tasks.register('downloadGradleSources') {
-	doLast {
-		// Awful hack to find the gradle api location
-		def gradleApiFile = project.configurations.detachedConfiguration(dependencies.gradleApi()).files.stream()
-				.find {
-					it.name.startsWith("gradle-api")
-				}
+    doLast {
+        // Awful hack to find the gradle api location
+        def gradleApiFile = project.configurations.detachedConfiguration(dependencies.gradleApi()).files.stream()
+            .find {
+                it.name.startsWith("gradle-api")
+            }
 
-		def gradleApiSources = new File(gradleApiFile.absolutePath.replace(".jar", "-sources.jar"))
-		def url = "https://services.gradle.org/distributions/gradle-${GradleVersion.current().getVersion()}-src.zip"
+        def gradleApiSources = new File(gradleApiFile.absolutePath.replace(".jar", "-sources.jar"))
+        def url = "https://services.gradle.org/distributions/gradle-${GradleVersion.current().getVersion()}-src.zip"
 
-		gradleApiSources.delete()
+        gradleApiSources.delete()
 
-		println("Downloading (${url}) to (${gradleApiSources})")
-		gradleApiSources << new URL(url).newInputStream()
-	}
+        println("Downloading (${url}) to (${gradleApiSources})")
+        gradleApiSources << new URL(url).newInputStream()
+    }
 }
 
 tasks.register('printActionsTestName', PrintActionsTestName) {
@@ -443,15 +454,15 @@ tasks.register('printActionsTestName', PrintActionsTestName) {
  * Replaces invalid characters in test names for GitHub Actions artifacts.
  */
 abstract class PrintActionsTestName extends DefaultTask {
-	@Input
-	@Option(option = "name", description = "The test name")
-	String testName
+    @Input
+    @Option(option = "name", description = "The test name")
+    String testName
 
-	@TaskAction
-	def run() {
-		def sanitised = testName.replace('*', '_')
-		new File(System.getenv().GITHUB_OUTPUT) << "\ntest=$sanitised"
-	}
+    @TaskAction
+    def run() {
+        def sanitised = testName.replace('*', '_')
+        new File(System.getenv().GITHUB_OUTPUT) << "\ntest=$sanitised"
+    }
 }
 
 apply from: rootProject.file('gradle/versions.gradle')

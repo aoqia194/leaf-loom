@@ -33,20 +33,21 @@ import org.gradle.api.provider.Provider;
  * @param optionsClass The options class for the service.
  * @param serviceClass The service class.
  */
-public record ServiceType<O extends Service.Options, S extends Service<O>>(Class<O> optionsClass, Class<S> serviceClass) {
-	/**
-	 * Create an instance of the options class for the given service class.
-	 * @param project The {@link Project} to create the options for.
-	 * @param action An action to configure the options.
-	 * @return The created options instance.
-	 */
-	public Provider<O> create(Project project, Action<O> action) {
-		return project.provider(() -> {
-			O options = project.getObjects().newInstance(optionsClass);
-			options.getServiceClass().set(serviceClass.getName());
-			options.getServiceClass().finalizeValue();
-			action.execute(options);
-			return options;
-		});
-	}
+public record ServiceType<O extends Service.Options, S extends Service<O>>(
+        Class<O> optionsClass, Class<S> serviceClass) {
+    /**
+     * Create an instance of the options class for the given service class.
+     * @param project The {@link Project} to create the options for.
+     * @param action An action to configure the options.
+     * @return The created options instance.
+     */
+    public Provider<O> create(Project project, Action<O> action) {
+        return project.provider(() -> {
+            O options = project.getObjects().newInstance(optionsClass);
+            options.getServiceClass().set(serviceClass.getName());
+            options.getServiceClass().finalizeValue();
+            action.execute(options);
+            return options;
+        });
+    }
 }

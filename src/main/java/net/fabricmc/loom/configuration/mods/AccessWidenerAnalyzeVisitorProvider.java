@@ -26,37 +26,37 @@ package net.fabricmc.loom.configuration.mods;
 
 import java.io.IOException;
 import java.util.List;
-
-import org.objectweb.asm.ClassVisitor;
-
 import net.fabricmc.accesswidener.AccessWidener;
 import net.fabricmc.accesswidener.AccessWidenerClassVisitor;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.loom.configuration.mods.dependency.ModDependency;
 import net.fabricmc.loom.util.Constants;
 import net.fabricmc.tinyremapper.TinyRemapper;
+import org.objectweb.asm.ClassVisitor;
 
-public record AccessWidenerAnalyzeVisitorProvider(AccessWidener accessWidener) implements TinyRemapper.AnalyzeVisitorProvider {
-	static AccessWidenerAnalyzeVisitorProvider createFromMods(String namespace, List<ModDependency> mods) throws IOException {
-		AccessWidener accessWidener = new AccessWidener();
-		accessWidener.visitHeader(namespace);
+public record AccessWidenerAnalyzeVisitorProvider(AccessWidener accessWidener)
+        implements TinyRemapper.AnalyzeVisitorProvider {
+    static AccessWidenerAnalyzeVisitorProvider createFromMods(String namespace, List<ModDependency> mods)
+            throws IOException {
+        AccessWidener accessWidener = new AccessWidener();
+        accessWidener.visitHeader(namespace);
 
-		for (ModDependency mod : mods) {
-			final var accessWidenerData = AccessWidenerUtils.readAccessWidenerData(mod.getInputFile());
+        for (ModDependency mod : mods) {
+            final var accessWidenerData = AccessWidenerUtils.readAccessWidenerData(mod.getInputFile());
 
-			if (accessWidenerData == null) {
-				continue;
-			}
+            if (accessWidenerData == null) {
+                continue;
+            }
 
-			final var reader = new AccessWidenerReader(accessWidener);
-			reader.read(accessWidenerData.content());
-		}
+            final var reader = new AccessWidenerReader(accessWidener);
+            reader.read(accessWidenerData.content());
+        }
 
-		return new AccessWidenerAnalyzeVisitorProvider(accessWidener);
-	}
+        return new AccessWidenerAnalyzeVisitorProvider(accessWidener);
+    }
 
-	@Override
-	public ClassVisitor insertAnalyzeVisitor(int mrjVersion, String className, ClassVisitor next) {
-		return AccessWidenerClassVisitor.createClassVisitor(Constants.ASM_VERSION, next, accessWidener);
-	}
+    @Override
+    public ClassVisitor insertAnalyzeVisitor(int mrjVersion, String className, ClassVisitor next) {
+        return AccessWidenerClassVisitor.createClassVisitor(Constants.ASM_VERSION, next, accessWidener);
+    }
 }

@@ -31,31 +31,31 @@ import java.util.Map;
 
 // This is an internal interface to loom, DO NOT USE this in your own plugins.
 public interface LoomInternalDecompiler {
-	void decompile(Context context);
+    void decompile(Context context);
 
-	interface Context {
-		Path compiledJar();
+    interface Context {
+        Path compiledJar();
 
-		Path sourcesDestination();
+        Path sourcesDestination();
 
-		Path linemapDestination();
+        Path linemapDestination();
 
-		int numberOfThreads();
+        int numberOfThreads();
 
-		Path javaDocs();
+        Path javaDocs();
 
-		Collection<Path> libraries();
+        Collection<Path> libraries();
 
-		Logger logger();
+        Logger logger();
 
-		Map<String, String> options();
+        Map<String, String> options();
 
-		byte[] unpackZip(Path zip, String path) throws IOException;
-	}
+        byte[] unpackZip(Path zip, String path) throws IOException;
+    }
 
-	interface Logger {
-		void accept(String data) throws IOException;
+    interface Logger {
+        void accept(String data) throws IOException;
 
-		void error(String msg);
-	}
+        void error(String msg);
+    }
 }

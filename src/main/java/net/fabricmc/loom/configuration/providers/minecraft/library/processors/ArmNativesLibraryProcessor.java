@@ -26,81 +26,82 @@ package net.fabricmc.loom.configuration.providers.minecraft.library.processors;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
-
 import net.fabricmc.loom.LoomRepositoryPlugin;
 import net.fabricmc.loom.configuration.providers.minecraft.library.Library;
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext;
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessor;
 import net.fabricmc.loom.util.Platform;
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
 /**
  * A processor to add support for ARM64.
  */
 public class ArmNativesLibraryProcessor extends LibraryProcessor {
-	private static final String LWJGL_GROUP = "org.lwjgl";
+    private static final String LWJGL_GROUP = "org.lwjgl";
 
-	public ArmNativesLibraryProcessor(Platform platform, LibraryContext context) {
-		super(platform, context);
-	}
+    public ArmNativesLibraryProcessor(Platform platform, LibraryContext context) {
+        super(platform, context);
+    }
 
-	@Override
-	public ApplicationResult getApplicationResult() {
-		if (!context.usesLWJGL3()) {
-			// Only supports LWJGL 3
-			return ApplicationResult.DONT_APPLY;
-		}
+    @Override
+    public ApplicationResult getApplicationResult() {
+        if (!context.usesLWJGL3()) {
+            // Only supports LWJGL 3
+            return ApplicationResult.DONT_APPLY;
+        }
 
-		if (!platform.getArchitecture().isArm() || !platform.getArchitecture().is64Bit()) {
-			// Not an arm64 platform, can never apply this.
-			return ApplicationResult.DONT_APPLY;
-		}
+        if (!platform.getArchitecture().isArm() || !platform.getArchitecture().is64Bit()) {
+            // Not an arm64 platform, can never apply this.
+            return ApplicationResult.DONT_APPLY;
+        }
 
-		if (context.supportsArm64(platform.getOperatingSystem())) {
-			// This version already supports arm64, nothing to do.
-			return ApplicationResult.DONT_APPLY;
-		}
+        if (context.supportsArm64(platform.getOperatingSystem())) {
+            // This version already supports arm64, nothing to do.
+            return ApplicationResult.DONT_APPLY;
+        }
 
-		if (platform.getOperatingSystem().isMacOS()) {
-			// Must upgrade natives to support macos ARM, even if not using classpath natives.
-			return ApplicationResult.MUST_APPLY;
-		}
+        if (platform.getOperatingSystem().isMacOS()) {
+            // Must upgrade natives to support macos ARM, even if not using classpath natives.
+            return ApplicationResult.MUST_APPLY;
+        }
 
-		if (!context.hasClasspathNatives()) {
-			// Only support updating linux and windows versions that have the natives on the classpath.
-			return ApplicationResult.DONT_APPLY;
-		}
+        if (!context.hasClasspathNatives()) {
+            // Only support updating linux and windows versions that have the natives on the classpath.
+            return ApplicationResult.DONT_APPLY;
+        }
 
-		// Must add arm 64 to Windows and Linux for versions that use classpath natives.
-		return ApplicationResult.MUST_APPLY;
-	}
+        // Must add arm 64 to Windows and Linux for versions that use classpath natives.
+        return ApplicationResult.MUST_APPLY;
+    }
 
-	@Override
-	public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
-		final String osName = switch (platform.getOperatingSystem()) {
-		case MAC_OS -> "macos";
-		case WINDOWS -> "windows";
-		case LINUX -> "linux";
-		};
+    @Override
+    public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
+        final String osName =
+                switch (platform.getOperatingSystem()) {
+                    case MAC_OS -> "macos";
+                    case WINDOWS -> "windows";
+                    case LINUX -> "linux";
+                };
 
-		return library -> {
-			if (library.is(LWJGL_GROUP) && library.target() == Library.Target.NATIVES && (library.classifier() != null && library.classifier().equals("natives-" + osName))) {
-				// Add the arm64 natives.
-				dependencyConsumer.accept(library.withClassifier(library.classifier() + "-arm64"));
+        return library -> {
+            if (library.is(LWJGL_GROUP)
+                    && library.target() == Library.Target.NATIVES
+                    && (library.classifier() != null && library.classifier().equals("natives-" + osName))) {
+                // Add the arm64 natives.
+                dependencyConsumer.accept(library.withClassifier(library.classifier() + "-arm64"));
 
-				if (!context.hasClasspathNatives()) {
-					// Remove the none arm64 natives when extracting.
-					return false;
-				}
-			}
+                if (!context.hasClasspathNatives()) {
+                    // Remove the none arm64 natives when extracting.
+                    return false;
+                }
+            }
 
-			return true;
-		};
-	}
+            return true;
+        };
+    }
 
-	@Override
-	public void applyRepositories(RepositoryHandler repositories) {
-		LoomRepositoryPlugin.forceLWJGLFromMavenCentral(repositories);
-	}
+    @Override
+    public void applyRepositories(RepositoryHandler repositories) {
+        LoomRepositoryPlugin.forceLWJGLFromMavenCentral(repositories);
+    }
 }

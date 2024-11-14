@@ -26,33 +26,32 @@ package net.fabricmc.loom.extension;
 
 import java.io.File;
 import java.util.Objects;
-
 import org.gradle.api.Project;
 
 public final class LoomFilesProjectImpl extends LoomFilesBaseImpl {
-	private final Project project;
+    private final Project project;
 
-	public LoomFilesProjectImpl(Project project) {
-		this.project = Objects.requireNonNull(project);
-	}
+    public LoomFilesProjectImpl(Project project) {
+        this.project = Objects.requireNonNull(project);
+    }
 
-	@Override
-	protected File getGradleUserHomeDir() {
-		return project.getGradle().getGradleUserHomeDir();
-	}
+    @Override
+    protected File getGradleUserHomeDir() {
+        return project.getGradle().getGradleUserHomeDir();
+    }
 
-	@Override
-	protected File getRootDir() {
-		return project.getRootDir();
-	}
+    @Override
+    protected File getRootDir() {
+        return project.getRootDir();
+    }
 
-	@Override
-	protected File getProjectDir() {
-		return project.getProjectDir();
-	}
+    @Override
+    protected File getProjectDir() {
+        return project.getProjectDir();
+    }
 
-	@Override
-	protected File getBuildDir() {
-		return project.getLayout().getBuildDirectory().getAsFile().get();
-	}
+    @Override
+    protected File getBuildDir() {
+        return project.getLayout().getBuildDirectory().getAsFile().get();
+    }
 }

@@ -38,39 +38,39 @@ import net.fabricmc.loom.LoomGradleExtension;
  * Can be used to create a {@link DownloadBuilder} with the correct settings for the project within a task.
  */
 public abstract class DownloadFactory {
-	@Input
-	protected abstract Property<Boolean> getIsOffline();
+    @Input
+    protected abstract Property<Boolean> getIsOffline();
 
-	@Input
-	protected abstract Property<Boolean> getIsManualRefreshDependencies();
+    @Input
+    protected abstract Property<Boolean> getIsManualRefreshDependencies();
 
-	@Inject
-	public abstract Project getProject();
+    @Inject
+    public abstract Project getProject();
 
-	@Inject
-	public DownloadFactory() {
-		getIsOffline().set(getProject().getGradle().getStartParameter().isOffline());
-		getIsManualRefreshDependencies().set(LoomGradleExtension.get(getProject()).refreshDeps());
-	}
+    @Inject
+    public DownloadFactory() {
+        getIsOffline().set(getProject().getGradle().getStartParameter().isOffline());
+        getIsManualRefreshDependencies().set(LoomGradleExtension.get(getProject()).refreshDeps());
+    }
 
-	// Matches the logic in LoomGradleExtensionImpl
-	public DownloadBuilder download(String url) {
-		DownloadBuilder builder;
+    // Matches the logic in LoomGradleExtensionImpl
+    public DownloadBuilder download(String url) {
+        DownloadBuilder builder;
 
-		try {
-			builder = Download.create(url);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("Failed to create downloader for: " + e);
-		}
+        try {
+            builder = Download.create(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Failed to create downloader for: " + e);
+        }
 
-		if (getIsOffline().get()) {
-			builder.offline();
-		}
+        if (getIsOffline().get()) {
+            builder.offline();
+        }
 
-		if (getIsManualRefreshDependencies().get()) {
-			builder.forceDownload();
-		}
+        if (getIsManualRefreshDependencies().get()) {
+            builder.forceDownload();
+        }
 
-		return builder;
-	}
+        return builder;
+    }
 }

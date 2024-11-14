@@ -30,7 +30,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import net.fabricmc.loom.util.service.Service;
+import net.fabricmc.loom.util.service.ServiceFactory;
+import net.fabricmc.loom.util.service.ServiceType;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -39,71 +41,68 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 
-import net.fabricmc.loom.util.service.Service;
-import net.fabricmc.loom.util.service.ServiceFactory;
-import net.fabricmc.loom.util.service.ServiceType;
-
 public final class KotlinClasspathService extends Service<KotlinClasspathService.Options> implements KotlinClasspath {
-	public static ServiceType<Options, KotlinClasspathService> TYPE = new ServiceType<>(Options.class, KotlinClasspathService.class);
+    public static ServiceType<Options, KotlinClasspathService> TYPE =
+            new ServiceType<>(Options.class, KotlinClasspathService.class);
 
-	public interface Options extends Service.Options {
-		@InputFiles
-		ConfigurableFileCollection getClasspath();
-		@Input
-		Property<String> getKotlinVersion();
-	}
+    public interface Options extends Service.Options {
+        @InputFiles
+        ConfigurableFileCollection getClasspath();
 
-	public static Provider<Options> createOptions(Project project) {
-		if (!KotlinPluginUtils.hasKotlinPlugin(project)) {
-			// Return an empty provider
-			return project.getObjects().property(Options.class);
-		}
+        @Input
+        Property<String> getKotlinVersion();
+    }
 
-		return createOptions(
-				project,
-				KotlinPluginUtils.getKotlinPluginVersion(project),
-				KotlinPluginUtils.getKotlinMetadataVersion()
-		);
-	}
+    public static Provider<Options> createOptions(Project project) {
+        if (!KotlinPluginUtils.hasKotlinPlugin(project)) {
+            // Return an empty provider
+            return project.getObjects().property(Options.class);
+        }
 
-	private static Provider<Options> createOptions(Project project, String kotlinVersion, String kotlinMetadataVersion) {
-		// Create a detached config to resolve the kotlin std lib for the provided version.
-		Configuration detachedConfiguration = project.getConfigurations().detachedConfiguration(
-				project.getDependencies().create("org.jetbrains.kotlin:kotlin-stdlib:" + kotlinVersion),
-				// Load kotlinx-metadata-jvm like this to work around: https://github.com/gradle/gradle/issues/14727
-				project.getDependencies().create("org.jetbrains.kotlinx:kotlinx-metadata-jvm:" + kotlinMetadataVersion)
-		);
+        return createOptions(
+                project,
+                KotlinPluginUtils.getKotlinPluginVersion(project),
+                KotlinPluginUtils.getKotlinMetadataVersion());
+    }
 
-		return TYPE.create(project, options -> {
-			options.getClasspath().from(detachedConfiguration);
-			options.getKotlinVersion().set(kotlinVersion);
-		});
-	}
+    private static Provider<Options> createOptions(
+            Project project, String kotlinVersion, String kotlinMetadataVersion) {
+        // Create a detached config to resolve the kotlin std lib for the provided version.
+        Configuration detachedConfiguration = project.getConfigurations()
+                .detachedConfiguration(
+                        project.getDependencies().create("org.jetbrains.kotlin:kotlin-stdlib:" + kotlinVersion),
+                        // Load kotlinx-metadata-jvm like this to work around:
+                        // https://github.com/gradle/gradle/issues/14727
+                        project.getDependencies()
+                                .create("org.jetbrains.kotlinx:kotlinx-metadata-jvm:" + kotlinMetadataVersion));
 
-	public KotlinClasspathService(Options options, ServiceFactory serviceFactory) {
-		super(options, serviceFactory);
-	}
+        return TYPE.create(project, options -> {
+            options.getClasspath().from(detachedConfiguration);
+            options.getKotlinVersion().set(kotlinVersion);
+        });
+    }
 
-	@Override
-	public String version() {
-		return getOptions().getKotlinVersion().get();
-	}
+    public KotlinClasspathService(Options options, ServiceFactory serviceFactory) {
+        super(options, serviceFactory);
+    }
 
-	@Override
-	public Set<URL> classpath() {
-		return getOptions()
-				.getClasspath()
-				.getFiles()
-				.stream()
-				.map(KotlinClasspathService::fileToUrl)
-				.collect(Collectors.toSet());
-	}
+    @Override
+    public String version() {
+        return getOptions().getKotlinVersion().get();
+    }
 
-	private static URL fileToUrl(File file) {
-		try {
-			return file.toURI().toURL();
-		} catch (MalformedURLException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
+    @Override
+    public Set<URL> classpath() {
+        return getOptions().getClasspath().getFiles().stream()
+                .map(KotlinClasspathService::fileToUrl)
+                .collect(Collectors.toSet());
+    }
+
+    private static URL fileToUrl(File file) {
+        try {
+            return file.toURI().toURL();
+        } catch (MalformedURLException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 }

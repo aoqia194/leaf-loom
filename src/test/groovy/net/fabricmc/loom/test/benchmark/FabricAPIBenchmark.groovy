@@ -50,10 +50,10 @@ class FabricAPIBenchmark implements GradleProjectTestTrait {
 
 		if (!gradle.buildGradle.text.contains("loom.mixin.useLegacyMixinAp")) {
 			gradle.buildGradle << """
-				allprojects {
-					loom.mixin.useLegacyMixinAp = false
-				}
-				""".stripIndent()
+                allprojects {
+                    loom.mixin.useLegacyMixinAp = false
+                }
+                """.stripIndent()
 		}
 
 		def timeStart = new Date()

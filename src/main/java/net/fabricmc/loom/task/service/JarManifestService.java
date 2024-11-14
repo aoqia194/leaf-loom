@@ -29,7 +29,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-
+import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.LoomGradlePlugin;
+import net.fabricmc.loom.configuration.InstallerData;
+import net.fabricmc.loom.util.Constants;
+import net.fabricmc.loom.util.LoomVersions;
+import net.fabricmc.tinyremapper.TinyRemapper;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.provider.Property;
@@ -38,89 +43,107 @@ import org.gradle.api.services.BuildService;
 import org.gradle.api.services.BuildServiceParameters;
 import org.gradle.util.GradleVersion;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.configuration.InstallerData;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.LoomVersions;
-import net.fabricmc.tinyremapper.TinyRemapper;
-
 public abstract class JarManifestService implements BuildService<JarManifestService.Params> {
-	interface Params extends BuildServiceParameters {
-		Property<String> getGradleVersion();
-		Property<String> getLoomVersion();
-		Property<String> getMCEVersion();
-		Property<String> getMinecraftVersion();
-		Property<String> getTinyRemapperVersion();
-		Property<String> getFabricLoaderVersion();
-		Property<MixinVersion> getMixinVersion();
-	}
+    interface Params extends BuildServiceParameters {
+        Property<String> getGradleVersion();
 
-	public static Provider<JarManifestService> get(Project project) {
-		return project.getGradle().getSharedServices().registerIfAbsent("LoomJarManifestService:" + project.getName(), JarManifestService.class, spec -> {
-			spec.parameters(params -> {
-				LoomGradleExtension extension = LoomGradleExtension.get(project);
-				Optional<String> tinyRemapperVersion = Optional.ofNullable(TinyRemapper.class.getPackage().getImplementationVersion());
+        Property<String> getLoomVersion();
 
-				params.getGradleVersion().set(GradleVersion.current().getVersion());
-				params.getLoomVersion().set(LoomGradlePlugin.LOOM_VERSION);
-				params.getMCEVersion().set(LoomVersions.MIXIN_COMPILE_EXTENSIONS.version());
-				params.getMinecraftVersion().set(project.provider(() -> extension.getMinecraftProvider().minecraftVersion()));
-				params.getTinyRemapperVersion().set(tinyRemapperVersion.orElse("unknown"));
-				params.getFabricLoaderVersion().set(project.provider(() -> Optional.ofNullable(extension.getInstallerData()).map(InstallerData::version).orElse("unknown")));
-				params.getMixinVersion().set(getMixinVersion(project));
-			});
-		});
-	}
+        Property<String> getMCEVersion();
 
-	public void apply(Manifest manifest, Map<String, String> extraValues) {
-		Attributes attributes = manifest.getMainAttributes();
+        Property<String> getMinecraftVersion();
 
-		extraValues.entrySet().stream()
-				.sorted(Map.Entry.comparingByKey())
-				.forEach(entry -> {
-					attributes.putValue(entry.getKey(), entry.getValue());
-				});
+        Property<String> getTinyRemapperVersion();
 
-		// Don't set version attributes when running the reproducible build tests as it will break them when anything updates
-		if (Boolean.getBoolean("loom.test.reproducible")) {
-			return;
-		}
+        Property<String> getFabricLoaderVersion();
 
-		Params p = getParameters();
+        Property<MixinVersion> getMixinVersion();
+    }
 
-		attributes.putValue(Constants.Manifest.GRADLE_VERSION, p.getGradleVersion().get());
-		attributes.putValue(Constants.Manifest.LOOM_VERSION, p.getLoomVersion().get());
-		attributes.putValue(Constants.Manifest.MIXIN_COMPILE_EXTENSIONS_VERSION, p.getMCEVersion().get());
-		attributes.putValue(Constants.Manifest.MINECRAFT_VERSION, p.getMinecraftVersion().get());
-		attributes.putValue(Constants.Manifest.TINY_REMAPPER_VERSION, p.getTinyRemapperVersion().get());
-		attributes.putValue(Constants.Manifest.FABRIC_LOADER_VERSION, p.getFabricLoaderVersion().get());
+    public static Provider<JarManifestService> get(Project project) {
+        return project.getGradle()
+                .getSharedServices()
+                .registerIfAbsent("LoomJarManifestService:" + project.getName(), JarManifestService.class, spec -> {
+                    spec.parameters(params -> {
+                        LoomGradleExtension extension = LoomGradleExtension.get(project);
+                        Optional<String> tinyRemapperVersion = Optional.ofNullable(
+                                TinyRemapper.class.getPackage().getImplementationVersion());
 
-		// This can be overridden by mods if required
-		if (!attributes.containsKey(Constants.Manifest.MIXIN_VERSION)) {
-			attributes.putValue(Constants.Manifest.MIXIN_VERSION, p.getMixinVersion().get().version());
-			attributes.putValue(Constants.Manifest.MIXIN_GROUP, p.getMixinVersion().get().group());
-		}
-	}
+                        params.getGradleVersion().set(GradleVersion.current().getVersion());
+                        params.getLoomVersion().set(LoomGradlePlugin.LOOM_VERSION);
+                        params.getMCEVersion().set(LoomVersions.MIXIN_COMPILE_EXTENSIONS.version());
+                        params.getMinecraftVersion()
+                                .set(project.provider(
+                                        () -> extension.getZomboidProvider().zomboidVersion()));
+                        params.getTinyRemapperVersion().set(tinyRemapperVersion.orElse("unknown"));
+                        params.getFabricLoaderVersion()
+                                .set(project.provider(() -> Optional.ofNullable(extension.getInstallerData())
+                                        .map(InstallerData::version)
+                                        .orElse("unknown")));
+                        params.getMixinVersion().set(getMixinVersion(project));
+                    });
+                });
+    }
 
-	// Must be public for configuration cache
-	public record MixinVersion(String group, String version) implements Serializable { }
+    public void apply(Manifest manifest, Map<String, String> extraValues) {
+        Attributes attributes = manifest.getMainAttributes();
 
-	private static Provider<MixinVersion> getMixinVersion(Project project) {
-		return project.getConfigurations().named(Constants.Configurations.LOADER_DEPENDENCIES).map(configuration -> {
-			// Not super ideal that this uses the mod compile classpath, should prob look into making this not a thing at somepoint
-			Optional<Dependency> dependency = configuration
-					.getDependencies()
-					.stream()
-					.filter(dep -> "sponge-mixin".equals(dep.getName()))
-					.findFirst();
+        extraValues.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> {
+            attributes.putValue(entry.getKey(), entry.getValue());
+        });
 
-			if (dependency.isEmpty()) {
-				project.getLogger().warn("Could not determine Mixin version for jar manifest");
-			}
+        // Don't set version attributes when running the reproducible build tests as it will break them when anything
+        // updates
+        if (Boolean.getBoolean("loom.test.reproducible")) {
+            return;
+        }
 
-			return dependency.map(d -> new MixinVersion(d.getGroup(), d.getVersion()))
-					.orElse(new MixinVersion("unknown", "unknown"));
-		});
-	}
+        Params p = getParameters();
+
+        attributes.putValue(
+                Constants.Manifest.GRADLE_VERSION, p.getGradleVersion().get());
+        attributes.putValue(Constants.Manifest.LOOM_VERSION, p.getLoomVersion().get());
+        attributes.putValue(
+                Constants.Manifest.MIXIN_COMPILE_EXTENSIONS_VERSION,
+                p.getMCEVersion().get());
+        attributes.putValue(
+                Constants.Manifest.ZOMBOID_VERSION, p.getMinecraftVersion().get());
+        attributes.putValue(
+                Constants.Manifest.TINY_REMAPPER_VERSION,
+                p.getTinyRemapperVersion().get());
+        attributes.putValue(
+                Constants.Manifest.FABRIC_LOADER_VERSION,
+                p.getFabricLoaderVersion().get());
+
+        // This can be overridden by mods if required
+        if (!attributes.containsKey(Constants.Manifest.MIXIN_VERSION)) {
+            attributes.putValue(
+                    Constants.Manifest.MIXIN_VERSION, p.getMixinVersion().get().version());
+            attributes.putValue(
+                    Constants.Manifest.MIXIN_GROUP, p.getMixinVersion().get().group());
+        }
+    }
+
+    // Must be public for configuration cache
+    public record MixinVersion(String group, String version) implements Serializable {}
+
+    private static Provider<MixinVersion> getMixinVersion(Project project) {
+        return project.getConfigurations()
+                .named(Constants.Configurations.LOADER_DEPENDENCIES)
+                .map(configuration -> {
+                    // Not super ideal that this uses the mod compile classpath, should prob look into making this not a
+                    // thing at somepoint
+                    Optional<Dependency> dependency = configuration.getDependencies().stream()
+                            .filter(dep -> "sponge-mixin".equals(dep.getName()))
+                            .findFirst();
+
+                    if (dependency.isEmpty()) {
+                        project.getLogger().warn("Could not determine Mixin version for jar manifest");
+                    }
+
+                    return dependency
+                            .map(d -> new MixinVersion(d.getGroup(), d.getVersion()))
+                            .orElse(new MixinVersion("unknown", "unknown"));
+                });
+    }
 }
