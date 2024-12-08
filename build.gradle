@@ -5,7 +5,7 @@ plugins {
     id 'idea'
     id 'eclipse'
     id 'groovy'
-    id 'codenarc'
+//    id 'codenarc'
     alias(libs.plugins.kotlin) apply false // Delay this so we can perform magic 🪄 first.
     alias(libs.plugins.spotless)
     alias(libs.plugins.retry)
@@ -51,7 +51,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
-group = 'net.fabricmc'
+group = 'net.aoqia'
 def baseVersion = '1.8'
 
 def ENV = System.getenv()
@@ -251,7 +251,7 @@ spotless {
         indentWithSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
-        importOrder('java', 'javax', '', 'net.fabricmc', '\\#')
+        importOrder('java', 'javax', '', 'net.fabricmc', '', 'net.aoqia', '\\#')
         licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
         greclipse()
     }
@@ -277,16 +277,16 @@ spotless {
     }
 }
 
-codenarc {
-    toolVersion = libs.versions.codenarc.get()
-    configFile = file("codenarc.groovy")
-}
+//codenarc {
+//    toolVersion = libs.versions.codenarc.get()
+//    configFile = file("codenarc.groovy")
+//}
 
 gradlePlugin {
     plugins {
-        fabricLoom {
-            id = 'fabric-loom'
-            implementationClass = 'net.fabricmc.loom.bootstrap.LoomGradlePluginBootstrap'
+        leafLoom {
+            id = 'leaf-loom'
+            implementationClass = 'net.aoqia.loom.bootstrap.LoomGradlePluginBootstrap'
         }
     }
 }
@@ -297,8 +297,8 @@ test {
     useJUnitPlatform()
 
     // Forward system prop onto tests.
-    if (System.getProperty("fabric.loom.test.homeDir")) {
-        systemProperty "fabric.loom.test.homeDir", System.getProperty("fabric.loom.test.homeDir")
+    if (System.getProperty("leaf.loom.test.homeDir")) {
+        systemProperty "leaf.loom.test.homeDir", System.getProperty("leaf.loom.test.homeDir")
     }
 
 
@@ -340,8 +340,8 @@ publishing {
 
             // Manually crate the plugin marker for snapshot versions
             snapshotPlugin(MavenPublication) { publication ->
-                groupId 'fabric-loom'
-                artifactId 'fabric-loom.gradle.plugin'
+                groupId 'leaf-loom'
+                artifactId 'leaf-loom.gradle.plugin'
                 version baseVersion + '-SNAPSHOT'
 
                 pom.withXml({
@@ -351,9 +351,9 @@ publishing {
                     Node dependencies = root.appendChild(document.createElement('dependencies'))
                     Node dependency = dependencies.appendChild(document.createElement('dependency'))
                     Node groupId = dependency.appendChild(document.createElement('groupId'))
-                    groupId.setTextContent('net.fabricmc')
+                    groupId.setTextContent(group)
                     Node artifactId = dependency.appendChild(document.createElement('artifactId'))
-                    artifactId.setTextContent('fabric-loom')
+                    artifactId.setTextContent('leaf-loom')
                     Node version = dependency.appendChild(document.createElement('version'))
                     version.setTextContent(baseVersion + '-SNAPSHOT')
                 })
@@ -405,15 +405,15 @@ tasks.register('writeActionsTestMatrix') {
                 }
 
                 def className = it.name.replace(".groovy", "")
-                testMatrix.add("net.fabricmc.loom.test.integration.${className}")
+                testMatrix.add("net.aoqia.loom.test.integration.${className}")
             }
         }
 
         // Run all the unit tests together
-        testMatrix.add("net.fabricmc.loom.test.unit.*")
+        testMatrix.add("net.aoqia.loom.test.unit.*")
 
         // Kotlin tests
-        testMatrix.add("net.fabricmc.loom.test.kotlin.*")
+        testMatrix.add("net.aoqia.loom.test.kotlin.*")
 
         def json = groovy.json.JsonOutput.toJson(testMatrix)
         def output = file("build/test_matrix.json")

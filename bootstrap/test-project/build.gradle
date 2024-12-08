@@ -1,8 +1,8 @@
 plugins {
-	id 'fabric-loom' version '0.13.local'
+	id 'leaf-loom' version '0.13.local'
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.16.5"
+	minecraft "com.theindiestone:zomboid:1.16.5"
 	mappings loom.officialMojangMappings()
 }

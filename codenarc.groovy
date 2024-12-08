@@ -24,7 +24,7 @@ ruleset {
     SpaceAfterSwitch
     SpaceAfterWhile
     SpaceAroundClosureArrow
-    SpaceAroundMapEntryColon(characterAfterColonRegex: /\ /)
+    // SpaceAroundMapEntryColon(characterAfterColonRegex: /\ /)
     SpaceAroundOperator
     SpaceBeforeClosingBrace
     SpaceBeforeOpeningBrace

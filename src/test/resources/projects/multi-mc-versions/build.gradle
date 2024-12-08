@@ -54,7 +54,7 @@ subprojects {
 		inputs.property 'minecraft_version', mcVersion
 		inputs.property 'loader_version', loaderVersion
 
-		filesMatching("fabric.mod.json") {
+		filesMatching("leaf.mod.json") {
 			expand 'version': version, 'minecraft_version': mcVersion, 'loader_version': loaderVersion
 		}
 	}
