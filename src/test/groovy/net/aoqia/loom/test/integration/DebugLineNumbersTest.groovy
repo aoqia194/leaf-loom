@@ -52,7 +52,7 @@ import io.reactivex.functions.Function
 import spock.lang.Specification
 import spock.lang.Timeout
 
-import net.aoqia.loom.configuration.providers.minecraft.ZomboidJar
+import net.aoqia.loom.configuration.providers.zomboid.ZomboidJar
 import net.aoqia.loom.test.util.GradleProjectTestTrait
 import net.aoqia.loom.util.ZipUtils
 

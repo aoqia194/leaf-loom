@@ -24,7 +24,7 @@
 
 package net.aoqia.loom.util.fmj;
 
-import static net.aoqia.loom.util.fmj.FabricModJsonUtils.readInt;
+import static net.aoqia.loom.util.fmj.LeafModJsonUtils.readInt;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;

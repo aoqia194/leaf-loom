@@ -76,7 +76,7 @@ public class AccessWidenerJarProcessor implements ZomboidJarProcessor<AccessWide
 
         /* Uncomment to read all access wideners from local mods.
 
-        for (FabricModJson fabricModJson : context.localMods()) {
+        for (LeafModJson fabricModJson : context.localMods()) {
             accessWideners.addAll(ModAccessWidenerEntry.readAll(fabricModJson, false));
         }
 

@@ -24,30 +24,28 @@
 
 package net.aoqia.loom.configuration;
 
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import net.aoqia.loom.LoomGradleExtension;
+import net.aoqia.loom.util.download.DownloadException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.SourceSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.util.download.DownloadException;
-
 public abstract class LeafApiExtension {
-    @Inject
-    public abstract Project getProject();
-
     private static final HashMap<String, Map<String, String>> moduleVersionCache = new HashMap<>();
     private static final HashMap<String, Map<String, String>> deprecatedModuleVersionCache = new HashMap<>();
 
@@ -74,21 +72,21 @@ public abstract class LeafApiExtension {
         return moduleVersion;
     }
 
-    private String getDependencyNotation(String moduleName, String fabricApiVersion) {
-        return String.format("net.fabricmc.leaf-api:%s:%s", moduleName, moduleVersion(moduleName, fabricApiVersion));
+    private String getDependencyNotation(String moduleName, String leafApiVersion) {
+        return String.format("net.aoqia.leaf-api:%s:%s", moduleName, moduleVersion(moduleName, leafApiVersion));
     }
 
-    private Map<String, String> getApiModuleVersions(String fabricApiVersion) {
+    private Map<String, String> getApiModuleVersions(String leafApiVersion) {
         try {
-            return populateModuleVersionMap(getApiMavenPom(fabricApiVersion));
+            return populateModuleVersionMap(getApiMavenPom(leafApiVersion));
         } catch (PomNotFoundException e) {
-            throw new RuntimeException("Could not find leaf-api version: " + fabricApiVersion);
+            throw new RuntimeException("Could not find leaf-api version: " + leafApiVersion);
         }
     }
 
-    private Map<String, String> getDeprecatedApiModuleVersions(String fabricApiVersion) {
+    private Map<String, String> getDeprecatedApiModuleVersions(String leafApiVersion) {
         try {
-            return populateModuleVersionMap(getDeprecatedApiMavenPom(fabricApiVersion));
+            return populateModuleVersionMap(getDeprecatedApiMavenPom(leafApiVersion));
         } catch (PomNotFoundException e) {
             // Not all fabric-api versions have deprecated modules, return an empty map to cache this fact.
             return Collections.emptyMap();
@@ -103,7 +101,8 @@ public abstract class LeafApiExtension {
 
             Map<String, String> versionMap = new HashMap<>();
 
-            NodeList dependencies = ((Element) pom.getElementsByTagName("dependencies").item(0)).getElementsByTagName("dependency");
+            NodeList dependencies = ((Element) pom.getElementsByTagName("dependencies").item(0)).getElementsByTagName(
+                "dependency");
 
             for (int i = 0; i < dependencies.getLength(); i++) {
                 Element dep = (Element) dependencies.item(i);
@@ -133,10 +132,13 @@ public abstract class LeafApiExtension {
 
     private File getPom(String name, String version) throws PomNotFoundException {
         final LoomGradleExtension extension = LoomGradleExtension.get(getProject());
-        final var mavenPom = new File(extension.getFiles().getUserCache(), "leaf-api/%s-%s.pom".formatted(name, version));
+        final var mavenPom = new File(extension.getFiles().getUserCache(),
+            "leaf-api/%s-%s.pom".formatted(name, version));
 
         try {
-            extension.download(String.format("https://maven.fabricmc.net/net/aoqia/leaf-api/%2$s/%1$s/%2$s-%1$s.pom", version, name))
+            extension.download(String.format("https://maven.aoqia.net/net/aoqia/leaf-api/%2$s/%1$s/%2$s-%1$s.pom",
+                    version,
+                    name))
                 .defaultCache()
                 .downloadPath(mavenPom.toPath());
         } catch (DownloadException e) {
@@ -150,10 +152,23 @@ public abstract class LeafApiExtension {
         return mavenPom;
     }
 
-    private static class PomNotFoundException extends Exception {
-        PomNotFoundException(Throwable cause) {
-            super(cause);
-        }
+    private void dependsOn(SourceSet sourceSet, SourceSet other) {
+        sourceSet.setCompileClasspath(
+            sourceSet.getCompileClasspath()
+                .plus(other.getOutput())
+        );
+
+        sourceSet.setRuntimeClasspath(
+            sourceSet.getRuntimeClasspath()
+                .plus(other.getOutput())
+        );
+
+        extendsFrom(getProject(),
+            sourceSet.getCompileClasspathConfigurationName(),
+            other.getCompileClasspathConfigurationName());
+        extendsFrom(getProject(),
+            sourceSet.getRuntimeClasspathConfigurationName(),
+            other.getRuntimeClasspathConfigurationName());
     }
 
     private static void extendsFrom(Project project, String name, String extendsFrom) {
@@ -162,5 +177,55 @@ public abstract class LeafApiExtension {
         configurations.named(name, configuration -> {
             configuration.extendsFrom(configurations.getByName(extendsFrom));
         });
+    }
+
+    @Inject
+    public abstract Project getProject();
+
+    public interface DataGenerationSettings {
+        /**
+         * Contains the output directory where generated data files will be stored.
+         */
+        RegularFileProperty getOutputDirectory();
+
+        /**
+         * Contains a boolean indicating whether a run configuration should be created for the data generation process.
+         */
+        Property<Boolean> getCreateRunConfiguration();
+
+        /**
+         * Contains a boolean property indicating whether a new source set should be created for the data generation
+         * process.
+         */
+        Property<Boolean> getCreateSourceSet();
+
+        /**
+         * Contains a string property representing the mod ID associated with the data generation process.
+         *
+         * <p>This must be set when {@link #getCreateRunConfiguration()} is set.
+         */
+        Property<String> getModId();
+
+        /**
+         * Contains a boolean property indicating whether strict validation is enabled.
+         */
+        Property<Boolean> getStrictValidation();
+
+        /**
+         * Contains a boolean property indicating whether the generated resources will be automatically added to the
+         * main sourceset.
+         */
+        Property<Boolean> getAddToResources();
+
+        /**
+         * Contains a boolean property indicating whether data generation will be compiled and ran with the client.
+         */
+        Property<Boolean> getClient();
+    }
+
+    private static class PomNotFoundException extends Exception {
+        PomNotFoundException(Throwable cause) {
+            super(cause);
+        }
     }
 }

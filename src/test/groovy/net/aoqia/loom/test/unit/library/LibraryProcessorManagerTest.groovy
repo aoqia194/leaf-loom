@@ -24,9 +24,9 @@
 
 package net.aoqia.loom.test.unit.library
 
-import net.aoqia.loom.configuration.providers.minecraft.library.Library
-import net.aoqia.loom.configuration.providers.minecraft.library.LibraryProcessorManager
-import net.aoqia.loom.configuration.providers.minecraft.library.processors.RuntimeLog4jLibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.Library
+import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessorManager
+import net.aoqia.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor
 import net.aoqia.loom.test.unit.library.processors.LibraryProcessorTest
 import net.aoqia.loom.test.util.GradleTestUtil
 import net.aoqia.loom.test.util.PlatformTestUtils

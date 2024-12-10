@@ -55,7 +55,7 @@ public interface MappingContext {
 
     Logger getLogger();
 
-    CopyGameFileBuilder copyGameFile(String url);
+    CopyGameFileBuilder copyGameFile(String path);
 
     DownloadBuilder download(String url);
 

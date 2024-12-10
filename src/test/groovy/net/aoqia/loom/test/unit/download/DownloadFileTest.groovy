@@ -37,12 +37,12 @@ import io.javalin.http.HttpStatus
 import spock.lang.IgnoreIf
 
 import net.aoqia.loom.util.Checksum
-import net.aoqia.loom.util.copygamefile.CopyGameFile
-import net.aoqia.loom.util.copygamefile.CopyGameFileExecutor
-import net.aoqia.loom.util.copygamefile.CopyGameFileProgressListener
+import net.aoqia.loom.util.download.Download
 import net.aoqia.loom.util.download.DownloadException
+import net.aoqia.loom.util.download.DownloadExecutor
+import net.aoqia.loom.util.download.DownloadProgressListener
 
-class CopyGameFileFileTest extends CopyGameFileTest {
+class DownloadFileTest extends DownloadTest {
 	@IgnoreIf({
 		os.windows
 	})
@@ -58,7 +58,7 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def symlink = Paths.get(linkedtmp.toString(), "file.txt")
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/symlinkFile").copyGameFileFromPath(symlink)
+		def result = Download.create("$DownloadTest.PATH/symlinkFile").downloadPath(symlink)
 
 		then:
 		Files.readString(symlink) == "Hello World"
@@ -73,7 +73,7 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def output = new File(File.createTempDir(), "subdir/file.txt").toPath()
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/simpleFile").copyGameFileFromPath(output)
+		def result = Download.create("$DownloadTest.PATH/simpleFile").downloadPath(output)
 
 		then:
 		Files.readString(output) == "Hello World"
@@ -88,7 +88,7 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def output = new File(File.createTempDir(), "file.txt").toPath()
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/fileNotfound").copyGameFileFromPath(output)
+		def result = Download.create("$DownloadTest.PATH/fileNotfound").downloadPath(output)
 
 		then:
 		def e = thrown DownloadException
@@ -104,7 +104,7 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def output = new File(File.createTempDir(), "file.txt").toPath()
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/fileServerError").copyGameFileFromPath(output)
+		def result = Download.create("$DownloadTest.PATH/fileServerError").downloadPath(output)
 
 		then:
 		def e = thrown DownloadException
@@ -124,9 +124,9 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 
 		when:
 		for (i in 0..<2) {
-			CopyGameFile.create("$CopyGameFileTest.PATH/sha1.txt")
+			Download.create("$DownloadTest.PATH/sha1.txt")
 					.sha1("0a4d55a8d778e5022fab701977c5d840bbc486d0")
-					.copyGameFileFromPath(output)
+					.downloadPath(output)
 		}
 
 		then:
@@ -142,9 +142,9 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def output = new File(File.createTempDir(), "file.txt").toPath()
 
 		when:
-		CopyGameFile.create("$CopyGameFileTest.PATH/sha1.invalid")
+		Download.create("$DownloadTest.PATH/sha1.invalid")
 				.sha1("d139cccf047a749691416ce385d3f168c1e28309")
-				.copyGameFileFromPath(output)
+				.downloadPath(output)
 
 		then:
 		// Ensure the file we downloaded with the wrong hash was deleted
@@ -164,12 +164,12 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def output = new File(File.createTempDir(), "offline.txt").toPath()
 
 		when:
-		CopyGameFile.create("$CopyGameFileTest.PATH/offline.txt")
-				.copyGameFileFromPath(output)
+		Download.create("$DownloadTest.PATH/offline.txt")
+				.downloadPath(output)
 
-		CopyGameFile.create("$CopyGameFileTest.PATH/offline.txt")
+		Download.create("$DownloadTest.PATH/offline.txt")
 				.offline()
-				.copyGameFileFromPath(output)
+				.downloadPath(output)
 
 		then:
 		requestCount == 1
@@ -187,20 +187,20 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def output = new File(File.createTempDir(), "maxage.txt").toPath()
 
 		when:
-		CopyGameFile.create("$CopyGameFileTest.PATH/maxage.txt")
+		Download.create("$DownloadTest.PATH/maxage.txt")
 				.maxAge(Duration.ofDays(1))
-				.copyGameFileFromPath(output)
+				.downloadPath(output)
 
-		CopyGameFile.create("$CopyGameFileTest.PATH/maxage.txt")
+		Download.create("$DownloadTest.PATH/maxage.txt")
 				.maxAge(Duration.ofDays(1))
-				.copyGameFileFromPath(output)
+				.downloadPath(output)
 
 		def twoDaysAgo = Instant.now() - Duration.ofDays(2)
 		Files.setLastModifiedTime(output, FileTime.from(twoDaysAgo))
 
-		CopyGameFile.create("$CopyGameFileTest.PATH/maxage.txt")
+		Download.create("$DownloadTest.PATH/maxage.txt")
 				.maxAge(Duration.ofDays(1))
-				.copyGameFileFromPath(output)
+				.downloadPath(output)
 
 		then:
 		requestCount == 2
@@ -231,9 +231,9 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 
 		when:
 		for (i in 0..<3) {
-			CopyGameFile.create("$CopyGameFileTest.PATH/etag")
+			Download.create("$DownloadTest.PATH/etag")
 					.etag(true)
-					.copyGameFileFromPath(output)
+					.downloadPath(output)
 		}
 
 		then:
@@ -275,10 +275,10 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 				Files.setLastModifiedTime(output, FileTime.from(Instant.now() - Duration.ofDays(2)))
 			}
 
-			CopyGameFile.create("$CopyGameFileTest.PATH/etag")
+			Download.create("$DownloadTest.PATH/etag")
 					.etag(true)
 					.maxAge(Duration.ofDays(1))
-					.copyGameFileFromPath(output)
+					.downloadPath(output)
 		}
 
 		then:
@@ -296,8 +296,8 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def started, ended = false
 
 		when:
-		CopyGameFile.create("$CopyGameFileTest.PATH/progressFile")
-				.progress(new CopyGameFileProgressListener() {
+		Download.create("$DownloadTest.PATH/progressFile")
+				.progress(new DownloadProgressListener() {
 					@Override
 					void onStart() {
 						started = true
@@ -312,7 +312,7 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 						ended = true
 					}
 				})
-				.copyGameFileFromPath(output)
+				.downloadPath(output)
 
 		then:
 		started
@@ -328,8 +328,8 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def started, ended = false
 
 		when:
-		CopyGameFile.create("$CopyGameFileTest.PATH/progressFile")
-				.progress(new CopyGameFileProgressListener() {
+		Download.create("$DownloadTest.PATH/progressFile")
+				.progress(new DownloadProgressListener() {
 					@Override
 					void onStart() {
 						started = true
@@ -360,11 +360,11 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def dir = File.createTempDir().toPath()
 
 		when:
-		new CopyGameFileExecutor(2).withCloseable {
-			CopyGameFile.create("$CopyGameFileTest.PATH/async1").copyGameFileFromPathAsync(dir.resolve("1.txt"), it)
-			CopyGameFile.create("$CopyGameFileTest.PATH/async1").copyGameFileFromPathAsync(dir.resolve("2.txt"), it)
-			CopyGameFile.create("$CopyGameFileTest.PATH/async1").copyGameFileFromPathAsync(dir.resolve("3.txt"), it)
-			CopyGameFile.create("$CopyGameFileTest.PATH/async1").copyGameFileFromPathAsync(dir.resolve("4.txt"), it)
+		new DownloadExecutor(2).withCloseable {
+			Download.create("$DownloadTest.PATH/async1").downloadPathAsync(dir.resolve("1.txt"), it)
+			Download.create("$DownloadTest.PATH/async1").downloadPathAsync(dir.resolve("2.txt"), it)
+			Download.create("$DownloadTest.PATH/async1").downloadPathAsync(dir.resolve("3.txt"), it)
+			Download.create("$DownloadTest.PATH/async1").downloadPathAsync(dir.resolve("4.txt"), it)
 		}
 
 		then:
@@ -380,14 +380,14 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def dir = File.createTempDir().toPath()
 
 		when:
-		new CopyGameFileExecutor(2).withCloseable {
-			CopyGameFile.create("$CopyGameFileTest.PATH/async2").copyGameFileFromPathAsync(dir.resolve("1.txt"), it)
-			CopyGameFile.create("$CopyGameFileTest.PATH/async2").copyGameFileFromPathAsync(dir.resolve("2.txt"), it)
-			CopyGameFile.create("$CopyGameFileTest.PATH/async2").copyGameFileFromPathAsync(dir.resolve("3.txt"), it)
-			CopyGameFile.create("$CopyGameFileTest.PATH/async2").copyGameFileFromPathAsync(dir.resolve("4.txt"), it)
+		new DownloadExecutor(2).withCloseable {
+			Download.create("$DownloadTest.PATH/async2").downloadPathAsync(dir.resolve("1.txt"), it)
+			Download.create("$DownloadTest.PATH/async2").downloadPathAsync(dir.resolve("2.txt"), it)
+			Download.create("$DownloadTest.PATH/async2").downloadPathAsync(dir.resolve("3.txt"), it)
+			Download.create("$DownloadTest.PATH/async2").downloadPathAsync(dir.resolve("4.txt"), it)
 
-			CopyGameFile.create("$CopyGameFileTest.PATH/asyncError").copyGameFileFromPathAsync(dir.resolve("5.txt"), it)
-			CopyGameFile.create("$CopyGameFileTest.PATH/asyncError2").copyGameFileFromPathAsync(dir.resolve("6.txt"), it)
+			Download.create("$DownloadTest.PATH/asyncError").downloadPathAsync(dir.resolve("5.txt"), it)
+			Download.create("$DownloadTest.PATH/asyncError2").downloadPathAsync(dir.resolve("6.txt"), it)
 		}
 
 		then:
@@ -407,7 +407,7 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		def output = new File(File.createTempDir(), "file").toPath()
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/largeFile").copyGameFileFromPath(output)
+		def result = Download.create("$DownloadTest.PATH/largeFile").downloadPath(output)
 
 		then:
 		Files.readAllBytes(output) == data
@@ -417,22 +417,8 @@ class CopyGameFileFileTest extends CopyGameFileTest {
 		setup:
 		def output = new File(File.createTempDir(), "file").toPath()
 		when:
-		def result = CopyGameFile.create("http://fabricmc.net").copyGameFileFromPath(output)
+		def result = Download.create("http://fabricmc.net").downloadPath(output)
 		then:
 		thrown IllegalArgumentException
-	}
-
-	// Known
-	def "Download Mojang Mappings"() {
-		setup:
-		def file = File.createTempDir().toPath().resolve("client.txt")
-		when:
-		CopyGameFile
-				.create("https://piston-data.mojang.com/v1/objects/8e8c9be5dc27802caba47053d4fdea328f7f89bd/client.txt")
-				.sha1("8e8c9be5dc27802caba47053d4fdea328f7f89bd")
-				.copyGameFileFromPath(file)
-
-		then:
-		Checksum.sha1Hex(file) == "8e8c9be5dc27802caba47053d4fdea328f7f89bd"
 	}
 }

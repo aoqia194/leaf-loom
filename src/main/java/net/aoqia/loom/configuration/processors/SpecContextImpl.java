@@ -42,7 +42,7 @@ import net.aoqia.loom.api.processor.SpecContext;
 import net.aoqia.loom.util.Constants;
 import net.aoqia.loom.util.fmj.LeafModJson;
 import net.aoqia.loom.util.fmj.LeafModJsonFactory;
-import net.aoqia.loom.util.fmj.FabricModJsonHelpers;
+import net.aoqia.loom.util.fmj.LeafModJsonHelpers;
 import net.aoqia.loom.util.gradle.GradleUtils;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -62,7 +62,7 @@ public record SpecContextImpl(
         final Map<String, List<LeafModJson>> fmjCache = new HashMap<>();
         return new SpecContextImpl(
                 getDependentMods(project, fmjCache),
-                FabricModJsonHelpers.getModsInProject(project),
+                LeafModJsonHelpers.getModsInProject(project),
                 getCompileRuntimeMods(project, fmjCache));
     }
 
@@ -92,7 +92,7 @@ public record SpecContextImpl(
             // Add all the dependent projects
             for (Project dependentProject : getDependentProjects(project).toList()) {
                 mods.addAll(fmjCache.computeIfAbsent(dependentProject.getPath(), $ -> {
-                    return FabricModJsonHelpers.getModsInProject(dependentProject);
+                    return LeafModJsonHelpers.getModsInProject(dependentProject);
                 }));
             }
         }
@@ -118,7 +118,7 @@ public record SpecContextImpl(
         for (Project dependentProject :
                 getCompileRuntimeProjectDependencies(project).toList()) {
             mods.addAll(fmjCache.computeIfAbsent(dependentProject.getPath(), $ -> {
-                return FabricModJsonHelpers.getModsInProject(dependentProject);
+                return LeafModJsonHelpers.getModsInProject(dependentProject);
             }));
         }
 

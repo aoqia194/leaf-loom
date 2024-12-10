@@ -24,7 +24,9 @@
 
 package net.aoqia.loom.util;
 
+
 import org.gradle.api.plugins.ExtensionAware;
+import org.jetbrains.annotations.Nullable;
 
 public class MirrorUtil {
     public static String getGameInstallPath(ExtensionAware aware) {
@@ -35,16 +37,16 @@ public class MirrorUtil {
         return Constants.GAME_INSTALL_PATH;
     }
 
-    public static String getServerInstallPath(ExtensionAware aware) {
-        if (aware.getExtensions().getExtraProperties().has("loom_server_install_path")) {
+    public static String getServerInstallPath(@Nullable ExtensionAware aware) {
+        if (aware != null && aware.getExtensions().getExtraProperties().has("loom_server_install_path")) {
             return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_server_install_path"));
         }
 
         return Constants.SERVER_INSTALL_PATH;
     }
 
-    public static String getClientVersionManifests(ExtensionAware aware) {
-        if (aware.getExtensions().getExtraProperties().has("loom_version_manifests")) {
+    public static String getClientVersionManifests(@Nullable ExtensionAware aware) {
+        if (aware != null && aware.getExtensions().getExtraProperties().has("loom_version_manifests")) {
             return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_version_manifests"));
         }
 

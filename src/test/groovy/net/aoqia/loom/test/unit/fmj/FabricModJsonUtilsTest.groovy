@@ -34,9 +34,9 @@ import com.google.gson.JsonObject
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.aoqia.loom.util.fmj.FabricModJsonUtils
+import net.aoqia.loom.util.fmj.LeafModJsonUtils
 
-class FabricModJsonUtilsTest extends Specification {
+class LeafModJsonUtilsTest extends Specification {
 	// Test that the schemaVersion is moved to the first position
 	def "optimize FMJ"() {
 		given:
@@ -44,7 +44,7 @@ class FabricModJsonUtilsTest extends Specification {
 		def gson = new GsonBuilder().setPrettyPrinting().create()
 		def json = gson.fromJson(INPUT_FMJ, JsonObject.class)
 		when:
-		def outputJson = FabricModJsonUtils.optimizeFmj(json)
+		def outputJson = LeafModJsonUtils.optimizeFmj(json)
 		def output = gson.toJson(outputJson)
 		then:
 		output == OUTPUT_FMJ

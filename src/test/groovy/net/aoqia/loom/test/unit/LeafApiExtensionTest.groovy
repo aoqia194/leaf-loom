@@ -24,46 +24,50 @@
 
 package net.aoqia.loom.test.unit
 
-import net.aoqia.loom.configuration.LeafApiExtension
-import net.aoqia.loom.test.util.GradleTestUtil
 import org.gradle.api.Project
 import spock.lang.Specification
 
-class FabricApiExtensionTest extends Specification {
-    def "get module version"() {
-        when:
-        def leafApi = new LeafApiExtension() {
-            Project project = GradleTestUtil.mockProject()
-        }
-        def version = leafApi.moduleVersion(moduleName, apiVersion)
+import org.gradle.api.Project
+import spock.lang.Specification
 
-        then:
-        version == expectedVersion
+import net.aoqia.loom.configuration.LeafApiExtension
+import net.aoqia.loom.test.util.GradleTestUtil
 
-        where:
-        moduleName             | apiVersion              | expectedVersion
-        "fabric-api-base"      | "0.88.3+1.20.2"         | "0.4.32+fce67b3299" // Normal module, new version
-        "fabric-api-base"      | "0.13.1+build.257-1.14" |
-            "0.1.2+28f8190f42" // Normal module, old version before deprecated modules.
-        "fabric-networking-v0" | "0.88.0+1.20.1"         | "0.3.50+df3654b377" // Deprecated module, opt-out version
-        "fabric-networking-v0" | "0.85.0+1.20.1"         | "0.3.48+df3654b377" // Deprecated module, opt-in version
-    }
+class LeafApiExtensionTest extends Specification {
+	def "get module version"() {
+		when:
+		def leafApi = new LeafApiExtension() {
+					Project project = GradleTestUtil.mockProject()
+				}
+		def version = leafApi.moduleVersion(moduleName, apiVersion)
 
-    def "unknown module"() {
-        when:
-        def leafApi = new LeafApiExtension() {
-            Project project = GradleTestUtil.mockProject()
-        }
-        leafApi.moduleVersion("leaf-api-unknown", apiVersion)
+		then:
+		version == expectedVersion
 
-        then:
-        def e = thrown RuntimeException
-        e.getMessage() == "Failed to find module version for module: leaf-api-unknown"
+		where:
+		moduleName             | apiVersion              | expectedVersion
+		"fabric-api-base"      | "0.88.3+1.20.2"         | "0.4.32+fce67b3299" // Normal module, new version
+		"fabric-api-base"      | "0.13.1+build.257-1.14" |
+				"0.1.2+28f8190f42" // Normal module, old version before deprecated modules.
+		"fabric-networking-v0" | "0.88.0+1.20.1"         | "0.3.50+df3654b377" // Deprecated module, opt-out version
+		"fabric-networking-v0" | "0.85.0+1.20.1"         | "0.3.48+df3654b377" // Deprecated module, opt-in version
+	}
 
-        where:
-        apiVersion               | _
-        "0.2.0+41.78.16"         | _ // Deprecated opt-out
-        "0.1.0+41.78.16"         | _ // Deprecated opt-int
-        "0.0.1+build.1-41.78.16" | _ // No deprecated modules
-    }
+	def "unknown module"() {
+		when:
+		def leafApi = new LeafApiExtension() {
+					Project project = GradleTestUtil.mockProject()
+				}
+		leafApi.moduleVersion("leaf-api-unknown", apiVersion)
+
+		then:
+		def e = thrown RuntimeException
+		e.getMessage() == "Failed to find module version for module: leaf-api-unknown"
+
+		where:
+		apiVersion               | _
+		"0.2.0+41.78.16"         | _ // Deprecated opt-out
+		"0.1.0+41.78.16"         | _ // Deprecated opt-int
+		"0.0.1+build.1-41.78.16" | _ // No deprecated modules
+	}
 }

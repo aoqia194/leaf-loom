@@ -24,10 +24,10 @@
 
 package net.aoqia.loom.configuration.sandbox;
 
-import static net.aoqia.loom.util.fmj.FabricModJsonUtils.ParseException;
-import static net.aoqia.loom.util.fmj.FabricModJsonUtils.getJsonObject;
-import static net.aoqia.loom.util.fmj.FabricModJsonUtils.readInt;
-import static net.aoqia.loom.util.fmj.FabricModJsonUtils.readString;
+import static net.aoqia.loom.util.fmj.LeafModJsonUtils.ParseException;
+import static net.aoqia.loom.util.fmj.LeafModJsonUtils.getJsonObject;
+import static net.aoqia.loom.util.fmj.LeafModJsonUtils.readInt;
+import static net.aoqia.loom.util.fmj.LeafModJsonUtils.readString;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

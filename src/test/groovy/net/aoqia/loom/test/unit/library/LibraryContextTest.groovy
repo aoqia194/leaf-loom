@@ -30,8 +30,8 @@ import spock.lang.Specification
 import org.gradle.api.JavaVersion
 import spock.lang.Specification
 
-import net.aoqia.loom.configuration.providers.minecraft.ZomboidVersionMeta
-import net.aoqia.loom.configuration.providers.minecraft.library.LibraryContext
+import net.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta
+import net.aoqia.loom.configuration.providers.zomboid.library.LibraryContext
 import net.aoqia.loom.test.util.ZomboidTestUtils
 import net.aoqia.loom.util.Platform
 

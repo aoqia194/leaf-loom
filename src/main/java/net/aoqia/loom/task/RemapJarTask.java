@@ -49,7 +49,7 @@ import net.aoqia.loom.util.Pair;
 import net.aoqia.loom.util.SidedClassVisitor;
 import net.aoqia.loom.util.ZipUtils;
 import net.aoqia.loom.util.fmj.LeafModJsonFactory;
-import net.aoqia.loom.util.fmj.FabricModJsonUtils;
+import net.aoqia.loom.util.fmj.LeafModJsonUtils;
 import net.aoqia.loom.util.service.ScopedServiceFactory;
 import net.aoqia.loom.util.service.ServiceFactory;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
@@ -85,7 +85,7 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
      * <p>The schemaVersion entry will be placed first in the json file
      */
     @Input
-    public abstract Property<Boolean> getOptimizeFabricModJson();
+    public abstract Property<Boolean> getOptimizeLeafModJson();
 
     @Input
     @ApiStatus.Internal
@@ -103,7 +103,7 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
         final ConfigurationContainer configurations = getProject().getConfigurations();
         getClasspath().from(configurations.getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME));
         getAddNestedDependencies().convention(true).finalizeValueOnRead();
-        getOptimizeFabricModJson().convention(false).finalizeValueOnRead();
+        getOptimizeLeafModJson().convention(false).finalizeValueOnRead();
 
         TaskProvider<NestableJarGenerationTask> processIncludeJars =
                 getProject().getTasks().named(Constants.Task.PROCESS_INCLUDE_JARS, NestableJarGenerationTask.class);
@@ -147,7 +147,7 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
                         .put(Constants.Manifest.MIXIN_REMAP_TYPE, refmapRemapType.manifestValue());
             }
 
-            params.getOptimizeFmj().set(getOptimizeFabricModJson().get());
+            params.getOptimizeFmj().set(getOptimizeLeafModJson().get());
         });
     }
 
@@ -321,7 +321,7 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
                     JsonObject.class,
                     outputFile,
                     LeafModJsonFactory.LEAF_MOD_JSON,
-                    FabricModJsonUtils::optimizeFmj);
+                    LeafModJsonUtils::optimizeFmj);
         }
     }
 

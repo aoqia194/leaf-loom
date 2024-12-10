@@ -24,13 +24,14 @@
 
 package net.aoqia.loom.test.unit.download
 
-import io.javalin.Javalin
-import spock.lang.Specification
 
 import io.javalin.Javalin
 import spock.lang.Specification
 
-abstract class CopyGameFileTest extends Specification {
+import io.javalin.Javalin
+import spock.lang.Specification
+
+abstract class DownloadTest extends Specification {
 	static final String PATH = "http://127.0.0.1:9081"
 
 	Javalin server = Javalin.create().start(9081)

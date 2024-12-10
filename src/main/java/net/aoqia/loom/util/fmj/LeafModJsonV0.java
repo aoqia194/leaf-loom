@@ -69,14 +69,14 @@ public final class LeafModJsonV0 extends LeafModJson {
                     if (arrayElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
                         mixins.add(jsonPrimitive.getAsString());
                     } else {
-                        throw new FabricModJsonUtils.ParseException(
+                        throw new LeafModJsonUtils.ParseException(
                                 "Expected entries in mixin %s to be an array of strings", key);
                     }
                 }
             } else if (jsonElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
                 mixins.add(jsonPrimitive.getAsString());
             } else {
-                throw new FabricModJsonUtils.ParseException(
+                throw new LeafModJsonUtils.ParseException(
                         "Expected mixin %s to be a string or an array of strings", key);
             }
         }

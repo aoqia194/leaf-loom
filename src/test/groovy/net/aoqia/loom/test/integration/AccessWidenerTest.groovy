@@ -45,7 +45,7 @@ class AccessWidenerTest extends Specification implements GradleProjectTestTrait 
 		def result = gradle.run(task: "build")
 		then:
 		result.task(":build").outcome == SUCCESS
-		gradle.getOutputZipEntry("fabric-example-mod-1.0.0.jar", "modid.accesswidener") == expected().replaceAll('\r', '')
+		gradle.getOutputZipEntry("le-example-mod-1.0.0.jar", "modid.accesswidener") == expected().replaceAll('\r', '')
 		where:
 		version << STANDARD_TEST_VERSIONS
 	}

@@ -89,7 +89,7 @@ public class FileMappingsSpecBuilderImpl implements FileMappingsSpecBuilder {
 
         if (MappingsNamespace.of(namespace) == null) {
             throw new IllegalArgumentException("Namespace '" + namespace
-                    + "' is unsupported! It must be either 'official', 'intermediary' or 'named'.");
+                    + "' is unsupported! It must be either 'official' or 'named'.");
         }
 
         mergeNamespace = namespace;

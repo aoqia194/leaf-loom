@@ -31,17 +31,17 @@ import org.intellij.lang.annotations.Language
 
 import org.intellij.lang.annotations.Language
 
-import net.aoqia.loom.configuration.providers.minecraft.ManifestLocations
-import net.aoqia.loom.configuration.providers.minecraft.ZomboidMetadataProvider
+import net.aoqia.loom.configuration.providers.zomboid.ManifestLocations
+import net.aoqia.loom.configuration.providers.zomboid.ZomboidMetadataProvider
 import net.aoqia.loom.test.LoomTestConstants
-import net.aoqia.loom.test.unit.download.CopyGameFileTest
+import net.aoqia.loom.test.unit.download.DownloadTest
 import net.aoqia.loom.util.copygamefile.CopyGameFile
 
-class ZomboidMetadataProviderTest extends CopyGameFileTest {
+class ZomboidMetadataProviderTest extends DownloadTest {
 	Path testDir
 
 	def setup() {
-		testDir = LoomTestConstants.TEST_DIR.toPath().resolve("MinecraftMetadataProviderTest")
+		testDir = LoomTestConstants.TEST_DIR.toPath().resolve("ZomboidMetadataProviderTest")
 
 		testDir.toFile().deleteDir()
 		Files.createDirectories(testDir)
@@ -57,16 +57,16 @@ class ZomboidMetadataProviderTest extends CopyGameFileTest {
 
 		when:
 		// Test the builtin caching of the metadata provider
-		def metaProvider = provider("1.20.1")
+		def metaProvider = provider("41.78.16")
 		metaProvider.getVersionMeta()
 		def meta = metaProvider.getVersionMeta()
 
 		// Create a new provider to test download caching
-		def meta2 = provider("1.20.1").getVersionMeta()
+		def meta2 = provider("41.78.16").getVersionMeta()
 
 		then:
-		meta.id() == "1.20.1"
-		meta2.id() == "1.20.1"
+		meta.id() == "41.78.16"
+		meta2.id() == "41.78.16"
 		calls == 1
 	}
 
@@ -84,12 +84,12 @@ class ZomboidMetadataProviderTest extends CopyGameFileTest {
 		}
 
 		when:
-		def meta = provider("1.20.1").getVersionMeta()
-		def meta2 = provider("1.20.1-rc1").getVersionMeta()
+		def meta = provider("41.78.16").getVersionMeta()
+		def meta2 = provider("41.78.16").getVersionMeta()
 
 		then:
-		meta.id() == "1.20.1"
-		meta2.id() == "1.20.1-rc1"
+		meta.id() == "41.78.16"
+		meta2.id() == "41.78.16"
 		calls == 3
 	}
 
@@ -106,10 +106,10 @@ class ZomboidMetadataProviderTest extends CopyGameFileTest {
 		}
 
 		when:
-		def meta = provider("1.19_deep_dark_experimental_snapshot-1").getVersionMeta()
+		def meta = provider("41.78.16").getVersionMeta()
 
 		then:
-		meta.id() == "1.19_deep_dark_experimental_snapshot-1"
+		meta.id() == "41.78.16"
 		calls == 2
 	}
 
@@ -120,7 +120,7 @@ class ZomboidMetadataProviderTest extends CopyGameFileTest {
 		}
 
 		when:
-		def meta = provider("2.0.0", "$CopyGameFileTest.PATH/customManifest").getVersionMeta()
+		def meta = provider("2.0.0", "$DownloadTest.PATH/customManifest").getVersionMeta()
 
 		then:
 		meta.id() == "2.0.0"
@@ -143,7 +143,7 @@ class ZomboidMetadataProviderTest extends CopyGameFileTest {
 
 		then:
 		def e = thrown(RuntimeException)
-		e.message == "Failed to find minecraft version: 2.0.0"
+		e.message == "Failed to find Zomboid version: 2.0.0"
 		calls == 4
 	}
 
@@ -156,8 +156,8 @@ class ZomboidMetadataProviderTest extends CopyGameFileTest {
 
 	private ZomboidMetadataProvider.Options options(String version, String customUrl) {
 		ManifestLocations manifests = new ManifestLocations()
-		manifests.add("test", "$CopyGameFileTest.PATH/versionManifest", 0)
-		manifests.add("test_experimental", "$CopyGameFileTest.PATH/experimentalVersionManifest", 1)
+		manifests.add("test", "$DownloadTest.PATH/versionManifest", 0)
+		manifests.add("test_experimental", "$DownloadTest.PATH/experimentalVersionManifest", 1)
 
 		return new ZomboidMetadataProvider.Options(
 				version,
@@ -172,14 +172,14 @@ class ZomboidMetadataProviderTest extends CopyGameFileTest {
 	private static final String VERSION_MANIFEST_1 = """
 {
   "latest": {
-    "release": "1.20.1",
-    "snapshot": "1.20.1"
+    "release": "41.78.16",
+    "snapshot": "41.78.16"
   },
   "versions": [
     {
-      "id": "1.20.1",
-      "url": "https://piston-meta.mojang.com/v1/packages/715ccf3330885e75b205124f09f8712542cbe7e0/1.20.1.json",
-      "sha1": "715ccf3330885e75b205124f09f8712542cbe7e0"
+      "id": "41.78.16",
+      "url": "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests/client/win/41.78.16.json",
+      "sha1": "0b32879ed74dde574891dd60b597dca2bef6d814"
     }
   ]
 }
@@ -189,35 +189,14 @@ class ZomboidMetadataProviderTest extends CopyGameFileTest {
 	private static final String VERSION_MANIFEST_2 = """
 {
   "latest": {
-    "release": "1.20.1",
-    "snapshot": "1.20.1"
+    "release": "41.78.16",
+    "snapshot": ""
   },
   "versions": [
     {
-      "id": "1.20.1",
-      "url": "https://piston-meta.mojang.com/v1/packages/715ccf3330885e75b205124f09f8712542cbe7e0/1.20.1.json",
-      "sha1": "715ccf3330885e75b205124f09f8712542cbe7e0"
-    },
-    {
-      "id": "1.20.1-rc1",
-      "url": "https://piston-meta.mojang.com/v1/packages/61c85d1e228b4ca6e48d2da903d2399c12b6a880/1.20.1-rc1.json",
-      "sha1": "61c85d1e228b4ca6e48d2da903d2399c12b6a880"
-    }
-  ]
-}
-"""
-	@Language("json")
-	private static final String EXP_VERSION_MANIFEST = """
-{
-  "latest": {
-    "release": "1.19_deep_dark_experimental_snapshot-1",
-    "snapshot": "1.19_deep_dark_experimental_snapshot-1"
-  },
-  "versions": [
-    {
-      "id": "1.19_deep_dark_experimental_snapshot-1",
-      "url": "https://maven.fabricmc.net/net/minecraft/1_19_deep_dark_experimental_snapshot-1.json",
-      "sha1": "c5b59acb75db612cf446b4ed4bd59b01e10092d1"
+      "id": "41.78.16",
+      "url": "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests/client/win/41.78.16.json",
+      "sha1": "0b32879ed74dde574891dd60b597dca2bef6d814"
     }
   ]
 }

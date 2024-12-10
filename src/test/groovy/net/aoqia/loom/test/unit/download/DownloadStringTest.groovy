@@ -28,10 +28,10 @@ import io.javalin.http.HttpStatus
 
 import io.javalin.http.HttpStatus
 
-import net.aoqia.loom.util.copygamefile.CopyGameFile
+import net.aoqia.loom.util.download.Download
 import net.aoqia.loom.util.download.DownloadException
 
-class CopyGameFileStringTest extends CopyGameFileTest {
+class DownloadStringTest extends DownloadTest {
 	def "String: Download"() {
 		setup:
 		server.get("/downloadString") {
@@ -39,7 +39,7 @@ class CopyGameFileStringTest extends CopyGameFileTest {
 		}
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/downloadString").downloadString()
+		def result = Download.create("$DownloadTest.PATH/downloadString").downloadString()
 
 		then:
 		result == "Hello World!"
@@ -52,7 +52,7 @@ class CopyGameFileStringTest extends CopyGameFileTest {
 		}
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/stringNotFound")
+		def result = Download.create("$DownloadTest.PATH/stringNotFound")
 				.maxRetries(3) // Ensure we still error as expected when retrying
 				.downloadString()
 
@@ -68,7 +68,7 @@ class CopyGameFileStringTest extends CopyGameFileTest {
 		}
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/stringNotFound")
+		def result = Download.create("$DownloadTest.PATH/stringNotFound")
 				.maxRetries(3) // Ensure we still error as expected when retrying
 				.downloadString()
 
@@ -83,11 +83,11 @@ class CopyGameFileStringTest extends CopyGameFileTest {
 			it.result("Hello World!")
 		}
 		server.get("/redirectString") {
-			it.redirect("$CopyGameFileTest.PATH/redirectString2")
+			it.redirect("$DownloadTest.PATH/redirectString2")
 		}
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/redirectString").downloadString()
+		def result = Download.create("$DownloadTest.PATH/redirectString").downloadString()
 
 		then:
 		result == "Hello World!"
@@ -108,7 +108,7 @@ class CopyGameFileStringTest extends CopyGameFileTest {
 		}
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/retryString")
+		def result = Download.create("$DownloadTest.PATH/retryString")
 				.maxRetries(3)
 				.downloadString()
 
@@ -125,7 +125,7 @@ class CopyGameFileStringTest extends CopyGameFileTest {
 		}
 
 		when:
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/retryString")
+		def result = Download.create("$DownloadTest.PATH/retryString")
 				.maxRetries(3)
 				.downloadString()
 
@@ -143,7 +143,7 @@ class CopyGameFileStringTest extends CopyGameFileTest {
 
 		when:
 		def output = new File(File.createTempDir(), "file.txt").toPath()
-		def result = CopyGameFile.create("$CopyGameFileTest.PATH/downloadString2").downloadString(output)
+		def result = Download.create("$DownloadTest.PATH/downloadString2").downloadString(output)
 
 		then:
 		result == "Hello World!"
@@ -151,7 +151,7 @@ class CopyGameFileStringTest extends CopyGameFileTest {
 
 	def "String: Insecure protocol"() {
 		when:
-		def result = CopyGameFile.create("http://fabricmc.net").downloadString()
+		def result = Download.create("http://fabricmc.net").downloadString()
 		then:
 		thrown IllegalArgumentException
 	}

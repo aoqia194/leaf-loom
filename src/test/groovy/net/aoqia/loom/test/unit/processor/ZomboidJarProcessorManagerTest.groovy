@@ -29,16 +29,15 @@ import spock.lang.Specification
 import spock.lang.Specification
 
 import net.aoqia.loom.api.processor.SpecContext
-import net.aoqia.loom.configuration.processors.MinecraftJarProcessorManager
-import net.aoqia.loom.test.util.processor.TestMinecraftJarProcessor
+import net.aoqia.loom.test.util.processor.TestZomboidJarProcessor
 
 class ZomboidJarProcessorManagerTest extends Specification {
 	def "Cache value matches"() {
 		when:
 		def specContext = Mock(SpecContext)
 
-		def processor1 = new TestMinecraftJarProcessor(input: "Test1")
-		def processor2 = new TestMinecraftJarProcessor(input: "Test2")
+		def processor1 = new TestZomboidJarProcessor(input: "Test1")
+		def processor2 = new TestZomboidJarProcessor(input: "Test2")
 		def manager1 = MinecraftJarProcessorManager.create([processor1, processor2], specContext)
 		def manager2 = MinecraftJarProcessorManager.create([processor1, processor2], specContext)
 
@@ -51,8 +50,8 @@ class ZomboidJarProcessorManagerTest extends Specification {
 		when:
 		def specContext = Mock(SpecContext)
 
-		def processor1 = new TestMinecraftJarProcessor(input: "Test1")
-		def processor2 = new TestMinecraftJarProcessor(input: "Test2")
+		def processor1 = new TestZomboidJarProcessor(input: "Test1")
+		def processor2 = new TestZomboidJarProcessor(input: "Test2")
 		def manager1 = MinecraftJarProcessorManager.create([processor1], specContext)
 		def manager2 = MinecraftJarProcessorManager.create([processor1, processor2], specContext)
 

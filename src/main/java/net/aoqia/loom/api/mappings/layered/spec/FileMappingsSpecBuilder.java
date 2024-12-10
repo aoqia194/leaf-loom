@@ -84,7 +84,7 @@ public interface FileMappingsSpecBuilder {
      * names to the rest of the mappings. For example, Yarn mappings should be merged through
      * the intermediary names.
      *
-     * <p>The default merge namespace is {@link MappingsNamespace#INTERMEDIARY}.
+     * <p>The default merge namespace is {@link MappingsNamespace#OFFICIAL}.
      *
      * @param namespace the new merge namespace
      * @return this builder

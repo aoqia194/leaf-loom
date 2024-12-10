@@ -36,14 +36,15 @@ import net.fabricmc.mappingio.tree.MemoryMappingTree
 import spock.lang.TempDir
 
 import net.aoqia.loom.api.mappings.layered.MappingsNamespace
-import net.aoqia.loom.configuration.providers.mappings.IntermediateMappingsService
-import net.aoqia.loom.configuration.providers.mappings.tiny.MappingsMerger
 
 class MappingsMergerTest {
 	@TempDir
 	Path tempDir
 
 	def "mappings merger"() {
+		// Disabled because removal of intermediary.
+		return
+
 		given:
 		Path intermediaryTiny = tempDir.resolve("intermediary.tiny")
 		Path mappingsTiny = tempDir.resolve("mappings.tiny")
@@ -52,8 +53,10 @@ class MappingsMergerTest {
 		Files.writeString(intermediaryTiny, INTERMEDIARY_MAPPINGS)
 		Files.writeString(mappingsTiny, NAMED_MAPPINGS)
 
-		IntermediateMappingsService.Options intermediateMappingsServiceOptions = LoomMocks.intermediateMappingsServiceOptionsMock(intermediaryTiny, OFFICIAL)
-		IntermediateMappingsService intermediateMappingsService = LoomMocks.intermediateMappingsServiceMock(intermediateMappingsServiceOptions)
+		//		IntermediateMappingsService.Options intermediateMappingsServiceOptions = LoomMocks
+		//				.intermediateMappingsServiceOptionsMock(intermediaryTiny, OFFICIAL)
+		//		IntermediateMappingsService intermediateMappingsService = LoomMocks
+		//				.intermediateMappingsServiceMock(intermediateMappingsServiceOptions)
 
 		when:
 		MappingsMerger.mergeAndSaveMappings(mappingsTiny, mergedMappingsTiny, intermediateMappingsService)
@@ -67,7 +70,7 @@ class MappingsMergerTest {
 		def namedNs = mappings.getNamespaceId(NAMED)
 		mappings.classes.size() == 2
 		mappings.classes[0].srcName == "a"
-		mappings.classes[0].getDstName(namedNs) == "net/fabricmc/loom/test/unit/ObfuscatedClass"
+		mappings.classes[0].getDstName(namedNs) == "net/aoqia/loom/test/unit/ObfuscatedClass"
 		mappings.classes[0].comment == "class comment"
 		mappings.classes[0].fields.size() == 1
 		mappings.classes[0].fields[0].srcName == "a"
@@ -79,8 +82,8 @@ class MappingsMergerTest {
 		mappings.classes[0].methods[0].comment == "method comment"
 		mappings.classes[0].methods[0].args.size() == 1
 		mappings.classes[0].methods[1].args[0].getDstName(namedNs) == "obfuscatedMethodParameter"
-		mappings.classes[1].srcName == "net/fabricmc/loom/test/unit/UnobfuscatedClass"
-		mappings.classes[1].getDstName(namedNs) == "net/fabricmc/loom/test/unit/UnobfuscatedClass"
+		mappings.classes[1].srcName == "net/aoqia/loom/test/unit/UnobfuscatedClass"
+		mappings.classes[1].getDstName(namedNs) == "net/aoqia/loom/test/unit/UnobfuscatedClass"
 		mappings.classes[1].comment == "class comment"
 		mappings.classes[1].fields.size() == 1
 		mappings.classes[1].fields[0].srcName == "unobfuscatedField"
@@ -95,6 +98,8 @@ class MappingsMergerTest {
 	}
 
 	def "mappings merger legacy"() {
+		return
+
 		given:
 		Path intermediaryTiny = tempDir.resolve("intermediary.tiny")
 		Path mappingsTiny = tempDir.resolve("mappings.tiny")
@@ -103,8 +108,10 @@ class MappingsMergerTest {
 		Files.writeString(intermediaryTiny, LEGACY_INTERMEDIARY_MAPPINGS)
 		Files.writeString(mappingsTiny, LEGACY_NAMED_MAPPINGS)
 
-		IntermediateMappingsService.Options intermediateMappingsServiceOptions = LoomMocks.intermediateMappingsServiceOptionsMock(intermediaryTiny, INTERMEDIARY)
-		IntermediateMappingsService intermediateMappingsService = LoomMocks.intermediateMappingsServiceMock(intermediateMappingsServiceOptions)
+		//		IntermediateMappingsService.Options intermediateMappingsServiceOptions = LoomMocks
+		//				.intermediateMappingsServiceOptionsMock(intermediaryTiny, INTERMEDIARY)
+		//		IntermediateMappingsService intermediateMappingsService = LoomMocks
+		//				.intermediateMappingsServiceMock(intermediateMappingsServiceOptions)
 
 		when:
 		MappingsMerger.legacyMergeAndSaveMappings(mappingsTiny, mergedMappingsTiny, intermediateMappingsService)
@@ -128,7 +135,7 @@ class MappingsMergerTest {
 		def clientNamedNs = clientMappings.getNamespaceId(NAMED)
 		clientMappings.classes.size() == 3
 		clientMappings.classes[0].srcName == "a"
-		clientMappings.classes[0].getDstName(namedNs) == "net/fabricmc/loom/test/unit/CommonObfuscatedClass"
+		clientMappings.classes[0].getDstName(namedNs) == "net/aoqia/loom/test/unit/CommonObfuscatedClass"
 		clientMappings.classes[0].comment == "class comment"
 		clientMappings.classes[0].fields.size() == 1
 		clientMappings.classes[0].fields[0].srcName == "a"
@@ -141,7 +148,7 @@ class MappingsMergerTest {
 		clientMappings.classes[0].methods[0].args.size() == 1
 		clientMappings.classes[0].methods[1].args[0].getDstName(namedNs) == "commonObfuscatedMethodParameter"
 		clientMappings.classes[1].srcName == "b"
-		clientMappings.classes[1].getDstName(namedNs) == "net/fabricmc/loom/test/unit/ClientObfuscatedClass"
+		clientMappings.classes[1].getDstName(namedNs) == "net/aoqia/loom/test/unit/ClientObfuscatedClass"
 		clientMappings.classes[1].comment == "class comment"
 		clientMappings.classes[1].fields.size() == 1
 		clientMappings.classes[1].fields[0].srcName == "a"
@@ -153,8 +160,8 @@ class MappingsMergerTest {
 		clientMappings.classes[1].methods[0].comment == "method comment"
 		clientMappings.classes[1].methods[0].args.size() == 1
 		clientMappings.classes[1].methods[1].args[0].getDstName(namedNs) == "clientObfuscatedMethodParameter"
-		clientMappings.classes[2].srcName == "net/fabricmc/loom/test/unit/UnobfuscatedClass"
-		clientMappings.classes[2].getDstName(namedNs) == "net/fabricmc/loom/test/unit/UnobfuscatedClass"
+		clientMappings.classes[2].srcName == "net/aoqia/loom/test/unit/UnobfuscatedClass"
+		clientMappings.classes[2].getDstName(namedNs) == "net/aoqia/loom/test/unit/UnobfuscatedClass"
 		clientMappings.classes[2].comment == "class comment"
 		clientMappings.classes[2].fields.size() == 1
 		clientMappings.classes[2].fields[0].srcName == "unobfuscatedField"
@@ -176,7 +183,7 @@ class MappingsMergerTest {
 		def serverNamedNs = serverMappings.getNamespaceId(NAMED)
 		serverMappings.classes.size() == 3
 		serverMappings.classes[0].srcName == "a"
-		serverMappings.classes[0].getDstName(namedNs) == "net/fabricmc/loom/test/unit/CommonObfuscatedClass"
+		serverMappings.classes[0].getDstName(namedNs) == "net/aoqia/loom/test/unit/CommonObfuscatedClass"
 		serverMappings.classes[0].comment == "class comment"
 		serverMappings.classes[0].fields.size() == 1
 		serverMappings.classes[0].fields[0].srcName == "a"
@@ -189,7 +196,7 @@ class MappingsMergerTest {
 		serverMappings.classes[0].methods[0].args.size() == 1
 		serverMappings.classes[0].methods[1].args[0].getDstName(namedNs) == "commonObfuscatedMethodParameter"
 		serverMappings.classes[1].srcName == "b"
-		serverMappings.classes[1].getDstName(namedNs) == "net/fabricmc/loom/test/unit/ClientObfuscatedClass"
+		serverMappings.classes[1].getDstName(namedNs) == "net/aoqia/loom/test/unit/ClientObfuscatedClass"
 		serverMappings.classes[1].comment == "class comment"
 		serverMappings.classes[1].fields.size() == 1
 		serverMappings.classes[1].fields[0].srcName == "a"
@@ -201,8 +208,8 @@ class MappingsMergerTest {
 		serverMappings.classes[1].methods[0].comment == "method comment"
 		serverMappings.classes[1].methods[0].args.size() == 1
 		serverMappings.classes[1].methods[1].args[0].getDstName(namedNs) == "clientObfuscatedMethodParameter"
-		serverMappings.classes[2].srcName == "net/fabricmc/loom/test/unit/UnobfuscatedClass"
-		serverMappings.classes[2].getDstName(namedNs) == "net/fabricmc/loom/test/unit/UnobfuscatedClass"
+		serverMappings.classes[2].srcName == "net/aoqia/loom/test/unit/UnobfuscatedClass"
+		serverMappings.classes[2].getDstName(namedNs) == "net/aoqia/loom/test/unit/UnobfuscatedClass"
 		serverMappings.classes[2].comment == "class comment"
 		serverMappings.classes[2].fields.size() == 1
 		serverMappings.classes[2].fields[0].srcName == "unobfuscatedField"
@@ -230,14 +237,14 @@ c\ta\tclass_1
 """.trim()
 	private static final String NAMED_MAPPINGS = """
 tiny\t2\t0\tintermediary\tnamed
-c\tclass_1\tnet/fabricmc/loom/test/unit/ObfuscatedClass
+c\tclass_1\tnet/aoqia/loom/test/unit/ObfuscatedClass
 \tc\tclass comment
 \tf\tZ\tfield_1\tobfuscatedField
 \t\tc\tfield comment
 \tm\t(Z)V\tmethod_1\tobfuscatedMethod
 \t\tc\tmethod comment
 \t\tp\t0\t\t\tobfuscatedMethodParameter
-c\tnet/fabricmc/loom/test/unit/UnobfuscatedClass\tnet/fabricmc/loom/test/unit/UnobfuscatedClass
+c\tnet/aoqia/loom/test/unit/UnobfuscatedClass\tnet/aoqia/loom/test/unit/UnobfuscatedClass
 \tc\tclass comment
 \tf\tZ\tunobfuscatedField\tunobfuscatedField
 \t\tc\tfield comment
@@ -260,28 +267,28 @@ c\tclass_3\t\tc
 """.trim()
 	private static final String LEGACY_NAMED_MAPPINGS = """
 tiny\t2\t0\tintermediary\tnamed
-c\tclass_1\tnet/fabricmc/loom/test/unit/CommonObfuscatedClass
+c\tclass_1\tnet/aoqia/loom/test/unit/CommonObfuscatedClass
 \tc\tclass comment
 \tf\tZ\tfield_1\tcommonObfuscatedField
 \t\tc\tfield comment
 \tm\t(Z)V\tmethod_1\tcommonObfuscatedMethod
 \t\tc\tmethod comment
 \t\tp\t0\t\t\tcommonObfuscatedMethodParameter
-c\tclass_2\tnet/fabricmc/loom/test/unit/ClientObfuscatedClass
+c\tclass_2\tnet/aoqia/loom/test/unit/ClientObfuscatedClass
 \tc\tclass comment
 \tf\tZ\tfield_2\tclientObfuscatedField
 \t\tc\tfield comment
 \tm\t(Z)V\tmethod_2\tclientObfuscatedMethod
 \t\tc\tmethod comment
 \t\tp\t0\t\t\tclientObfuscatedMethodParameter
-c\tclass_3\tnet/fabricmc/loom/test/unit/ServerObfuscatedClass
+c\tclass_3\tnet/aoqia/loom/test/unit/ServerObfuscatedClass
 \tc\tclass comment
 \tf\tZ\tfield_3\tserverObfuscatedField
 \t\tc\tfield comment
 \tm\t(Z)V\tmethod_3\tserverObfuscatedMethod
 \t\tc\tmethod comment
 \t\tp\t0\t\t\tserverObfuscatedMethodParameter
-c\tnet/fabricmc/loom/test/unit/UnobfuscatedClass\tnet/fabricmc/loom/test/unit/UnobfuscatedClass
+c\tnet/aoqia/loom/test/unit/UnobfuscatedClass\tnet/aoqia/loom/test/unit/UnobfuscatedClass
 \tc\tclass comment
 \tf\tZ\tunobfuscatedField\tunobfuscatedField
 \t\tc\tfield comment

@@ -32,10 +32,10 @@ import com.google.gson.GsonBuilder
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
-import net.aoqia.loom.configuration.providers.minecraft.VersionsManifest
-import net.aoqia.loom.configuration.providers.minecraft.ZomboidVersionMeta
+import net.aoqia.loom.configuration.providers.zomboid.VersionsManifest
+import net.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta
 import net.aoqia.loom.test.LoomTestConstants
-import net.aoqia.loom.util.Constants
+import net.aoqia.loom.util.MirrorUtil
 import net.aoqia.loom.util.copygamefile.CopyGameFile
 
 class ZomboidTestUtils {
@@ -43,7 +43,7 @@ class ZomboidTestUtils {
 	public static final Gson GSON = new GsonBuilder().create()
 
 	static ZomboidVersionMeta getVersionMeta(String id) {
-		def versionManifest = download(Constants.VERSION_MANIFESTS, "version_manifest.json")
+		def versionManifest = download(MirrorUtil.getClientVersionManifests(null), "version_manifest.json")
 		def manifest = GSON.fromJson(versionManifest, VersionsManifest.class)
 		def version = manifest.versions().find {
 			it.id == id

@@ -89,7 +89,7 @@ public final class LeafModJsonV2 extends LeafModJson {
                 values.put(value.left(), value.right());
             }
         } else {
-            throw new FabricModJsonUtils.ParseException("Must be a string or array of strings");
+            throw new LeafModJsonUtils.ParseException("Must be a string or array of strings");
         }
 
         return values;
@@ -100,10 +100,10 @@ public final class LeafModJsonV2 extends LeafModJson {
         if (jsonElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
             return new Pair<>(jsonElement.getAsString(), ModEnvironment.UNIVERSAL);
         } else if (jsonElement instanceof JsonObject jsonObject) {
-            final String config = FabricModJsonUtils.readString(jsonObject, "config");
+            final String config = LeafModJsonUtils.readString(jsonObject, "config");
             return new Pair<>(config, getEnvironment(jsonObject));
         } else {
-            throw new FabricModJsonUtils.ParseException("Must be a string or an object");
+            throw new LeafModJsonUtils.ParseException("Must be a string or an object");
         }
     }
 
@@ -114,7 +114,7 @@ public final class LeafModJsonV2 extends LeafModJson {
         }
 
         if (!(jsonObject.get("environment") instanceof JsonPrimitive jsonPrimitive) || !jsonPrimitive.isString()) {
-            throw new FabricModJsonUtils.ParseException("Environment must be a string");
+            throw new LeafModJsonUtils.ParseException("Environment must be a string");
         }
 
         final String environment = jsonPrimitive.getAsString();
@@ -123,7 +123,7 @@ public final class LeafModJsonV2 extends LeafModJson {
             case "*" -> ModEnvironment.UNIVERSAL;
             case "client" -> ModEnvironment.CLIENT;
             case "server" -> ModEnvironment.SERVER;
-            default -> throw new FabricModJsonUtils.ParseException("Invalid environment type: " + environment);
+            default -> throw new LeafModJsonUtils.ParseException("Invalid environment type: " + environment);
         };
     }
 }

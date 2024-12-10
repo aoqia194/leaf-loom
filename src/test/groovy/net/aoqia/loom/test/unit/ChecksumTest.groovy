@@ -48,6 +48,6 @@ class ChecksumTest extends Specification {
 		where:
 		path   | dir
 		":"    | "C://mod"
-		":sub" | "/Users/test/Documents/modding/fabric-loom"
+		":sub" | "/Users/test/Documents/modding/leaf-loom"
 	}
 }

@@ -24,28 +24,24 @@
 
 package net.aoqia.loom.test.unit.layeredmappings
 
-
-import net.aoqia.loom.api.mappings.layered.spec.FileSpec
-import net.aoqia.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl
-import net.aoqia.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
-
 class UnpickLayerTest extends LayeredMappingsSpecification {
 	def "read unpick data from yarn"() {
-		setup:
-		intermediaryUrl = INTERMEDIARY_1_17_URL
-		mockMinecraftProvider.getVersionInfo() >> VERSION_META_1_17
-		when:
-		def builder = FileMappingsSpecBuilderImpl.builder(FileSpec.create(YARN_1_17_URL)).containsUnpick()
-		def unpickData = getUnpickData(
-				new IntermediaryMappingsSpec(),
-				builder.build()
-				)
-		def metadata = unpickData.metadata()
-		then:
-		metadata.version() == 1
-		metadata.unpickGroup() == "net.fabricmc.unpick"
-		metadata.unpickVersion() == "2.2.0"
-
-		unpickData.definitions().length == 56119
+		// Fuck unpick test, we dont have intermediary mapping.
+		//		setup:
+		//		intermediaryUrl = INTERMEDIARY_1_17_URL
+		//		mockMinecraftProvider.getVersionInfo() >> VERSION_META_1_17
+		//		when:
+		//		def builder = FileMappingsSpecBuilderImpl.builder(FileSpec.create(YARN_1_17_URL)).containsUnpick()
+		//		def unpickData = getUnpickData(
+		//				new IntermediaryMappingsSpec(),
+		//				builder.build()
+		//				)
+		//		def metadata = unpickData.metadata()
+		//		then:
+		//		metadata.version() == 1
+		//		metadata.unpickGroup() == "net.fabricmc.unpick"
+		//		metadata.unpickVersion() == "2.2.0"
+		//
+		//		unpickData.definitions().length == 56119
 	}
 }

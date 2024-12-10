@@ -33,7 +33,7 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
-import static net.aoqia.loom.util.fmj.FabricModJsonUtils.readString;
+import static net.aoqia.loom.util.fmj.LeafModJsonUtils.readString;
 
 public abstract sealed class LeafModJson
     permits LeafModJsonV0, LeafModJsonV1, LeafModJsonV2, LeafModJson.Mockable {

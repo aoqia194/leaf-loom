@@ -24,15 +24,15 @@
 
 package net.aoqia.loom.test.unit.library.processors
 
-import net.aoqia.loom.configuration.providers.minecraft.library.Library
-import net.aoqia.loom.configuration.providers.minecraft.library.LibraryProcessor
-import net.aoqia.loom.configuration.providers.minecraft.library.processors.ObjcBridgeUpgradeLibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.Library
+import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.processors.ObjcBridgeUpgradeLibraryProcessor
 import net.aoqia.loom.test.util.PlatformTestUtils
 
 class ObjcBridgeUpgradeLibraryProcessorTest extends LibraryProcessorTest {
 	def "Only apply to arm64 macOS"() {
 		when:
-		def (_, context) = getLibs("1.18.2", platform)
+		def (_, context) = getLibs("41.78.16", platform)
 		def processor = new ObjcBridgeUpgradeLibraryProcessor(platform, context)
 		then:
 		processor.applicationResult == result
@@ -56,13 +56,12 @@ class ObjcBridgeUpgradeLibraryProcessorTest extends LibraryProcessorTest {
 
 		where:
 		id       || result
-		"1.19.2" || LibraryProcessor.ApplicationResult.DONT_APPLY
-		"1.18.2" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.17.1" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.16.5" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.15.2" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.14.4" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.12.2" || LibraryProcessor.ApplicationResult.DONT_APPLY // None LWJGL 3
+		"41.78.16" || LibraryProcessor.ApplicationResult.DONT_APPLY
+		"41.78.15" || LibraryProcessor.ApplicationResult.MUST_APPLY
+		"41.78.13" || LibraryProcessor.ApplicationResult.MUST_APPLY
+		"41.78.0" || LibraryProcessor.ApplicationResult.MUST_APPLY
+		"41.77.9" || LibraryProcessor.ApplicationResult.DONT_APPLY
+		"41.77.0" || LibraryProcessor.ApplicationResult.DONT_APPLY
 	}
 
 	def "Upgrade objc bridge"() {
@@ -85,10 +84,7 @@ class ObjcBridgeUpgradeLibraryProcessorTest extends LibraryProcessorTest {
 
 		where:
 		id       | _
-		"1.18.2" | _
-		"1.17.1" | _
-		"1.16.5" | _
-		"1.15.2" | _
-		"1.14.4" | _
+		"41.78.15" | _
+		"41.78.13" | _
 	}
 }

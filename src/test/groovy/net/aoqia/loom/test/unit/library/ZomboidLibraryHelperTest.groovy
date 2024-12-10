@@ -28,8 +28,8 @@ import spock.lang.Specification
 
 import spock.lang.Specification
 
-import net.aoqia.loom.configuration.providers.minecraft.library.Library
-import net.aoqia.loom.configuration.providers.minecraft.library.ZomboidLibraryHelper
+import net.aoqia.loom.configuration.providers.zomboid.library.Library
+import net.aoqia.loom.configuration.providers.zomboid.library.ZomboidLibraryHelper
 import net.aoqia.loom.test.util.PlatformTestUtils
 import net.aoqia.loom.test.util.ZomboidTestUtils
 
@@ -57,7 +57,7 @@ class ZomboidLibraryHelperTest extends Specification {
 
 	def "find macos natives"() {
 		when:
-		def meta = ZomboidTestUtils.getVersionMeta("1.18.2")
+		def meta = ZomboidTestUtils.getVersionMeta("41.78.16")
 		def libraries = ZomboidLibraryHelper.getLibrariesForPlatform(meta, PlatformTestUtils.MAC_OS_X64)
 
 		then:
@@ -71,7 +71,7 @@ class ZomboidLibraryHelperTest extends Specification {
 
 	def "dont find macos natives"() {
 		when:
-		def meta = ZomboidTestUtils.getVersionMeta("1.18.2")
+		def meta = ZomboidTestUtils.getVersionMeta("41.78.16")
 		def libraries = ZomboidLibraryHelper.getLibrariesForPlatform(meta, PlatformTestUtils.WINDOWS_X64)
 
 		then:

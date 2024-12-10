@@ -24,9 +24,7 @@
 
 package net.aoqia.loom.test.unit.layeredmappings
 
-import java.nio.file.Files
 import java.nio.file.Path
-import java.util.function.Supplier
 import java.util.zip.ZipFile
 
 import groovy.transform.EqualsAndHashCode
@@ -51,17 +49,16 @@ import net.aoqia.loom.api.mappings.layered.MappingContext
 import net.aoqia.loom.api.mappings.layered.MappingLayer
 import net.aoqia.loom.api.mappings.layered.MappingsNamespace
 import net.aoqia.loom.api.mappings.layered.spec.MappingsSpec
-import net.aoqia.loom.configuration.providers.mappings.IntermediateMappingsService
 import net.aoqia.loom.configuration.providers.mappings.LayeredMappingSpec
 import net.aoqia.loom.configuration.providers.mappings.LayeredMappingsProcessor
 import net.aoqia.loom.configuration.providers.mappings.extras.unpick.UnpickLayer
-import net.aoqia.loom.configuration.providers.mappings.intermediary.IntermediaryMappingLayer
 import net.aoqia.loom.configuration.providers.mappings.utils.AddConstructorMappingVisitor
-import net.aoqia.loom.configuration.providers.minecraft.ZomboidProvider
+import net.aoqia.loom.configuration.providers.zomboid.ZomboidProvider
 import net.aoqia.loom.test.LoomTestConstants
-import net.aoqia.loom.test.unit.LoomMocks
 import net.aoqia.loom.util.copygamefile.CopyGameFile
 import net.aoqia.loom.util.copygamefile.CopyGameFileBuilder
+import net.aoqia.loom.util.download.Download
+import net.aoqia.loom.util.download.DownloadBuilder
 
 abstract class LayeredMappingsSpecification extends Specification implements LayeredMappingsTestConstants {
 	Logger mockLogger = Mock(Logger)
@@ -114,9 +111,8 @@ abstract class LayeredMappingsSpecification extends Specification implements Lay
 	}
 
 	private static LayeredMappingsProcessor createLayeredMappingsProcessor(MappingsSpec<? extends MappingLayer>... specs) {
-		boolean usingNoIntermediateSpec = specs.any { it instanceof NoIntermediateMappingsSpec }
 		LayeredMappingSpec spec = new LayeredMappingSpec(specs.toList())
-		return new LayeredMappingsProcessor(spec, usingNoIntermediateSpec)
+		return new LayeredMappingsProcessor(spec, false)
 	}
 
 	String getTiny(MemoryMappingTree mappingTree) {
@@ -127,7 +123,8 @@ abstract class LayeredMappingsSpecification extends Specification implements Lay
 
 	MemoryMappingTree reorder(MemoryMappingTree mappingTree) {
 		def reorderedMappings = new MemoryMappingTree()
-		def nsReorder = new MappingDstNsReorder(reorderedMappings, Collections.singletonList(MappingsNamespace.NAMED.toString()))
+		def nsReorder = new MappingDstNsReorder(reorderedMappings,
+				Collections.singletonList(MappingsNamespace.NAMED.toString()))
 		def nsSwitch = new MappingSourceNsSwitch(nsReorder, MappingsNamespace.INTERMEDIARY.toString(), true)
 		def addConstructor = new AddConstructorMappingVisitor(nsSwitch)
 		mappingTree.accept(addConstructor)
@@ -158,21 +155,6 @@ abstract class LayeredMappingsSpecification extends Specification implements Lay
 		}
 
 		@Override
-		Supplier<MemoryMappingTree> intermediaryTree() {
-			return {
-				def path = LoomTestConstants.TEST_DIR.toPath().resolve("intermediary").resolve(Objects.requireNonNull(minecraftVersion()) + ".tiny")
-
-				if (!Files.exists(path)) {
-					Files.createDirectories(path.parent)
-					def provider = LoomMocks.intermediaryMappingsProviderMock(minecraftVersion(), intermediaryUrl)
-					provider.provide(path, null)
-				}
-
-				return IntermediateMappingsService.createMemoryMappingTree(path, MappingsNamespace.OFFICIAL.toString())
-			}
-		}
-
-		@Override
 		ZomboidProvider zomboidProvider() {
 			return mockMinecraftProvider
 		}
@@ -188,29 +170,17 @@ abstract class LayeredMappingsSpecification extends Specification implements Lay
 		}
 
 		@Override
-		CopyGameFileBuilder download(String url) {
-			return CopyGameFile.create(url)
+		DownloadBuilder download(String url) {
+			return Download.create(url)
+		}
+
+		CopyGameFileBuilder copyGameFile(String path) {
+			return CopyGameFile.create(path)
 		}
 
 		@Override
 		boolean refreshDeps() {
 			return false
-		}
-	}
-
-	@EqualsAndHashCode
-	static class NoIntermediateMappingsSpec implements MappingsSpec<IntermediaryMappingLayer> {
-		static String NO_OP_MAPPINGS = "tiny\t2\t0\tofficial\tintermediary"
-
-		@Override
-		IntermediaryMappingLayer createLayer(MappingContext context) {
-			return new IntermediaryMappingLayer(NoIntermediateMappingsSpec.&createNoOpMappings)
-		}
-
-		private static MemoryMappingTree createNoOpMappings() {
-			def tree = new MemoryMappingTree()
-			MappingReader.read(new StringReader(NO_OP_MAPPINGS), tree)
-			return tree
 		}
 	}
 }

@@ -327,8 +327,8 @@ trait GradleProjectTestTrait {
 
 			buildGradle.text = buildGradle.text.replaceAll("(?s)(plugins \\{.*?})", pluginBlock)
 
-			def sourceSrc = new File("src/test/groovy/net/fabricmc/loom/test/integration/buildSrc/" + name)
-			def targetSrc = new File(buildSrcDir, "src/main/groovy/net/fabricmc/loom/test/integration/buildSrc/" + name)
+			def sourceSrc = new File("src/test/groovy/net/aoqia/loom/test/integration/buildSrc/" + name)
+			def targetSrc = new File(buildSrcDir, "src/main/groovy/net/aoqia/loom/test/integration/buildSrc/" + name)
 
 			FileUtils.copyDirectory(sourceSrc, targetSrc)
 		}

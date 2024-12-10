@@ -28,9 +28,9 @@ import org.gradle.api.JavaVersion
 
 import org.gradle.api.JavaVersion
 
-import net.aoqia.loom.configuration.providers.minecraft.library.Library
-import net.aoqia.loom.configuration.providers.minecraft.library.LibraryProcessor
-import net.aoqia.loom.configuration.providers.minecraft.library.processors.LoomNativeSupportLibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.Library
+import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.processors.LoomNativeSupportLibraryProcessor
 import net.aoqia.loom.test.util.PlatformTestUtils
 
 class LoomNativeSupportLibraryProcessorTest extends LibraryProcessorTest {
@@ -43,18 +43,15 @@ class LoomNativeSupportLibraryProcessorTest extends LibraryProcessorTest {
 
 		where:
 		id       || result
-		"1.19.4" || LibraryProcessor.ApplicationResult.CAN_APPLY
-		"1.18.2" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.17.1" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.16.5" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.15.2" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.14.4" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.12.2" || LibraryProcessor.ApplicationResult.DONT_APPLY // Not LWJGL 3
+		"41.78.16" || LibraryProcessor.ApplicationResult.CAN_APPLY
+		"41.78.15" || LibraryProcessor.ApplicationResult.MUST_APPLY
+		"41.78.13" || LibraryProcessor.ApplicationResult.MUST_APPLY
+		"40.43.0" || LibraryProcessor.ApplicationResult.DONT_APPLY // No LWJGL 3
 	}
 
 	def "Apply when using Java 19 or later on macOS"() {
 		when:
-		def (_, context) = getLibs("1.19.4", PlatformTestUtils.MAC_OS_X64, version)
+		def (_, context) = getLibs("41.78.16", PlatformTestUtils.MAC_OS_X64, version)
 		def processor = new LoomNativeSupportLibraryProcessor(PlatformTestUtils.MAC_OS_X64, context)
 		then:
 		processor.applicationResult == result
@@ -69,7 +66,7 @@ class LoomNativeSupportLibraryProcessorTest extends LibraryProcessorTest {
 
 	def "Dont apply when using Java 19 or later on macOS with supported version"() {
 		when:
-		def (_, context) = getLibs("1.20.2", PlatformTestUtils.MAC_OS_X64, version)
+		def (_, context) = getLibs("41.78.16", PlatformTestUtils.MAC_OS_X64, version)
 		def processor = new LoomNativeSupportLibraryProcessor(PlatformTestUtils.MAC_OS_X64, context)
 		then:
 		processor.applicationResult == result
@@ -84,7 +81,7 @@ class LoomNativeSupportLibraryProcessorTest extends LibraryProcessorTest {
 
 	def "Can apply when using Java 19 or later on other platforms"() {
 		when:
-		def (_, context) = getLibs("1.19.4", PlatformTestUtils.WINDOWS_ARM64, version)
+		def (_, context) = getLibs("41.78.16", PlatformTestUtils.WINDOWS_ARM64, version)
 		def processor = new LoomNativeSupportLibraryProcessor(PlatformTestUtils.WINDOWS_ARM64, context)
 		then:
 		processor.applicationResult == result
@@ -106,18 +103,18 @@ class LoomNativeSupportLibraryProcessorTest extends LibraryProcessorTest {
 
 		where:
 		id       | platform
-		"1.19.4" | PlatformTestUtils.MAC_OS_ARM64
-		"1.18.2" | PlatformTestUtils.WINDOWS_X64
-		"1.17.1" | PlatformTestUtils.MAC_OS_X64
-		"1.16.5" | PlatformTestUtils.WINDOWS_ARM64
-		"1.15.2" | PlatformTestUtils.LINUX_X64
-		"1.14.4" | PlatformTestUtils.MAC_OS_X64
-		"1.19.4" | PlatformTestUtils.WINDOWS_X64
+		"41.78.16" | PlatformTestUtils.MAC_OS_ARM64
+		"41.78.15" | PlatformTestUtils.WINDOWS_X64
+		"41.78.16" | PlatformTestUtils.MAC_OS_X64
+		"41.78.13" | PlatformTestUtils.WINDOWS_ARM64
+		"41.78.15" | PlatformTestUtils.LINUX_X64
+		"41.77.9" | PlatformTestUtils.MAC_OS_X64
+		"41.78.0" | PlatformTestUtils.WINDOWS_X64
 	}
 
 	def "Add native support mod"() {
 		when:
-		def (original, context) = getLibs("1.18.2", PlatformTestUtils.MAC_OS_X64)
+		def (original, context) = getLibs("41.78.16", PlatformTestUtils.MAC_OS_X64)
 		def processor = new LoomNativeSupportLibraryProcessor(PlatformTestUtils.MAC_OS_X64, context)
 		def processed = mockLibraryProcessorManager().processLibraries([processor], original)
 

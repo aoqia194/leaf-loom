@@ -24,7 +24,7 @@
 
 package net.aoqia.loom.util.fmj;
 
-import static net.aoqia.loom.util.fmj.FabricModJsonUtils.readString;
+import static net.aoqia.loom.util.fmj.LeafModJsonUtils.readString;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -86,7 +86,7 @@ public final class LeafModJsonV1 extends LeafModJson {
         } else if (jsonElement instanceof JsonObject obj) {
             return obj.get("config").getAsString();
         } else {
-            throw new FabricModJsonUtils.ParseException("Expected mixin element to be an object or string");
+            throw new LeafModJsonUtils.ParseException("Expected mixin element to be an object or string");
         }
     }
 

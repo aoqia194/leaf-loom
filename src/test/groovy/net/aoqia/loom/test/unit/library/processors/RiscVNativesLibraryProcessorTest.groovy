@@ -24,9 +24,9 @@
 
 package net.aoqia.loom.test.unit.library.processors
 
-import net.aoqia.loom.configuration.providers.minecraft.library.Library
-import net.aoqia.loom.configuration.providers.minecraft.library.LibraryProcessor
-import net.aoqia.loom.configuration.providers.minecraft.library.processors.RiscVNativesLibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.Library
+import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.processors.RiscVNativesLibraryProcessor
 import net.aoqia.loom.test.util.PlatformTestUtils
 
 class RiscVNativesLibraryProcessorTest extends LibraryProcessorTest {
@@ -38,11 +38,11 @@ class RiscVNativesLibraryProcessorTest extends LibraryProcessorTest {
 		processor.applicationResult == result
 
 		where:
+		// Don't apply RISCV when we dont use classpath natives or when the game using LWJGL version <3
 		id       || result
-		"1.21" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.20.1" || LibraryProcessor.ApplicationResult.MUST_APPLY
-		"1.14.4" || LibraryProcessor.ApplicationResult.DONT_APPLY // Not using classpath natives
-		"1.12.2" || LibraryProcessor.ApplicationResult.DONT_APPLY // Not LWJGL 3
+		"41.78.16" || LibraryProcessor.ApplicationResult.MUST_APPLY
+		"41.78.15" || LibraryProcessor.ApplicationResult.MUST_APPLY
+		"41.78.13" || LibraryProcessor.ApplicationResult.DONT_APPLY // In reality we dont apply here, just test.
 	}
 
 	def "Never apply on none riscv platforms"() {
@@ -54,20 +54,20 @@ class RiscVNativesLibraryProcessorTest extends LibraryProcessorTest {
 
 		where:
 		id       | platform
-		"1.21" | PlatformTestUtils.LINUX_ARM64
-		"1.21" | PlatformTestUtils.LINUX_X64
-		"1.19.4" | PlatformTestUtils.MAC_OS_X64
-		"1.18.2" | PlatformTestUtils.WINDOWS_X64
-		"1.17.1" | PlatformTestUtils.MAC_OS_X64
-		"1.16.5" | PlatformTestUtils.MAC_OS_X64
-		"1.15.2" | PlatformTestUtils.LINUX_X64
-		"1.14.4" | PlatformTestUtils.MAC_OS_X64
-		"1.12.2" | PlatformTestUtils.WINDOWS_X64
+		"41.78.16" | PlatformTestUtils.LINUX_ARM64
+		"41.78.16" | PlatformTestUtils.LINUX_X64
+		"41.78.15" | PlatformTestUtils.MAC_OS_X64
+		"41.78.13" | PlatformTestUtils.WINDOWS_X64
+		"41.78.0" | PlatformTestUtils.MAC_OS_X64
+		"41.77.9" | PlatformTestUtils.MAC_OS_X64
+		"41.77.8" | PlatformTestUtils.LINUX_X64
+		"41.77.0" | PlatformTestUtils.MAC_OS_X64
+		"41.65.0" | PlatformTestUtils.WINDOWS_X64
 	}
 
 	def "Add linux riscv natives"() {
 		when:
-		def (original, context) = getLibs("1.21", PlatformTestUtils.LINUX_RISCV)
+		def (original, context) = getLibs("41.78.16", PlatformTestUtils.LINUX_RISCV)
 		def processor = new RiscVNativesLibraryProcessor(PlatformTestUtils.LINUX_RISCV, context)
 		def processed = mockLibraryProcessorManager().processLibraries([processor], original)
 

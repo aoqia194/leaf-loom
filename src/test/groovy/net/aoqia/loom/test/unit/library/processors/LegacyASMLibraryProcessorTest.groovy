@@ -24,8 +24,8 @@
 
 package net.aoqia.loom.test.unit.library.processors
 
-import net.aoqia.loom.configuration.providers.minecraft.library.LibraryProcessor
-import net.aoqia.loom.configuration.providers.minecraft.library.processors.LegacyASMLibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.processors.LegacyASMLibraryProcessor
 import net.aoqia.loom.test.util.PlatformTestUtils
 
 class LegacyASMLibraryProcessorTest extends LibraryProcessorTest {

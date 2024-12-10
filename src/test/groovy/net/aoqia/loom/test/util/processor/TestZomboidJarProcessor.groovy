@@ -28,12 +28,14 @@ import java.nio.file.Path
 
 import groovy.transform.Immutable
 
+import groovy.transform.Immutable
+
 import net.aoqia.loom.api.processor.ProcessorContext
 import net.aoqia.loom.api.processor.SpecContext
 import net.aoqia.loom.api.processor.ZomboidJarProcessor
 
 @Immutable
-class TestMinecraftJarProcessor implements ZomboidJarProcessor<Spec> {
+class TestZomboidJarProcessor implements ZomboidJarProcessor<Spec> {
 	String input
 
 	final String name = "TestProcessor"

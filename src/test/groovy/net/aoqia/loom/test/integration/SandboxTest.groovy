@@ -81,7 +81,7 @@ class SandboxTest extends Specification implements GradleProjectTestTrait {
 
 	static Path createDummySandboxJar() {
 		def zip = ZipTestUtils.createZip(["fabric-sandbox.json": METADATA_JSON], ".jar")
-		ZipUtils.add(zip, "net/fabricmc/loom/test/unit/sandbox/SandboxEntrypoint.class", getClassBytes(SandboxEntrypoint.class))
+		ZipUtils.add(zip, "net/aoqia/loom/test/unit/sandbox/SandboxEntrypoint.class", getClassBytes(SandboxEntrypoint.class))
 		return zip
 	}
 

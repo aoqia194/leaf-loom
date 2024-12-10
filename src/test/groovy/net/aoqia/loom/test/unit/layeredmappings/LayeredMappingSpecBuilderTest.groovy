@@ -31,9 +31,6 @@ import spock.lang.Specification
 import net.aoqia.loom.configuration.providers.mappings.LayeredMappingSpec
 import net.aoqia.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl
 import net.aoqia.loom.configuration.providers.mappings.file.FileMappingsSpec
-import net.aoqia.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
-import net.aoqia.loom.configuration.providers.mappings.mojmap.MojangMappingsSpec
-import net.aoqia.loom.configuration.providers.mappings.parchment.ParchmentMappingsSpec
 import net.aoqia.loom.configuration.providers.mappings.utils.MavenFileSpec
 import net.aoqia.loom.util.ClosureAction
 
@@ -51,69 +48,10 @@ class LayeredMappingSpecBuilderTest extends Specification {
 		layers[1].class == MojangMappingsSpec
 	}
 
-	def "simple mojmap with parchment" () {
-		when:
-		def dep = "I like cake"
-		def spec = layered() {
-			officialMojangMappings()
-			parchment(dep)
-		}
-		def layers = spec.layers()
-		def parchment = layers[2] as ParchmentMappingsSpec
-		then:
-		spec.version == "layered+hash.863752751"
-		layers.size() == 3
-		layers[0].class == IntermediaryMappingsSpec
-		layers[1].class == MojangMappingsSpec
-		layers[2].class == ParchmentMappingsSpec
-		(parchment.fileSpec() as MavenFileSpec).dependencyNotation() == "I like cake"
-		parchment.removePrefix() == true
-	}
-
-	def "simple mojmap with parchment keep prefix" () {
-		when:
-		def spec = layered() {
-			officialMojangMappings()
-			parchment("I like cake") {
-				it.removePrefix = false
-			}
-		}
-		def layers = spec.layers()
-		def parchment = layers[2] as ParchmentMappingsSpec
-		then:
-		spec.version == "layered+hash.863752757"
-		layers.size() == 3
-		layers[0].class == IntermediaryMappingsSpec
-		layers[1].class == MojangMappingsSpec
-		layers[2].class == ParchmentMappingsSpec
-		(parchment.fileSpec() as MavenFileSpec).dependencyNotation() == "I like cake"
-		parchment.removePrefix() == false
-	}
-
-	def "simple mojmap with parchment keep prefix alternate hash" () {
-		when:
-		def spec = layered {
-			officialMojangMappings()
-			parchment("I really like cake") {
-				it.removePrefix = false
-			}
-		}
-		def layers = spec.layers()
-		def parchment = layers[2] as ParchmentMappingsSpec
-		then:
-		spec.version == "layered+hash.1144427140"
-		layers.size() == 3
-		layers[0].class == IntermediaryMappingsSpec
-		layers[1].class == MojangMappingsSpec
-		layers[2].class == ParchmentMappingsSpec
-		(parchment.fileSpec() as MavenFileSpec).dependencyNotation() == "I really like cake"
-		parchment.removePrefix() == false
-	}
-
 	def "yarn through file mappings"() {
 		when:
 		def spec = layered {
-			mappings("net.fabricmc:yarn:1.18.1+build.1:v2")
+			mappings("net.aoqia:yarn:41.78.16+build.1:v2")
 		}
 		def layers = spec.layers()
 		then:
@@ -121,7 +59,7 @@ class LayeredMappingSpecBuilderTest extends Specification {
 		layers.size() == 2
 		layers[0].class == IntermediaryMappingsSpec
 		layers[1].class == FileMappingsSpec
-		((layers[1] as FileMappingsSpec).fileSpec() as MavenFileSpec).dependencyNotation() == "net.fabricmc:yarn:1.18.1+build.1:v2"
+		((layers[1] as FileMappingsSpec).fileSpec() as MavenFileSpec).dependencyNotation() == "net.aoqia:yarn:41.78.16+build.1:v2"
 	}
 
 	LayeredMappingSpec layered(@DelegatesTo(LayeredMappingSpecBuilderImpl) Closure cl) {

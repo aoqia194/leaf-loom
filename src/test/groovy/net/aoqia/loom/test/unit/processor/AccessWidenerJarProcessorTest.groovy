@@ -31,7 +31,7 @@ import spock.lang.Specification
 import net.aoqia.loom.api.processor.SpecContext
 import net.aoqia.loom.configuration.accesswidener.AccessWidenerJarProcessor
 import net.aoqia.loom.test.util.GradleTestUtil
-import net.aoqia.loom.util.fmj.FabricModJson
+import net.aoqia.loom.util.fmj.LeafModJson
 import net.aoqia.loom.util.fmj.ModEnvironment
 
 class AccessWidenerJarProcessorTest extends Specification {
@@ -55,11 +55,11 @@ class AccessWidenerJarProcessorTest extends Specification {
 		given:
 		def specContext = Mock(SpecContext)
 
-		def mod1 = Mock(FabricModJson.Mockable)
+		def mod1 = Mock(LeafModJson.Mockable)
 		mod1.getClassTweakers() >> ["test.accesswidener": ModEnvironment.UNIVERSAL]
 		mod1.getId() >> "modid1"
 
-		def mod2 = Mock(FabricModJson.Mockable)
+		def mod2 = Mock(LeafModJson.Mockable)
 		mod2.getClassTweakers() >> ["test2.accesswidener": ModEnvironment.UNIVERSAL]
 		mod2.getId() >> "modid2"
 

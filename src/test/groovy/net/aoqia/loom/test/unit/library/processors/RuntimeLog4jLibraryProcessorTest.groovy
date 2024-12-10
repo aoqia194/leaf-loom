@@ -24,15 +24,15 @@
 
 package net.aoqia.loom.test.unit.library.processors
 
-import net.aoqia.loom.configuration.providers.minecraft.library.Library
-import net.aoqia.loom.configuration.providers.minecraft.library.LibraryProcessor
-import net.aoqia.loom.configuration.providers.minecraft.library.processors.RuntimeLog4jLibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.Library
+import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor
 import net.aoqia.loom.test.util.PlatformTestUtils
 
 class RuntimeLog4jLibraryProcessorTest extends LibraryProcessorTest {
 	def "Make log4j runtime"() {
 		when:
-		def (original, context) = getLibs("1.19.4", PlatformTestUtils.MAC_OS_X64)
+		def (original, context) = getLibs("41.78.16", PlatformTestUtils.MAC_OS_X64)
 		def processor = new RuntimeLog4jLibraryProcessor(PlatformTestUtils.MAC_OS_X64, context)
 		def processed = mockLibraryProcessorManager().processLibraries([processor], original)
 

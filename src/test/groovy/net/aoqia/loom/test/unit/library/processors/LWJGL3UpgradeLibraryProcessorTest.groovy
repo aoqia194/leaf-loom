@@ -28,9 +28,9 @@ import org.gradle.api.JavaVersion
 
 import org.gradle.api.JavaVersion
 
-import net.aoqia.loom.configuration.providers.minecraft.library.Library
-import net.aoqia.loom.configuration.providers.minecraft.library.LibraryProcessor
-import net.aoqia.loom.configuration.providers.minecraft.library.processors.LWJGL3UpgradeLibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.Library
+import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
+import net.aoqia.loom.configuration.providers.zomboid.library.processors.LWJGL3UpgradeLibraryProcessor
 import net.aoqia.loom.test.util.PlatformTestUtils
 
 class LWJGL3UpgradeLibraryProcessorTest extends LibraryProcessorTest {
@@ -43,18 +43,16 @@ class LWJGL3UpgradeLibraryProcessorTest extends LibraryProcessorTest {
 
 		where:
 		id       || result
-		"1.19.2" || LibraryProcessor.ApplicationResult.CAN_APPLY
-		"1.18.2" || LibraryProcessor.ApplicationResult.CAN_APPLY
-		"1.17.1" || LibraryProcessor.ApplicationResult.CAN_APPLY
-		"1.16.5" || LibraryProcessor.ApplicationResult.CAN_APPLY
-		"1.15.2" || LibraryProcessor.ApplicationResult.CAN_APPLY
-		"1.14.4" || LibraryProcessor.ApplicationResult.CAN_APPLY
-		"1.12.2" || LibraryProcessor.ApplicationResult.DONT_APPLY // Not LWJGL 3
+		"41.78.16" || LibraryProcessor.ApplicationResult.CAN_APPLY
+		"41.78.15" || LibraryProcessor.ApplicationResult.CAN_APPLY
+		"41.78.13" || LibraryProcessor.ApplicationResult.CAN_APPLY
+		"41.78.0" || LibraryProcessor.ApplicationResult.DONT_APPLY
+		"41.77.9" || LibraryProcessor.ApplicationResult.DONT_APPLY
 	}
 
 	def "Apply when using Java 19 or later"() {
 		when:
-		def (_, context) = getLibs("1.19.4", PlatformTestUtils.WINDOWS_X64, version)
+		def (_, context) = getLibs("41.78.16", PlatformTestUtils.WINDOWS_X64, version)
 		def processor = new LWJGL3UpgradeLibraryProcessor(PlatformTestUtils.WINDOWS_X64, context)
 		then:
 		processor.applicationResult == result

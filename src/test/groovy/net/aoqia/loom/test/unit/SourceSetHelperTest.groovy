@@ -59,7 +59,7 @@ class SourceSetHelperTest extends Specification {
 		mockProject.getRootDir() >> projectDir
 		mockSourceSet.getName() >> "main"
 
-		System.setProperty("fabric-loom.unit.testing", "true")
+		System.setProperty("leaf-loom.unit.testing", "true")
 
 		def ref = new SourceSetReference(mockSourceSet, mockProject)
 		when:
@@ -88,7 +88,7 @@ class SourceSetHelperTest extends Specification {
 		mockProject.getProjectDir() >> projectDir
 		mockSourceSet.getName() >> "main"
 
-		System.setProperty("fabric-loom.unit.testing", "true")
+		System.setProperty("leaf-loom.unit.testing", "true")
 
 		def ref = new SourceSetReference(mockSourceSet, mockProject)
 		when:
@@ -115,7 +115,7 @@ class SourceSetHelperTest extends Specification {
 		mockProject.getProjectDir() >> projectDir
 		mockSourceSet.getName() >> "main"
 
-		System.setProperty("fabric-loom.unit.testing", "true")
+		System.setProperty("leaf-loom.unit.testing", "true")
 
 		def ref = new SourceSetReference(mockSourceSet, mockProject)
 		when:
