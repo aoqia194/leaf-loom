@@ -31,8 +31,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public final class FabricModJsonUtils {
-    private FabricModJsonUtils() {}
+public final class LeafModJsonUtils {
+    private LeafModJsonUtils() {}
 
     public static String readString(JsonObject jsonObject, String key) {
         final JsonElement element = getElement(jsonObject, key);

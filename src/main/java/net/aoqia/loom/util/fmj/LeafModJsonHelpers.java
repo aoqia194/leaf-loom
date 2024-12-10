@@ -34,7 +34,7 @@ import net.aoqia.loom.util.gradle.SourceSetHelper;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 
-public class FabricModJsonHelpers {
+public class LeafModJsonHelpers {
     // Returns a list of Mods found in the provided project's main or client sourcesets
     public static List<LeafModJson> getModsInProject(Project project) {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);

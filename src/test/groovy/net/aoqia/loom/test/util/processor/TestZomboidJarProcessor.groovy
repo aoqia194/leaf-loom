@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2021 FabricMC
+ * Copyright (c) 2023 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +22,37 @@
  * SOFTWARE.
  */
 
-package net.aoqia.loom.api.mappings.layered.spec;
+package net.aoqia.loom.test.util.processor
 
-import org.jetbrains.annotations.ApiStatus;
+import java.nio.file.Path
 
-@ApiStatus.Experimental
-public interface ParchmentMappingsSpecBuilder {
-    /**
-     * When enabled the "p" prefix will be stripped from parameter names.
-     */
-    ParchmentMappingsSpecBuilder setRemovePrefix(boolean removePrefix);
+import groovy.transform.Immutable
+
+import net.aoqia.loom.api.processor.ProcessorContext
+import net.aoqia.loom.api.processor.SpecContext
+import net.aoqia.loom.api.processor.ZomboidJarProcessor
+
+@Immutable
+class TestMinecraftJarProcessor implements ZomboidJarProcessor<Spec> {
+	String input
+
+	final String name = "TestProcessor"
+
+	@Override
+	Spec buildSpec(SpecContext context) {
+		if (input == null) {
+			return null
+		}
+
+		return new Spec(input)
+	}
+
+	@Immutable
+	class Spec implements ZomboidJarProcessor.Spec {
+		String input
+	}
+
+	@Override
+	void processJar(Path jar, Spec spec, ProcessorContext context) throws IOException {
+	}
 }
