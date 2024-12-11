@@ -35,6 +35,7 @@ import net.aoqia.loom.configuration.providers.zomboid.library.LibraryContext;
 import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
 import net.aoqia.loom.configuration.providers.zomboid.library.ZomboidLibraryHelper;
 import net.aoqia.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor;
+import net.aoqia.loom.util.gradle.GradleUtils;
 import net.aoqia.loom.util.Constants;
 import net.aoqia.loom.util.Platform;
 import org.gradle.api.JavaVersion;
@@ -136,7 +137,7 @@ public class ZomboidLibraryProvider {
     }
 
     private JavaVersion getTargetRuntimeJavaVersion() {
-        final Object property = project.findProperty(Constants.Properties.RUNTIME_JAVA_COMPATIBILITY_VERSION);
+        final Object property = GradleUtils.getProperty(project, Constants.Properties.RUNTIME_JAVA_COMPATIBILITY_VERSION));
 
         if (property != null) {
             // This is very much a last ditch effort to allow users to set the runtime java version

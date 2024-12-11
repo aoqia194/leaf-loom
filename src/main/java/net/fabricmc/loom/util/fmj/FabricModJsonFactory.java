@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2022 FabricMC
+ * Copyright (c) 2022 LeafMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,6 @@ package net.aoqia.loom.util.fmj;
 
 import static net.aoqia.loom.util.fmj.LeafModJsonUtils.readInt;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -36,22 +34,28 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.util.FileSystemUtil;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.gradle.SourceSetHelper;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.aoqia.loom.LoomGradlePlugin;
+import net.aoqia.loom.util.FileSystemUtil;
+import net.aoqia.loom.util.ZipUtils;
+import net.aoqia.loom.util.gradle.SourceSetHelper;
+
 public final class LeafModJsonFactory {
     public static final String LEAF_MOD_JSON = "leaf.mod.json";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LeafModJsonFactory.class);
 
-    private LeafModJsonFactory() {}
+    private LeafModJsonFactory() {
+    }
 
     @VisibleForTesting
     public static LeafModJson create(JsonObject jsonObject, LeafModJsonSource source) {
@@ -66,17 +70,13 @@ public final class LeafModJsonFactory {
             case 0 -> new LeafModJsonV0(jsonObject, source);
             case 1 -> new LeafModJsonV1(jsonObject, source);
             case 2 -> new LeafModJsonV2(jsonObject, source);
-            default -> throw new UnsupportedOperationException(String.format(
-                    "This version of leaf-loom doesn't support the newer leaf.mod.json schema version of (%s) Please update leaf-loom to be able to read this.",
-                    schemaVersion));
+            default -> throw new UnsupportedOperationException(String.format("This version of leaf-loom doesn't support the newer leaf.mod.json schema version of (%s) Please update leaf-loom to be able to read this.", schemaVersion));
         };
     }
 
     public static LeafModJson createFromZip(Path zipPath) {
         try {
-            return create(
-                    ZipUtils.unpackGson(zipPath, LEAF_MOD_JSON, JsonObject.class),
-                    new LeafModJsonSource.ZipSource(zipPath));
+            return create(ZipUtils.unpackGson(zipPath, LEAF_MOD_JSON, JsonObject.class), new LeafModJsonSource.ZipSource(zipPath));
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to read leaf.mod.json file in zip: " + zipPath, e);
         } catch (JsonSyntaxException e) {
@@ -108,17 +108,15 @@ public final class LeafModJsonFactory {
     }
 
     @Nullable
-    public static LeafModJson createFromSourceSetsNullable(SourceSet... sourceSets) throws IOException {
-        final File file = SourceSetHelper.findFirstFileInResource(LEAF_MOD_JSON, sourceSets);
+    public static LeafModJson createFromSourceSetsNullable(Project project, SourceSet... sourceSets) throws IOException {
+        final File file = SourceSetHelper.findFirstFileInResource(LEAF_MOD_JSON, project, sourceSets);
 
         if (file == null) {
             return null;
         }
 
         try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
-            return create(
-                    LoomGradlePlugin.GSON.fromJson(reader, JsonObject.class),
-                    new LeafModJsonSource.SourceSetSource(sourceSets));
+            return create(LoomGradlePlugin.GSON.fromJson(reader, JsonObject.class), new LeafModJsonSource.SourceSetSource(project, sourceSets));
         } catch (JsonSyntaxException e) {
             LOGGER.warn("Failed to parse leaf.mod.json: {}", file.getAbsolutePath());
             return null;
