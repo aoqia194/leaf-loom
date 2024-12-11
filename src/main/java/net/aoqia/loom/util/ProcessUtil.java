@@ -41,17 +41,17 @@ public record ProcessUtil(ArgumentVisibility argumentVisibility) {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessUtil.class);
 
     public static ProcessUtil create(Project project) {
-		return create(ArgumentVisibility.get(project));
-	}
+        return create(ArgumentVisibility.get(project));
+    }
 
-	public static ProcessUtil create(ArgumentVisibility argumentVisibility) {
-		return new ProcessUtil(argumentVisibility);
+    public static ProcessUtil create(ArgumentVisibility argumentVisibility) {
+        return new ProcessUtil(argumentVisibility);
     }
 
     public String printWithParents(ProcessHandle handle) {
         String result = printWithParents(handle, 0).trim();
 
-		if (argumentVisibility == ArgumentVisibility.HIDE) {
+        if (argumentVisibility == ArgumentVisibility.HIDE) {
             return "Run with --info or --debug to show arguments, may reveal sensitive info\n" + result;
         }
 
@@ -78,7 +78,7 @@ public record ProcessUtil(ArgumentVisibility argumentVisibility) {
     }
 
     private Optional<String> getProcessArguments(ProcessHandle handle) {
-		if (argumentVisibility != ArgumentVisibility.SHOW_SENSITIVE) {
+        if (argumentVisibility != ArgumentVisibility.SHOW_SENSITIVE) {
             return Optional.empty();
         }
 
@@ -121,13 +121,13 @@ public record ProcessUtil(ArgumentVisibility argumentVisibility) {
         return Optional.of(joiner.toString());
     }
 
-	public enum ArgumentVisibility {
-		HIDE,
-		SHOW_SENSITIVE;
+    public enum ArgumentVisibility {
+        HIDE,
+        SHOW_SENSITIVE;
 
-		static ArgumentVisibility get(Project project) {
-			final LogLevel logLevel = project.getGradle().getStartParameter().getLogLevel();
-			return (logLevel == LogLevel.INFO || logLevel == LogLevel.DEBUG) ? SHOW_SENSITIVE : HIDE;
-		}
-	}
+        static ArgumentVisibility get(Project project) {
+            final LogLevel logLevel = project.getGradle().getStartParameter().getLogLevel();
+            return (logLevel == LogLevel.INFO || logLevel == LogLevel.DEBUG) ? SHOW_SENSITIVE : HIDE;
+        }
+    }
 }

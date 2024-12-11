@@ -329,11 +329,11 @@ trait GradleProjectTestTrait {
 				def ids = matcher.group("ids")
 
 				def pluginBlock = """
-					plugins {
-						${ids}
-						id 'loom-test-plugin'
-					}
-				"""
+                    plugins {
+                        ${ids}
+                        id 'loom-test-plugin'
+                    }
+                """
 
 				buildGradle.text = buildGradle.text.replaceAll("(?s)(plugins \\{.*?})", pluginBlock)
 			}

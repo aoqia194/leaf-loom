@@ -63,7 +63,7 @@ public interface LeafModJsonSource {
         }
 
         private File findFile(String path) throws IOException {
-			final File file = SourceSetHelper.findFirstFileInResource(path, project, sourceSets);
+            final File file = SourceSetHelper.findFirstFileInResource(path, project, sourceSets);
 
             if (file == null) {
                 throw new FileNotFoundException("Could not find: " + path);

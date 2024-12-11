@@ -265,8 +265,8 @@ public final class SourceSetHelper {
     }
 
     @Nullable
-	public static File findFileInResource(Project project, SourceSet sourceSet, String path) {
-		Objects.requireNonNull(project);
+    public static File findFileInResource(Project project, SourceSet sourceSet, String path) {
+        Objects.requireNonNull(project);
         Objects.requireNonNull(sourceSet);
         Objects.requireNonNull(path);
 
@@ -296,9 +296,9 @@ public final class SourceSetHelper {
     }
 
     @Nullable
-	public static File findFirstFileInResource(String path, Project project, SourceSet... sourceSets) {
+    public static File findFirstFileInResource(String path, Project project, SourceSet... sourceSets) {
         for (SourceSet sourceSet : sourceSets) {
-			File file = findFileInResource(project, sourceSet, path);
+            File file = findFileInResource(project, sourceSet, path);
 
             if (file != null) {
                 return file;

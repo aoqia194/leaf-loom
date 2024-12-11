@@ -52,7 +52,7 @@ public class JarNester {
                 LeafModJsonFactory.isModJar(modJar), "Cannot nest jars into none mod jar " + modJar.getName());
 
         // Ensure deterministic ordering of entries in fabric.mod.json
-		Collection<File> sortedJars = jars.stream().sorted(Comparator.comparing(File::getName)).toList();try {
+        Collection<File> sortedJars = jars.stream().sorted(Comparator.comparing(File::getName)).toList();try {
             ZipUtils.add(
                     modJar.toPath(),
                     sortedJars.stream()

@@ -122,5 +122,5 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 
     boolean isConfigurationCacheActive();
 
-	boolean isProjectIsolationActive();
+    boolean isProjectIsolationActive();
 }

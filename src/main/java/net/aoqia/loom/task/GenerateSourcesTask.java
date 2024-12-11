@@ -24,12 +24,8 @@
 
 package net.aoqia.loom.task;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import javax.inject.Inject;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
@@ -37,17 +33,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
+
 import net.aoqia.loom.api.decompilers.DecompilationMetadata;
 import net.aoqia.loom.api.decompilers.DecompilerOptions;
 import net.aoqia.loom.api.decompilers.LoomDecompiler;
@@ -59,16 +47,9 @@ import net.aoqia.loom.decompilers.cache.CachedData;
 import net.aoqia.loom.decompilers.cache.CachedFileStoreImpl;
 import net.aoqia.loom.decompilers.cache.CachedJarProcessor;
 import net.aoqia.loom.task.service.SourceMappingsService;
-import net.aoqia.loom.util.Checksum;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.ExceptionUtil;
-import net.aoqia.loom.util.FileSystemUtil;
-import net.aoqia.loom.util.IOStringConsumer;
-import net.aoqia.loom.util.Platform;
-import net.aoqia.loom.util.gradle.SyncTaskBuildService;
-import net.aoqia.loom.util.gradle.ThreadedProgressLoggerConsumer;
-import net.aoqia.loom.util.gradle.ThreadedSimpleProgressLogger;
-import net.aoqia.loom.util.gradle.WorkerDaemonClientsManagerHelper;
+import net.aoqia.loom.util.*;
+import net.aoqia.loom.util.gradle.*;
+import net.aoqia.loom.util.gradle.daemon.DaemonUtils;
 import net.aoqia.loom.util.ipc.IPCClient;
 import net.aoqia.loom.util.ipc.IPCServer;
 import net.aoqia.loom.util.service.ScopedServiceFactory;
@@ -78,14 +59,8 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.services.ServiceReference;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.OutputFile;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.options.Option;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.process.ExecOperations;
@@ -104,14 +79,80 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     private static final String CACHE_VERSION = "v1";
     private final DecompilerOptions decompilerOptions;
 
+    @Inject
+    public GenerateSourcesTask(DecompilerOptions decompilerOptions) {
+        this.decompilerOptions = decompilerOptions;
+
+        getClassesInputJar().setFrom(getInputJarName().map(minecraftJarName -> {
+            final List<ZomboidJar> zomboidJars =
+                getExtension().getNamedZomboidProvider().getMinecraftJars();
+
+            for (ZomboidJar zomboidJar : zomboidJars) {
+                if (zomboidJar.getName().equals(minecraftJarName)) {
+                    final Path backupJarPath = AbstractMappedZomboidProvider.getBackupJarPath(zomboidJar);
+
+                    if (Files.notExists(backupJarPath)) {
+                        throw new IllegalStateException("Input zomboid jar not found at: " + backupJarPath);
+                    }
+
+                    return backupJarPath.toFile();
+                }
+            }
+
+            throw new IllegalStateException(
+                "Input zomboid jar not found: " + getInputJarName().get());
+        }));
+        getClassesOutputJar().setFrom(getInputJarName().map(minecraftJarName -> {
+            final List<ZomboidJar> zomboidJars =
+                getExtension().getNamedZomboidProvider().getMinecraftJars();
+
+            for (ZomboidJar zomboidJar : zomboidJars) {
+                if (zomboidJar.getName().equals(minecraftJarName)) {
+                    return zomboidJar.toFile();
+                }
+            }
+
+            throw new IllegalStateException(
+                "Input zomboid jar not found: " + getInputJarName().get());
+        }));
+
+        getOutputs().upToDateWhen((o) -> false);
+        getClasspath().from(decompilerOptions.getClasspath()).finalizeValueOnRead();
+        dependsOn(decompilerOptions.getClasspath().getBuiltBy());
+
+        getMinecraftCompileLibraries()
+            .from(getProject().getConfigurations().getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
+        getDecompileCacheFile().set(getExtension().getFiles().getDecompileCache(CACHE_VERSION));
+        getUnpickRuntimeClasspath()
+            .from(getProject().getConfigurations().getByName(Constants.Configurations.UNPICK_CLASSPATH));
+        getUnpickLogConfig().set(getExtension().getFiles().getUnpickLoggingConfigFile());
+
+        getUseCache().convention(true);
+        getResetCache().convention(getExtension().refreshDeps());
+
+        getMappings().set(SourceMappingsService.create(getProject()));
+
+        getMaxCachedFiles().set(GradleUtils.getIntegerPropertyProvider(getProject(),
+            Constants.Properties.DECOMPILE_CACHE_MAX_FILES).orElse(50_000));
+        getMaxCacheFileAge().set(GradleUtils.getIntegerPropertyProvider(getProject(),
+            Constants.Properties.DECOMPILE_CACHE_MAX_AGE).orElse(90));
+
+        getDaemonUtilsContext().set(getProject().getObjects().newInstance(DaemonUtils.Context.class, getProject()));
+        mustRunAfter(getProject().getTasks().withType(AbstractRemapJarTask.class));
+    }
+
+    @InputFiles // Only contains a single file
+    protected abstract ConfigurableFileCollection getClassesInputJar();
+
     /**
      * The jar name to decompile, {@link ZomboidJar#getName()}.
      */
     @Input
     public abstract Property<String> getInputJarName();
 
-    @InputFiles // Only contains a single file
-    protected abstract ConfigurableFileCollection getClassesInputJar();
+    // Contains the remapped linenumbers
+    @OutputFile
+    protected abstract ConfigurableFileCollection getClassesOutputJar(); // Single jar
 
     @InputFiles
     protected abstract ConfigurableFileCollection getClasspath();
@@ -119,34 +160,15 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     @InputFiles
     protected abstract ConfigurableFileCollection getMinecraftCompileLibraries();
 
-    @OutputFile
-    public abstract RegularFileProperty getSourcesOutputJar();
-
-    // Contains the remapped linenumbers
-    @OutputFile
-    protected abstract ConfigurableFileCollection getClassesOutputJar(); // Single jar
-
-    // Unpick
-    @InputFile
-    @Optional
-    public abstract RegularFileProperty getUnpickDefinitions();
-
-    @InputFiles
-    @Optional
-    public abstract ConfigurableFileCollection getUnpickConstantJar();
-
-    @InputFiles
-    @Optional
-    public abstract ConfigurableFileCollection getUnpickClasspath();
+    // Internal outputs
+    @ApiStatus.Internal
+    @Internal
+    protected abstract RegularFileProperty getDecompileCacheFile();
 
     @InputFiles
     @Optional
     @ApiStatus.Internal
     public abstract ConfigurableFileCollection getUnpickRuntimeClasspath();
-
-    @OutputFile
-    @Optional
-    public abstract RegularFileProperty getUnpickOutputJar();
 
     @OutputFile
     protected abstract RegularFileProperty getUnpickLogConfig();
@@ -166,18 +188,89 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     @Nested
     protected abstract Property<SourceMappingsService.Options> getMappings();
 
-    // Internal outputs
     @ApiStatus.Internal
-    @Internal
-    protected abstract RegularFileProperty getDecompileCacheFile();
+    @Input
+    protected abstract Property<Integer> getMaxCachedFiles();
 
     @ApiStatus.Internal
-	@Input
-	protected abstract Property<Integer> getMaxCachedFiles();
+    @Input
+    protected abstract Property<Integer> getMaxCacheFileAge();// Injects
 
-	@ApiStatus.Internal
-	@Input
-	protected abstract Property<Integer> getMaxCacheFileAge();// Injects
+    @Nested
+    protected abstract Property<DaemonUtils.Context> getDaemonUtilsContext();// Prevent Gradle from running two gen
+
+    public static File getJarFileWithSuffix(String suffix, Path runtimeJar) {
+        final String path = runtimeJar.toFile().getAbsolutePath();
+
+        if (!path.toLowerCase(Locale.ROOT).endsWith(".jar")) {
+            throw new RuntimeException("Invalid mapped JAR path: " + path);
+        }
+
+        return new File(path.substring(0, path.length() - 4) + suffix);
+    }
+
+    @Nullable
+    private static ClassLineNumbers readLineNumbers(Path linemapFile) throws IOException {
+        if (Files.notExists(linemapFile)) {
+            return null;
+        }
+
+        try (BufferedReader reader = Files.newBufferedReader(linemapFile, StandardCharsets.UTF_8)) {
+            return ClassLineNumbers.readMappings(reader);
+        }
+    }
+
+    private static Constructor<LoomDecompiler> getDecompilerConstructor(String clazz) {
+        try {
+            //noinspection unchecked
+            return (Constructor<LoomDecompiler>) Class.forName(clazz).getConstructor();
+        } catch (NoSuchMethodException e) {
+            return null;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String fileHash(File file) {
+        try {
+            return Checksum.sha256Hex(Files.readAllBytes(file.toPath()));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static String fileCollectionHash(FileCollection files) {
+        var sj = new StringJoiner(",");
+
+        files.getFiles().stream()
+            .sorted(Comparator.comparing(File::getAbsolutePath))
+            .map(GenerateSourcesTask::fileHash)
+            .forEach(sj::add);
+
+        return sj.toString();
+    }
+
+    @OutputFile
+    public abstract RegularFileProperty getSourcesOutputJar();
+
+    // Unpick
+    @InputFile
+    @Optional
+    public abstract RegularFileProperty getUnpickDefinitions();
+
+    @InputFiles
+    @Optional
+    public abstract ConfigurableFileCollection getUnpickConstantJar();
+    // sources tasks in parallel
+
+    @InputFiles
+    @Optional
+    public abstract ConfigurableFileCollection getUnpickClasspath();
+
+    @OutputFile
+    @Optional
+    public abstract RegularFileProperty getUnpickOutputJar();
+
     @Inject
     protected abstract WorkerExecutor getWorkerExecutor();
 
@@ -190,69 +283,8 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     @Inject
     protected abstract ProgressLoggerFactory getProgressLoggerFactory();
 
-    @Nested
-	protected abstract Property<DaemonUtils.Context> getDaemonUtilsContext();// Prevent Gradle from running two gen sources tasks in parallel
     @ServiceReference(SyncTaskBuildService.NAME)
     abstract Property<SyncTaskBuildService> getSyncTask();
-
-    @Inject
-    public GenerateSourcesTask(DecompilerOptions decompilerOptions) {
-        this.decompilerOptions = decompilerOptions;
-
-        getClassesInputJar().setFrom(getInputJarName().map(minecraftJarName -> {
-            final List<ZomboidJar> zomboidJars =
-                    getExtension().getNamedZomboidProvider().getMinecraftJars();
-
-            for (ZomboidJar zomboidJar : zomboidJars) {
-                if (zomboidJar.getName().equals(minecraftJarName)) {
-                    final Path backupJarPath = AbstractMappedZomboidProvider.getBackupJarPath(zomboidJar);
-
-                    if (Files.notExists(backupJarPath)) {
-                        throw new IllegalStateException("Input zomboid jar not found at: " + backupJarPath);
-                    }
-
-                    return backupJarPath.toFile();
-                }
-            }
-
-            throw new IllegalStateException(
-                    "Input zomboid jar not found: " + getInputJarName().get());
-        }));
-        getClassesOutputJar().setFrom(getInputJarName().map(minecraftJarName -> {
-            final List<ZomboidJar> zomboidJars =
-                    getExtension().getNamedZomboidProvider().getMinecraftJars();
-
-            for (ZomboidJar zomboidJar : zomboidJars) {
-                if (zomboidJar.getName().equals(minecraftJarName)) {
-                    return zomboidJar.toFile();
-                }
-            }
-
-            throw new IllegalStateException(
-                    "Input zomboid jar not found: " + getInputJarName().get());
-        }));
-
-        getOutputs().upToDateWhen((o) -> false);
-        getClasspath().from(decompilerOptions.getClasspath()).finalizeValueOnRead();
-        dependsOn(decompilerOptions.getClasspath().getBuiltBy());
-
-        getMinecraftCompileLibraries()
-                .from(getProject().getConfigurations().getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
-        getDecompileCacheFile().set(getExtension().getFiles().getDecompileCache(CACHE_VERSION));
-        getUnpickRuntimeClasspath()
-                .from(getProject().getConfigurations().getByName(Constants.Configurations.UNPICK_CLASSPATH));
-        getUnpickLogConfig().set(getExtension().getFiles().getUnpickLoggingConfigFile());
-
-        getUseCache().convention(true);
-        getResetCache().convention(getExtension().refreshDeps());
-
-        getMappings().set(SourceMappingsService.create(getProject()));
-
-        getMaxCachedFiles().set(GradleUtils.getIntegerPropertyProvider(getProject(), Constants.Properties.DECOMPILE_CACHE_MAX_FILES).orElse(50_000));
-		getMaxCacheFileAge().set(GradleUtils.getIntegerPropertyProvider(getProject(), Constants.Properties.DECOMPILE_CACHE_MAX_AGE).orElse(90));
-
-		getDaemonUtilsContext().set(getProject().getObjects().newInstance(DaemonUtils.Context.class, getProject()));mustRunAfter(getProject().getTasks().withType(AbstractRemapJarTask.class));
-    }
 
     @TaskAction
     public void run() throws IOException {
@@ -260,7 +292,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
         if (!platform.getArchitecture().is64Bit()) {
             throw new UnsupportedOperationException(
-                    "GenSources task requires a 64bit JVM to run due to the memory requirements.");
+                "GenSources task requires a 64bit JVM to run due to the memory requirements.");
         }
 
         if (!getUseCache().get()) {
@@ -291,13 +323,14 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
             Files.createDirectories(cacheFile.getParent());
 
             if (Files.exists(cacheFile)) {
-				try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(cacheFile, true)) {
-					// Success, cache exists and can be read
-				} catch (IOException e) {
-					getLogger().warn("Discarding invalid decompile cache file: {}", cacheFile, e);
-					Files.delete(cacheFile);
-				}
-			}try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(cacheFile, true)) {
+                try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(cacheFile, true)) {
+                    // Success, cache exists and can be read
+                } catch (IOException e) {
+                    getLogger().warn("Discarding invalid decompile cache file: {}", cacheFile, e);
+                    Files.delete(cacheFile);
+                }
+            }
+            try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(cacheFile, true)) {
                 runWithCache(fs.getRoot());
             }
         } catch (Exception e) {
@@ -310,14 +343,15 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         final Path classesInputJar = getClassesInputJar().getSingleFile().toPath();
         final Path sourcesOutputJar = getSourcesOutputJar().get().getAsFile().toPath();
         final Path classesOutputJar = getClassesOutputJar().getSingleFile().toPath();
-        final var cacheRules = new CachedFileStoreImpl.CacheRules(getMaxCachedFiles().get(), Duration.ofDays(getMaxCacheFileAge().get()));
+        final var cacheRules = new CachedFileStoreImpl.CacheRules(getMaxCachedFiles().get(),
+            Duration.ofDays(getMaxCacheFileAge().get()));
         final var decompileCache = new CachedFileStoreImpl<>(cacheRoot, CachedData.SERIALIZER, cacheRules);
         final String cacheKey = getCacheKey();
         final CachedJarProcessor cachedJarProcessor = new CachedJarProcessor(decompileCache, cacheKey);
         final CachedJarProcessor.WorkRequest workRequest;
 
         getLogger().info("Decompile cache key: {}", cacheKey);
-		getLogger().debug("Decompile cache rules: {}", cacheRules);
+        getLogger().debug("Decompile cache rules: {}", cacheRules);
 
         try (var timer = new Timer("Prepare job")) {
             workRequest = cachedJarProcessor.prepareJob(classesInputJar);
@@ -334,8 +368,8 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
             Path workInputJar = workToDoJob.incomplete();
             @Nullable
             Path existingClasses = (job instanceof CachedJarProcessor.PartialWorkJob partialWorkJob)
-                    ? partialWorkJob.existingClasses()
-                    : null;
+                ? partialWorkJob.existingClasses()
+                : null;
 
             if (getUnpickDefinitions().isPresent()) {
                 try (var timer = new Timer("Unpick")) {
@@ -403,7 +437,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     }
 
     private void applyLineNumbers(@Nullable ClassLineNumbers lineNumbers, Path classesInputJar, Path classesOutputJar)
-            throws IOException {
+        throws IOException {
         if (lineNumbers == null) {
             getLogger().info("No line numbers to remap, skipping remapping");
             return;
@@ -439,7 +473,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         sj.add(fileCollectionHash(decompilerOptions.getClasspath()));
 
         for (Map.Entry<String, String> entry :
-                decompilerOptions.getOptions().get().entrySet()) {
+            decompilerOptions.getOptions().get().entrySet()) {
             sj.add(entry.getKey() + "=" + entry.getValue());
         }
 
@@ -461,15 +495,16 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
     @Nullable
     private ClassLineNumbers runDecompileJob(Path inputJar, Path outputJar, @Nullable Path existingJar)
-            throws IOException {
+        throws IOException {
         final Platform platform = Platform.CURRENT;
         final Path lineMapFile = File.createTempFile("loom", "linemap").toPath();
         Files.delete(lineMapFile);
 
         if (!platform.supportsUnixDomainSockets()) {
             getLogger()
-                    .warn(
-                            "Decompile worker logging disabled as Unix Domain Sockets is not supported on your operating system.");
+                .warn(
+                    "Decompile worker logging disabled as Unix Domain Sockets is not supported on your operating " +
+                    "system.");
 
             doWork(null, inputJar, outputJar, lineMapFile, existingJar);
             return readLineNumbers(lineMapFile);
@@ -480,11 +515,11 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         Files.deleteIfExists(ipcPath);
 
         try (ThreadedProgressLoggerConsumer loggerConsumer = new ThreadedProgressLoggerConsumer(
-                        getLogger(),
-                        getProgressLoggerFactory(),
-                        decompilerOptions.getName(),
-                        "Decompiling zomboid sources");
-                IPCServer logReceiver = new IPCServer(ipcPath, loggerConsumer)) {
+            getLogger(),
+            getProgressLoggerFactory(),
+            decompilerOptions.getName(),
+            "Decompiling zomboid sources");
+             IPCServer logReceiver = new IPCServer(ipcPath, loggerConsumer)) {
             doWork(logReceiver, inputJar, outputJar, lineMapFile, existingJar);
         } catch (InterruptedException e) {
             throw new RuntimeException("Failed to shutdown log receiver", e);
@@ -504,7 +539,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
             spec.classpath(getUnpickRuntimeClasspath());
             spec.args(args);
             spec.systemProperty(
-                    "java.util.logging.config.file", writeUnpickLogConfig().getAbsolutePath());
+                "java.util.logging.config.file", writeUnpickLogConfig().getAbsolutePath());
         });
 
         result.rethrowFailure();
@@ -535,9 +570,9 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         final File unpickLoggingConfigFile = getUnpickLogConfig().getAsFile().get();
 
         try (InputStream is =
-                GenerateSourcesTask.class.getClassLoader().getResourceAsStream("unpick-logging.properties")) {
+                 GenerateSourcesTask.class.getClassLoader().getResourceAsStream("unpick-logging.properties")) {
             Files.copy(
-                    Objects.requireNonNull(is), unpickLoggingConfigFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Objects.requireNonNull(is), unpickLoggingConfigFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to copy unpick logging config", e);
         }
@@ -560,11 +595,11 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     }
 
     private void doWork(
-            @Nullable IPCServer ipcServer,
-            Path inputJar,
-            Path outputJar,
-            Path linemapFile,
-            @Nullable Path existingClasses) {
+        @Nullable IPCServer ipcServer,
+        Path inputJar,
+        Path outputJar,
+        Path linemapFile,
+        @Nullable Path existingClasses) {
         final String jvmMarkerValue = UUID.randomUUID().toString();
         final WorkQueue workQueue = createWorkQueue(jvmMarkerValue);
 
@@ -592,7 +627,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         } finally {
             if (ipcServer != null) {
                 boolean stopped =
-                        WorkerDaemonClientsManagerHelper.stopIdleJVM(getWorkerDaemonClientsManager(), jvmMarkerValue);
+                    WorkerDaemonClientsManagerHelper.stopIdleJVM(getWorkerDaemonClientsManager(), jvmMarkerValue);
 
                 if (!stopped && ipcServer.hasReceivedMessage()) {
                     getLogger().info("Failed to stop decompile worker JVM, it may have already been stopped?");
@@ -611,11 +646,11 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         return getWorkerExecutor().processIsolation(spec -> {
             spec.forkOptions(forkOptions -> {
                 forkOptions.setMinHeapSize(String.format(
-                        Locale.ENGLISH,
-                        "%dm",
-                        Math.min(512, decompilerOptions.getMemory().get())));
+                    Locale.ENGLISH,
+                    "%dm",
+                    Math.min(512, decompilerOptions.getMemory().get())));
                 forkOptions.setMaxHeapSize(String.format(
-                        Locale.ENGLISH, "%dm", decompilerOptions.getMemory().get()));
+                    Locale.ENGLISH, "%dm", decompilerOptions.getMemory().get()));
                 forkOptions.systemProperty(WorkerDaemonClientsManagerHelper.MARKER_PROP, jvmMarkerValue);
             });
             spec.getClasspath().from(getClasspath());
@@ -643,6 +678,10 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         ConfigurableFileCollection getClassPath();
     }
 
+    public interface MappingsProcessor {
+        boolean transform(MemoryMappingTree mappings);
+    }
+
     public abstract static class DecompileAction implements WorkAction<DecompileParams> {
         @Override
         public void execute() {
@@ -663,14 +702,14 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
         private void doDecompile(IOStringConsumer logger) {
             final Path inputJar =
-                    getParameters().getInputJar().get().getAsFile().toPath();
+                getParameters().getInputJar().get().getAsFile().toPath();
             final Path linemap =
-                    getParameters().getLinemapFile().get().getAsFile().toPath();
+                getParameters().getLinemapFile().get().getAsFile().toPath();
             final Path outputJar =
-                    getParameters().getOutputJar().get().getAsFile().toPath();
+                getParameters().getOutputJar().get().getAsFile().toPath();
 
             final DecompilerOptions.Dto decompilerOptions =
-                    getParameters().getDecompilerOptions().get();
+                getParameters().getDecompilerOptions().get();
 
             final LoomDecompiler decompiler;
 
@@ -678,7 +717,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
                 final String className = decompilerOptions.className();
                 final Constructor<LoomDecompiler> decompilerConstructor = getDecompilerConstructor(className);
                 Objects.requireNonNull(
-                        decompilerConstructor, "%s must have a no args constructor".formatted(className));
+                    decompilerConstructor, "%s must have a no args constructor".formatted(className));
 
                 decompiler = decompilerConstructor.newInstance();
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -687,14 +726,14 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
             try (var serviceFactory = new ScopedServiceFactory()) {
                 final SourceMappingsService mappingsService =
-                        serviceFactory.get(getParameters().getMappings());
+                    serviceFactory.get(getParameters().getMappings());
 
                 final var metadata = new DecompilationMetadata(
-                        decompilerOptions.maxThreads(),
-                        mappingsService.getMappingsFile(),
-                        getLibraries(),
-                        logger,
-                        decompilerOptions.options());
+                    decompilerOptions.maxThreads(),
+                    mappingsService.getMappingsFile(),
+                    getLibraries(),
+                    logger,
+                    decompilerOptions.options());
 
                 decompiler.decompile(inputJar, outputJar, linemap, metadata);
 
@@ -711,64 +750,9 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
         private Collection<Path> getLibraries() {
             return getParameters().getClassPath().getFiles().stream()
-                    .map(File::toPath)
-                    .collect(Collectors.toSet());
+                .map(File::toPath)
+                .collect(Collectors.toSet());
         }
-    }
-
-    public static File getJarFileWithSuffix(String suffix, Path runtimeJar) {
-        final String path = runtimeJar.toFile().getAbsolutePath();
-
-        if (!path.toLowerCase(Locale.ROOT).endsWith(".jar")) {
-            throw new RuntimeException("Invalid mapped JAR path: " + path);
-        }
-
-        return new File(path.substring(0, path.length() - 4) + suffix);
-    }
-
-    @Nullable
-    private static ClassLineNumbers readLineNumbers(Path linemapFile) throws IOException {
-        if (Files.notExists(linemapFile)) {
-            return null;
-        }
-
-        try (BufferedReader reader = Files.newBufferedReader(linemapFile, StandardCharsets.UTF_8)) {
-            return ClassLineNumbers.readMappings(reader);
-        }
-    }
-
-    private static Constructor<LoomDecompiler> getDecompilerConstructor(String clazz) {
-        try {
-            //noinspection unchecked
-            return (Constructor<LoomDecompiler>) Class.forName(clazz).getConstructor();
-        } catch (NoSuchMethodException e) {
-            return null;
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String fileHash(File file) {
-        try {
-            return Checksum.sha256Hex(Files.readAllBytes(file.toPath()));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    private static String fileCollectionHash(FileCollection files) {
-        var sj = new StringJoiner(",");
-
-        files.getFiles().stream()
-                .sorted(Comparator.comparing(File::getAbsolutePath))
-                .map(GenerateSourcesTask::fileHash)
-                .forEach(sj::add);
-
-        return sj.toString();
-    }
-
-    public interface MappingsProcessor {
-        boolean transform(MemoryMappingTree mappings);
     }
 
     private final class Timer implements AutoCloseable {

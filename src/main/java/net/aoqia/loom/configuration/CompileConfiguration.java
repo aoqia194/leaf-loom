@@ -24,8 +24,7 @@
 
 package net.aoqia.loom.configuration;
 
-import static net.aoqia.loom.util.Constants.Configurations;
-
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -61,6 +60,7 @@ import net.aoqia.loom.util.ExceptionUtil;
 import net.aoqia.loom.util.ProcessUtil;
 import net.aoqia.loom.util.gradle.GradleUtils;
 import net.aoqia.loom.util.gradle.SourceSetHelper;
+import net.aoqia.loom.util.gradle.daemon.DaemonUtils;
 import net.aoqia.loom.util.service.ScopedServiceFactory;
 import net.aoqia.loom.util.service.ServiceFactory;
 import org.gradle.api.GradleException;
@@ -75,7 +75,7 @@ import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.api.tasks.testing.Test;
 
-import net.aoqia.loom.util.gradle.daemon.DaemonUtils;
+import static net.aoqia.loom.util.Constants.Configurations;
 
 public abstract class CompileConfiguration implements Runnable {
     private static Duration getDefaultTimeout() {
@@ -148,8 +148,8 @@ public abstract class CompileConfiguration implements Runnable {
             }
 
             configureDecompileTasks(configContext);
-        configureTestTask();
-		});
+            configureTestTask();
+        });
 
         finalizedBy("eclipse", "genEclipseRuns");
 
@@ -293,24 +293,26 @@ public abstract class CompileConfiguration implements Runnable {
     }
 
     private void configureTestTask() {
-		final LoomGradleExtension extension = LoomGradleExtension.get(getProject());
+        final LoomGradleExtension extension = LoomGradleExtension.get(getProject());
 
-		if (extension.getMods().isEmpty()) {
-			return;
-		}
+        if (extension.getMods().isEmpty()) {
+            return;
+        }
 
-		getProject().getTasks().named(JavaPlugin.TEST_TASK_NAME, Test.class, test -> {
-			String classPathGroups = extension.getMods().stream()
-					.map(modSettings ->
-							SourceSetHelper.getClasspath(modSettings, getProject()).stream()
-									.map(File::getAbsolutePath)
-									.collect(Collectors.joining(File.pathSeparator))
-					)
-					.collect(Collectors.joining(File.pathSeparator+File.pathSeparator));;
+        getProject().getTasks().named(JavaPlugin.TEST_TASK_NAME, Test.class, test -> {
+            String classPathGroups = extension.getMods().stream()
+                .map(modSettings ->
+                    SourceSetHelper.getClasspath(modSettings, getProject()).stream()
+                        .map(File::getAbsolutePath)
+                        .collect(Collectors.joining(File.pathSeparator))
+                )
+                .collect(Collectors.joining(File.pathSeparator + File.pathSeparator));
 
-			test.systemProperty("fabric.classPathGroups", classPathGroups);
-		});
-	}private LockFile getLockFile() {
+            test.systemProperty("fabric.classPathGroups", classPathGroups);
+        });
+    }
+
+    private LockFile getLockFile() {
         final LoomGradleExtension extension = LoomGradleExtension.get(getProject());
         final Path cacheDirectory = extension.getFiles().getUserCache().toPath();
         final String pathHash = Checksum.projectHash(getProject());

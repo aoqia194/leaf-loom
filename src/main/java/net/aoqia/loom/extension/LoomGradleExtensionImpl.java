@@ -101,9 +101,9 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
             project.getLogger().lifecycle("Refresh dependencies is in use, loom will be significantly slower.");
         }
 
-		if (isolatedProjectsActive) {
-			project.getLogger().lifecycle("Isolated projects is enabled, Loom support is highly experimental, not all features will be enabled.");
-		}
+        if (isolatedProjectsActive) {
+            project.getLogger().lifecycle("Isolated projects is enabled, Loom support is highly experimental, not all features will be enabled.");
+        }
     }
 
     @Inject
@@ -276,10 +276,10 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
         return configurationCacheActive;
     }
 
-	@Override
-	public boolean isProjectIsolationActive() {
-		return isolatedProjectsActive;
-	}
+    @Override
+    public boolean isProjectIsolationActive() {
+        return isolatedProjectsActive;
+    }
 
     @Override
     public MixinExtension getMixin() {

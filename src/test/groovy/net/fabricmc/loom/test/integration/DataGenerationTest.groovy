@@ -32,19 +32,19 @@ import spock.lang.Unroll
 
 import net.aoqia.loom.test.util.GradleProjectTestTrait
 
-import static net.fabricmc.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
 import static net.aoqia.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static net.fabricmc.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class DataGenerationTest extends Specification implements GradleProjectTestTrait {
 	private static String DEPENDENCIES = """
-		dependencies {
-			minecraft "com.mojang:minecraft:1.20.2"
-			mappings "net.fabricmc:yarn:1.20.2+build.4:v2"
-			modImplementation "net.fabricmc:fabric-loader:0.14.23"
-			modImplementation "net.fabricmc.fabric-api:fabric-api:0.90.0+1.20.2"
-		}
-	"""
+        dependencies {
+            minecraft "com.mojang:minecraft:1.20.2"
+            mappings "net.fabricmc:yarn:1.20.2+build.4:v2"
+            modImplementation "net.fabricmc:fabric-loader:0.14.23"
+            modImplementation "net.fabricmc.fabric-api:fabric-api:0.90.0+1.20.2"
+        }
+    """
 
 	@Unroll
 	def "dataGeneration (gradle #version)"() {
@@ -106,8 +106,8 @@ class DataGenerationTest extends Specification implements GradleProjectTestTrait
 		gradle.buildGradle << '''
                 fabricApi {
                     configureDataGeneration {
-                    	client = true
-					}
+                        client = true
+                    }
                 }
             ''' + DEPENDENCIES
 		when:
@@ -151,20 +151,20 @@ class DataGenerationTest extends Specification implements GradleProjectTestTrait
 		setup:
 		def gradle = gradleProject(project: "minimalBase", version: PRE_RELEASE_GRADLE)
 		gradle.buildGradle << '''
-				loom {
-					splitEnvironmentSourceSets()
-					mods {
-						"example" {
-							sourceSet sourceSets.main
-							sourceSet sourceSets.client
-						}
-					}
+                loom {
+                    splitEnvironmentSourceSets()
+                    mods {
+                        "example" {
+                            sourceSet sourceSets.main
+                            sourceSet sourceSets.client
+                        }
+                    }
                 }
 
                 fabricApi {
                     configureDataGeneration {
-                    	client = true
-					}
+                        client = true
+                    }
                 }
             ''' + DEPENDENCIES
 		when:
@@ -180,13 +180,13 @@ class DataGenerationTest extends Specification implements GradleProjectTestTrait
 		def gradle = gradleProject(project: "minimalBase", version: PRE_RELEASE_GRADLE)
 		gradle.buildGradle << '''
                 loom {
-					splitEnvironmentSourceSets()
-					mods {
-						"example" {
-							sourceSet sourceSets.main
-							sourceSet sourceSets.client
-						}
-					}
+                    splitEnvironmentSourceSets()
+                    mods {
+                        "example" {
+                            sourceSet sourceSets.main
+                            sourceSet sourceSets.client
+                        }
+                    }
                 }
 
                 fabricApi {

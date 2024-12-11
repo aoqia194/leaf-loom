@@ -149,8 +149,8 @@ public class Constants {
          */
         public static final String RUNTIME_JAVA_COMPATIBILITY_VERSION = "leaf.loom.runtimeJavaCompatibilityVersion";
     public static final String DECOMPILE_CACHE_MAX_FILES = "leaf.loom.decompileCacheMaxFiles";
-		public static final String DECOMPILE_CACHE_MAX_AGE = "leaf.loom.decompileCacheMaxAge";
-	}
+        public static final String DECOMPILE_CACHE_MAX_AGE = "leaf.loom.decompileCacheMaxAge";
+    }
 
     public static final class Manifest {
         public static final String PATH = "META-INF/MANIFEST.MF";

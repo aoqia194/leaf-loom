@@ -65,10 +65,10 @@ public final class GradleUtils {
     public static Provider<Boolean> getBooleanPropertyProvider(Project project, String key) {
         LoomGradleExtension extension = LoomGradleExtension.get(project);
 
-		if (extension.isProjectIsolationActive()) {
-			// TODO write a custom property parser for isolated projects
-			return project.provider(() -> false);
-		}// Works around https://github.com/gradle/gradle/issues/23572
+        if (extension.isProjectIsolationActive()) {
+            // TODO write a custom property parser for isolated projects
+            return project.provider(() -> false);
+        }// Works around https://github.com/gradle/gradle/issues/23572
         return project.provider(() -> {
             final Object value = project.findProperty(key);
 
@@ -85,33 +85,33 @@ public final class GradleUtils {
     }
 
     public static Provider<Integer> getIntegerPropertyProvider(Project project, String key) {
-		return project.provider(() -> {
-			final Object value = project.findProperty(key);
+        return project.provider(() -> {
+            final Object value = project.findProperty(key);
 
-			if (value == null) {
-				return null;
-			}
+            if (value == null) {
+                return null;
+            }
 
-			try {
-				return Integer.parseInt(value.toString());
-			} catch (final NumberFormatException ex) {
-				throw new IllegalArgumentException("Property " + key + " must be an integer", ex);
-			}
-		});
-	}public static boolean getBooleanProperty(Project project, String key) {
+            try {
+                return Integer.parseInt(value.toString());
+            } catch (final NumberFormatException ex) {
+                throw new IllegalArgumentException("Property " + key + " must be an integer", ex);
+            }
+        });
+    }public static boolean getBooleanProperty(Project project, String key) {
         return getBooleanPropertyProvider(project, key).getOrElse(false);
     }
 
     public static Object getProperty(Project project, String key) {
-		LoomGradleExtension extension = LoomGradleExtension.get(project);
+        LoomGradleExtension extension = LoomGradleExtension.get(project);
 
-		if (extension.isProjectIsolationActive()) {
-			// TODO write a custom property parser for isolated projects
-			return null;
-		}
+        if (extension.isProjectIsolationActive()) {
+            // TODO write a custom property parser for isolated projects
+            return null;
+        }
 
-		return project.findProperty(key);
-	}// A hack to include the given file in the configuration cache input
+        return project.findProperty(key);
+    }// A hack to include the given file in the configuration cache input
     // this ensures that configuration cache is invalidated when the file changes
     public static File configurationInputFile(Project project, File file) {
         final RegularFileProperty property = project.getObjects().fileProperty();

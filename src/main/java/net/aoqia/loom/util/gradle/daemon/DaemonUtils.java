@@ -126,32 +126,32 @@ public final class DaemonUtils {
         return null;
     }
 
-	public abstract static class Context {
-		@Input
-		protected abstract Property<String> getRegistryBin();
+    public abstract static class Context {
+        @Input
+        protected abstract Property<String> getRegistryBin();
 
-		@Inject
-		protected abstract FileLockManager getFileLockManager();
+        @Inject
+        protected abstract FileLockManager getFileLockManager();
 
-		@Inject
-		protected abstract Chmod getChmod();
+        @Inject
+        protected abstract Chmod getChmod();
 
-		@SuppressWarnings("unused")
-		@Inject
-		public Context(Project project) {
-			getRegistryBin().set(Context.getRegistryBinPathName(project));
-		}
+        @SuppressWarnings("unused")
+        @Inject
+        public Context(Project project) {
+            getRegistryBin().set(Context.getRegistryBinPathName(project));
+        }
 
-		public static Context fromProject(Project project) {
-			return project.getObjects().newInstance(Context.class, project);
-		}
+        public static Context fromProject(Project project) {
+            return project.getObjects().newInstance(Context.class, project);
+        }
 
-		private static String getRegistryBinPathName(Project project) {
-			return project.getGradle().getGradleUserHomeDir().toPath()
-					.resolve("daemon")
-					.resolve(GradleVersion.current().getVersion())
-					.resolve("registry.bin")
-					.toAbsolutePath().toString();
-		}
-	}
+        private static String getRegistryBinPathName(Project project) {
+            return project.getGradle().getGradleUserHomeDir().toPath()
+                    .resolve("daemon")
+                    .resolve(GradleVersion.current().getVersion())
+                    .resolve("registry.bin")
+                    .toAbsolutePath().toString();
+        }
+    }
 }

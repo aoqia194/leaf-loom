@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import net.aoqia.loom.LoomGradleExtension;
 import net.aoqia.loom.configuration.ide.RunConfig;
 import net.aoqia.loom.util.Constants;
 import net.aoqia.loom.util.gradle.SyncTaskBuildService;
@@ -47,6 +48,7 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.services.ServiceReference;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
@@ -55,35 +57,13 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.ide.RunConfig;
-import net.aoqia.loom.util.Constants;
-
 public abstract class AbstractRunTask extends JavaExec {
     private static final CharsetEncoder ASCII_ENCODER = StandardCharsets.US_ASCII.newEncoder();
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRunTask.class);
 
-	@Input
-	protected abstract Property<String> getInternalRunDir();
-	@Input
-	protected abstract MapProperty<String, Object> getInternalEnvironmentVars();
-	@Input
-	protected abstract ListProperty<String> getInternalJvmArgs();
-	@Input
-	protected abstract Property<Boolean> getUseArgFile();
-	@Input
-	protected abstract Property<String> getProjectDir();
-	@Input
-	// We use a string here, as it's technically an output, but we don't want to cache runs of this task by default.
-	protected abstract Property<String> getArgFilePath();
-
-	// We control the classpath, as we use a ArgFile to pass it over the command line: https://docs.oracle.com/javase/7/docs/technotes/tools/windows/javac.html#commandlineargfile
-	@InputFiles
-	protected abstract ConfigurableFileCollection getInternalClasspath();
-
-	public AbstractRunTask(Function<Project, RunConfig> configProvider) {
-		super();
-		setGroup(Constants.TaskGroup.LEAF);
+    public AbstractRunTask(Function<Project, RunConfig> configProvider) {
+        super();
+        setGroup(Constants.TaskGroup.LEAF);
 
         final Provider<RunConfig> config = getProject().provider(() -> configProvider.apply(getProject()));
 
@@ -100,41 +80,15 @@ public abstract class AbstractRunTask extends JavaExec {
         getInternalJvmArgs().set(config.map(runConfig -> runConfig.vmArgs));
         getUseArgFile().set(getProject().provider(this::canUseArgFile));
         getProjectDir().set(getProject().getProjectDir().getAbsolutePath());
-    File buildCache = LoomGradleExtension.get(getProject()).getFiles().getProjectBuildCache();
-		File argFile = new File(buildCache, "argFiles/" + getName());
-		getArgFilePath().set(argFile.getAbsolutePath());
-	}
-
-    @Input
-    protected abstract Property<String> getInternalRunDir();
-
-    @Input
-    protected abstract MapProperty<String, Object> getInternalEnvironmentVars();
-
-    @Input
-    protected abstract Property<String> getProjectDir();
+        File buildCache = LoomGradleExtension.get(getProject()).getFiles().getProjectBuildCache();
+        File argFile = new File(buildCache, "argFiles/" + getName());
+        getArgFilePath().set(argFile.getAbsolutePath());
+    }
 
     // We control the classpath, as we use a ArgFile to pass it over the command line:
     // https://docs.oracle.com/javase/7/docs/technotes/tools/windows/javac.html#commandlineargfile
     @InputFiles
     protected abstract ConfigurableFileCollection getInternalClasspath();
-
-    private boolean canUseArgFile() {
-        if (!canPathBeASCIIEncoded()) {
-            // The gradle home or project dir contain chars that cannot be ascii encoded, thus are not supported by an
-            // arg file.
-            return false;
-        }
-
-        // @-files were added for java (not javac) in Java 9, see https://bugs.openjdk.org/browse/JDK-8027634
-        return getJavaVersion().isJava9Compatible();
-    }
-
-    private boolean canPathBeASCIIEncoded() {
-        return ASCII_ENCODER.canEncode(getProject().getProjectDir().getAbsolutePath())
-               && ASCII_ENCODER.canEncode(
-            getProject().getGradle().getGradleUserHomeDir().getAbsolutePath());
-    }
 
     private List<String> getGameJvmArgs() {
         final List<String> args = new ArrayList<>();
@@ -148,7 +102,7 @@ public abstract class AbstractRunTask extends JavaExec {
 
             try {
                 final Path argsFile = Paths.get(getArgFilePath().get());
-				Files.createDirectories(argsFile.getParent());
+                Files.createDirectories(argsFile.getParent());
                 Files.writeString(argsFile, content, StandardCharsets.UTF_8);
                 args.add("@" + argsFile.toAbsolutePath());
             } catch (IOException e) {
@@ -161,10 +115,34 @@ public abstract class AbstractRunTask extends JavaExec {
     }
 
     @Input
+    protected abstract Property<String> getInternalRunDir();
+
+    @Input
+    protected abstract MapProperty<String, Object> getInternalEnvironmentVars();
+
+    @Input
     protected abstract ListProperty<String> getInternalJvmArgs();
 
     @Input
     protected abstract Property<Boolean> getUseArgFile();
+
+    private boolean canUseArgFile() {
+        if (!canPathBeASCIIEncoded()) {
+            // The gradle home or project dir contain chars that cannot be ascii encoded, thus are not supported by an
+            // arg file.
+            return false;
+        }
+
+        // @-files were added for java (not javac) in Java 9, see https://bugs.openjdk.org/browse/JDK-8027634
+        return getJavaVersion().isJava9Compatible();
+    }
+
+    @Input
+    protected abstract Property<String> getProjectDir();
+
+    @Input
+    // We use a string here, as it's technically an output, but we don't want to cache runs of this task by default.
+    protected abstract Property<String> getArgFilePath();
 
     // Based off
     // https://github.com/JetBrains/intellij-community/blob/295dd68385a458bdfde638152e36d19bed18b666/platform/util/src/com/intellij/execution/CommandLineWrapperUtil.java#L87
@@ -194,6 +172,12 @@ public abstract class AbstractRunTask extends JavaExec {
         }
 
         return sb.toString();
+    }
+
+    private boolean canPathBeASCIIEncoded() {
+        return ASCII_ENCODER.canEncode(getProject().getProjectDir().getAbsolutePath())
+               && ASCII_ENCODER.canEncode(
+            getProject().getGradle().getGradleUserHomeDir().getAbsolutePath());
     }
 
     // https://github.com/JetBrains/intellij-community/blob/295dd68385a458bdfde638152e36d19bed18b666/platform/util/base/src/com/intellij/openapi/util/text/Strings.java#L100-L118

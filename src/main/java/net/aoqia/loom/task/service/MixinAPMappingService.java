@@ -104,8 +104,8 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
             }
         };
 
-		if (thisExtension.isProjectIsolationActive()) {
-			// TODO provide a project isolated way of remapping with dependency mixin mapping
+        if (thisExtension.isProjectIsolationActive()) {
+            // TODO provide a project isolated way of remapping with dependency mixin mapping
             processProject.accept(thisProject);
         } else {
             GradleUtils.allLoomProjects(thisProject.getGradle(), project -> {

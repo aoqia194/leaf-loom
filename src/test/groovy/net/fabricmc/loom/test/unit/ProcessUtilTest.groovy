@@ -24,6 +24,7 @@
 
 package net.aoqia.loom.test.unit
 
+import org.gradle.api.logging.LogLevel
 import spock.lang.Specification
 
 import org.gradle.api.logging.LogLevel

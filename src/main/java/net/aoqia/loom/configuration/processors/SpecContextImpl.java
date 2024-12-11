@@ -88,8 +88,8 @@ public record SpecContextImpl(
             }
         }
 
-		// TODO provide a project isolated way of doing this.
-		if (!extension.isProjectIsolationActive() && !GradleUtils.getBooleanProperty(project, Constants.Properties.DISABLE_PROJECT_DEPENDENT_MODS)) {
+        // TODO provide a project isolated way of doing this.
+        if (!extension.isProjectIsolationActive() && !GradleUtils.getBooleanProperty(project, Constants.Properties.DISABLE_PROJECT_DEPENDENT_MODS)) {
             // Add all the dependent projects
             for (Project dependentProject : getDependentProjects(project).toList()) {
                 mods.addAll(fmjCache.computeIfAbsent(dependentProject.getPath(), $ -> {
