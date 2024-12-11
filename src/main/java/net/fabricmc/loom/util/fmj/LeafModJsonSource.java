@@ -31,6 +31,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import net.aoqia.loom.util.ZipUtils;
 import net.aoqia.loom.util.gradle.SourceSetHelper;
+
+import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 
 /**
@@ -54,14 +56,14 @@ public interface LeafModJsonSource {
         }
     }
 
-    record SourceSetSource(SourceSet... sourceSets) implements LeafModJsonSource {
+    record SourceSetSource(Project project, SourceSet... sourceSets) implements LeafModJsonSource {
         @Override
         public byte[] read(String path) throws IOException {
             return Files.readAllBytes(findFile(path).toPath());
         }
 
         private File findFile(String path) throws IOException {
-            final File file = SourceSetHelper.findFirstFileInResource(path, sourceSets);
+			final File file = SourceSetHelper.findFirstFileInResource(path, project, sourceSets);
 
             if (file == null) {
                 throw new FileNotFoundException("Could not find: " + path);

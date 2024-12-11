@@ -47,7 +47,7 @@ public class LeafModJsonHelpers {
 
         try {
             final LeafModJson leafModJson =
-                    LeafModJsonFactory.createFromSourceSetsNullable(sourceSets.toArray(SourceSet[]::new));
+                    LeafModJsonFactory.createFromSourceSetsNullable(project, sourceSets.toArray(SourceSet[]::new));
 
             if (leafModJson != null) {
                 return List.of(leafModJson);

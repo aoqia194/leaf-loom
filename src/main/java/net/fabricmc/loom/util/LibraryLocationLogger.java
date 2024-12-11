@@ -27,7 +27,7 @@ package net.aoqia.loom.util;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import java.util.List;
-import kotlinx.metadata.jvm.KotlinClassMetadata;
+import kotlin.metadata.jvm.KotlinClassMetadata;
 import org.apache.commons.io.FileUtils;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.commons.ClassRemapper;

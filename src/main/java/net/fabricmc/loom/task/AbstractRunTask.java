@@ -31,6 +31,7 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -46,7 +47,6 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.services.ServiceReference;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
@@ -55,13 +55,35 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.aoqia.loom.LoomGradleExtension;
+import net.aoqia.loom.configuration.ide.RunConfig;
+import net.aoqia.loom.util.Constants;
+
 public abstract class AbstractRunTask extends JavaExec {
     private static final CharsetEncoder ASCII_ENCODER = StandardCharsets.US_ASCII.newEncoder();
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRunTask.class);
 
-    public AbstractRunTask(Function<Project, RunConfig> configProvider) {
-        super();
-        setGroup(Constants.TaskGroup.LEAF);
+	@Input
+	protected abstract Property<String> getInternalRunDir();
+	@Input
+	protected abstract MapProperty<String, Object> getInternalEnvironmentVars();
+	@Input
+	protected abstract ListProperty<String> getInternalJvmArgs();
+	@Input
+	protected abstract Property<Boolean> getUseArgFile();
+	@Input
+	protected abstract Property<String> getProjectDir();
+	@Input
+	// We use a string here, as it's technically an output, but we don't want to cache runs of this task by default.
+	protected abstract Property<String> getArgFilePath();
+
+	// We control the classpath, as we use a ArgFile to pass it over the command line: https://docs.oracle.com/javase/7/docs/technotes/tools/windows/javac.html#commandlineargfile
+	@InputFiles
+	protected abstract ConfigurableFileCollection getInternalClasspath();
+
+	public AbstractRunTask(Function<Project, RunConfig> configProvider) {
+		super();
+		setGroup(Constants.TaskGroup.LEAF);
 
         final Provider<RunConfig> config = getProject().provider(() -> configProvider.apply(getProject()));
 
@@ -78,7 +100,10 @@ public abstract class AbstractRunTask extends JavaExec {
         getInternalJvmArgs().set(config.map(runConfig -> runConfig.vmArgs));
         getUseArgFile().set(getProject().provider(this::canUseArgFile));
         getProjectDir().set(getProject().getProjectDir().getAbsolutePath());
-    }
+    File buildCache = LoomGradleExtension.get(getProject()).getFiles().getProjectBuildCache();
+		File argFile = new File(buildCache, "argFiles/" + getName());
+		getArgFilePath().set(argFile.getAbsolutePath());
+	}
 
     @Input
     protected abstract Property<String> getInternalRunDir();
@@ -122,7 +147,8 @@ public abstract class AbstractRunTask extends JavaExec {
                                        .collect(Collectors.joining(File.pathSeparator));
 
             try {
-                final Path argsFile = Files.createTempFile("loom-classpath", ".args");
+                final Path argsFile = Paths.get(getArgFilePath().get());
+				Files.createDirectories(argsFile.getParent());
                 Files.writeString(argsFile, content, StandardCharsets.UTF_8);
                 args.add("@" + argsFile.toAbsolutePath());
             } catch (IOException e) {

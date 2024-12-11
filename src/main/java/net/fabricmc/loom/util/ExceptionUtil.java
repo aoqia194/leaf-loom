@@ -31,10 +31,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import net.aoqia.loom.util.gradle.daemon.DaemonUtils;
-import net.fabricmc.loom.nativeplatform.LoomNativePlatform;
-import net.fabricmc.loom.nativeplatform.LoomNativePlatformException;
-import org.gradle.api.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +57,7 @@ public final class ExceptionUtil {
         return constructor.apply(descriptiveMessage, cause);
     }
 
-    public static void processException(Throwable e, Project project) {
+    public static void processException(Throwable e, DaemonUtils.Context context) {
         Throwable cause = e;
         boolean unrecoverable = false;
 
@@ -69,7 +65,7 @@ public final class ExceptionUtil {
             if (cause instanceof FileSystemUtil.UnrecoverableZipException) {
                 unrecoverable = true;
             } else if (cause instanceof FileSystemException fse) {
-                printFileLocks(fse.getFile(), project);
+                printFileLocks(fse.getFile());
                 break;
             }
 
@@ -77,11 +73,11 @@ public final class ExceptionUtil {
         }
 
         if (unrecoverable) {
-            DaemonUtils.tryStopGradleDaemon(project);
+            DaemonUtils.tryStopGradleDaemon(context);
         }
     }
 
-    private static void printFileLocks(String filename, Project project) {
+    private static void printFileLocks(String filename) {
         final Path path = Paths.get(filename);
 
         if (!Files.exists(path)) {
@@ -101,13 +97,13 @@ public final class ExceptionUtil {
             return;
         }
 
-        final ProcessUtil processUtil = ProcessUtil.create(project);
+        final ProcessUtil processUtil = ProcessUtil.create(LOGGER.isInfoEnabled() ? ProcessUtil.ArgumentVisibility.SHOW_SENSITIVE : ProcessUtil.ArgumentVisibility.HIDE);
 
         final String noun = processes.size() == 1 ? "process has" : "processes have";
-        project.getLogger().error("The following {} a lock on the file '{}':", noun, path);
+        LOGGER.error("The following {} a lock on the file '{}':", noun, path);
 
         for (ProcessHandle process : processes) {
-            project.getLogger().error(processUtil.printWithParents(process));
+            LOGGER.error(processUtil.printWithParents(process));
         }
     }
 }

@@ -171,7 +171,13 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     @Internal
     protected abstract RegularFileProperty getDecompileCacheFile();
 
-    // Injects
+    @ApiStatus.Internal
+	@Input
+	protected abstract Property<Integer> getMaxCachedFiles();
+
+	@ApiStatus.Internal
+	@Input
+	protected abstract Property<Integer> getMaxCacheFileAge();// Injects
     @Inject
     protected abstract WorkerExecutor getWorkerExecutor();
 
@@ -184,7 +190,8 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     @Inject
     protected abstract ProgressLoggerFactory getProgressLoggerFactory();
 
-    // Prevent Gradle from running two gen sources tasks in parallel
+    @Nested
+	protected abstract Property<DaemonUtils.Context> getDaemonUtilsContext();// Prevent Gradle from running two gen sources tasks in parallel
     @ServiceReference(SyncTaskBuildService.NAME)
     abstract Property<SyncTaskBuildService> getSyncTask();
 
@@ -241,7 +248,10 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
         getMappings().set(SourceMappingsService.create(getProject()));
 
-        mustRunAfter(getProject().getTasks().withType(AbstractRemapJarTask.class));
+        getMaxCachedFiles().set(GradleUtils.getIntegerPropertyProvider(getProject(), Constants.Properties.DECOMPILE_CACHE_MAX_FILES).orElse(50_000));
+		getMaxCacheFileAge().set(GradleUtils.getIntegerPropertyProvider(getProject(), Constants.Properties.DECOMPILE_CACHE_MAX_AGE).orElse(90));
+
+		getDaemonUtilsContext().set(getProject().getObjects().newInstance(DaemonUtils.Context.class, getProject()));mustRunAfter(getProject().getTasks().withType(AbstractRemapJarTask.class));
     }
 
     @TaskAction
@@ -259,7 +269,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
             try (var timer = new Timer("Decompiled sources")) {
                 runWithoutCache();
             } catch (Exception e) {
-                ExceptionUtil.processException(e, getProject());
+                ExceptionUtil.processException(e, getDaemonUtilsContext().get());
                 throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to decompile", e);
             }
 
@@ -277,14 +287,21 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
             }
 
             // TODO ensure we have a lock on this file to prevent multiple tasks from running at the same time
-            // TODO handle being unable to read the cache file
+
             Files.createDirectories(cacheFile.getParent());
 
-            try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(cacheFile, true)) {
+            if (Files.exists(cacheFile)) {
+				try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(cacheFile, true)) {
+					// Success, cache exists and can be read
+				} catch (IOException e) {
+					getLogger().warn("Discarding invalid decompile cache file: {}", cacheFile, e);
+					Files.delete(cacheFile);
+				}
+			}try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(cacheFile, true)) {
                 runWithCache(fs.getRoot());
             }
         } catch (Exception e) {
-            ExceptionUtil.processException(e, getProject());
+            ExceptionUtil.processException(e, getDaemonUtilsContext().get());
             throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to decompile", e);
         }
     }
@@ -293,13 +310,14 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         final Path classesInputJar = getClassesInputJar().getSingleFile().toPath();
         final Path sourcesOutputJar = getSourcesOutputJar().get().getAsFile().toPath();
         final Path classesOutputJar = getClassesOutputJar().getSingleFile().toPath();
-        final var cacheRules = new CachedFileStoreImpl.CacheRules(50_000, Duration.ofDays(90));
+        final var cacheRules = new CachedFileStoreImpl.CacheRules(getMaxCachedFiles().get(), Duration.ofDays(getMaxCacheFileAge().get()));
         final var decompileCache = new CachedFileStoreImpl<>(cacheRoot, CachedData.SERIALIZER, cacheRules);
         final String cacheKey = getCacheKey();
         final CachedJarProcessor cachedJarProcessor = new CachedJarProcessor(decompileCache, cacheKey);
         final CachedJarProcessor.WorkRequest workRequest;
 
         getLogger().info("Decompile cache key: {}", cacheKey);
+		getLogger().debug("Decompile cache rules: {}", cacheRules);
 
         try (var timer = new Timer("Prepare job")) {
             workRequest = cachedJarProcessor.prepareJob(classesInputJar);

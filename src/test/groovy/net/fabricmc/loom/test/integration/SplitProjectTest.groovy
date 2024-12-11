@@ -32,6 +32,7 @@ import spock.lang.Unroll
 
 import net.aoqia.loom.test.util.GradleProjectTestTrait
 
+import static net.aoqia.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
 import static net.aoqia.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -50,5 +51,17 @@ class SplitProjectTest extends Specification implements GradleProjectTestTrait {
 
 		where:
 		version << STANDARD_TEST_VERSIONS
+	}
+
+	@Unroll
+	def "genSources (gradle #version)"() {
+		setup:
+		def gradle = gradleProject(project: "splitSources", version: PRE_RELEASE_GRADLE)
+
+		when:
+		def result = gradle.run(tasks: ["genSources"])
+
+		then:
+		result.task(":genSources").outcome == SUCCESS
 	}
 }

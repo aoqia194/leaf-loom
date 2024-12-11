@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.*;
 import net.aoqia.loom.api.decompilers.DecompilerOptions;
 import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
 import net.aoqia.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
@@ -320,7 +319,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
     public String getModVersion() {
         try {
             final LeafModJson leafModJson =
-                LeafModJsonFactory.createFromSourceSetsNullable(SourceSetHelper.getMainSourceSet(getProject()));
+                LeafModJsonFactory.createFromSourceSetsNullable(getProject(), SourceSetHelper.getMainSourceSet(getProject()));
 
             if (leafModJson == null) {
                 throw new RuntimeException("Could not find a leaf.mod.json file in the main sourceset");

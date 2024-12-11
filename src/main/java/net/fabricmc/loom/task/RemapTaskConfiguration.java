@@ -132,9 +132,9 @@ public abstract class RemapTaskConfiguration implements Runnable {
                                             .get()
                                             .getAsFile()
                                             .getAbsolutePath())
-                            && artifact.getBuildDependencies()
+                            && (extension.isProjectIsolationActive() || artifact.getBuildDependencies()
                                     .getDependencies(null)
-                                    .contains(jarTask);
+                                    .contains(jarTask));
                 });
             }
         });

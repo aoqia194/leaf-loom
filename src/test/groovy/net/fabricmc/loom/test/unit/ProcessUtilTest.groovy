@@ -24,7 +24,6 @@
 
 package net.aoqia.loom.test.unit
 
-import org.gradle.api.logging.LogLevel
 import spock.lang.Specification
 
 import org.gradle.api.logging.LogLevel
@@ -35,7 +34,7 @@ import net.aoqia.loom.util.ProcessUtil
 class ProcessUtilTest extends Specification {
 	def "print process info"() {
 		when:
-		def output = new ProcessUtil(LogLevel.DEBUG).printWithParents(ProcessHandle.current())
+		def output = new ProcessUtil(ProcessUtil.ArgumentVisibility.SHOW_SENSITIVE).printWithParents(ProcessHandle.current())
 
 		then:
 		// Just a simple check to see if the output is not empty

@@ -44,9 +44,8 @@ import net.aoqia.loom.util.kotlin.KotlinRemapperClassloader
 
 class KotlinRemapperClassloaderTest extends Specification {
 	private static String KOTLIN_VERSION = KotlinVersion.CURRENT.toString()
-	private static String KOTLIN_METADATA_VERSION = KotlinPluginUtils.kotlinMetadataVersion
 	private static String KOTLIN_URL = "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/${KOTLIN_VERSION}/kotlin-stdlib-${KOTLIN_VERSION}.jar"
-	private static String KOTLIN_METADATA_URL = "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-metadata-jvm/${KOTLIN_METADATA_VERSION}/kotlinx-metadata-jvm-${KOTLIN_METADATA_VERSION}.jar"
+	private static String KOTLIN_METADATA_URL = "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-metadata-jvm/${KOTLIN_VERSION}/kotlin-metadata-jvm-${KOTLIN_VERSION}.jar"
 
 	def "Test Kotlin Remapper Classloader"() {
 		given:

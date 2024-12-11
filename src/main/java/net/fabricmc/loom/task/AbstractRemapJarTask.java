@@ -124,7 +124,10 @@ public abstract class AbstractRemapJarTask extends Jar {
         usesService(jarManifestServiceProvider);
     }
 
-    public final <P extends AbstractRemapParams> void submitWork(
+    @Override
+	protected void copy() {
+		// Skip the default copy behaviour of AbstractCopyTask.
+	}public final <P extends AbstractRemapParams> void submitWork(
             Class<? extends AbstractRemapAction<P>> workAction, Action<P> action) {
         final WorkQueue workQueue = getWorkerExecutor().noIsolation();
 

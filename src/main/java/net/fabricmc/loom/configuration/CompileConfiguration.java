@@ -24,7 +24,9 @@
 
 package net.aoqia.loom.configuration;
 
-import javax.inject.Inject;
+import static net.aoqia.loom.util.Constants.Configurations;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
@@ -33,6 +35,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import net.aoqia.loom.LoomGradleExtension;
 import net.aoqia.loom.api.InterfaceInjectionExtensionAPI;
@@ -70,8 +73,9 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
+import org.gradle.api.tasks.testing.Test;
 
-import static net.aoqia.loom.util.Constants.Configurations;
+import net.aoqia.loom.util.gradle.daemon.DaemonUtils;
 
 public abstract class CompileConfiguration implements Runnable {
     private static Duration getDefaultTimeout() {
@@ -124,7 +128,7 @@ public abstract class CompileConfiguration implements Runnable {
                     dependencyManager.handleDependencies(getProject(), serviceFactory);
                 }
             } catch (Exception e) {
-                ExceptionUtil.processException(e, getProject());
+                ExceptionUtil.processException(e, DaemonUtils.Context.fromProject(getProject()));
                 disownLock();
                 throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to setup Zomboid", e);
             }
@@ -144,7 +148,8 @@ public abstract class CompileConfiguration implements Runnable {
             }
 
             configureDecompileTasks(configContext);
-        });
+        configureTestTask();
+		});
 
         finalizedBy("eclipse", "genEclipseRuns");
 
@@ -287,7 +292,25 @@ public abstract class CompileConfiguration implements Runnable {
             .afterEvaluation();
     }
 
-    private LockFile getLockFile() {
+    private void configureTestTask() {
+		final LoomGradleExtension extension = LoomGradleExtension.get(getProject());
+
+		if (extension.getMods().isEmpty()) {
+			return;
+		}
+
+		getProject().getTasks().named(JavaPlugin.TEST_TASK_NAME, Test.class, test -> {
+			String classPathGroups = extension.getMods().stream()
+					.map(modSettings ->
+							SourceSetHelper.getClasspath(modSettings, getProject()).stream()
+									.map(File::getAbsolutePath)
+									.collect(Collectors.joining(File.pathSeparator))
+					)
+					.collect(Collectors.joining(File.pathSeparator+File.pathSeparator));;
+
+			test.systemProperty("fabric.classPathGroups", classPathGroups);
+		});
+	}private LockFile getLockFile() {
         final LoomGradleExtension extension = LoomGradleExtension.get(getProject());
         final Path cacheDirectory = extension.getFiles().getUserCache().toPath();
         final String pathHash = Checksum.projectHash(getProject());

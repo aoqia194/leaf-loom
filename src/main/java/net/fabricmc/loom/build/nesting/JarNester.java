@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.aoqia.loom.util.Pair;
@@ -50,10 +51,11 @@ public class JarNester {
         Preconditions.checkArgument(
                 LeafModJsonFactory.isModJar(modJar), "Cannot nest jars into none mod jar " + modJar.getName());
 
-        try {
+        // Ensure deterministic ordering of entries in fabric.mod.json
+		Collection<File> sortedJars = jars.stream().sorted(Comparator.comparing(File::getName)).toList();try {
             ZipUtils.add(
                     modJar.toPath(),
-                    jars.stream()
+                    sortedJars.stream()
                             .map(file -> {
                                 try {
                                     return new Pair<>(
@@ -72,7 +74,7 @@ public class JarNester {
                             nestedJars = new JsonArray();
                         }
 
-                        for (File file : jars) {
+                        for (File file : sortedJars) {
                             String nestedJarPath = "META-INF/jars/" + file.getName();
                             Preconditions.checkArgument(
                                     LeafModJsonFactory.isModJar(file), "Cannot nest none mod jar: " + file.getName());

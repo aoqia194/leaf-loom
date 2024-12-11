@@ -42,16 +42,17 @@ import net.aoqia.loom.util.service.ScopedServiceFactory;
 import net.aoqia.loom.util.service.Service;
 import net.aoqia.loom.util.service.ServiceFactory;
 import net.aoqia.loom.util.service.ServiceType;
-import net.fabricmc.mappingio.MappingReader;
-import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.InputFiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.fabricmc.mappingio.MappingReader;
+import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
+import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public class SourceMappingsService extends Service<SourceMappingsService.Options> {
     public static final ServiceType<Options, SourceMappingsService> TYPE = new ServiceType<>(
@@ -127,6 +128,10 @@ public class SourceMappingsService extends Service<SourceMappingsService.Options
             var tiny2Writer = new Tiny2FileWriter(writer, false);
             mappingTree.accept(new MappingSourceNsSwitch(tiny2Writer, MappingsNamespace.NAMED.toString()));
         }
+	}
+
+	public SourceMappingsService(Options options, ServiceFactory serviceFactory) {
+		super(options, serviceFactory);
     }
 
     public Path getMappingsFile() {
