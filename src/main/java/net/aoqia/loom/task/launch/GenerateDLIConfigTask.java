@@ -65,7 +65,6 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
             getCommonGameJarPath().set(getGameJarPath("common"));
         }
 
-        getClientInstallPath().set(new File(getExtension().getFiles().getUserCache(), "assets").getAbsolutePath());
         getNativesDirectoryPath()
             .set(getExtension().getFiles().getNativesDirectory(getProject()).getAbsolutePath());
         getDevLauncherConfig().set(getExtension().getFiles().getDevLauncherConfig());
@@ -81,51 +80,23 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
     protected abstract Property<Boolean> getSplitSourceSets();
 
     @Input
-    protected abstract Property<Boolean> getPlainConsole();
+    protected abstract Property<Boolean> getANSISupportedIDE();
+
+    private static boolean ansiSupportedIde(Project project) {
+        File rootDir = project.getRootDir();
+        return new File(rootDir, ".vscode").exists()
+               || new File(rootDir, ".idea").exists()
+               || new File(rootDir, ".project").exists()
+               || (Arrays.stream(rootDir.listFiles())
+            .anyMatch(file -> file.getName().endsWith(".iws")));
+    }
 
     @Input
-    protected abstract Property<Boolean> getANSISupportedIDE();
+    protected abstract Property<Boolean> getPlainConsole();
 
     @Input
     @Optional
     protected abstract Property<String> getClassPathGroups();
-
-    @Input
-    protected abstract Property<String> getLog4jConfigPaths();
-
-    @Input
-    @Optional
-    protected abstract Property<String> getClientGameJarPath();
-
-    @Input
-    @Optional
-    protected abstract Property<String> getCommonGameJarPath();
-
-    @Input
-    protected abstract Property<String> getClientInstallPath();
-
-    @Input
-    protected abstract Property<String> getNativesDirectoryPath();
-
-    @OutputFile
-    protected abstract RegularFileProperty getDevLauncherConfig();
-
-    private static String getAllLog4JConfigFiles(Project project) {
-        return LoomGradleExtension.get(project).getLog4jConfigs().getFiles().stream()
-            .map(File::getAbsolutePath)
-            .collect(Collectors.joining(","));
-    }
-
-    private String getGameJarPath(String env) {
-        MappedZomboidProvider.Split split =
-            (MappedZomboidProvider.Split) getExtension().getNamedZomboidProvider();
-
-        return switch (env) {
-            case "client" -> split.getClientOnlyJar().getPath().toAbsolutePath().toString();
-            case "common" -> split.getCommonJar().getPath().toAbsolutePath().toString();
-            default -> throw new UnsupportedOperationException();
-        };
-    }
 
     /**
      * See: https://github.com/FabricMC/fabric-loader/pull/585.
@@ -138,17 +109,39 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
             .collect(Collectors.joining(File.pathSeparator + File.pathSeparator));
     }
 
-    private static boolean ansiSupportedIde(Project project) {
-        File rootDir = project.getRootDir();
-        return new File(rootDir, ".vscode").exists()
-               || new File(rootDir, ".idea").exists()
-               || new File(rootDir, ".project").exists()
-               || (Arrays.stream(rootDir.listFiles())
-            .anyMatch(file -> file.getName().endsWith(".iws")));
+    @Input
+    protected abstract Property<String> getLog4jConfigPaths();
+
+    private static String getAllLog4JConfigFiles(Project project) {
+        return LoomGradleExtension.get(project).getLog4jConfigs().getFiles().stream()
+            .map(File::getAbsolutePath)
+            .collect(Collectors.joining(","));
     }
 
     @Input
-    protected abstract Property<String> getServerInstallPath();
+    @Optional
+    protected abstract Property<String> getClientGameJarPath();
+
+    private String getGameJarPath(String env) {
+        MappedZomboidProvider.Split split =
+            (MappedZomboidProvider.Split) getExtension().getNamedZomboidProvider();
+
+        return switch (env) {
+            case "client" -> split.getClientOnlyJar().getPath().toAbsolutePath().toString();
+            case "common" -> split.getCommonJar().getPath().toAbsolutePath().toString();
+            default -> throw new UnsupportedOperationException();
+        };
+    }
+
+    @Input
+    @Optional
+    protected abstract Property<String> getCommonGameJarPath();
+
+    @Input
+    protected abstract Property<String> getNativesDirectoryPath();
+
+    @OutputFile
+    protected abstract RegularFileProperty getDevLauncherConfig();
 
     @TaskAction
     public void run() throws IOException {
