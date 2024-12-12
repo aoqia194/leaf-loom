@@ -62,7 +62,6 @@ public class MappingConfiguration {
     public final Path tinyMappingsJar;
     private final Path mappingsWorkingDir;
     // The mappings that gradle gives us
-    private final Path baseTinyMappings;
     private final Path unpickDefinitions;
 
     private boolean hasUnpickDefinitions;
@@ -73,7 +72,6 @@ public class MappingConfiguration {
         this.mappingsIdentifier = mappingsIdentifier;
 
         this.mappingsWorkingDir = mappingsWorkingDir;
-        this.baseTinyMappings = mappingsWorkingDir.resolve("mappings-base.tiny");
         this.tinyMappings = mappingsWorkingDir.resolve("mappings.tiny");
         this.tinyMappingsJar = mappingsWorkingDir.resolve("mappings.jar");
         this.unpickDefinitions = mappingsWorkingDir.resolve("mappings.unpick");
@@ -210,6 +208,10 @@ public class MappingConfiguration {
         project.getDependencies().add(Constants.Configurations.MAPPINGS_FINAL, project.files(tinyMappingsJar.toFile()));
     }
 
+    public boolean hasUnpickDefinitions() {
+        return hasUnpickDefinitions;
+    }
+
     private void populateUnpickClasspath(Project project) {
         String unpickCliName = "unpick-cli";
         project.getDependencies()
@@ -231,23 +233,34 @@ public class MappingConfiguration {
         }
     }
 
-    public boolean hasUnpickDefinitions() {
-        return hasUnpickDefinitions;
-    }
-
     private void storeMappings(
         Project project, ServiceFactory serviceFactory, ZomboidProvider zomboidProvider, Path inputJar)
         throws IOException {
         LOGGER.info(":extracting " + inputJar.getFileName());
 
         try (FileSystemUtil.Delegate delegate = FileSystemUtil.getJarFileSystem(inputJar)) {
-            extractMappings(delegate.fs(), baseTinyMappings);
+            extractMappings(delegate.fs(), tinyMappings);
             extractExtras(delegate.fs());
         }
 
-        if (!areMappingsV2(baseTinyMappings)) {
-            throw new IOException("Mappings are using an unsupported version.");
+        // Don't really need to support V1 for the time being (or foreseeable future).
+        if (!areMappingsV2(tinyMappings)) {
+            throw new UnsupportedOperationException("Mappings are using V1 which is unsupported currently.");
         }
+
+        // V1 mappings
+        //        if (!areMappingsV2(tinyMappings)) {
+        //            final List<Path> zomboidJars = zomboidProvider.getZomboidJars();
+        //
+        //            if (zomboidJars.size() != 1) {
+        //                throw new UnsupportedOperationException("V1 mappings only support single jar providers");
+        //            }
+        //
+        //            // These are merged v1 mappings
+        //            Files.deleteIfExists(tinyMappings);
+        //            LOGGER.info(":populating field names");
+        //            suggestFieldNames(zomboidJars.get(0), baseTinyMappings, tinyMappings);
+        //        }
     }
 
     private void extractExtras(FileSystem jar) throws IOException {
