@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2022 FabricMC
+ * Copyright (c) 2022 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.test.unit
 
 import java.nio.file.Path
@@ -223,19 +222,19 @@ class ArtifactMetadataTest extends Specification {
 		where:
 		knownBSMs | entries
 		[]                    | ["leaf.mod.json": "{}"] // Default
-		["com/example/Class"] | ["META-INF/MANIFEST.MF": manifest("Fabric-Loom-Known-Indy-BSMS", "com/example/Class")] // single bsm
+		["com/example/Class"] | ["META-INF/MANIFEST.MF": manifest("Leaf-Loom-Known-Indy-BSMS", "com/example/Class")] // single bsm
 		[
 			"com/example/Class",
 			"com/example/Another"
-		] | ["META-INF/MANIFEST.MF": manifest("Fabric-Loom-Known-Indy-BSMS", "com/example/Class,com/example/Another")] // two bsms
+		] | ["META-INF/MANIFEST.MF": manifest("Leaf-Loom-Known-Indy-BSMS", "com/example/Class,com/example/Another")] // two bsms
 	}
 
 	private static Path createModWithRemapType(String loomVersion, String remapType) {
-		return createZip(["leaf.mod.json": "{}", "META-INF/MANIFEST.MF": manifest(["Fabric-Loom-Version": loomVersion, "Leaf-Loom-Mixin-Remap-Type": remapType])])
+		return createZip(["leaf.mod.json": "{}", "META-INF/MANIFEST.MF": manifest(["Leaf-Loom-Version": loomVersion, "Leaf-Loom-Mixin-Remap-Type": remapType])])
 	}
 
 	private static Path createModWithRemap(String loomVersion, boolean remap) {
-		return createZip(["leaf.mod.json": "{}", "META-INF/MANIFEST.MF": manifest(["Fabric-Loom-Version": loomVersion, "Fabric-Loom-Mixin-Remap": remap ? "true" : "false"])])
+		return createZip(["leaf.mod.json": "{}", "META-INF/MANIFEST.MF": manifest(["Leaf-Loom-Version": loomVersion, "Leaf-Loom-Mixin-Remap": remap ? "true" : "false"])])
 	}
 
 	private static ArtifactMetadata createMetadata(Path zip, String loomVersion = "1.4") {

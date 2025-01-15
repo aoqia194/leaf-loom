@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2020-2023 FabricMC
+ * Copyright (c) 2020-2023 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.configuration;
 
 import javax.inject.Inject;
@@ -38,8 +37,6 @@ import net.aoqia.loom.util.download.DownloadException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.SourceSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -181,47 +178,6 @@ public abstract class LeafApiExtension {
 
     @Inject
     public abstract Project getProject();
-
-    public interface DataGenerationSettings {
-        /**
-         * Contains the output directory where generated data files will be stored.
-         */
-        RegularFileProperty getOutputDirectory();
-
-        /**
-         * Contains a boolean indicating whether a run configuration should be created for the data generation process.
-         */
-        Property<Boolean> getCreateRunConfiguration();
-
-        /**
-         * Contains a boolean property indicating whether a new source set should be created for the data generation
-         * process.
-         */
-        Property<Boolean> getCreateSourceSet();
-
-        /**
-         * Contains a string property representing the mod ID associated with the data generation process.
-         *
-         * <p>This must be set when {@link #getCreateRunConfiguration()} is set.
-         */
-        Property<String> getModId();
-
-        /**
-         * Contains a boolean property indicating whether strict validation is enabled.
-         */
-        Property<Boolean> getStrictValidation();
-
-        /**
-         * Contains a boolean property indicating whether the generated resources will be automatically added to the
-         * main sourceset.
-         */
-        Property<Boolean> getAddToResources();
-
-        /**
-         * Contains a boolean property indicating whether data generation will be compiled and ran with the client.
-         */
-        Property<Boolean> getClient();
-    }
 
     private static class PomNotFoundException extends Exception {
         PomNotFoundException(Throwable cause) {

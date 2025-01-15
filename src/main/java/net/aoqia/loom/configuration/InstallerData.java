@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2021-2022 FabricMC
+ * Copyright (c) 2021-2022 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.configuration;
 
 import com.google.gson.JsonArray;
@@ -29,7 +28,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.aoqia.loom.LoomGradleExtension;
 import net.aoqia.loom.LoomRepositoryPlugin;
-import net.aoqia.loom.configuration.ide.idea.IdeaUtils;
 import net.aoqia.loom.util.Constants;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -81,10 +79,10 @@ public record InstallerData(String version, JsonObject installerJson) {
 
             // Work around https://github.com/FabricMC/Mixin/pull/60 and
             // https://github.com/FabricMC/fabric-mixin-compile-extensions/issues/14.
-            if (!IdeaUtils.isIdeaSync()
-                    && extension.getMixin().getUseLegacyMixinAp().get()) {
-                annotationProcessor.getDependencies().add(modDep);
-            }
+//            if (!IdeaUtils.isIdeaSync()
+//                    && extension.getMixin().getUseLegacyMixinAp().get()) {
+//                annotationProcessor.getDependencies().add(modDep);
+//            }
 
             // If user choose to use dependencyResolutionManagement, then they should declare
             // these repositories manually in the settings file.

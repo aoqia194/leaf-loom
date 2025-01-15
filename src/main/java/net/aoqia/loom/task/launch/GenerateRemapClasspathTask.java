@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2021-2022 FabricMC
+ * Copyright (c) 2021-2022 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,18 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.task.launch;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.aoqia.loom.api.RemapConfigurationSettings;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
 import net.aoqia.loom.task.AbstractLoomTask;
 import net.aoqia.loom.util.Constants;
 import org.gradle.api.artifacts.ConfigurationContainer;
@@ -57,10 +54,6 @@ public abstract class GenerateRemapClasspathTask extends AbstractLoomTask {
                 .map(RemapConfigurationSettings::getName)
                 .map(configurations::named)
                 .forEach(getRemapClasspath()::from);
-
-        for (Path zomboidJar : getExtension().getZomboidJars(MappingsNamespace.OFFICIAL)) {
-            getRemapClasspath().from(zomboidJar.toFile());
-        }
 
         getRemapClasspathFile().set(getExtension().getFiles().getRemapClasspathFile());
     }

@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2021-2022 FabricMC
+ * Copyright (c) 2021-2022 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.configuration.providers.zomboid.mapped;
 
 import javax.annotation.Nullable;
@@ -214,8 +213,8 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
             configContext.serviceFactory(),
             toM);
         final ZomboidVersionMeta.JavaVersion javaVersion =
-            zomboidProvider.getClientVersionInfo().java_version();
-        final boolean fixRecords = javaVersion != null && javaVersion.major_version() >= 16;
+            zomboidProvider.getClientVersionInfo().javaVersion();
+        final boolean fixRecords = javaVersion != null && javaVersion.majorVersion() >= 16;
 
         TinyRemapper remapper = TinyRemapperHelper.getTinyRemapper(
             getProject(), configContext.serviceFactory(), fromM, toM, fixRecords, (builder) -> {

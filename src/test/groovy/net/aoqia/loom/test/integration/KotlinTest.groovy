@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2018-2021 FabricMC
+ * Copyright (c) 2018-2021 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.test.integration
 
 import spock.lang.Specification
@@ -41,8 +40,8 @@ class KotlinTest extends Specification implements GradleProjectTestTrait {
 	def "kotlin build (gradle #version)"() {
 		setup:
 		def gradle = gradleProject(project: "kotlin", version: version)
-		def server = ServerRunner.create(gradle.projectDir, "1.16.5")
-				.withMod(gradle.getOutputFile("fabric-example-mod-0.0.1.jar"))
+		def server = ServerRunner.create(gradle.projectDir, "41.78.16")
+				.withMod(gradle.getOutputFile("leaf-example-mod-0.0.1.jar"))
 				.downloadMod(ServerRunner.FABRIC_LANG_KOTLIN, "fabric-language-kotlin-1.10.17+kotlin.1.9.22.jar")
 
 		when:

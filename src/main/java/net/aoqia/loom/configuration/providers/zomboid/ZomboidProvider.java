@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2018-2021 FabricMC
+ * Copyright (c) 2018-2021 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.configuration.providers.zomboid;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,128 +74,111 @@ public abstract class ZomboidProvider {
         serverMetadataProvider = null;
     }
 
-    public void provide() throws Exception {
-        initFiles();
+    public static File zomboidWorkingDirectory(Project project, String version) {
+        LoomGradleExtension extension = LoomGradleExtension.get(project);
+        File workingDir = new File(extension.getFiles().getUserCache(), version);
+        workingDir.mkdirs();
+        return workingDir;
+    }
 
-        final int copyFileThreads = Math.min(Runtime.getRuntime().availableProcessors(), 10);
+    public void provide() throws Exception {
         final Project project = getProject();
+        final int copyFileThreads = Math.min(Runtime.getRuntime().availableProcessors(), 10);
+
+        initFiles();
 
         // Copy client files
         if (provideClient()) {
-            final ZomboidVersionMeta.JavaVersion javaVersion = getClientVersionInfo().java_version();
-            if (javaVersion != null) {
-                final int requiredMajorJavaVersion = getClientVersionInfo().java_version().major_version();
-                final JavaVersion requiredJavaVersion = JavaVersion.toVersion(requiredMajorJavaVersion);
-
-                if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
-                    throw new IllegalStateException(
-                        "Zomboid " + clientZomboidVersion() + " requires Java " + requiredJavaVersion
-                        + " but Gradle is using " + JavaVersion.current());
-                }
-            }
-
-            final String gameInstallPath = MirrorUtil.getGameInstallPath(project);
-            final AssetIndex assetIndex = getClientAssetIndex();
-
-            try (final FileSystemUtil.Delegate outputJar = FileSystemUtil.getJarFileSystem(zomboidClientJar, true)) {
-                try (ProgressGroup progressGroup = new ProgressGroup(project, "Copy Client Game Assets");
-                     CopyGameFileExecutor executor = new CopyGameFileExecutor(copyFileThreads)) {
-                    for (AssetIndex.Object object : assetIndex.getObjects()) {
-                        final String path = object.path();
-
-                        // Exclude certain folders.
-                        if (path.contains("jre")
-                            || path.contains("jre64")
-                            || path.endsWith(".bat")
-                            || path.endsWith(".exe")) {
-                            continue;
-                        }
-
-                        final String sha1 = object.hash();
-                        final Path srcPath = Path.of(gameInstallPath, path);
-                        final Path dstPath = outputJar.get().getPath(getGameFilePath(object).toString());
-                        // System.out.println("copyGameAssets srcPath=(" + srcPath + "), dstPath=(" + dstPath + ")");
-
-                        // File exists check.
-                        if (!srcPath.toFile().exists()) {
-                            if (GradleUtils.getBooleanProperty(project, Constants.Properties.IGNORE_MISSING_FILES)) {
-                                continue;
-                            }
-
-                            throw new FileNotFoundException("Client game file '%s' does not exist.".formatted(srcPath));
-                        }
-
-                        getExtension().copyGameFile(srcPath.toString())
-                            .sha1(sha1)
-                            .progress(new GradleCopyGameFileProgressListener(object.path(),
-                                progressGroup::createProgressLogger))
-                            .copyGameFileFromPathAsync(dstPath, executor);
-                    }
-                }
-
-                JarUtil.createManifest(outputJar);
-            }
+            packageGameFiles(project, copyFileThreads, false);
         }
 
         // Copy server files
         if (provideServer()) {
-            final ZomboidVersionMeta.JavaVersion javaVersion = getServerVersionInfo().java_version();
-            if (javaVersion != null) {
-                final int requiredMajorJavaVersion = getServerVersionInfo().java_version().major_version();
-                final JavaVersion requiredJavaVersion = JavaVersion.toVersion(requiredMajorJavaVersion);
-
-                if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
-                    throw new IllegalStateException(
-                        "Zomboid Server " + serverZomboidVersion() + " requires Java " + requiredJavaVersion
-                        + " but Gradle is using " + JavaVersion.current());
-                }
-            }
-
-            final String gameInstallPath = MirrorUtil.getGameInstallPath(project);
-            final AssetIndex assetIndex = getServerAssetIndex();
-
-            try (final FileSystemUtil.Delegate outputJar = FileSystemUtil.getJarFileSystem(zomboidServerJar, true)) {
-                try (ProgressGroup progressGroup = new ProgressGroup(project, "Copy Server Game Assets");
-                     CopyGameFileExecutor executor = new CopyGameFileExecutor(copyFileThreads)) {
-                    for (AssetIndex.Object object : assetIndex.getObjects()) {
-                        final String path = object.path();
-
-                        // Exclude certain folders.
-                        if (path.contains("jre")
-                            || path.contains("jre64")
-                            || path.endsWith(".bat")
-                            || path.endsWith(".exe")) {
-                            continue;
-                        }
-
-                        final String sha1 = object.hash();
-                        final Path srcPath = Path.of(gameInstallPath, path);
-                        final Path dstPath = outputJar.get().getPath(getGameFilePath(object).toString());
-                        // System.out.println("copyGameAssets srcPath=(" + srcPath + "), dstPath=(" + dstPath + ")");
-
-                        // File exists check.
-                        if (!srcPath.toFile().exists()) {
-                            if (GradleUtils.getBooleanProperty(project, Constants.Properties.IGNORE_MISSING_FILES)) {
-                                continue;
-                            }
-
-                            throw new FileNotFoundException("Server game file '%s' does not exist.".formatted(srcPath));
-                        }
-
-                        getExtension().copyGameFile(srcPath.toString())
-                            .sha1(sha1)
-                            .progress(new GradleCopyGameFileProgressListener(object.path(),
-                                progressGroup::createProgressLogger))
-                            .copyGameFileFromPathAsync(dstPath, executor);
-                    }
-                }
-
-                JarUtil.createManifest(outputJar);
-            }
+            packageGameFiles(project, copyFileThreads, true);
         }
 
         final ZomboidLibraryProvider libraryProvider = new ZomboidLibraryProvider(this, configContext.project());
         libraryProvider.provide();
+    }
+
+    private void packageGameFiles(Project project, int copyFileThreads, boolean isServer) throws IOException {
+        final String envString = !isServer ? "Client" : "Server";
+
+        final String version = !isServer ? clientZomboidVersion() : serverZomboidVersion();
+        final ZomboidVersionMeta versionInfo = !isServer ? getClientVersionInfo() : getServerVersionInfo();
+
+        final ZomboidVersionMeta.JavaVersion javaVersion = versionInfo.javaVersion();
+        if (javaVersion != null) {
+            final int requiredMajorJavaVersion = versionInfo.javaVersion().majorVersion();
+            final JavaVersion requiredJavaVersion = JavaVersion.toVersion(requiredMajorJavaVersion);
+
+            if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
+                throw new IllegalStateException(
+                    "Zomboid " + version + " requires Java " + requiredJavaVersion +
+                    " but Gradle is using " + JavaVersion.current());
+            }
+        }
+
+        final String gameInstallPath = !isServer ? MirrorUtil.getGameInstallPath(project)
+            : MirrorUtil.getServerInstallPath(project);
+
+        final ArrayList<Path> extractedLibs = new ArrayList<>();
+
+        final File jar = !isServer ? zomboidClientJar : zomboidServerJar;
+        try (final FileSystemUtil.Delegate outputJar = FileSystemUtil.getJarFileSystem(jar, true);
+             ProgressGroup progressGroup = new ProgressGroup(project, "Copy %s Game Assets".formatted(envString));
+             CopyGameFileExecutor executor = new CopyGameFileExecutor(copyFileThreads)) {
+            final AssetIndex assetIndex = !isServer ? getClientAssetIndex() : getServerAssetIndex();
+            for (AssetIndex.Object object : assetIndex.getObjects()) {
+                final String path = object.path();
+
+                // Exclude certain folders for dev environment.
+                if (path.contains("jre")
+                    || path.contains("jre64")
+                    || path.endsWith(".bat")
+                    || path.endsWith(".exe")
+                    || path.endsWith(".sh")) {
+                    continue;
+                }
+
+                final String sha1 = object.hash();
+                final Path srcPath = Path.of(gameInstallPath, path);
+                Path dstPath = outputJar.get().getPath(getGameFilePath(object).toString());
+                // System.out.println("copyGameAssets srcPath=(" + srcPath + "), dstPath=(" + dstPath + ")");
+
+                // File exists check.
+                if (!srcPath.toFile().exists()) {
+                    if (GradleUtils.getBooleanProperty(project, Constants.Properties.IGNORE_MISSING_FILES)) {
+                        continue;
+                    }
+
+                    throw new FileNotFoundException("%s game file '%s' does not exist.".formatted(envString, srcPath));
+                }
+
+                boolean isExtractedLib = path.endsWith(".jar");
+                if (isExtractedLib) {
+                    dstPath = jar.toPath()
+                        .getParent()
+                        .resolve("extractedLibs")
+                        .resolve(getGameFilePath(object).getFileName());
+
+                    extractedLibs.add(dstPath);
+                }
+
+                getExtension().copyGameFile(srcPath.toString())
+                    .sha1(sha1)
+                    .progress(new GradleCopyGameFileProgressListener(object.path(),
+                        progressGroup::createProgressLogger))
+                    .copyGameFileFromPathAsync(dstPath, executor);
+            }
+
+            JarUtil.createManifest(outputJar);
+        }
+
+        // Add the extracted libs to compile libraries (which also adds to runtime).
+        final String config = !isServer ? Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES
+            : Constants.Configurations.ZOMBOID_SERVER_COMPILE_LIBRARIES;
+        project.getDependencies().add(config, project.files(extractedLibs));
     }
 
     private Path getGameFilePath(AssetIndex.Object object) {
@@ -204,7 +187,7 @@ public abstract class ZomboidProvider {
 
     private AssetIndex getClientAssetIndex() throws IOException {
         final ZomboidVersionMeta.AssetIndex assetIndex =
-            LoomGradlePlugin.GSON.fromJson(LoomGradlePlugin.GSON.toJson(getClientVersionInfo().asset_index()),
+            LoomGradlePlugin.GSON.fromJson(LoomGradlePlugin.GSON.toJson(getClientVersionInfo().assetIndex()),
                 ZomboidVersionMeta.AssetIndex.class);
         final File indexFile = new File(workingDir(), "zomboid_client_index_manifest.json");
 
@@ -219,7 +202,7 @@ public abstract class ZomboidProvider {
 
     private AssetIndex getServerAssetIndex() throws IOException {
         final ZomboidVersionMeta.AssetIndex assetIndex =
-            LoomGradlePlugin.GSON.fromJson(LoomGradlePlugin.GSON.toJson(getServerVersionInfo().asset_index()),
+            LoomGradlePlugin.GSON.fromJson(LoomGradlePlugin.GSON.toJson(getServerVersionInfo().assetIndex()),
                 ZomboidVersionMeta.AssetIndex.class);
         final File indexFile = new File(workingDir(), "zomboid_server_index_manifest.json");
 
@@ -284,13 +267,6 @@ public abstract class ZomboidProvider {
         return zomboidWorkingDirectory(configContext.project(), clientZomboidVersion());
     }
 
-    public static File zomboidWorkingDirectory(Project project, String version) {
-        LoomGradleExtension extension = LoomGradleExtension.get(project);
-        File workingDir = new File(extension.getFiles().getUserCache(), version);
-        workingDir.mkdirs();
-        return workingDir;
-    }
-
     public String clientZomboidVersion() {
         return Objects.requireNonNull(clientMetadataProvider, "Metadata provider not setup")
             .getZomboidVersion();
@@ -300,14 +276,13 @@ public abstract class ZomboidProvider {
         return file(path).toPath();
     }
 
-    // This may be the server bundler jar on newer versions prob not what you want.
     public File getZomboidServerJar() {
         Preconditions.checkArgument(provideServer(), "Not configured to provide server jar");
         return zomboidServerJar;
     }
 
     protected boolean provideServer() {
-        return true;
+        return false;
     }
 
     public abstract List<Path> getZomboidJars();

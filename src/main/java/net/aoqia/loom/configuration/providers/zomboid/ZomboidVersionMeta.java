@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2021 FabricMC
+ * Copyright (c) 2021 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.configuration.providers.zomboid;
 
 import java.io.File;
@@ -35,11 +34,11 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("unused")
 public record ZomboidVersionMeta(
     Object arguments,
-    AssetIndex asset_index,
-    @Nullable JavaVersion java_version,
+    AssetIndex assetIndex,
+    @Nullable JavaVersion javaVersion,
     List<Library> libraries,
-    String main_class,
-    String release_time,
+    String mainClass,
+    String releaseTime,
     String time,
     String version) {
     private static final Map<Platform.OperatingSystem, String> OS_NAMES = Map.of(
@@ -48,7 +47,7 @@ public record ZomboidVersionMeta(
         Platform.OperatingSystem.LINUX, "linux");
 
     public boolean isVersionOrNewer(String releaseTime) {
-        return this.release_time().compareTo(releaseTime) >= 0;
+        return this.releaseTime().compareTo(releaseTime) >= 0;
     }
 
     public boolean hasNativesToExtract() {
@@ -156,6 +155,6 @@ public record ZomboidVersionMeta(
         }
     }
 
-    public record JavaVersion(String component, int major_version) {
+    public record JavaVersion(String component, int majorVersion) {
     }
 }

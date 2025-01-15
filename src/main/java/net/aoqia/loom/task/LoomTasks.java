@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2016-2022 FabricMC
+ * Copyright (c) 2016-2022 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.task;
 
 import javax.inject.Inject;
@@ -45,6 +44,11 @@ import org.gradle.api.tasks.TaskProvider;
 public abstract class LoomTasks implements Runnable {
     @Override
     public void run() {
+        // If only provide jars then dont setup tasks or anything else.
+        if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
+            return;
+        }
+
         var generateLog4jConfig = getTasks().register("generateLog4jConfig", GenerateLog4jConfigTask.class, t -> {
             t.setDescription("Generate the log4j config file");
         });
@@ -69,16 +73,6 @@ public abstract class LoomTasks implements Runnable {
 
             task.setDescription("Setup the required files to launch Zomboid");
             task.setGroup(Constants.TaskGroup.LEAF);
-        });
-
-        // If only provide jars then dont setup tasks or anything else.
-        if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
-            return;
-        }
-
-        getTasks().register("migrateMappings", MigrateMappingsTask.class, t -> {
-            t.setDescription("Migrates mappings to a new version.");
-            t.getOutputs().upToDateWhen(o -> false);
         });
 
         TaskProvider<ValidateAccessWidenerTask> validateAccessWidener = getTasks()
@@ -107,12 +101,16 @@ public abstract class LoomTasks implements Runnable {
             final ZomboidVersionMeta versionInfo = extension.getZomboidProvider().getClientVersionInfo();
             if (versionInfo == null) {
                 // Something has gone wrong, don't register the task.
+                System.out.println("LoomTasks: Version info is null.");
                 return;
             }
 
             registerClientSetupTasks(getTasks(), versionInfo.hasNativesToExtract());
         });
     }
+
+    @Inject
+    protected abstract Project getProject();
 
     @Inject
     protected abstract TaskContainer getTasks();
@@ -131,26 +129,12 @@ public abstract class LoomTasks implements Runnable {
         });
     }
 
-    @Inject
-    protected abstract Project getProject();
-
-    public static Provider<Task> getIDELaunchConfigureTaskName(Project project) {
-        return project.provider(() -> {
-            final ZomboidJarConfiguration jarConfiguration = LoomGradleExtension.get(project)
-                .getZomboidJarConfiguration()
-                .get();
-            final String name = jarConfiguration == ZomboidJarConfiguration.SERVER_ONLY
-                ? "configureLaunch"
-                : "configureClientLaunch";
-            return project.getTasks().getByName(name);
-        });
-    }
-
     private void registerRunTasks() {
         LoomGradleExtension extension = LoomGradleExtension.get(getProject());
 
         Preconditions.checkArgument(
-            extension.getRunConfigs().size() == 0, "Run configurations must not be registered before loom");
+            extension.getRunConfigs().isEmpty(),
+            "Run configurations must not be registered before loom");
 
         extension.getRunConfigs().whenObjectAdded(config -> {
             getTasks()
@@ -158,8 +142,8 @@ public abstract class LoomTasks implements Runnable {
                 .configure(t -> {
                     t.setDescription("Starts the '" + config.getConfigName() + "' run configuration");
 
-                    t.dependsOn(
-                        config.getEnvironment().equals("client") ? "configureClientLaunch" : "configureLaunch");
+                    t.dependsOn(config.getEnvironment().equals("client")
+                        ? "configureClientLaunch" : "configureLaunch");
                 });
         });
 
@@ -195,15 +179,10 @@ public abstract class LoomTasks implements Runnable {
         });
     }
 
-    private static String getRunConfigTaskName(RunConfigSettings config) {
-        String configName = config.getName();
-        return "run" + configName.substring(0, 1).toUpperCase() + configName.substring(1);
-    }
-
     private static void registerClientSetupTasks(TaskContainer tasks, boolean extractNatives) {
         if (extractNatives) {
             tasks.register("extractNatives", ExtractNativesTask.class, t -> {
-                t.setDescription("Extracts the Minecraft platform specific natives.");
+                t.setDescription("Extracts the platform specific natives.");
             });
         }
 
@@ -215,8 +194,25 @@ public abstract class LoomTasks implements Runnable {
                 task.dependsOn(tasks.named("extractNatives"));
             }
 
-            task.setDescription("Setup the required files to launch the Minecraft client");
+            task.setDescription("Setup the required files to launch the Zomboid client");
             task.setGroup(Constants.TaskGroup.LEAF);
         });
+    }
+
+    public static Provider<Task> getIDELaunchConfigureTaskName(Project project) {
+        return project.provider(() -> {
+            final ZomboidJarConfiguration jarConfiguration = LoomGradleExtension.get(project)
+                .getZomboidJarConfiguration()
+                .get();
+            final String name = jarConfiguration == ZomboidJarConfiguration.SERVER_ONLY
+                ? "configureLaunch"
+                : "configureClientLaunch";
+            return project.getTasks().getByName(name);
+        });
+    }
+
+    private static String getRunConfigTaskName(RunConfigSettings config) {
+        String configName = config.getName();
+        return "run" + configName.substring(0, 1).toUpperCase() + configName.substring(1);
     }
 }

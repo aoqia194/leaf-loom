@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2016-2023 FabricMC
+ * Copyright (c) 2016-2023 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.configuration;
 
 import javax.inject.Inject;
@@ -143,9 +142,9 @@ public abstract class CompileConfiguration implements Runnable {
 
             MixinExtension mixin = LoomGradleExtension.get(getProject()).getMixin();
 
-            if (mixin.getUseLegacyMixinAp().get()) {
-                setupMixinAp(mixin);
-            }
+//            if (mixin.getUseLegacyMixinAp().get()) {
+//                setupMixinAp(mixin);
+//            }
 
             configureDecompileTasks(configContext);
             configureTestTask();
@@ -308,7 +307,7 @@ public abstract class CompileConfiguration implements Runnable {
                 )
                 .collect(Collectors.joining(File.pathSeparator + File.pathSeparator));
 
-            test.systemProperty("fabric.classPathGroups", classPathGroups);
+            test.systemProperty("leaf.classPathGroups", classPathGroups);
         });
     }
 

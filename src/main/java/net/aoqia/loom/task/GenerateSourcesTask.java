@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2016-2022 FabricMC
+ * Copyright (c) 2016-2022 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.task;
 
 import javax.inject.Inject;
@@ -83,12 +82,12 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     public GenerateSourcesTask(DecompilerOptions decompilerOptions) {
         this.decompilerOptions = decompilerOptions;
 
-        getClassesInputJar().setFrom(getInputJarName().map(minecraftJarName -> {
+        getClassesInputJar().setFrom(getInputJarName().map(zomboidJarName -> {
             final List<ZomboidJar> zomboidJars =
-                getExtension().getNamedZomboidProvider().getMinecraftJars();
+                getExtension().getNamedZomboidProvider().getZomboidJars();
 
             for (ZomboidJar zomboidJar : zomboidJars) {
-                if (zomboidJar.getName().equals(minecraftJarName)) {
+                if (zomboidJar.getName().equals(zomboidJarName)) {
                     final Path backupJarPath = AbstractMappedZomboidProvider.getBackupJarPath(zomboidJar);
 
                     if (Files.notExists(backupJarPath)) {
@@ -102,12 +101,12 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
             throw new IllegalStateException(
                 "Input zomboid jar not found: " + getInputJarName().get());
         }));
-        getClassesOutputJar().setFrom(getInputJarName().map(minecraftJarName -> {
+        getClassesOutputJar().setFrom(getInputJarName().map(zomboidJarName -> {
             final List<ZomboidJar> zomboidJars =
-                getExtension().getNamedZomboidProvider().getMinecraftJars();
+                getExtension().getNamedZomboidProvider().getZomboidJars();
 
             for (ZomboidJar zomboidJar : zomboidJars) {
-                if (zomboidJar.getName().equals(minecraftJarName)) {
+                if (zomboidJar.getName().equals(zomboidJarName)) {
                     return zomboidJar.toFile();
                 }
             }
@@ -120,8 +119,8 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         getClasspath().from(decompilerOptions.getClasspath()).finalizeValueOnRead();
         dependsOn(decompilerOptions.getClasspath().getBuiltBy());
 
-        getMinecraftCompileLibraries()
-            .from(getProject().getConfigurations().getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
+        getZomboidCompileLibraries().from(getProject().getConfigurations()
+            .getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
         getDecompileCacheFile().set(getExtension().getFiles().getDecompileCache(CACHE_VERSION));
         getUnpickRuntimeClasspath()
             .from(getProject().getConfigurations().getByName(Constants.Configurations.UNPICK_CLASSPATH));
@@ -158,7 +157,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     protected abstract ConfigurableFileCollection getClasspath();
 
     @InputFiles
-    protected abstract ConfigurableFileCollection getMinecraftCompileLibraries();
+    protected abstract ConfigurableFileCollection getZomboidCompileLibraries();
 
     // Internal outputs
     @ApiStatus.Internal
@@ -615,7 +614,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
                 params.getIPCPath().set(ipcServer.getPath().toFile());
             }
 
-            params.getClassPath().setFrom(getMinecraftCompileLibraries());
+            params.getClassPath().setFrom(getZomboidCompileLibraries());
 
             if (existingClasses != null) {
                 params.getClassPath().from(existingClasses);

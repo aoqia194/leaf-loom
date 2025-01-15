@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2023 FabricMC
+ * Copyright (c) 2023 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.configuration.providers.zomboid.library;
 
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ public class ZomboidLibraryHelper {
                 continue;
             }
 
-            if (library.artifact() != null) {
+//            if (library.artifact() != null) {
                 Library mavenLib = Library.fromMaven(library.name(), Library.Target.COMPILE);
 
                 // Versions that have the natives on the classpath, attempt to target them as natives.
@@ -56,7 +55,7 @@ public class ZomboidLibraryHelper {
                 }
 
                 libraries.add(mavenLib);
-            }
+//            }
 
             if (library.hasNativesForOS(platform)) {
                 final ZomboidVersionMeta.Download download = library.classifierForOS(platform);

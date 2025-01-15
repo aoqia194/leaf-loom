@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2016-2021 FabricMC
+ * Copyright (c) 2016-2021 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.configuration.ide;
 
 import com.google.common.collect.ImmutableMap;
@@ -175,9 +174,9 @@ public class RunConfig {
         }
 
         runConfig.mainClass = settings.devLaunchMainClass().get();
-        runConfig.vmArgs.add("-Dleaf.dli.config="
+        runConfig.vmArgs.add("-Dfabric.dli.config="
                 + encodeEscaped(extension.getFiles().getDevLauncherConfig().getAbsolutePath()));
-        runConfig.vmArgs.add("-Dleaf.dli.env=" + environment.toLowerCase());
+        runConfig.vmArgs.add("-Dfabric.dli.env=" + environment.toLowerCase());
         runConfig.eclipseProjectName = project.getExtensions()
                 .getByType(EclipseModel.class)
                 .getProject()
@@ -191,7 +190,7 @@ public class RunConfig {
         // Custom parameters
         runConfig.programArgs.addAll(settings.getProgramArgs());
         runConfig.vmArgs.addAll(settings.getVmArgs());
-        runConfig.vmArgs.add("-Dleaf.dli.main=" + mainClass);
+        runConfig.vmArgs.add("-Dfabric.dli.main=" + mainClass);
         runConfig.environmentVariables = new HashMap<>();
         runConfig.environmentVariables.putAll(settings.getEnvironmentVariables());
         runConfig.projectName = project.getName();
@@ -221,8 +220,7 @@ public class RunConfig {
         dummyConfig = dummyConfig.replace("%ECLIPSE_PROJECT%", eclipseProjectName);
         dummyConfig = dummyConfig.replace("%IDEA_MODULE%", ideaModuleName);
         dummyConfig = dummyConfig.replace("%RUN_DIRECTORY%", runDir);
-        dummyConfig =
-                dummyConfig.replace("%PROGRAM_ARGS%", joinArguments(programArgs).replaceAll("\"", "&quot;"));
+        dummyConfig = dummyConfig.replace("%PROGRAM_ARGS%", joinArguments(programArgs).replaceAll("\"", "&quot;"));
         dummyConfig = dummyConfig.replace("%VM_ARGS%", joinArguments(vmArgs).replaceAll("\"", "&quot;"));
         dummyConfig = dummyConfig.replace("%IDEA_ENV_VARS%", getEnvVars("<env name=\"%s\" value=\"%s\"/>"));
         dummyConfig = dummyConfig.replace("%ECLIPSE_ENV_VARS%", getEnvVars("<mapEntry key=\"%s\" value=\"%s\"/>"));

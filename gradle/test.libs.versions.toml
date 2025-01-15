@@ -4,10 +4,10 @@ junit = "5.11.3"
 javalin = "6.3.0"
 mockito = "5.14.2"
 java-debug = "0.52.0"
-mixin = "0.15.3+mixin.0.8.7"
+mixin = "0.15.5+mixin.0.8.7"
 
 gradle-nightly = "8.12-20241110002642+0000"
-fabric-loader = "0.16.9"
+leaf-loader = "0.16.9"
 fabric-installer = "1.0.1"
 
 [libraries]
@@ -19,5 +19,5 @@ mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 java-debug = { module = "com.microsoft.java:com.microsoft.java.debug.core", version.ref = "java-debug" }
 mixin = { module = "net.fabricmc:sponge-mixin", version.ref = "mixin" }
 gradle-nightly = { module = "org.gradle:dummy", version.ref = "gradle-nightly" }
-fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+leaf-loader = { module = "net.aoqia:leaf-loader", version.ref = "leaf-loader" }
 fabric-installer = { module = "net.fabricmc:fabric-installer", version.ref = "fabric-installer" }

@@ -1,8 +1,7 @@
 plugins {
-	id 'leaf-loom' version '0.13.local'
+	id 'leaf-loom' version '1.19.local'
 }
 
 dependencies {
-	minecraft "com.theindiestone:zomboid:1.16.5"
-	mappings loom.officialMojangMappings()
+	zomboid "com.theindiestone:zomboid:41.78.16"
 }

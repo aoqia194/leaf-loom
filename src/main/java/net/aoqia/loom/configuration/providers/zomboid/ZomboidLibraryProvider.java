@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2018-2023 FabricMC
+ * Copyright (c) 2018-2023 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.configuration.providers.zomboid;
 
 import java.util.ArrayList;
@@ -84,8 +83,7 @@ public class ZomboidLibraryProvider {
 
     public void provide() {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);
-        final ZomboidJarConfiguration jarConfiguration =
-            extension.getZomboidJarConfiguration().get();
+        final ZomboidJarConfiguration<?, ?, ?> jarConfiguration = extension.getZomboidJarConfiguration().get();
 
         final boolean provideClient = jarConfiguration.supportedEnvironments().contains("client");
         final boolean provideServer = jarConfiguration.supportedEnvironments().contains("server");

@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2020-2022 FabricMC
+ * Copyright (c) 2020-2022 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net.aoqia.loom.build.mixin;
 
 import java.io.File;
@@ -34,6 +33,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 import net.aoqia.loom.LoomGradleExtension;
 import net.aoqia.loom.configuration.ide.idea.IdeaUtils;
 import net.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
@@ -47,9 +47,9 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.tasks.SourceSet;
 
 /**
- * Normally javac invokes annotation processors, but when the scala or kapt plugin are installed they will want to invoke
- * the annotation processor themselves.
- * See Java and Kapt implementations for a more deep understanding of the things passed by the children.
+ * Normally javac invokes annotation processors, but when the scala or kapt plugin are installed they will want to
+ * invoke the annotation processor themselves. See Java and Kapt implementations for a more deep understanding of the
+ * things passed by the children.
  */
 public abstract class AnnotationProcessorInvoker<T extends Task> {
     public static final String JAVA = "java";
@@ -60,14 +60,14 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
     private static final Pattern MSG_VALUE_PATTERN = Pattern.compile("^(note|warning|error|disabled)$");
 
     protected final Project project;
-    private final LoomGradleExtension loomExtension;
     protected final MixinExtension mixinExtension;
     protected final Map<SourceSet, T> invokerTasks;
+    private final LoomGradleExtension loomExtension;
     private final String name;
     private final Collection<Configuration> apConfigurations;
 
     protected AnnotationProcessorInvoker(
-            Project project, Collection<Configuration> apConfigurations, Map<SourceSet, T> invokerTasks, String name) {
+        Project project, Collection<Configuration> apConfigurations, Map<SourceSet, T> invokerTasks, String name) {
         this.project = project;
         this.loomExtension = LoomGradleExtension.get(project);
         this.mixinExtension = loomExtension.getMixin();
@@ -77,44 +77,61 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
     }
 
     protected static Collection<Configuration> getApConfigurations(
-            Project project, Function<SourceSet, String> getApConfigNameFunc) {
+        Project project, Function<SourceSet, String> getApConfigNameFunc) {
         MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
         return mixin.getApConfigurationsStream(getApConfigNameFunc).collect(Collectors.toList());
     }
 
-    protected abstract void passArgument(T compileTask, String key, String value);
+    public void  configureMixin() {
+        ConfigurationContainer configs = project.getConfigurations();
+        ZomboidSourceSets zomboidSourceSets = ZomboidSourceSets.get(project);
 
-    protected abstract File getRefmapDestinationDir(T task);
+        if (!IdeaUtils.isIdeaSync()) {
+            for (Configuration processorConfig : apConfigurations) {
+                project.getLogger().info("Adding mixin to classpath of AP config: " + processorConfig.getName());
+                // Pass named MC classpath to mixin AP classpath
+                processorConfig.extendsFrom(
+                    configs.getByName(Constants.Configurations.LOADER_DEPENDENCIES),
+                    configs.getByName(Constants.Configurations.MAPPINGS_FINAL));
 
-    protected final String getRefmapDestination(T task, String refmapName) throws IOException {
-        return new File(getRefmapDestinationDir(task), refmapName).getCanonicalPath();
+                // Add Mixin and mixin extensions (fabric-mixin-compile-extensions pulls mixin itself too)
+                project.getDependencies().add(processorConfig.getName(), LoomVersions.SPONGE_MIXIN.mavenNotation());
+                //                project.getDependencies()
+                //                        .add(processorConfig.getName(), LoomVersions.MIXIN_COMPILE_EXTENSIONS
+                //                        .mavenNotation());
+            }
+        }
+
+        for (Map.Entry<SourceSet, T> entry : invokerTasks.entrySet()) {
+            passMixinArguments(entry.getValue(), entry.getKey());
+        }
     }
 
     private void passMixinArguments(T task, SourceSet sourceSet) {
         try {
             LoomGradleExtension loom = LoomGradleExtension.get(project);
             String refmapName = Objects.requireNonNull(MixinExtension.getMixinInformationContainer(sourceSet))
-                    .refmapNameProvider()
-                    .get();
+                .refmapNameProvider()
+                .get();
 
             final File mixinMappings = getMixinMappingsForSourceSet(project, sourceSet);
 
             task.getOutputs()
-                    .file(mixinMappings)
-                    .withPropertyName("mixin-ap-" + sourceSet.getName() + "-" + name)
-                    .optional();
+                .file(mixinMappings)
+                .withPropertyName("mixin-ap-" + sourceSet.getName() + "-" + name)
+                .optional();
 
             Map<String, String> args = new HashMap<>() {
                 {
                     put(
-                            Constants.MixinArguments.IN_MAP_FILE_NAMED_INTERMEDIARY,
-                            loom.getMappingConfiguration().tinyMappings.toFile().getCanonicalPath());
+                        Constants.MixinArguments.IN_MAP_FILE_NAMED_INTERMEDIARY,
+                        loom.getMappingConfiguration().tinyMappings.toFile().getCanonicalPath());
                     put(Constants.MixinArguments.OUT_MAP_FILE_NAMED_INTERMEDIARY, mixinMappings.getCanonicalPath());
                     put(Constants.MixinArguments.OUT_REFMAP_FILE, getRefmapDestination(task, refmapName));
                     put(
-                            Constants.MixinArguments.DEFAULT_OBFUSCATION_ENV,
-                            "named:"
-                                    + loom.getMixin().getRefmapTargetNamespace().get());
+                        Constants.MixinArguments.DEFAULT_OBFUSCATION_ENV,
+                        "named:"
+                        + loom.getMixin().getRefmapTargetNamespace().get());
                     put(Constants.MixinArguments.QUIET, "true");
                 }
             };
@@ -131,34 +148,23 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
             });
 
             project.getLogger()
-                    .debug("Outputting refmap to dir: " + getRefmapDestinationDir(task) + " for compile task: " + task);
+                .debug("Outputting refmap to dir: " + getRefmapDestinationDir(task) + " for compile task: " + task);
             args.forEach((k, v) -> passArgument(task, k, v));
         } catch (IOException e) {
             project.getLogger().error("Could not configure mixin annotation processors", e);
         }
     }
 
-    public void configureMixin() {
-        ConfigurationContainer configs = project.getConfigurations();
-        ZomboidSourceSets zomboidSourceSets = ZomboidSourceSets.get(project);
+    public static File getMixinMappingsForSourceSet(Project project, SourceSet sourceSet) {
+        final LoomGradleExtension extension = LoomGradleExtension.get(project);
+        return new File(
+            extension.getFiles().getProjectBuildCache(),
+            "mixin-map-" + extension.getMappingConfiguration().mappingsIdentifier() + "." + sourceSet.getName()
+            + ".tiny");
+    }
 
-        if (!IdeaUtils.isIdeaSync()) {
-            for (Configuration processorConfig : apConfigurations) {
-                project.getLogger().info("Adding mixin to classpath of AP config: " + processorConfig.getName());
-                // Pass named MC classpath to mixin AP classpath
-                processorConfig.extendsFrom(
-                        configs.getByName(Constants.Configurations.LOADER_DEPENDENCIES),
-                        configs.getByName(Constants.Configurations.MAPPINGS_FINAL));
-
-                // Add Mixin and mixin extensions (fabric-mixin-compile-extensions pulls mixin itself too)
-                project.getDependencies()
-                        .add(processorConfig.getName(), LoomVersions.MIXIN_COMPILE_EXTENSIONS.mavenNotation());
-            }
-        }
-
-        for (Map.Entry<SourceSet, T> entry : invokerTasks.entrySet()) {
-            passMixinArguments(entry.getValue(), entry.getKey());
-        }
+    protected final String getRefmapDestination(T task, String refmapName) throws IOException {
+        return new File(getRefmapDestinationDir(task), refmapName).getCanonicalPath();
     }
 
     private static void checkPattern(String input, Pattern pattern) {
@@ -166,15 +172,11 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
 
         if (!matcher.find()) {
             throw new IllegalArgumentException(
-                    "Mixin argument (%s) does not match pattern (%s)".formatted(input, pattern.toString()));
+                "Mixin argument (%s) does not match pattern (%s)".formatted(input, pattern.toString()));
         }
     }
 
-    public static File getMixinMappingsForSourceSet(Project project, SourceSet sourceSet) {
-        final LoomGradleExtension extension = LoomGradleExtension.get(project);
-        return new File(
-                extension.getFiles().getProjectBuildCache(),
-                "mixin-map-" + extension.getMappingConfiguration().mappingsIdentifier() + "." + sourceSet.getName()
-                        + ".tiny");
-    }
+    protected abstract File getRefmapDestinationDir(T task);
+
+    protected abstract void passArgument(T compileTask, String key, String value);
 }
