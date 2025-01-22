@@ -23,16 +23,11 @@
  */
 package net.aoqia.loom.configuration.ide;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
 import javax.inject.Inject;
+import java.io.File;
+import java.util.*;
+import java.util.function.Function;
+
 import net.aoqia.loom.LoomGradleExtension;
 import net.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import net.aoqia.loom.util.Constants;
@@ -54,12 +49,38 @@ public class RunConfigSettings implements Named {
      * Arguments for the program's main class.
      */
     private final List<String> programArgs = new ArrayList<>();
-
+    /**
+     * Whether to append the project path to the {@link #configName} when {@code project} isn't the root project.
+     *
+     * <p>Warning: could produce ambiguous run config names if disabled, unless used carefully in conjunction with
+     * {@link #configName}.
+     */
+    private final Property<Boolean> appendProjectPathToConfigName;
+    /**
+     * The main class of the run configuration.
+     *
+     * <p>If unset, {@link #defaultMainClass} is used as the fallback, including the overwritten main class
+     * from installer files.
+     */
+    private final Property<String> mainClass;
+    /**
+     * The true entrypoint, this is usually dev launch injector. This should not be changed unless you know what you are
+     * doing.
+     */
+    @ApiStatus.Internal
+    @ApiStatus.Experimental
+    private final Property<String> devLaunchMainClass;
+    /**
+     * The base name of the run configuration, which is the name it is created with, i.e. 'client'
+     */
+    private final String name;
+    private final Map<String, Object> environmentVariables = new HashMap<>();
+    private final Project project;
+    private final LoomGradleExtension extension;
     /**
      * The environment (or side) to run, usually client or server.
      */
     private String environment;
-
     /**
      * The full name of the run configuration, i.e. 'Minecraft Client'.
      *
@@ -69,15 +90,6 @@ public class RunConfigSettings implements Named {
      * the project path will be appended automatically, e.g. 'Minecraft Client (:some:project)'.
      */
     private String configName;
-
-    /**
-     * Whether to append the project path to the {@link #configName} when {@code project} isn't the root project.
-     *
-     * <p>Warning: could produce ambiguous run config names if disabled, unless used carefully in conjunction with
-     * {@link #configName}.
-     */
-    private final Property<Boolean> appendProjectPathToConfigName;
-
     /**
      * The default main class of the run configuration.
      *
@@ -85,38 +97,14 @@ public class RunConfigSettings implements Named {
      * priority over the main class specified in the Fabric installer configuration.
      */
     private String defaultMainClass;
-
-    /**
-     * The main class of the run configuration.
-     *
-     * <p>If unset, {@link #defaultMainClass} is used as the fallback, including the overwritten main class
-     * from installer files.
-     */
-    private final Property<String> mainClass;
-
-    /**
-     * The true entrypoint, this is usually dev launch injector.
-     * This should not be changed unless you know what you are doing.
-     */
-    @ApiStatus.Internal
-    @ApiStatus.Experimental
-    private final Property<String> devLaunchMainClass;
-
     /**
      * The source set getter, which obtains the source set from the given project.
      */
     private Function<Project, SourceSet> source;
-
     /**
      * The run directory for this configuration, relative to the root project directory.
      */
     private String runDir;
-
-    /**
-     * The base name of the run configuration, which is the name it is created with, i.e. 'client'
-     */
-    private final String name;
-
     /**
      * When true a run configuration file will be generated for IDE's.
      *
@@ -124,17 +112,12 @@ public class RunConfigSettings implements Named {
      */
     private boolean ideConfigGenerated;
 
-    private final Map<String, Object> environmentVariables = new HashMap<>();
-
-    private final Project project;
-    private final LoomGradleExtension extension;
-
     @Inject
     public RunConfigSettings(Project project, String name) {
         this.name = name;
         this.project = project;
         this.appendProjectPathToConfigName =
-                project.getObjects().property(Boolean.class).convention(true);
+            project.getObjects().property(Boolean.class).convention(true);
         this.extension = LoomGradleExtension.get(project);
         this.ideConfigGenerated = extension.isRootProject();
         this.mainClass = project.getObjects().property(String.class).convention(project.provider(() -> {
@@ -143,14 +126,14 @@ public class RunConfigSettings implements Named {
             return RunConfig.getMainClass(environment, extension, defaultMainClass);
         }));
         this.devLaunchMainClass =
-                project.getObjects().property(String.class).convention("net.fabricmc.devlaunchinjector.Main");
+            project.getObjects().property(String.class).convention("net.fabricmc.devlaunchinjector.Main");
 
         setSource(p -> {
             final String sourceSetName = ZomboidSourceSets.get(p).getSourceSetForEnv(getEnvironment());
             return SourceSetHelper.getSourceSetByName(sourceSetName, p);
         });
 
-        runDir("run");
+        setRunDir(project.getProjectDir().toPath().resolve("run").toString());
     }
 
     public Project getProject() {
@@ -248,10 +231,6 @@ public class RunConfigSettings implements Named {
         setDefaultMainClass(cls);
     }
 
-    public void runDir(String dir) {
-        setRunDir(dir);
-    }
-
     public void vmArg(String arg) {
         vmArgs.add(arg);
     }
@@ -318,8 +297,8 @@ public class RunConfigSettings implements Named {
     }
 
     /**
-     * Removes the {@code nogui} argument for the server configuration. By default {@code nogui} is specified, this is
-     * a convenient way to remove it if wanted.
+     * Removes the {@code nogui} argument for the server configuration. By default {@code nogui} is specified, this is a
+     * convenient way to remove it if wanted.
      */
     public void serverWithGui() {
         programArgs.removeIf("nogui"::equals);

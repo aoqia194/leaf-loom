@@ -25,6 +25,7 @@ package net.aoqia.loom.configuration.decompile;
 
 import java.io.File;
 import java.util.List;
+
 import net.aoqia.loom.LoomGradleExtension;
 import net.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
 import net.aoqia.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
@@ -52,29 +53,23 @@ public class SingleJarDecompileConfiguration extends DecompileConfiguration<Mapp
         LoomGradleExtension.get(project).getDecompilerOptions().forEach(options -> {
             final String decompilerName = options.getFormattedName();
             String taskName = "%sWith%s".formatted(taskBaseName, decompilerName);
+
             // Decompiler will be passed to the constructor of GenerateSourcesTask
-            project.getTasks()
-                    .register(taskName, GenerateSourcesTask.class, options)
-                    .configure(task -> {
-                        task.getInputJarName().set(zomboidJar.getName());
-                        task.getSourcesOutputJar()
-                                .fileValue(GenerateSourcesTask.getJarFileWithSuffix(
-                                        "-sources.jar", zomboidJar.getPath()));
+            project.getTasks().register(taskName, GenerateSourcesTask.class, options).configure(task -> {
+                task.getInputJarName().set(zomboidJar.getName());
+                task.getSourcesOutputJar()
+                    .fileValue(GenerateSourcesTask.getJarFileWithSuffix("-sources.jar", zomboidJar.getPath()));
 
-                        task.dependsOn(project.getTasks().named("validateAccessWidener"));
-                        task.setDescription("Decompile zomboid using %s.".formatted(decompilerName));
-                        task.setGroup(Constants.TaskGroup.LEAF);
+                task.dependsOn(project.getTasks().named("validateAccessWidener"));
+                task.setDescription("Decompile zomboid using %s.".formatted(decompilerName));
+                task.setGroup(Constants.TaskGroup.LEAF);
 
-                        if (mappingConfiguration.hasUnpickDefinitions()) {
-                            final File outputJar = new File(
-                                    extension
-                                            .getMappingConfiguration()
-                                            .mappingsWorkingDir()
-                                            .toFile(),
-                                    "zomboid-unpicked.jar");
-                            configureUnpick(task, outputJar);
-                        }
-                    });
+                if (mappingConfiguration.hasUnpickDefinitions()) {
+                    final File outputJar = new File(extension.getMappingConfiguration()
+                        .mappingsWorkingDir().toFile(), "zomboid-unpicked.jar");
+                    configureUnpick(task, outputJar);
+                }
+            });
         });
 
         project.getTasks().register(taskBaseName, task -> {

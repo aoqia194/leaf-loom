@@ -133,8 +133,12 @@ public abstract class ZomboidProvider {
                 final String path = object.path();
 
                 // Exclude certain folders for dev environment.
-                if (path.contains("jre")
-                    || path.contains("jre64")
+                if (path.startsWith("jre\\")
+                    || path.startsWith("jre64\\")
+                    || path.startsWith("mods\\")
+                    || path.startsWith("launcher\\")
+                    || path.startsWith("license\\")
+                    || path.startsWith("Workshop\\")
                     || path.endsWith(".bat")
                     || path.endsWith(".exe")
                     || path.endsWith(".sh")) {
@@ -155,14 +159,15 @@ public abstract class ZomboidProvider {
                     throw new FileNotFoundException("%s game file '%s' does not exist.".formatted(envString, srcPath));
                 }
 
-                boolean isExtractedLib = path.endsWith(".jar");
-                if (isExtractedLib) {
-                    dstPath = jar.toPath()
-                        .getParent()
-                        .resolve("extractedLibs")
-                        .resolve(getGameFilePath(object).getFileName());
-
-                    extractedLibs.add(dstPath);
+                // Send non class files (and some specific files) to the extracted folder. Speeds up processing time a LOT.
+                if (!path.endsWith(".class") && !path.endsWith(".lbc")) {
+                    // Add jar files to the classpath.
+                    if (path.endsWith(".jar")) {
+                        dstPath = extractedDir().toPath().resolve(getGameFilePath(object).getFileName());
+                        extractedLibs.add(dstPath);
+                    } else {
+                        dstPath = extractedDir().toPath().resolve(getGameFilePath(object));
+                    }
                 }
 
                 getExtension().copyGameFile(srcPath.toString())
@@ -265,6 +270,10 @@ public abstract class ZomboidProvider {
 
     public File workingDir() {
         return zomboidWorkingDirectory(configContext.project(), clientZomboidVersion());
+    }
+
+    public File extractedDir() {
+        return this.workingDir().toPath().resolve("extracted").toFile();
     }
 
     public String clientZomboidVersion() {

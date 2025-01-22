@@ -55,8 +55,6 @@ public final class SplitZomboidProvider extends ZomboidProvider {
         final Path serverJar = getZomboidServerJar().toPath();
 
         try (ZomboidJarSplitter jarSplitter = new ZomboidJarSplitter(clientJar, serverJar)) {
-            // Required for loader to compute the version info also useful to have in both jars.
-            // jarSplitter.sharedEntry("assets/zomboid/lang/en_us.json");
             jarSplitter.split(clientOnlyJar, commonJar);
         } catch (Exception e) {
             Files.deleteIfExists(clientOnlyJar);

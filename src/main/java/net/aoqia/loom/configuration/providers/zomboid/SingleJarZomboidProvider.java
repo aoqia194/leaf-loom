@@ -68,7 +68,7 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider
     public void provide() throws Exception {
         super.provide();
 
-        // Unlike Minecraft, PZ is the opposite. Server JARs are basically useless for ANY version <=41.78.16.
+        // Unlike Minecraft, PZ is the opposite. Server JARs are basically useless for ANY version >=41.78.16.
         if (provideServer()) {
             getProject().getLogger().warn("Using `serverOnlyZomboidJar()` is not recommended for Zomboid.");
         }

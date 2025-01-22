@@ -13,7 +13,7 @@
 		</Console>
 
 		<!--	latest.log same as vanilla	-->
-		<RollingRandomAccessFile name="LatestFile" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+		<RollingRandomAccessFile name="LatestFile" fileName="{sys:leaf.runDir}/logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
 			<PatternLayout>
 				<LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss}] [%t/%level] (%logger{1}) %msg{nolookups}%n">
 					<!-- Dont show the logger name for zomboid classes-->
@@ -27,7 +27,7 @@
 		</RollingRandomAccessFile>
 
 		<!--	Debug log file	-->
-		<RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.gz">
+		<RollingRandomAccessFile name="DebugFile" fileName="{sys:leaf.runDir}/logs/debug.log" filePattern="logs/debug-%i.log.gz">
 			<PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] (%logger) %msg{nolookups}%n" />
 
 			<!--	Keep 5 files max	-->

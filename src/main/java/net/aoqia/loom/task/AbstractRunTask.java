@@ -74,14 +74,62 @@ public abstract class AbstractRunTask extends JavaExec {
         getMainClass().set(config.map(runConfig -> runConfig.mainClass));
         getJvmArguments().addAll(getProject().provider(this::getGameJvmArgs));
 
-        getInternalRunDir().set(config.map(runConfig -> runConfig.runDir));
+        getInternalRunDir().set(config.map(runConfig -> runConfig.workingDir));
         getInternalEnvironmentVars().set(config.map(runConfig -> runConfig.environmentVariables));
         getInternalJvmArgs().set(config.map(runConfig -> runConfig.vmArgs));
         getUseArgFile().set(getProject().provider(this::canUseArgFile));
-        getProjectDir().set(getProject().getProjectDir().getAbsolutePath());
+        getGameRunDir().set(config.get().runDir);
         File buildCache = LoomGradleExtension.get(getProject()).getFiles().getProjectBuildCache();
         File argFile = new File(buildCache, "argFiles/" + getName());
         getArgFilePath().set(argFile.getAbsolutePath());
+    }
+
+    // Based off
+    // https://github.com/JetBrains/intellij-community/blob/295dd68385a458bdfde638152e36d19bed18b666/platform/util/src/com/intellij/execution/CommandLineWrapperUtil.java#L87
+    private static String quoteArg(String arg) {
+        final String specials = " #'\"\n\r\t\f";
+
+        if (!containsAnyChar(arg, specials)) {
+            return arg;
+        }
+
+        final StringBuilder sb = new StringBuilder(arg.length() * 2);
+
+        for (int i = 0; i < arg.length(); i++) {
+            char c = arg.charAt(i);
+
+            switch (c) {
+                case ' ',
+                     '#',
+                     '\'' -> sb.append('"').append(c).append('"');
+                case '"' -> sb.append("\"\\\"\"");
+                case '\n' -> sb.append("\"\\n\"");
+                case '\r' -> sb.append("\"\\r\"");
+                case '\t' -> sb.append("\"\\t\"");
+                case '\f' -> sb.append("\"\\f\"");
+                default -> sb.append(c);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    // https://github.com/JetBrains/intellij-community/blob/295dd68385a458bdfde638152e36d19bed18b666/platform/util/base/src/com/intellij/openapi/util/text/Strings.java#L100-L118
+    public static boolean containsAnyChar(final @NotNull String value, final @NotNull String chars) {
+        return chars.length() > value.length()
+            ? containsAnyChar(value, chars, 0, value.length())
+            : containsAnyChar(chars, value, 0, chars.length());
+    }
+
+    public static boolean containsAnyChar(
+        final @NotNull String value, final @NotNull String chars, final int start, final int end) {
+        for (int i = start; i < end; i++) {
+            if (chars.indexOf(value.charAt(i)) >= 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // We control the classpath, as we use a ArgFile to pass it over the command line:
@@ -137,64 +185,16 @@ public abstract class AbstractRunTask extends JavaExec {
     }
 
     @Input
-    protected abstract Property<String> getProjectDir();
+    protected abstract Property<String> getGameRunDir();
 
     @Input
     // We use a string here, as it's technically an output, but we don't want to cache runs of this task by default.
     protected abstract Property<String> getArgFilePath();
 
-    // Based off
-    // https://github.com/JetBrains/intellij-community/blob/295dd68385a458bdfde638152e36d19bed18b666/platform/util/src/com/intellij/execution/CommandLineWrapperUtil.java#L87
-    private static String quoteArg(String arg) {
-        final String specials = " #'\"\n\r\t\f";
-
-        if (!containsAnyChar(arg, specials)) {
-            return arg;
-        }
-
-        final StringBuilder sb = new StringBuilder(arg.length() * 2);
-
-        for (int i = 0; i < arg.length(); i++) {
-            char c = arg.charAt(i);
-
-            switch (c) {
-                case ' ',
-                     '#',
-                     '\'' -> sb.append('"').append(c).append('"');
-                case '"' -> sb.append("\"\\\"\"");
-                case '\n' -> sb.append("\"\\n\"");
-                case '\r' -> sb.append("\"\\r\"");
-                case '\t' -> sb.append("\"\\t\"");
-                case '\f' -> sb.append("\"\\f\"");
-                default -> sb.append(c);
-            }
-        }
-
-        return sb.toString();
-    }
-
     private boolean canPathBeASCIIEncoded() {
         return ASCII_ENCODER.canEncode(getProject().getProjectDir().getAbsolutePath())
                && ASCII_ENCODER.canEncode(
             getProject().getGradle().getGradleUserHomeDir().getAbsolutePath());
-    }
-
-    // https://github.com/JetBrains/intellij-community/blob/295dd68385a458bdfde638152e36d19bed18b666/platform/util/base/src/com/intellij/openapi/util/text/Strings.java#L100-L118
-    public static boolean containsAnyChar(final @NotNull String value, final @NotNull String chars) {
-        return chars.length() > value.length()
-            ? containsAnyChar(value, chars, 0, value.length())
-            : containsAnyChar(chars, value, 0, chars.length());
-    }
-
-    public static boolean containsAnyChar(
-        final @NotNull String value, final @NotNull String chars, final int start, final int end) {
-        for (int i = start; i < end; i++) {
-            if (chars.indexOf(value.charAt(i)) >= 0) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     // Prevent Gradle from running two run tasks in parallel
@@ -213,7 +213,19 @@ public abstract class AbstractRunTask extends JavaExec {
             super.setClasspath(getInternalClasspath());
         }
 
-        setWorkingDir(new File(getProjectDir().get(), getInternalRunDir().get()));
+        // The game doesn't like us setting the working directory to the runDir like FabricMC/loom does for Minecraft.
+        // We get around this by setting the workingDir to the assets folder, and then setting runDir via cachedir.
+        // setWorkingDir(new File(getProjectDir().get(), getInternalRunDir().get()));
+        this.setWorkingDir(getInternalRunDir().get());
+
+        // Ensure that the run dir was created.
+        try {
+            LOGGER.debug("Creating run dir with path {}", getGameRunDir().get());
+            Files.createDirectories(Path.of(getGameRunDir().get()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         environment(getInternalEnvironmentVars().get());
 
         super.exec();

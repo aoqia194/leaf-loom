@@ -28,6 +28,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.aoqia.loom.LoomGradleExtension;
 import net.aoqia.loom.LoomRepositoryPlugin;
+import net.aoqia.loom.configuration.ide.idea.IdeaUtils;
 import net.aoqia.loom.util.Constants;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -79,10 +80,9 @@ public record InstallerData(String version, JsonObject installerJson) {
 
             // Work around https://github.com/FabricMC/Mixin/pull/60 and
             // https://github.com/FabricMC/fabric-mixin-compile-extensions/issues/14.
-//            if (!IdeaUtils.isIdeaSync()
-//                    && extension.getMixin().getUseLegacyMixinAp().get()) {
-//                annotationProcessor.getDependencies().add(modDep);
-//            }
+            if (!IdeaUtils.isIdeaSync() && extension.getMixin().getUseLegacyMixinAp().get()) {
+                annotationProcessor.getDependencies().add(modDep);
+            }
 
             // If user choose to use dependencyResolutionManagement, then they should declare
             // these repositories manually in the settings file.

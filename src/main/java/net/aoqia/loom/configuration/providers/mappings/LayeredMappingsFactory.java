@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+
 import net.aoqia.loom.LoomGradleExtension;
 import net.aoqia.loom.LoomGradlePlugin;
 import net.aoqia.loom.api.mappings.layered.MappingContext;
@@ -62,12 +63,12 @@ public record LayeredMappingsFactory(LayeredMappingSpec spec) {
      */
     public static void afterEvaluate(ConfigContext configContext) {
         for (LayeredMappingsFactory layeredMappingFactory :
-                configContext.extension().getLayeredMappingFactories()) {
+            configContext.extension().getLayeredMappingFactories()) {
             try {
                 layeredMappingFactory.evaluate(configContext);
             } catch (IOException e) {
                 throw new UncheckedIOException(
-                        "Failed to setup layered mappings: %s".formatted(layeredMappingFactory.mavenNotation()), e);
+                    "Failed to setup layered mappings: %s".formatted(layeredMappingFactory.mavenNotation()), e);
             }
         }
     }
@@ -75,8 +76,7 @@ public record LayeredMappingsFactory(LayeredMappingSpec spec) {
     private void evaluate(ConfigContext configContext) throws IOException {
         LOGGER.info("Evaluating layer mapping: {}", mavenNotation());
 
-        final Path mavenRepoDir =
-                configContext.extension().getFiles().getGlobalZomboidRepo().toPath();
+        final Path mavenRepoDir = configContext.extension().getFiles().getGlobalZomboidRepo().toPath();
         final LocalMavenHelper maven = new LocalMavenHelper(GROUP, MODULE, spec().getVersion(), null, mavenRepoDir);
         final Path jar = resolve(configContext.project());
         maven.copyToMaven(jar, null);
@@ -85,9 +85,9 @@ public record LayeredMappingsFactory(LayeredMappingSpec spec) {
     public Path resolve(Project project) throws IOException {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);
         final MappingContext mappingContext = new GradleMappingContext(
-                project, spec.getVersion().replace("+", "_").replace(".", "_"));
+            project, spec.getVersion().replace("+", "_").replace(".", "_"));
         final Path mappingsDir =
-                mappingContext.zomboidProvider().dir("layered").toPath();
+            mappingContext.zomboidProvider().dir("layered").toPath();
         final Path mappingsZip = mappingsDir.resolve(String.format("%s.%s-%s.jar", GROUP, MODULE, spec.getVersion()));
 
         if (Files.exists(mappingsZip) && !mappingContext.refreshDeps()) {
@@ -115,27 +115,26 @@ public record LayeredMappingsFactory(LayeredMappingSpec spec) {
     }
 
     private void writeMapping(LayeredMappingsProcessor processor, List<MappingLayer> layers, Path mappingsFile)
-            throws IOException {
+        throws IOException {
         MemoryMappingTree mappings = processor.getMappings(layers);
 
         try (Writer writer = new StringWriter()) {
             var tiny2Writer = new Tiny2FileWriter(writer, false);
 
-            MappingDstNsReorder nsReorder = new MappingDstNsReorder(
-                    tiny2Writer, List.of(MappingsNamespace.NAMED.toString(), MappingsNamespace.OFFICIAL.toString()));
-            MappingSourceNsSwitch nsSwitch =
-                    new MappingSourceNsSwitch(nsReorder, MappingsNamespace.OFFICIAL.toString(), true);
+            MappingDstNsReorder nsReorder = new MappingDstNsReorder(tiny2Writer,
+                List.of(MappingsNamespace.NAMED.toString(), MappingsNamespace.OFFICIAL.toString()));
+            MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsReorder,
+                MappingsNamespace.OFFICIAL.toString(), true);
             AddConstructorMappingVisitor addConstructor = new AddConstructorMappingVisitor(nsSwitch);
             mappings.accept(addConstructor);
 
             Files.deleteIfExists(mappingsFile);
-            ZipUtils.add(
-                    mappingsFile, "mappings/mappings.tiny", writer.toString().getBytes(StandardCharsets.UTF_8));
+            ZipUtils.add(mappingsFile, "mappings/mappings.tiny", writer.toString().getBytes(StandardCharsets.UTF_8));
         }
     }
 
     private void writeSignatureFixes(LayeredMappingsProcessor processor, List<MappingLayer> layers, Path mappingsFile)
-            throws IOException {
+        throws IOException {
         Map<String, String> signatureFixes = processor.getSignatureFixes(layers);
 
         if (signatureFixes == null) {
@@ -148,7 +147,7 @@ public record LayeredMappingsFactory(LayeredMappingSpec spec) {
     }
 
     private void writeUnpickData(LayeredMappingsProcessor processor, List<MappingLayer> layers, Path mappingsFile)
-            throws IOException {
+        throws IOException {
         UnpickLayer.UnpickData unpickData = processor.getUnpickData(layers);
 
         if (unpickData == null) {

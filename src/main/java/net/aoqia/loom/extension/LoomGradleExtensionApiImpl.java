@@ -45,7 +45,6 @@ import net.aoqia.loom.configuration.providers.mappings.LayeredMappingSpecBuilder
 import net.aoqia.loom.configuration.providers.mappings.LayeredMappingsFactory;
 import net.aoqia.loom.configuration.providers.zomboid.ManifestLocations;
 import net.aoqia.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidMetadataProvider;
 import net.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import net.aoqia.loom.task.GenerateSourcesTask;
 import net.aoqia.loom.util.DeprecationHelper;
@@ -140,11 +139,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
         this.zomboidJarConfiguration = project.getObjects()
             .property((Class<ZomboidJarConfiguration<?, ?, ?>>) (Class<?>) ZomboidJarConfiguration.class)
             .convention(project.provider(() -> {
-                final LoomGradleExtension extension = LoomGradleExtension.get(project);
-                final ZomboidMetadataProvider metadataProvider = extension.getClientMetadataProvider();
-
-                // if no configuration is selected by the user
-                // just fucking assume client only
+                // If no configuration is selected by the user, assume client only.
                 return ZomboidJarConfiguration.CLIENT_ONLY;
             }));
         this.zomboidJarConfiguration.finalizeValueOnRead();

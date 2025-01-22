@@ -141,10 +141,9 @@ public abstract class CompileConfiguration implements Runnable {
             }
 
             MixinExtension mixin = LoomGradleExtension.get(getProject()).getMixin();
-
-//            if (mixin.getUseLegacyMixinAp().get()) {
-//                setupMixinAp(mixin);
-//            }
+            if (mixin.getUseLegacyMixinAp().get()) {
+                setupMixinAp(mixin);
+            }
 
             configureDecompileTasks(configContext);
             configureTestTask();
