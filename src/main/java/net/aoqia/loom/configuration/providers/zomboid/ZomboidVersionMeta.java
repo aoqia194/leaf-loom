@@ -28,12 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.gson.JsonPrimitive;
 import net.aoqia.loom.util.Platform;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
 public record ZomboidVersionMeta(
-    Object arguments,
+    Arguments arguments,
     AssetIndex assetIndex,
     @Nullable JavaVersion javaVersion,
     List<Library> libraries,
@@ -120,6 +121,9 @@ public record ZomboidVersionMeta(
 
             return downloads().artifact();
         }
+    }
+
+    public record Arguments(List<JsonPrimitive> game, List<JsonPrimitive> jvm) {
     }
 
     public record AssetIndex(String sha1, long size, String url) {

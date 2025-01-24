@@ -134,12 +134,6 @@ public class RunConfig {
         // To prevent the log file from creating in workingdir.
         runConfig.vmArgs.add("-Dleaf.log.file=" + Path.of(runDir).resolve("leafloader.log"));
 
-        // Zomboid specific JVM args
-        runConfig.vmArgs.add("-Djava.awt.headless=true");
-        runConfig.vmArgs.add("-Dzomboid.steam=0");
-        runConfig.vmArgs.add("-Dzomboid.znetlog=1");
-        runConfig.vmArgs.add("-Djava.library.path=./win64/;./");
-
         runConfig.eclipseProjectName = project.getExtensions()
             .getByType(EclipseModel.class)
             .getProject()

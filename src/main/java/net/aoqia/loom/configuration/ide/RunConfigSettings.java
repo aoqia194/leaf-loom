@@ -297,17 +297,15 @@ public class RunConfigSettings implements Named {
     }
 
     /**
-     * Removes the {@code nogui} argument for the server configuration. By default {@code nogui} is specified, this is a
-     * convenient way to remove it if wanted.
-     */
-    public void serverWithGui() {
-        programArgs.removeIf("nogui"::equals);
-    }
-
-    /**
      * Configure run config with the default client options.
      */
     public void client() {
+        // Zomboid specific JVM args that aren't added to the manifests.
+        // They aren't added to manifests so the user can change them freely in the run config.
+        // Because they aren't critical to the game's execution.
+        property("zomboid.steam", "0");
+        property("zomboid.znetlog", "1");
+
         environment("client");
         defaultMainClass(Constants.Knot.KNOT_CLIENT);
 
@@ -321,7 +319,12 @@ public class RunConfigSettings implements Named {
      * Configure run config with the default server options.
      */
     public void server() {
-        programArg("nogui");
+        // Zomboid specific JVM args that aren't added to the manifests.
+        // They aren't added to manifests so the user can change them freely in the run config.
+        // Because they aren't critical to the game's execution.
+        property("zomboid.steam", "0");
+        property("zomboid.znetlog", "1");
+
         environment("server");
         defaultMainClass(Constants.Knot.KNOT_SERVER);
     }

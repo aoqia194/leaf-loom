@@ -34,6 +34,7 @@ import net.aoqia.loom.LoomGradlePlugin;
 import net.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import net.aoqia.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 import net.aoqia.loom.task.AbstractLoomTask;
+import net.aoqia.loom.util.Platform;
 import net.aoqia.loom.util.gradle.SourceSetHelper;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.Project;
@@ -69,18 +70,6 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
         getDevLauncherConfig().set(getExtension().getFiles().getDevLauncherConfig());
     }
 
-    @Input
-    protected abstract Property<String> getVersionInfoJson();
-
-    @Input
-    protected abstract Property<String> getZomboidVersion();
-
-    @Input
-    protected abstract Property<Boolean> getSplitSourceSets();
-
-    @Input
-    protected abstract Property<Boolean> getANSISupportedIDE();
-
     private static boolean ansiSupportedIde(Project project) {
         File rootDir = project.getRootDir();
         return new File(rootDir, ".vscode").exists()
@@ -89,13 +78,6 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
                || (Arrays.stream(rootDir.listFiles())
             .anyMatch(file -> file.getName().endsWith(".iws")));
     }
-
-    @Input
-    protected abstract Property<Boolean> getPlainConsole();
-
-    @Input
-    @Optional
-    protected abstract Property<String> getClassPathGroups();
 
     /**
      * See: https://github.com/FabricMC/fabric-loader/pull/585.
@@ -108,14 +90,33 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
             .collect(Collectors.joining(File.pathSeparator + File.pathSeparator));
     }
 
-    @Input
-    protected abstract Property<String> getLog4jConfigPaths();
-
     private static String getAllLog4JConfigFiles(Project project) {
         return LoomGradleExtension.get(project).getLog4jConfigs().getFiles().stream()
             .map(File::getAbsolutePath)
             .collect(Collectors.joining(","));
     }
+
+    @Input
+    protected abstract Property<String> getVersionInfoJson();
+
+    @Input
+    protected abstract Property<String> getZomboidVersion();
+
+    @Input
+    protected abstract Property<Boolean> getSplitSourceSets();
+
+    @Input
+    protected abstract Property<Boolean> getANSISupportedIDE();
+
+    @Input
+    protected abstract Property<Boolean> getPlainConsole();
+
+    @Input
+    @Optional
+    protected abstract Property<String> getClassPathGroups();
+
+    @Input
+    protected abstract Property<String> getLog4jConfigPaths();
 
     @Input
     @Optional
@@ -154,6 +155,27 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
                 getRemapClasspathFile().get().getAsFile().getAbsolutePath())
             .property("log4j.configurationFile", getLog4jConfigPaths().get())
             .property("log4j2.formatMsgNoLookups", "true");
+
+        // I don't add game args from the versionInfo manifest because I don't need them rn.
+        // Add the jvm args from the versionInfo manifest.
+        for (final var arg : versionInfo.arguments().jvm()) {
+            if (arg.isString()) {
+                String str = arg.getAsJsonPrimitive().getAsString();
+                String key = str.subSequence(2, str.indexOf("=")).toString();
+                String value = str.subSequence(str.indexOf("=") + 1, str.length()).toString();
+
+                launchConfig.property(key, value);
+            } else {
+                var rule = LoomGradlePlugin.GSON.fromJson(arg, ZomboidVersionMeta.Rule.class);
+                if (rule.isAllowed() && rule.appliesToOS(Platform.CURRENT)) {
+                    String str = rule.action();
+                    String key = str.subSequence(2, str.indexOf("=")).toString();
+                    String value = str.subSequence(str.indexOf("=") + 1, str.length()).toString();
+
+                    launchConfig.property(key, value);
+                }
+            }
+        }
 
         if (versionInfo.hasNativesToExtract()) {
             String nativesPath = getNativesDirectoryPath().get();
