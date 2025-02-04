@@ -27,9 +27,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Opcodes;
 
 public class Constants {
-    public static final String GAME_INSTALL_PATH = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\ProjectZomboid";
-    public static final String SERVER_INSTALL_PATH =
-        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Project Zomboid Dedicated Server";
+    public static final String STEAM_LIBRARY_PATH = "C:\\Program Files (x86)\\Steam";
+    public static final String GAME_INSTALL_PATH = STEAM_LIBRARY_PATH + "\\steamapps\\common\\ProjectZomboid";
+    public static final String SERVER_INSTALL_PATH = STEAM_LIBRARY_PATH + "\\steamapps\\common\\Project Zomboid Dedicated Server";
     public static final String INDEX_MANIFEST_PATH =
         "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/indexes/";
     public static final String VERSION_MANIFESTS =
