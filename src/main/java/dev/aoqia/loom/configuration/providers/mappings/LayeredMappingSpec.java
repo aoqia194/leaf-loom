@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings;
+package dev.aoqia.loom.configuration.providers.mappings;
 
 import java.util.List;
 import java.util.Locale;
-import net.aoqia.loom.api.mappings.layered.spec.MappingsSpec;
+import dev.aoqia.loom.api.mappings.layered.spec.MappingsSpec;
 
 public record LayeredMappingSpec(List<MappingsSpec<?>> layers) {
     public String getVersion() {

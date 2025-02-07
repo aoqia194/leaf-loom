@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.service
+package dev.aoqia.loom.test.unit.service
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -34,10 +34,10 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.intellij.lang.annotations.Language
 
-import net.aoqia.loom.task.service.MappingsService
-import net.aoqia.loom.task.service.SourceRemapperService
-import net.aoqia.loom.test.util.GradleTestUtil
-import net.aoqia.loom.util.DeletingFileVisitor
+import dev.aoqia.loom.task.service.MappingsService
+import dev.aoqia.loom.task.service.SourceRemapperService
+import dev.aoqia.loom.test.util.GradleTestUtil
+import dev.aoqia.loom.util.DeletingFileVisitor
 
 class SourceRemapperServiceTest extends ServiceTestBase {
 	def "remap sources"() {

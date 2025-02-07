@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,10 +36,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.ide.RunConfig;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.gradle.SyncTaskBuildService;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.ide.RunConfig;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.gradle.SyncTaskBuildService;
 import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;

@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.gradle;
+package dev.aoqia.loom.util.gradle;
 
 import java.io.IOException;
 import java.util.Locale;
-import net.aoqia.loom.util.IOStringConsumer;
+import dev.aoqia.loom.util.IOStringConsumer;
 
 public record ThreadedSimpleProgressLogger(IOStringConsumer parent) implements IOStringConsumer {
     @Override

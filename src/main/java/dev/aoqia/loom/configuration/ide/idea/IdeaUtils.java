@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.ide.idea;
+package dev.aoqia.loom.configuration.ide.idea;
 
-import net.aoqia.loom.util.gradle.SourceSetReference;
+import dev.aoqia.loom.util.gradle.SourceSetReference;
 import org.gradle.api.Project;
 
 public class IdeaUtils {

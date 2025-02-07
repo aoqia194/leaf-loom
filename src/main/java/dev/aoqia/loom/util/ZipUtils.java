@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util;
+package dev.aoqia.loom.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -41,7 +41,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import net.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.LoomGradlePlugin;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;

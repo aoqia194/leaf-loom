@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.service;
+package dev.aoqia.loom.util.service;
 
 import org.gradle.api.provider.Provider;
 import org.jetbrains.annotations.Nullable;

@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.library.processors
+package dev.aoqia.loom.test.unit.library.processors
 
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.LegacyASMLibraryProcessor
-import net.aoqia.loom.test.util.PlatformTestUtils
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.LegacyASMLibraryProcessor
+import dev.aoqia.loom.test.util.PlatformTestUtils
 
 class LegacyASMLibraryProcessorTest extends LibraryProcessorTest {
 	def "Removes legacy asm-all"() {

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.processors;
+package dev.aoqia.loom.configuration.processors;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -35,14 +35,14 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.RemapConfigurationSettings;
-import net.aoqia.loom.api.processor.SpecContext;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.fmj.LeafModJson;
-import net.aoqia.loom.util.fmj.LeafModJsonFactory;
-import net.aoqia.loom.util.fmj.LeafModJsonHelpers;
-import net.aoqia.loom.util.gradle.GradleUtils;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.RemapConfigurationSettings;
+import dev.aoqia.loom.api.processor.SpecContext;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.fmj.LeafModJson;
+import dev.aoqia.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.loom.util.fmj.LeafModJsonHelpers;
+import dev.aoqia.loom.util.gradle.GradleUtils;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ProjectDependency;

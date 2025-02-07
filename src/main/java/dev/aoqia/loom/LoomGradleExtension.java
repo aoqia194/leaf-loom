@@ -21,28 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom;
+package dev.aoqia.loom;
 
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
-import net.aoqia.loom.api.LoomGradleExtensionAPI;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.InstallerData;
-import net.aoqia.loom.configuration.LoomDependencyManager;
-import net.aoqia.loom.configuration.accesswidener.AccessWidenerFile;
-import net.aoqia.loom.configuration.providers.mappings.LayeredMappingsFactory;
-import net.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidMetadataProvider;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidProvider;
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
-import net.aoqia.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
-import net.aoqia.loom.extension.LoomFiles;
-import net.aoqia.loom.extension.MixinExtension;
-import net.aoqia.loom.extension.RemapperExtensionHolder;
-import net.aoqia.loom.util.copygamefile.CopyGameFileBuilder;
-import net.aoqia.loom.util.download.DownloadBuilder;
+import dev.aoqia.loom.api.LoomGradleExtensionAPI;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.InstallerData;
+import dev.aoqia.loom.configuration.LoomDependencyManager;
+import dev.aoqia.loom.configuration.accesswidener.AccessWidenerFile;
+import dev.aoqia.loom.configuration.providers.mappings.LayeredMappingsFactory;
+import dev.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidMetadataProvider;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidProvider;
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
+import dev.aoqia.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
+import dev.aoqia.loom.extension.LoomFiles;
+import dev.aoqia.loom.extension.MixinExtension;
+import dev.aoqia.loom.extension.RemapperExtensionHolder;
+import dev.aoqia.loom.util.copygamefile.CopyGameFileBuilder;
+import dev.aoqia.loom.util.download.DownloadBuilder;
 import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;

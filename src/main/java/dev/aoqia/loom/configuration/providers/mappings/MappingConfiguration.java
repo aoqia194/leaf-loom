@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings;
+package dev.aoqia.loom.configuration.providers.mappings;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -31,15 +31,15 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.google.gson.JsonObject;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.configuration.DependencyInfo;
-import net.aoqia.loom.configuration.providers.mappings.tiny.TinyJarInfo;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidProvider;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.DeletingFileVisitor;
-import net.aoqia.loom.util.FileSystemUtil;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.configuration.DependencyInfo;
+import dev.aoqia.loom.configuration.providers.mappings.tiny.TinyJarInfo;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidProvider;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.DeletingFileVisitor;
+import dev.aoqia.loom.util.FileSystemUtil;
+import dev.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.service.ServiceFactory;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.format.MappingFormat;
 import net.fabricmc.stitch.Command;

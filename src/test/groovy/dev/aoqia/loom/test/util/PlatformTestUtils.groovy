@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.util
+package dev.aoqia.loom.test.util
 
 import groovy.transform.Immutable
 
 import groovy.transform.Immutable
 
-import net.aoqia.loom.util.Platform
+import dev.aoqia.loom.util.Platform
 
 @Immutable
 class PlatformTestUtils implements Platform  {

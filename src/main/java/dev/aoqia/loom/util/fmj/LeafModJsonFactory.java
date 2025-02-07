@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.fmj;
+package dev.aoqia.loom.util.fmj;
 
-import static net.aoqia.loom.util.fmj.LeafModJsonUtils.readInt;
+import static dev.aoqia.loom.util.fmj.LeafModJsonUtils.readInt;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,10 +43,10 @@ import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.util.FileSystemUtil;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.util.FileSystemUtil;
+import dev.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.gradle.SourceSetHelper;
 
 public final class LeafModJsonFactory {
     public static final String LEAF_MOD_JSON = "leaf.mod.json";

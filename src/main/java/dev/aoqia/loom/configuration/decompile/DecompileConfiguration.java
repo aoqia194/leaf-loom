@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.decompile;
+package dev.aoqia.loom.configuration.decompile;
 
 import java.io.File;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
-import net.aoqia.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
-import net.aoqia.loom.task.GenerateSourcesTask;
-import net.aoqia.loom.util.Constants;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
+import dev.aoqia.loom.task.GenerateSourcesTask;
+import dev.aoqia.loom.util.Constants;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 

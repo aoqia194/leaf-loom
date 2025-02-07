@@ -21,20 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task.service;
+package dev.aoqia.loom.task.service;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import net.aoqia.loom.task.RemapSourcesJarTask;
-import net.aoqia.loom.util.DeletingFileVisitor;
-import net.aoqia.loom.util.FileSystemUtil;
-import net.aoqia.loom.util.SourceRemapper;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.service.Service;
-import net.aoqia.loom.util.service.ServiceFactory;
-import net.aoqia.loom.util.service.ServiceType;
+import dev.aoqia.loom.task.RemapSourcesJarTask;
+import dev.aoqia.loom.util.DeletingFileVisitor;
+import dev.aoqia.loom.util.FileSystemUtil;
+import dev.aoqia.loom.util.SourceRemapper;
+import dev.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.service.Service;
+import dev.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.util.service.ServiceType;
 import net.fabricmc.lorenztiny.TinyMappingsReader;
 import org.cadixdev.mercury.Mercury;
 import org.cadixdev.mercury.remapper.MercuryRemapper;

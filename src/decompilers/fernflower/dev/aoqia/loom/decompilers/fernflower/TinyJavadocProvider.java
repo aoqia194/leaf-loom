@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.decompilers.fernflower;
+package dev.aoqia.loom.decompilers.fernflower;
 
 import java.io.BufferedReader;
 import java.io.File;

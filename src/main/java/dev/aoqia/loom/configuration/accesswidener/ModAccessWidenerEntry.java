@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.accesswidener;
+package dev.aoqia.loom.configuration.accesswidener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,10 +32,10 @@ import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerRemapper;
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
 import net.fabricmc.accesswidener.TransitiveOnlyFilter;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.util.LazyCloseable;
-import net.aoqia.loom.util.fmj.LeafModJson;
-import net.aoqia.loom.util.fmj.ModEnvironment;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.util.LazyCloseable;
+import dev.aoqia.loom.util.fmj.LeafModJson;
+import dev.aoqia.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.jetbrains.annotations.Nullable;
 

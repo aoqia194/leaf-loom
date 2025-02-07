@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.copygamefile;
+package dev.aoqia.loom.util.copygamefile;
 
 import javax.inject.Inject;
 import java.nio.file.Path;
 
-import net.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.LoomGradleExtension;
 import org.gradle.api.Project;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;

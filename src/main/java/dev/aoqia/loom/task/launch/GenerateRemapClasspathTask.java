@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task.launch;
+package dev.aoqia.loom.task.launch;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,9 +29,9 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.aoqia.loom.api.RemapConfigurationSettings;
-import net.aoqia.loom.task.AbstractLoomTask;
-import net.aoqia.loom.util.Constants;
+import dev.aoqia.loom.api.RemapConfigurationSettings;
+import dev.aoqia.loom.task.AbstractLoomTask;
+import dev.aoqia.loom.util.Constants;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;

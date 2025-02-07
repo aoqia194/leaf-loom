@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.processors;
+package dev.aoqia.loom.configuration.processors;
 
 import com.google.gson.JsonElement;
 import java.io.ByteArrayInputStream;
@@ -36,13 +36,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import javax.inject.Inject;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.api.processor.ZomboidJarProcessor;
-import net.aoqia.loom.api.processor.ProcessorContext;
-import net.aoqia.loom.api.processor.SpecContext;
-import net.aoqia.loom.util.Checksum;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.fmj.LeafModJson;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.loom.api.processor.ProcessorContext;
+import dev.aoqia.loom.api.processor.SpecContext;
+import dev.aoqia.loom.util.Checksum;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.fmj.LeafModJson;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;

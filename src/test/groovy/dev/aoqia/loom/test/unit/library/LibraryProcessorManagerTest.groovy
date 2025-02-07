@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.library
+package dev.aoqia.loom.test.unit.library
 
-import net.aoqia.loom.configuration.providers.zomboid.library.Library
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessorManager
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor
-import net.aoqia.loom.test.unit.library.processors.LibraryProcessorTest
-import net.aoqia.loom.test.util.GradleTestUtil
-import net.aoqia.loom.test.util.PlatformTestUtils
+import dev.aoqia.loom.configuration.providers.zomboid.library.Library
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessorManager
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor
+import dev.aoqia.loom.test.unit.library.processors.LibraryProcessorTest
+import dev.aoqia.loom.test.util.GradleTestUtil
+import dev.aoqia.loom.test.util.PlatformTestUtils
 
 class LibraryProcessorManagerTest extends LibraryProcessorTest {
 	// A test to ensure that we can add macOS ARM64 support on an unsupported version

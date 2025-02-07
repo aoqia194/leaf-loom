@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
-import net.aoqia.loom.task.service.MigrateMappingsService;
-import net.aoqia.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.loom.task.service.MigrateMappingsService;
+import dev.aoqia.loom.util.service.ScopedServiceFactory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;

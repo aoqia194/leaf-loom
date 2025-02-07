@@ -21,17 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.accesswidener;
+package dev.aoqia.loom.configuration.accesswidener;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.api.processor.MappingProcessorContext;
-import net.aoqia.loom.api.processor.ZomboidJarProcessor;
-import net.aoqia.loom.util.LazyCloseable;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.api.processor.MappingProcessorContext;
+import dev.aoqia.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.loom.util.LazyCloseable;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;

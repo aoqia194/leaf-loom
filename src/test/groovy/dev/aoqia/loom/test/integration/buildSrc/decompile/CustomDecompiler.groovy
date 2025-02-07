@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration.buildSrc.decompile
+package dev.aoqia.loom.test.integration.buildSrc.decompile
 
 import java.nio.file.Path
 
-import net.aoqia.loom.api.decompilers.DecompilationMetadata
-import net.aoqia.loom.api.decompilers.LoomDecompiler
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.api.decompilers.DecompilationMetadata
+import dev.aoqia.loom.api.decompilers.LoomDecompiler
+import dev.aoqia.loom.util.ZipUtils
 
 class CustomDecompiler implements LoomDecompiler {
 	@Override

@@ -1,6 +1,6 @@
 package net.fabricmc.example;
 
-import net.aoqia.api.ModInitializer;
+import dev.aoqia.api.ModInitializer;
 
 public class ExampleMod implements ModInitializer {
 	@Override

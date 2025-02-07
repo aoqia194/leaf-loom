@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.processor
+package dev.aoqia.loom.test.unit.processor
 
 import spock.lang.Specification
 
 import spock.lang.Specification
 
-import net.aoqia.loom.configuration.accesswidener.ModAccessWidenerEntry
-import net.aoqia.loom.util.fmj.ModEnvironment
+import dev.aoqia.loom.configuration.accesswidener.ModAccessWidenerEntry
+import dev.aoqia.loom.util.fmj.ModEnvironment
 
 class ModAccessWidenerEntryTest extends Specification {
 	def "read local mod"() {

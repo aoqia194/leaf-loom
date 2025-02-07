@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.ide.idea;
+package dev.aoqia.loom.configuration.ide.idea;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,10 +30,10 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.mods.dependency.LocalMavenHelper;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
-import net.aoqia.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.mods.dependency.LocalMavenHelper;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.jetbrains.annotations.Nullable;

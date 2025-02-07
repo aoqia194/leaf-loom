@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.decompilers.cache;
+package dev.aoqia.loom.decompilers.cache;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
-import net.aoqia.loom.util.Checksum;
+import dev.aoqia.loom.util.Checksum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

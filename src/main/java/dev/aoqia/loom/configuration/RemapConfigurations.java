@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration;
+package dev.aoqia.loom.configuration;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.RemapConfigurationSettings;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.Strings;
-import net.aoqia.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.RemapConfigurationSettings;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.Strings;
+import dev.aoqia.loom.util.gradle.SourceSetHelper;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectList;
 import org.gradle.api.Project;

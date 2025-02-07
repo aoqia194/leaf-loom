@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.service
+package dev.aoqia.loom.test.unit.service
 
 import groovy.transform.InheritConstructors
 import groovy.transform.TupleConstructor
@@ -35,10 +35,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import spock.lang.Specification
 
-import net.aoqia.loom.test.util.GradleTestUtil
-import net.aoqia.loom.util.service.ScopedServiceFactory
-import net.aoqia.loom.util.service.Service
-import net.aoqia.loom.util.service.ServiceType
+import dev.aoqia.loom.test.util.GradleTestUtil
+import dev.aoqia.loom.util.service.ScopedServiceFactory
+import dev.aoqia.loom.util.service.Service
+import dev.aoqia.loom.util.service.ServiceType
 
 class ScopedServiceFactoryTest extends Specification {
 	def "create service"() {

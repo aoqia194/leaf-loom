@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid;
+package dev.aoqia.loom.configuration.providers.zomboid;
 
 import java.nio.file.Path;
 import java.util.function.Function;

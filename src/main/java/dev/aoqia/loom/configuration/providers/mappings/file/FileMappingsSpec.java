@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings.file;
+package dev.aoqia.loom.configuration.providers.mappings.file;
 
-import net.aoqia.loom.api.mappings.layered.MappingContext;
-import net.aoqia.loom.api.mappings.layered.spec.FileSpec;
-import net.aoqia.loom.api.mappings.layered.spec.MappingsSpec;
+import dev.aoqia.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.loom.api.mappings.layered.spec.MappingsSpec;
 
 public record FileMappingsSpec(
         FileSpec fileSpec,

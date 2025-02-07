@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.download
+package dev.aoqia.loom.test.unit.download
 
 import io.javalin.http.HttpStatus
 
 import io.javalin.http.HttpStatus
 
-import net.aoqia.loom.util.download.Download
-import net.aoqia.loom.util.download.DownloadException
+import dev.aoqia.loom.util.download.Download
+import dev.aoqia.loom.util.download.DownloadException
 
 class DownloadStringTest extends DownloadTest {
 	def "String: Download"() {

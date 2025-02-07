@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.gradle;
+package dev.aoqia.loom.util.gradle;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,10 +36,10 @@ import java.util.Set;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.ModSettings;
-import net.aoqia.loom.configuration.ide.idea.IdeaUtils;
-import net.aoqia.loom.util.Constants;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.ModSettings;
+import dev.aoqia.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.loom.util.Constants;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;

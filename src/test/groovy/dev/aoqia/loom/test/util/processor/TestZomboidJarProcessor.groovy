@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.util.processor
+package dev.aoqia.loom.test.util.processor
 
 import java.nio.file.Path
 
@@ -29,9 +29,9 @@ import groovy.transform.Immutable
 
 import groovy.transform.Immutable
 
-import net.aoqia.loom.api.processor.ProcessorContext
-import net.aoqia.loom.api.processor.SpecContext
-import net.aoqia.loom.api.processor.ZomboidJarProcessor
+import dev.aoqia.loom.api.processor.ProcessorContext
+import dev.aoqia.loom.api.processor.SpecContext
+import dev.aoqia.loom.api.processor.ZomboidJarProcessor
 
 @Immutable
 class TestZomboidJarProcessor implements ZomboidJarProcessor<Spec> {

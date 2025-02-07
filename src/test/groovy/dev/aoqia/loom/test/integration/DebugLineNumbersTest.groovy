@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration
+package dev.aoqia.loom.test.integration
 
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.CompletableFuture
@@ -51,11 +51,11 @@ import io.reactivex.functions.Function
 import spock.lang.Specification
 import spock.lang.Timeout
 
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidJar
-import net.aoqia.loom.test.util.GradleProjectTestTrait
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidJar
+import dev.aoqia.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.loom.util.ZipUtils
 
-import static net.aoqia.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
+import static dev.aoqia.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 @Timeout(value = 30, unit = TimeUnit.MINUTES)

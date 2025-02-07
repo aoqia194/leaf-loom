@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid;
+package dev.aoqia.loom.configuration.providers.zomboid;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,9 +35,9 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import com.google.common.collect.Sets;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.FileSystemUtil;
-import net.aoqia.loom.util.JarUtil;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.FileSystemUtil;
+import dev.aoqia.loom.util.JarUtil;
 
 public class ZomboidJarSplitter implements AutoCloseable {
     private final Path clientInputJar;

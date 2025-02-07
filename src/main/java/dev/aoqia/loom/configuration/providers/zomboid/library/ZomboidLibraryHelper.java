@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid.library;
+package dev.aoqia.loom.configuration.providers.zomboid.library;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta;
-import net.aoqia.loom.util.Platform;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta;
+import dev.aoqia.loom.util.Platform;
 
 /**
  * Utils to get the Zomboid libraries for a given platform, no processing is applied.

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -29,7 +29,7 @@ import spock.lang.Unroll
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import net.aoqia.loom.util.Strings
+import dev.aoqia.loom.util.Strings
 
 class StringsTest extends Specification {
 	@Unroll

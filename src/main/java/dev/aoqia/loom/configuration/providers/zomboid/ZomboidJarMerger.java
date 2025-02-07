@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid;
+package dev.aoqia.loom.configuration.providers.zomboid;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,10 +43,10 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.FileSystemUtil;
-import net.aoqia.loom.util.SnowmanClassVisitor;
-import net.aoqia.loom.util.SyntheticParameterClassVisitor;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.FileSystemUtil;
+import dev.aoqia.loom.util.SnowmanClassVisitor;
+import dev.aoqia.loom.util.SyntheticParameterClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;

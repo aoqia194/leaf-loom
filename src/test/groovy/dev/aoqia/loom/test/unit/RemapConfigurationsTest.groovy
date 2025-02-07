@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import org.gradle.api.tasks.SourceSet
 import spock.lang.Specification
@@ -29,9 +29,9 @@ import spock.lang.Specification
 import org.gradle.api.tasks.SourceSet
 import spock.lang.Specification
 
-import net.aoqia.loom.api.RemapConfigurationSettings
-import net.aoqia.loom.configuration.RemapConfigurations
-import net.aoqia.loom.test.util.GradleTestUtil
+import dev.aoqia.loom.api.RemapConfigurationSettings
+import dev.aoqia.loom.configuration.RemapConfigurations
+import dev.aoqia.loom.test.util.GradleTestUtil
 
 class RemapConfigurationsTest extends Specification {
 	private static final RemapConfigurations.ConfigurationOption IMPLEMENTATION_OPTION = new RemapConfigurations.ConfigurationOption(SourceSet.&getImplementationConfigurationName, true, true, RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY)

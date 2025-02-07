@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.util
+package dev.aoqia.loom.test.util
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -29,7 +29,7 @@ import java.nio.file.Path
 import java.util.jar.Attributes
 import java.util.jar.Manifest
 
-import net.aoqia.loom.util.FileSystemUtil
+import dev.aoqia.loom.util.FileSystemUtil
 
 class ZipTestUtils {
 	static Path createZip(Map<String, String> entries, String suffix = ".zip") {

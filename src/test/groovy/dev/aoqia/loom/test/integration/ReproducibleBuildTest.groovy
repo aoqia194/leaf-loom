@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration
+package dev.aoqia.loom.test.integration
 
 import com.google.common.hash.HashCode
 import com.google.common.hash.Hashing
@@ -37,10 +37,10 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import spock.util.environment.RestoreSystemProperties
 
-import net.aoqia.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.loom.test.util.GradleProjectTestTrait
 
+import static dev.aoqia.loom.test.LoomTestConstants.*
 import static java.lang.System.setProperty
-import static net.aoqia.loom.test.LoomTestConstants.*
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class ReproducibleBuildTest extends Specification implements GradleProjectTestTrait {

@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.sandbox;
+package dev.aoqia.loom.configuration.sandbox;
 
-import static net.aoqia.loom.util.fmj.LeafModJsonUtils.ParseException;
-import static net.aoqia.loom.util.fmj.LeafModJsonUtils.getJsonObject;
-import static net.aoqia.loom.util.fmj.LeafModJsonUtils.readInt;
-import static net.aoqia.loom.util.fmj.LeafModJsonUtils.readString;
+import static dev.aoqia.loom.util.fmj.LeafModJsonUtils.ParseException;
+import static dev.aoqia.loom.util.fmj.LeafModJsonUtils.getJsonObject;
+import static dev.aoqia.loom.util.fmj.LeafModJsonUtils.readInt;
+import static dev.aoqia.loom.util.fmj.LeafModJsonUtils.readString;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -38,8 +38,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.aoqia.loom.util.Platform;
-import net.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.Platform;
+import dev.aoqia.loom.util.ZipUtils;
 
 public sealed interface SandboxMetadata permits SandboxMetadata.V1 {
     String SANDBOX_METADATA_FILENAME = "fabric-sandbox.json";

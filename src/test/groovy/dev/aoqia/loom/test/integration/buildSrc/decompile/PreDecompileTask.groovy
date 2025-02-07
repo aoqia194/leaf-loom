@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration.buildSrc.decompile
+package dev.aoqia.loom.test.integration.buildSrc.decompile
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty

@@ -1,4 +1,4 @@
-package net.aoqia.loom.bootstrap;
+package dev.aoqia.loom.bootstrap;
 
 import org.gradle.api.plugins.PluginAware;
 

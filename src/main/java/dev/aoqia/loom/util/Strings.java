@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util;
+package dev.aoqia.loom.util;
 
 public final class Strings {
     public static String capitalize(String word) {

@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom;
+package dev.aoqia.loom;
 
-import net.aoqia.loom.extension.LoomFiles;
-import net.aoqia.loom.util.MirrorUtil;
+import dev.aoqia.loom.extension.LoomFiles;
+import dev.aoqia.loom.util.MirrorUtil;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ArtifactRepositoryContainer;

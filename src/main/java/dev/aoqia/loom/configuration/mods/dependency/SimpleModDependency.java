@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.mods.dependency;
+package dev.aoqia.loom.configuration.mods.dependency;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
-import net.aoqia.loom.configuration.mods.ArtifactMetadata;
-import net.aoqia.loom.configuration.mods.ArtifactRef;
+import dev.aoqia.loom.configuration.mods.ArtifactMetadata;
+import dev.aoqia.loom.configuration.mods.ArtifactRef;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.jetbrains.annotations.Nullable;

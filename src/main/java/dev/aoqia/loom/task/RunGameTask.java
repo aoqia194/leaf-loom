@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
 import javax.inject.Inject;
-import net.aoqia.loom.configuration.ide.RunConfig;
-import net.aoqia.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.loom.configuration.ide.RunConfig;
+import dev.aoqia.loom.configuration.ide.RunConfigSettings;
 
 public abstract class RunGameTask extends AbstractRunTask {
     @Inject

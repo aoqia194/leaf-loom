@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.layeredmappings
+package dev.aoqia.loom.test.unit.layeredmappings
 
 interface LayeredMappingsTestConstants {
-	public static final String YARN_41_78_16_URL = "https://maven.aoqia.net/net/aoqia/yarn/41.78.16%2Bbuild.1/yarn-41.78.16%2Bbuild.1-v2.jar"
+	public static final String YARN_41_78_16_URL = "https://maven.aoqia.net/dev/aoqia/yarn/41.78.16%2Bbuild.1/yarn-41.78.16%2Bbuild.1-v2.jar"
 }

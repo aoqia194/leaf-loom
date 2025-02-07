@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api.processor;
+package dev.aoqia.loom.api.processor;
 
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.util.LazyCloseable;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.util.LazyCloseable;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public interface MappingProcessorContext {

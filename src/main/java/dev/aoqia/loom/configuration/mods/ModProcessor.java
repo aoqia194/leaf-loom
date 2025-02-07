@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.mods;
+package dev.aoqia.loom.configuration.mods;
 
 import com.google.gson.JsonObject;
 import java.io.ByteArrayInputStream;
@@ -40,19 +40,19 @@ import java.util.Set;
 import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.RemapConfigurationSettings;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.mods.dependency.ModDependency;
-import net.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
-import net.aoqia.loom.extension.RemapperExtensionHolder;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.Pair;
-import net.aoqia.loom.util.TinyRemapperHelper;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.kotlin.KotlinClasspathService;
-import net.aoqia.loom.util.kotlin.KotlinRemapperClassloader;
-import net.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.RemapConfigurationSettings;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.mods.dependency.ModDependency;
+import dev.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.loom.extension.RemapperExtensionHolder;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.Pair;
+import dev.aoqia.loom.util.TinyRemapperHelper;
+import dev.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.kotlin.KotlinClasspathService;
+import dev.aoqia.loom.util.kotlin.KotlinRemapperClassloader;
+import dev.aoqia.loom.util.service.ServiceFactory;
 import net.fabricmc.tinyremapper.InputTag;
 import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;

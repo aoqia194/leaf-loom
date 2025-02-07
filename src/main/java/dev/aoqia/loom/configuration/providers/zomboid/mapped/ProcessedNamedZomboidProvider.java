@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid.mapped;
+package dev.aoqia.loom.configuration.providers.zomboid.mapped;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,17 +31,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import net.aoqia.loom.configuration.ConfigContext;
-import net.aoqia.loom.configuration.mods.dependency.LocalMavenHelper;
-import net.aoqia.loom.configuration.processors.ZomboidJarProcessorManager;
-import net.aoqia.loom.configuration.processors.ProcessorContextImpl;
-import net.aoqia.loom.configuration.providers.zomboid.MergedZomboidProvider;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
-import net.aoqia.loom.configuration.providers.zomboid.SingleJarEnvType;
-import net.aoqia.loom.configuration.providers.zomboid.SingleJarZomboidProvider;
-import net.aoqia.loom.configuration.providers.zomboid.SplitZomboidProvider;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidProvider;
+import dev.aoqia.loom.configuration.ConfigContext;
+import dev.aoqia.loom.configuration.mods.dependency.LocalMavenHelper;
+import dev.aoqia.loom.configuration.processors.ZomboidJarProcessorManager;
+import dev.aoqia.loom.configuration.processors.ProcessorContextImpl;
+import dev.aoqia.loom.configuration.providers.zomboid.MergedZomboidProvider;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
+import dev.aoqia.loom.configuration.providers.zomboid.SingleJarEnvType;
+import dev.aoqia.loom.configuration.providers.zomboid.SingleJarZomboidProvider;
+import dev.aoqia.loom.configuration.providers.zomboid.SplitZomboidProvider;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidProvider;
 
 public abstract class ProcessedNamedZomboidProvider<M extends ZomboidProvider, P extends NamedZomboidProvider<M>>
         extends NamedZomboidProvider<M> {

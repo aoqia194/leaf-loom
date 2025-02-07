@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration
+package dev.aoqia.loom.test.integration
 
 import java.nio.file.Path
 
@@ -33,14 +33,14 @@ import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import net.aoqia.loom.configuration.mods.dependency.LocalMavenHelper
-import net.aoqia.loom.test.unit.sandbox.SandboxEntrypoint
-import net.aoqia.loom.test.util.GradleProjectTestTrait
-import net.aoqia.loom.test.util.ZipTestUtils
-import net.aoqia.loom.util.Constants
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.configuration.mods.dependency.LocalMavenHelper
+import dev.aoqia.loom.test.unit.sandbox.SandboxEntrypoint
+import dev.aoqia.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.loom.test.util.ZipTestUtils
+import dev.aoqia.loom.util.Constants
+import dev.aoqia.loom.util.ZipUtils
 
-import static net.aoqia.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static dev.aoqia.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class SandboxTest extends Specification implements GradleProjectTestTrait {
@@ -59,9 +59,9 @@ class SandboxTest extends Specification implements GradleProjectTestTrait {
                     modImplementation "net.fabricmc:fabric-loader:0.15.10"
                 }
             '''
-		new File(gradle.getProjectDir(), "gradle.properties").text = "${Constants.Properties.SANDBOX}=net.aoqia.loom.test:sandbox:1.0.0"
+		new File(gradle.getProjectDir(), "gradle.properties").text = "${Constants.Properties.SANDBOX}=dev.aoqia.loom.test:sandbox:1.0.0"
 
-		def mavenHelper = new LocalMavenHelper("net.aoqia.loom.test", "sandbox", "1.0.0", null, gradle.getMavenLocalDir().toPath())
+		def mavenHelper = new LocalMavenHelper("dev.aoqia.loom.test", "sandbox", "1.0.0", null, gradle.getMavenLocalDir().toPath())
 		mavenHelper.copyToMaven(createDummySandboxJar(), null)
 		mavenHelper.savePom()
 
@@ -80,7 +80,7 @@ class SandboxTest extends Specification implements GradleProjectTestTrait {
 
 	static Path createDummySandboxJar() {
 		def zip = ZipTestUtils.createZip(["fabric-sandbox.json": METADATA_JSON], ".jar")
-		ZipUtils.add(zip, "net/aoqia/loom/test/unit/sandbox/SandboxEntrypoint.class", getClassBytes(SandboxEntrypoint.class))
+		ZipUtils.add(zip, "dev/aoqia/loom/test/unit/sandbox/SandboxEntrypoint.class", getClassBytes(SandboxEntrypoint.class))
 		return zip
 	}
 

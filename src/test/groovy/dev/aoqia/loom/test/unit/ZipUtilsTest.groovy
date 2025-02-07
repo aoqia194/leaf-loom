@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -35,11 +35,11 @@ import com.google.gson.JsonObject
 import org.gradle.api.tasks.bundling.ZipEntryCompression
 import spock.lang.Specification
 
-import net.aoqia.loom.util.Checksum
-import net.aoqia.loom.util.FileSystemUtil
-import net.aoqia.loom.util.Pair
-import net.aoqia.loom.util.ZipReprocessorUtil
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.util.Checksum
+import dev.aoqia.loom.util.FileSystemUtil
+import dev.aoqia.loom.util.Pair
+import dev.aoqia.loom.util.ZipReprocessorUtil
+import dev.aoqia.loom.util.ZipUtils
 
 class ZipUtilsTest extends Specification {
 	def "pack"() {

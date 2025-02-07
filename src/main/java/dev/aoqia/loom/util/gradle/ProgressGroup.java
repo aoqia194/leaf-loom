@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.gradle;
+package dev.aoqia.loom.util.gradle;
 
 import java.io.Closeable;
 import java.io.IOException;

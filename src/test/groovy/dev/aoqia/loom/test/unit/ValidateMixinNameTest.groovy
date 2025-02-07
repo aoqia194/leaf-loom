@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import org.spongepowered.asm.mixin.Mixin
 import org.spongepowered.asm.mixin.gen.Accessor
@@ -31,15 +31,15 @@ import org.spongepowered.asm.mixin.Mixin
 import org.spongepowered.asm.mixin.gen.Accessor
 import spock.lang.Specification
 
-import net.aoqia.loom.task.ValidateMixinNameTask
+import dev.aoqia.loom.task.ValidateMixinNameTask
 
 class ValidateMixinNameTest extends Specification {
 	def "TestMixin"() {
 		when:
 		def mixin = getMixin(TestMixin.class)
 		then:
-		mixin.className() == "net/aoqia/loom/test/unit/TestMixin"
-		mixin.target().internalName == "net/aoqia/loom/test/unit/Test"
+		mixin.className() == "dev/aoqia/loom/test/unit/TestMixin"
+		mixin.target().internalName == "dev/aoqia/loom/test/unit/Test"
 		mixin.expectedClassName() == "TestMixin"
 		!mixin.accessor()
 	}
@@ -48,8 +48,8 @@ class ValidateMixinNameTest extends Specification {
 		when:
 		def mixin = getMixin(TestInnerMixin.class)
 		then:
-		mixin.className() == "net/aoqia/loom/test/unit/TestInnerMixin"
-		mixin.target().internalName == "net/aoqia/loom/test/unit/Test\$Inner"
+		mixin.className() == "dev/aoqia/loom/test/unit/TestInnerMixin"
+		mixin.target().internalName == "dev/aoqia/loom/test/unit/Test\$Inner"
 		mixin.expectedClassName() == "TestInnerMixin"
 		!mixin.accessor()
 	}
@@ -58,8 +58,8 @@ class ValidateMixinNameTest extends Specification {
 		when:
 		def mixin = getMixin(TestAccessor.class)
 		then:
-		mixin.className() == "net/aoqia/loom/test/unit/TestAccessor"
-		mixin.target().internalName == "net/aoqia/loom/test/unit/Test"
+		mixin.className() == "dev/aoqia/loom/test/unit/TestAccessor"
+		mixin.target().internalName == "dev/aoqia/loom/test/unit/Test"
 		mixin.expectedClassName() == "TestAccessor"
 		mixin.accessor()
 	}

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util;
+package dev.aoqia.loom.util;
 
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
@@ -30,7 +30,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import net.aoqia.loom.util.gradle.daemon.DaemonUtils;
+import dev.aoqia.loom.util.gradle.daemon.DaemonUtils;
 import net.fabricmc.loom.nativeplatform.LoomNativePlatform;
 import net.fabricmc.loom.nativeplatform.LoomNativePlatformException;
 import org.slf4j.Logger;

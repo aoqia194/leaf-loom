@@ -21,17 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.layeredmappings
+package dev.aoqia.loom.test.unit.layeredmappings
 
 import spock.lang.Specification
 
 import spock.lang.Specification
 
-import net.aoqia.loom.configuration.providers.mappings.LayeredMappingSpec
-import net.aoqia.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl
-import net.aoqia.loom.configuration.providers.mappings.file.FileMappingsSpec
-import net.aoqia.loom.configuration.providers.mappings.utils.MavenFileSpec
-import net.aoqia.loom.util.ClosureAction
+import dev.aoqia.loom.configuration.providers.mappings.LayeredMappingSpec
+import dev.aoqia.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl
+import dev.aoqia.loom.configuration.providers.mappings.file.FileMappingsSpec
+import dev.aoqia.loom.configuration.providers.mappings.utils.MavenFileSpec
+import dev.aoqia.loom.util.ClosureAction
 
 class LayeredMappingSpecBuilderTest extends Specification {
 	def "simple mojmap" () {
@@ -50,7 +50,7 @@ class LayeredMappingSpecBuilderTest extends Specification {
 	def "yarn through file mappings"() {
 		when:
 		def spec = layered {
-			mappings("net.aoqia:yarn:41.78.16+build.1:v2")
+			mappings("dev.aoqia:yarn:41.78.16+build.1:v2")
 		}
 		def layers = spec.layers()
 		then:
@@ -58,7 +58,7 @@ class LayeredMappingSpecBuilderTest extends Specification {
 		layers.size() == 2
 		layers[0].class == IntermediaryMappingsSpec
 		layers[1].class == FileMappingsSpec
-		((layers[1] as FileMappingsSpec).fileSpec() as MavenFileSpec).dependencyNotation() == "net.aoqia:yarn:41.78.16+build.1:v2"
+		((layers[1] as FileMappingsSpec).fileSpec() as MavenFileSpec).dependencyNotation() == "dev.aoqia:yarn:41.78.16+build.1:v2"
 	}
 
 	LayeredMappingSpec layered(@DelegatesTo(LayeredMappingSpecBuilderImpl) Closure cl) {

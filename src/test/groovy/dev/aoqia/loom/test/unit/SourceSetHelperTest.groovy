@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
@@ -37,8 +37,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
-import net.aoqia.loom.util.gradle.SourceSetHelper
-import net.aoqia.loom.util.gradle.SourceSetReference
+import dev.aoqia.loom.util.gradle.SourceSetHelper
+import dev.aoqia.loom.util.gradle.SourceSetReference
 
 class SourceSetHelperTest extends Specification {
 	@Shared

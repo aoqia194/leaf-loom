@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.download;
+package dev.aoqia.loom.util.download;
 
 import java.util.Objects;
 import java.util.function.Function;

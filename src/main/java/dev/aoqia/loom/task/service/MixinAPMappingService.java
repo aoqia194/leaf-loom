@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task.service;
+package dev.aoqia.loom.task.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,14 +32,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.build.mixin.AnnotationProcessorInvoker;
-import net.aoqia.loom.util.TinyRemapperHelper;
-import net.aoqia.loom.util.gradle.GradleUtils;
-import net.aoqia.loom.util.gradle.SourceSetHelper;
-import net.aoqia.loom.util.service.Service;
-import net.aoqia.loom.util.service.ServiceFactory;
-import net.aoqia.loom.util.service.ServiceType;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.build.mixin.AnnotationProcessorInvoker;
+import dev.aoqia.loom.util.TinyRemapperHelper;
+import dev.aoqia.loom.util.gradle.GradleUtils;
+import dev.aoqia.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.loom.util.service.Service;
+import dev.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.util.service.ServiceType;
 import net.fabricmc.tinyremapper.IMappingProvider;
 import org.gradle.api.Project;
 import org.gradle.api.Task;

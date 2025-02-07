@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid.library;
+package dev.aoqia.loom.configuration.providers.zomboid.library;
 
 import org.jetbrains.annotations.Nullable;
 

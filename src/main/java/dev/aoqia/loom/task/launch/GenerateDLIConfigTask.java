@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task.launch;
+package dev.aoqia.loom.task.launch;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,13 +29,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta;
-import net.aoqia.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
-import net.aoqia.loom.task.AbstractLoomTask;
-import net.aoqia.loom.util.Platform;
-import net.aoqia.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta;
+import dev.aoqia.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
+import dev.aoqia.loom.task.AbstractLoomTask;
+import dev.aoqia.loom.util.Platform;
+import dev.aoqia.loom.util.gradle.SourceSetHelper;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.Project;
 import org.gradle.api.file.RegularFileProperty;

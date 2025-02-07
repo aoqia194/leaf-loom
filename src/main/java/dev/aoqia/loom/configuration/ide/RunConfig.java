@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.ide;
+package dev.aoqia.loom.configuration.ide;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,12 +33,12 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.InstallerData;
-import net.aoqia.loom.configuration.ide.idea.IdeaSyncTask;
-import net.aoqia.loom.configuration.ide.idea.IdeaUtils;
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryContext;
-import net.aoqia.loom.util.gradle.SourceSetReference;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.InstallerData;
+import dev.aoqia.loom.configuration.ide.idea.IdeaSyncTask;
+import dev.aoqia.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryContext;
+import dev.aoqia.loom.util.gradle.SourceSetReference;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ModuleVersionIdentifier;

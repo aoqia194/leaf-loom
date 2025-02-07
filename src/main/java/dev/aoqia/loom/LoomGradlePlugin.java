@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom;
+package dev.aoqia.loom;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,19 +29,19 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.aoqia.loom.api.LoomGradleExtensionAPI;
-import net.aoqia.loom.bootstrap.BootstrappedPlugin;
-import net.aoqia.loom.configuration.CompileConfiguration;
-import net.aoqia.loom.configuration.LoomConfigurations;
-import net.aoqia.loom.configuration.MavenPublication;
-import net.aoqia.loom.configuration.ide.idea.IdeaConfiguration;
-import net.aoqia.loom.configuration.sandbox.SandboxConfiguration;
-import net.aoqia.loom.decompilers.DecompilerConfiguration;
-import net.aoqia.loom.extension.LoomFiles;
-import net.aoqia.loom.extension.LoomGradleExtensionImpl;
-import net.aoqia.loom.task.LoomTasks;
-import net.aoqia.loom.task.RemapTaskConfiguration;
-import net.aoqia.loom.util.LibraryLocationLogger;
+import dev.aoqia.loom.api.LoomGradleExtensionAPI;
+import dev.aoqia.loom.bootstrap.BootstrappedPlugin;
+import dev.aoqia.loom.configuration.CompileConfiguration;
+import dev.aoqia.loom.configuration.LoomConfigurations;
+import dev.aoqia.loom.configuration.MavenPublication;
+import dev.aoqia.loom.configuration.ide.idea.IdeaConfiguration;
+import dev.aoqia.loom.configuration.sandbox.SandboxConfiguration;
+import dev.aoqia.loom.decompilers.DecompilerConfiguration;
+import dev.aoqia.loom.extension.LoomFiles;
+import dev.aoqia.loom.extension.LoomGradleExtensionImpl;
+import dev.aoqia.loom.task.LoomTasks;
+import dev.aoqia.loom.task.RemapTaskConfiguration;
+import dev.aoqia.loom.util.LibraryLocationLogger;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 

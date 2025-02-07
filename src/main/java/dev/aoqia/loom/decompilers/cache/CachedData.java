@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.decompilers.cache;
+package dev.aoqia.loom.decompilers.cache;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -37,7 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Objects;
-import net.aoqia.loom.decompilers.ClassLineNumbers;
+import dev.aoqia.loom.decompilers.ClassLineNumbers;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

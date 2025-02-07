@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api.decompilers;
+package dev.aoqia.loom.api.decompilers;
 
 import com.google.common.base.Preconditions;
 import java.io.Serializable;

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util;
+package dev.aoqia.loom.util;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Opcodes;
@@ -100,8 +100,8 @@ public class Constants {
     }
 
     public static final class Knot {
-        public static final String KNOT_CLIENT = "net.aoqia.loader.launch.knot.KnotClient";
-        public static final String KNOT_SERVER = "net.aoqia.loader.launch.knot.KnotServer";
+        public static final String KNOT_CLIENT = "dev.aoqia.loader.launch.knot.KnotClient";
+        public static final String KNOT_SERVER = "dev.aoqia.loader.launch.knot.KnotServer";
 
         private Knot() {
         }

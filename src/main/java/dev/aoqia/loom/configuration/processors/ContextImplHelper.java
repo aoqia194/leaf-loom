@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.processors;
+package dev.aoqia.loom.configuration.processors;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.ConfigContext;
-import net.aoqia.loom.util.LazyCloseable;
-import net.aoqia.loom.util.TinyRemapperHelper;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.ConfigContext;
+import dev.aoqia.loom.util.LazyCloseable;
+import dev.aoqia.loom.util.TinyRemapperHelper;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public final class ContextImplHelper {

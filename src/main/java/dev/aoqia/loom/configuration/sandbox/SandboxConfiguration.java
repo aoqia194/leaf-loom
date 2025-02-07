@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.sandbox;
+package dev.aoqia.loom.configuration.sandbox;
 
 import java.nio.file.Path;
 import java.util.Objects;
 import javax.inject.Inject;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.ide.RunConfigSettings;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.Platform;
-import net.aoqia.loom.util.gradle.GradleUtils;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.Platform;
+import dev.aoqia.loom.util.gradle.GradleUtils;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ExternalModuleDependency;

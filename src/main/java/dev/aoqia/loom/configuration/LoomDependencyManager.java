@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration;
+package dev.aoqia.loom.configuration;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.mods.ModConfigurationRemapper;
-import net.aoqia.loom.util.SourceRemapper;
-import net.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.mods.ModConfigurationRemapper;
+import dev.aoqia.loom.util.SourceRemapper;
+import dev.aoqia.loom.util.service.ServiceFactory;
 import org.gradle.api.Project;
 
 public class LoomDependencyManager {

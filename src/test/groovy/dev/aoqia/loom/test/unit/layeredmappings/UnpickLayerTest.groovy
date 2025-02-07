@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.layeredmappings
+package dev.aoqia.loom.test.unit.layeredmappings
 
 class UnpickLayerTest extends LayeredMappingsSpecification {
 	def "read unpick data from yarn"() {

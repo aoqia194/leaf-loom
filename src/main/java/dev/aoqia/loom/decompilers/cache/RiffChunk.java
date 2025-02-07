@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.decompilers.cache;
+package dev.aoqia.loom.decompilers.cache;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

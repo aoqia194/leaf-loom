@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.cache
+package dev.aoqia.loom.test.unit.cache
 
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
@@ -31,9 +31,9 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 import spock.lang.Specification
 
-import net.aoqia.loom.decompilers.cache.JarWalker
-import net.aoqia.loom.test.util.ZipTestUtils
-import net.aoqia.loom.util.FileSystemUtil
+import dev.aoqia.loom.decompilers.cache.JarWalker
+import dev.aoqia.loom.test.util.ZipTestUtils
+import dev.aoqia.loom.util.FileSystemUtil
 
 class JarWalkerTest extends Specification {
 	def "find classes in jar"() {

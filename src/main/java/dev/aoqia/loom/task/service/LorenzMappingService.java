@@ -21,17 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task.service;
+package dev.aoqia.loom.task.service;
 
 import com.google.common.base.Suppliers;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.function.Supplier;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
-import net.aoqia.loom.util.service.Service;
-import net.aoqia.loom.util.service.ServiceFactory;
-import net.aoqia.loom.util.service.ServiceType;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.loom.util.service.Service;
+import dev.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.util.service.ServiceType;
 import net.fabricmc.lorenztiny.TinyMappingsReader;
 import org.cadixdev.lorenz.MappingSet;
 import org.gradle.api.Project;

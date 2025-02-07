@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.kotlin;
+package dev.aoqia.loom.util.kotlin;
 
 import java.net.URL;
 import java.util.Set;

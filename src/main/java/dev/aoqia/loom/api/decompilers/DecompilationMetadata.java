@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api.decompilers;
+package dev.aoqia.loom.api.decompilers;
 
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
-import net.aoqia.loom.util.IOStringConsumer;
+import dev.aoqia.loom.util.IOStringConsumer;
 
 public record DecompilationMetadata(
         int numberOfThreads,

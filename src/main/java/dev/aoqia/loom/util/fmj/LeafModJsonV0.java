@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.fmj;
+package dev.aoqia.loom.util.fmj;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

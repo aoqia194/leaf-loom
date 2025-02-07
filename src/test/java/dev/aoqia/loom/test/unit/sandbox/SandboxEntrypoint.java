@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.sandbox;
+package dev.aoqia.loom.test.unit.sandbox;
 
 public class SandboxEntrypoint {
     public static void main(String[] args) {

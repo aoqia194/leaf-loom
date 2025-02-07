@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.service
+package dev.aoqia.loom.test.unit.service
 
 import org.gradle.api.provider.Property
 import spock.lang.Specification
@@ -29,10 +29,10 @@ import spock.lang.Specification
 import org.gradle.api.provider.Property
 import spock.lang.Specification
 
-import net.aoqia.loom.test.util.GradleTestUtil
-import net.aoqia.loom.util.service.ScopedServiceFactory
-import net.aoqia.loom.util.service.Service
-import net.aoqia.loom.util.service.ServiceType
+import dev.aoqia.loom.test.util.GradleTestUtil
+import dev.aoqia.loom.util.service.ScopedServiceFactory
+import dev.aoqia.loom.util.service.Service
+import dev.aoqia.loom.util.service.ServiceType
 
 abstract class ServiceTestBase extends Specification {
 	ScopedServiceFactory factory

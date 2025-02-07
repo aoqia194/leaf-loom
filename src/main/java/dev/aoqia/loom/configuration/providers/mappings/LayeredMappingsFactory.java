@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings;
+package dev.aoqia.loom.configuration.providers.mappings;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -33,16 +33,16 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.api.mappings.layered.MappingContext;
-import net.aoqia.loom.api.mappings.layered.MappingLayer;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.ConfigContext;
-import net.aoqia.loom.configuration.mods.dependency.LocalMavenHelper;
-import net.aoqia.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
-import net.aoqia.loom.configuration.providers.mappings.utils.AddConstructorMappingVisitor;
-import net.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.ConfigContext;
+import dev.aoqia.loom.configuration.mods.dependency.LocalMavenHelper;
+import dev.aoqia.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
+import dev.aoqia.loom.configuration.providers.mappings.utils.AddConstructorMappingVisitor;
+import dev.aoqia.loom.util.ZipUtils;
 import net.fabricmc.mappingio.adapter.MappingDstNsReorder;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;

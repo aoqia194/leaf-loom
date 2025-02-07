@@ -4,8 +4,8 @@
 import java.nio.file.Files
 import java.time.LocalDate
 
-generateVersionConstants(sourceSets.main, "runtimeLibs", "net/aoqia/loom/util/LoomVersions")
-generateVersionConstants(sourceSets.test, "testLibs", "net/aoqia/loom/test/LoomTestVersions")
+generateVersionConstants(sourceSets.main, "runtimeLibs", "dev/aoqia/loom/util/LoomVersions")
+generateVersionConstants(sourceSets.test, "testLibs", "dev/aoqia/loom/test/LoomTestVersions")
 
 def generateVersionConstants(def sourceSet, def catalogName, def sourcesName) {
 	def versionCatalog = extensions.getByType(VersionCatalogsExtension.class).named(catalogName)

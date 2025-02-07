@@ -21,21 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.decompilers;
+package dev.aoqia.loom.decompilers;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import javax.inject.Inject;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.decompilers.DecompilationMetadata;
-import net.aoqia.loom.api.decompilers.LoomDecompiler;
-import net.aoqia.loom.decompilers.cfr.LoomCFRDecompiler;
-import net.aoqia.loom.decompilers.fernflower.FabricFernFlowerDecompiler;
-import net.aoqia.loom.decompilers.vineflower.VineflowerDecompiler;
-import net.aoqia.loom.util.LoomVersions;
-import net.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.decompilers.DecompilationMetadata;
+import dev.aoqia.loom.api.decompilers.LoomDecompiler;
+import dev.aoqia.loom.decompilers.cfr.LoomCFRDecompiler;
+import dev.aoqia.loom.decompilers.fernflower.FabricFernFlowerDecompiler;
+import dev.aoqia.loom.decompilers.vineflower.VineflowerDecompiler;
+import dev.aoqia.loom.util.LoomVersions;
+import dev.aoqia.loom.util.ZipUtils;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;

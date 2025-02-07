@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.library
+package dev.aoqia.loom.test.unit.library
 
 import org.gradle.api.JavaVersion
 import spock.lang.Specification
@@ -29,10 +29,10 @@ import spock.lang.Specification
 import org.gradle.api.JavaVersion
 import spock.lang.Specification
 
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryContext
-import net.aoqia.loom.test.util.ZomboidTestUtils
-import net.aoqia.loom.util.Platform
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryContext
+import dev.aoqia.loom.test.util.ZomboidTestUtils
+import dev.aoqia.loom.util.Platform
 
 class LibraryContextTest extends Specification {
 	def "Supports ARM64 macOS"() {

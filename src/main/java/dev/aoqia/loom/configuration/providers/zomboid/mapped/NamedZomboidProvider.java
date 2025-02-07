@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid.mapped;
+package dev.aoqia.loom.configuration.providers.zomboid.mapped;
 
 import java.util.List;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.providers.zomboid.*;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.providers.zomboid.*;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.gradle.api.Project;
 

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.accesswidener;
+package dev.aoqia.loom.configuration.accesswidener;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -29,9 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
-import net.aoqia.loom.util.Checksum;
-import net.aoqia.loom.util.LazyCloseable;
-import net.aoqia.loom.util.fmj.ModEnvironment;
+import dev.aoqia.loom.util.Checksum;
+import dev.aoqia.loom.util.LazyCloseable;
+import dev.aoqia.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.jetbrains.annotations.Nullable;
 

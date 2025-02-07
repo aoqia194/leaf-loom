@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.ifaceinject;
+package dev.aoqia.loom.configuration.ifaceinject;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -38,15 +38,15 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.api.processor.ZomboidJarProcessor;
-import net.aoqia.loom.api.processor.ProcessorContext;
-import net.aoqia.loom.api.processor.SpecContext;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.LazyCloseable;
-import net.aoqia.loom.util.Pair;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.fmj.LeafModJson;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.loom.api.processor.ProcessorContext;
+import dev.aoqia.loom.api.processor.SpecContext;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.LazyCloseable;
+import dev.aoqia.loom.util.Pair;
+import dev.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.fmj.LeafModJson;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;

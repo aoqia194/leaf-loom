@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings.file;
+package dev.aoqia.loom.configuration.providers.mappings.file;
 
 import java.util.Objects;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
-import net.aoqia.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
+import dev.aoqia.loom.api.mappings.layered.spec.FileSpec;
 
 public class FileMappingsSpecBuilderImpl implements FileMappingsSpecBuilder {
     /**

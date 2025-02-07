@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration
+package dev.aoqia.loom.test.integration
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -29,8 +29,8 @@ import spock.lang.Unroll
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import net.aoqia.loom.build.nesting.NestableJarGenerationTask
-import net.aoqia.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.loom.build.nesting.NestableJarGenerationTask
+import dev.aoqia.loom.test.util.GradleProjectTestTrait
 
 class SemVerParsingTest extends Specification implements GradleProjectTestTrait {
 	@Unroll

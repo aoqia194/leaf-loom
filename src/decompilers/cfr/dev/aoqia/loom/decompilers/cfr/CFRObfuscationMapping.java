@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.decompilers.cfr;
+package dev.aoqia.loom.decompilers.cfr;
 
 import java.io.BufferedReader;
 import java.io.IOException;

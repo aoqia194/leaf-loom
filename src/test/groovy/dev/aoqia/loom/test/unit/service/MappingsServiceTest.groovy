@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.service
+package dev.aoqia.loom.test.unit.service
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -29,8 +29,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 
-import net.aoqia.loom.task.service.MappingsService
-import net.aoqia.loom.test.util.GradleTestUtil
+import dev.aoqia.loom.task.service.MappingsService
+import dev.aoqia.loom.test.util.GradleTestUtil
 
 class MappingsServiceTest extends ServiceTestBase {
 	def "get mapping tree"() {

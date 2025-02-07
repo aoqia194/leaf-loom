@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid.library.processors;
+package dev.aoqia.loom.configuration.providers.zomboid.library.processors;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import net.aoqia.loom.configuration.providers.zomboid.library.Library;
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryContext;
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor;
-import net.aoqia.loom.util.Platform;
+import dev.aoqia.loom.configuration.providers.zomboid.library.Library;
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryContext;
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor;
+import dev.aoqia.loom.util.Platform;
 
 public class RuntimeLog4jLibraryProcessor extends LibraryProcessor {
     private static final String LOG4J_GROUP = "org.apache.logging.log4j";

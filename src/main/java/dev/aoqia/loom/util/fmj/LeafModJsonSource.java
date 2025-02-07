@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.fmj;
+package dev.aoqia.loom.util.fmj;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.gradle.SourceSetHelper;
 
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;

@@ -3,11 +3,11 @@ package net.fabricmc.example;
 import net.minecraft.block.Block;
 
 import net.fabricmc.api.ModInitializer;
-import net.aoqia.loom.LoomTestDataA;
-import net.aoqia.loom.LoomTestDataB;
-import net.aoqia.loom.LoomTestDataC;
-import net.aoqia.loom.LoomTestDataD;
-import net.aoqia.loom.LoomTestDataE;
+import dev.aoqia.loom.LoomTestDataA;
+import dev.aoqia.loom.LoomTestDataB;
+import dev.aoqia.loom.LoomTestDataC;
+import dev.aoqia.loom.LoomTestDataD;
+import dev.aoqia.loom.LoomTestDataE;
 
 public class ExampleMod implements ModInitializer {
 	@Override

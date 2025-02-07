@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import java.nio.file.Files
 
@@ -37,11 +37,11 @@ import org.objectweb.asm.Label
 import org.objectweb.asm.MethodVisitor
 import spock.lang.Specification
 
-import net.aoqia.loom.decompilers.ClassLineNumbers
-import net.aoqia.loom.decompilers.LineNumberRemapper
-import net.aoqia.loom.test.util.ZipTestUtils
-import net.aoqia.loom.util.Constants
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.decompilers.ClassLineNumbers
+import dev.aoqia.loom.decompilers.LineNumberRemapper
+import dev.aoqia.loom.test.util.ZipTestUtils
+import dev.aoqia.loom.util.Constants
+import dev.aoqia.loom.util.ZipUtils
 
 class LineNumberRemapperTests extends Specification {
 	def "remapLinenumbers"() {

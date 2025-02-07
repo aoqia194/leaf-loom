@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.library.processors
+package dev.aoqia.loom.test.unit.library.processors
 
 import org.gradle.api.JavaVersion
 
 import org.gradle.api.JavaVersion
 
-import net.aoqia.loom.configuration.providers.zomboid.library.Library
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.LWJGL3UpgradeLibraryProcessor
-import net.aoqia.loom.test.util.PlatformTestUtils
+import dev.aoqia.loom.configuration.providers.zomboid.library.Library
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.LWJGL3UpgradeLibraryProcessor
+import dev.aoqia.loom.test.util.PlatformTestUtils
 
 class LWJGL3UpgradeLibraryProcessorTest extends LibraryProcessorTest {
 	def "Only apply to LWJGL3"() {

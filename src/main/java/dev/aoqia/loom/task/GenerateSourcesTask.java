@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -35,23 +35,23 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.aoqia.loom.api.decompilers.DecompilationMetadata;
-import net.aoqia.loom.api.decompilers.DecompilerOptions;
-import net.aoqia.loom.api.decompilers.LoomDecompiler;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
-import net.aoqia.loom.configuration.providers.zomboid.mapped.AbstractMappedZomboidProvider;
-import net.aoqia.loom.decompilers.ClassLineNumbers;
-import net.aoqia.loom.decompilers.LineNumberRemapper;
-import net.aoqia.loom.decompilers.cache.CachedData;
-import net.aoqia.loom.decompilers.cache.CachedFileStoreImpl;
-import net.aoqia.loom.decompilers.cache.CachedJarProcessor;
-import net.aoqia.loom.task.service.SourceMappingsService;
-import net.aoqia.loom.util.*;
-import net.aoqia.loom.util.gradle.*;
-import net.aoqia.loom.util.gradle.daemon.DaemonUtils;
-import net.aoqia.loom.util.ipc.IPCClient;
-import net.aoqia.loom.util.ipc.IPCServer;
-import net.aoqia.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.loom.api.decompilers.DecompilationMetadata;
+import dev.aoqia.loom.api.decompilers.DecompilerOptions;
+import dev.aoqia.loom.api.decompilers.LoomDecompiler;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.loom.configuration.providers.zomboid.mapped.AbstractMappedZomboidProvider;
+import dev.aoqia.loom.decompilers.ClassLineNumbers;
+import dev.aoqia.loom.decompilers.LineNumberRemapper;
+import dev.aoqia.loom.decompilers.cache.CachedData;
+import dev.aoqia.loom.decompilers.cache.CachedFileStoreImpl;
+import dev.aoqia.loom.decompilers.cache.CachedJarProcessor;
+import dev.aoqia.loom.task.service.SourceMappingsService;
+import dev.aoqia.loom.util.*;
+import dev.aoqia.loom.util.gradle.*;
+import dev.aoqia.loom.util.gradle.daemon.DaemonUtils;
+import dev.aoqia.loom.util.ipc.IPCClient;
+import dev.aoqia.loom.util.ipc.IPCServer;
+import dev.aoqia.loom.util.service.ScopedServiceFactory;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;

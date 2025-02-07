@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration.buildSrc.remapext
+package dev.aoqia.loom.test.integration.buildSrc.remapext
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -29,8 +29,8 @@ import org.gradle.api.Project
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-import net.aoqia.loom.LoomGradleExtension
-import net.aoqia.loom.api.remapping.RemapperParameters
+import dev.aoqia.loom.LoomGradleExtension
+import dev.aoqia.loom.api.remapping.RemapperParameters
 
 class TestPlugin implements Plugin<Project> {
 	@Override

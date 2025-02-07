@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.fmj
+package dev.aoqia.loom.test.unit.fmj
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
@@ -33,7 +33,7 @@ import com.google.gson.JsonObject
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.aoqia.loom.util.fmj.LeafModJsonUtils
+import dev.aoqia.loom.util.fmj.LeafModJsonUtils
 
 class LeafModJsonUtilsTest extends Specification {
 	// Test that the schemaVersion is moved to the first position

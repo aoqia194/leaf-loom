@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-package net.aoqia.loom.kotlin.remapping
+package dev.aoqia.loom.kotlin.remapping
 
-import net.aoqia.loom.util.kotlin.KotlinMetadataTinyRemapperExtension
+import dev.aoqia.loom.util.kotlin.KotlinMetadataTinyRemapperExtension
 import net.fabricmc.tinyremapper.TinyRemapper
 import net.fabricmc.tinyremapper.api.TrClass
 import org.objectweb.asm.ClassVisitor

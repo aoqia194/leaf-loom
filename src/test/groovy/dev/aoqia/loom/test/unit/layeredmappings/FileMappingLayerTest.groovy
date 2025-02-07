@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.layeredmappings
+package dev.aoqia.loom.test.unit.layeredmappings
 
 import java.nio.file.Path
 import java.util.function.Consumer
@@ -30,10 +30,10 @@ import spock.lang.Unroll
 
 import spock.lang.Unroll
 
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace
-import net.aoqia.loom.api.mappings.layered.spec.FileSpec
-import net.aoqia.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace
+import dev.aoqia.loom.api.mappings.layered.spec.FileSpec
+import dev.aoqia.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl
+import dev.aoqia.loom.util.ZipUtils
 
 class FileMappingLayerTest extends LayeredMappingsSpecification {
 	@Unroll

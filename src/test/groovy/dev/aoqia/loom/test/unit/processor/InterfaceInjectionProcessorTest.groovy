@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.processor
+package dev.aoqia.loom.test.unit.processor
 
 import java.nio.file.Path
 import java.util.function.Consumer
@@ -40,29 +40,29 @@ import com.google.gson.JsonObject
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace
-import net.aoqia.loom.api.processor.ProcessorContext
-import net.aoqia.loom.api.processor.SpecContext
-import net.aoqia.loom.configuration.ifaceinject.InterfaceInjectionProcessor
-import net.aoqia.loom.test.unit.processor.classes.AdvancedGenericInterface
-import net.aoqia.loom.test.unit.processor.classes.AdvancedGenericTargetClass
-import net.aoqia.loom.test.unit.processor.classes.DoubleGenericTargetClass
-import net.aoqia.loom.test.unit.processor.classes.DoublePassingGenericInterface
-import net.aoqia.loom.test.unit.processor.classes.DoublePassingGenericTargetClass
-import net.aoqia.loom.test.unit.processor.classes.FirstGenericInterface
-import net.aoqia.loom.test.unit.processor.classes.GenericInterface
-import net.aoqia.loom.test.unit.processor.classes.GenericTargetClass
-import net.aoqia.loom.test.unit.processor.classes.PassingGenericTargetClass
-import net.aoqia.loom.test.unit.processor.classes.SecondGenericInterface
-import net.aoqia.loom.test.unit.processor.classes.SelfGenericInterface
-import net.aoqia.loom.test.unit.processor.classes.SelfGenericTargetClass
-import net.aoqia.loom.test.unit.processor.classes.SimpleInterface
-import net.aoqia.loom.test.unit.processor.classes.SimpleTargetClass
-import net.aoqia.loom.util.Constants
-import net.aoqia.loom.util.LazyCloseable
-import net.aoqia.loom.util.Pair
-import net.aoqia.loom.util.TinyRemapperHelper
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace
+import dev.aoqia.loom.api.processor.ProcessorContext
+import dev.aoqia.loom.api.processor.SpecContext
+import dev.aoqia.loom.configuration.ifaceinject.InterfaceInjectionProcessor
+import dev.aoqia.loom.test.unit.processor.classes.AdvancedGenericInterface
+import dev.aoqia.loom.test.unit.processor.classes.AdvancedGenericTargetClass
+import dev.aoqia.loom.test.unit.processor.classes.DoubleGenericTargetClass
+import dev.aoqia.loom.test.unit.processor.classes.DoublePassingGenericInterface
+import dev.aoqia.loom.test.unit.processor.classes.DoublePassingGenericTargetClass
+import dev.aoqia.loom.test.unit.processor.classes.FirstGenericInterface
+import dev.aoqia.loom.test.unit.processor.classes.GenericInterface
+import dev.aoqia.loom.test.unit.processor.classes.GenericTargetClass
+import dev.aoqia.loom.test.unit.processor.classes.PassingGenericTargetClass
+import dev.aoqia.loom.test.unit.processor.classes.SecondGenericInterface
+import dev.aoqia.loom.test.unit.processor.classes.SelfGenericInterface
+import dev.aoqia.loom.test.unit.processor.classes.SelfGenericTargetClass
+import dev.aoqia.loom.test.unit.processor.classes.SimpleInterface
+import dev.aoqia.loom.test.unit.processor.classes.SimpleTargetClass
+import dev.aoqia.loom.util.Constants
+import dev.aoqia.loom.util.LazyCloseable
+import dev.aoqia.loom.util.Pair
+import dev.aoqia.loom.util.TinyRemapperHelper
+import dev.aoqia.loom.util.ZipUtils
 
 class InterfaceInjectionProcessorTest extends Specification {
 	@TempDir
@@ -99,54 +99,54 @@ class InterfaceInjectionProcessorTest extends Specification {
 		where:
 		key | value | target | validator
 		// Simple class with a simple interface
-		"class_1" | "net/aoqia/loom/test/unit/processor/classes/SimpleInterface" | SimpleTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/aoqia/loom/test/unit/processor/classes/SimpleInterface"
+		"class_1" | "dev/aoqia/loom/test/unit/processor/classes/SimpleInterface" | SimpleTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/loom/test/unit/processor/classes/SimpleInterface"
 			loadedClass.constructors.first().newInstance().injectedMethod() == 123
 		}
 
 		// Inner class with a simple interface
-		"class_1\$class_2" | "net/aoqia/loom/test/unit/processor/classes/SimpleInterface" | SimpleTargetClass.Inner.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/aoqia/loom/test/unit/processor/classes/SimpleInterface"
+		"class_1\$class_2" | "dev/aoqia/loom/test/unit/processor/classes/SimpleInterface" | SimpleTargetClass.Inner.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/loom/test/unit/processor/classes/SimpleInterface"
 			loadedClass.constructors.first().newInstance().injectedMethod() == 123
 		}
 
 		// Class using interface with generics
-		"class_3" | "net/aoqia/loom/test/unit/processor/classes/GenericInterface<Ljava/lang/String;>" | GenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/aoqia/loom/test/unit/processor/classes/GenericInterface"
+		"class_3" | "dev/aoqia/loom/test/unit/processor/classes/GenericInterface<Ljava/lang/String;>" | GenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/loom/test/unit/processor/classes/GenericInterface"
 			loadedClass.constructors.first().newInstance().genericInjectedMethod() == null
 		}
 
 		// Class using generics and passing them to interface
-		"class_4" | "net/aoqia/loom/test/unit/processor/classes/GenericInterface<TT;>" | PassingGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/aoqia/loom/test/unit/processor/classes/GenericInterface"
+		"class_4" | "dev/aoqia/loom/test/unit/processor/classes/GenericInterface<TT;>" | PassingGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/loom/test/unit/processor/classes/GenericInterface"
 			loadedClass.constructors.first().newInstance().genericInjectedMethod() == null
 		}
 
 		// Class having one injected interface with two generics, including one provided by the class
-		"class_5" | "net/aoqia/loom/test/unit/processor/classes/AdvancedGenericInterface<Ljava/util/function/Predicate<TT;>;Ljava/lang/Integer;>" | AdvancedGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/aoqia/loom/test/unit/processor/classes/AdvancedGenericInterface"
+		"class_5" | "dev/aoqia/loom/test/unit/processor/classes/AdvancedGenericInterface<Ljava/util/function/Predicate<TT;>;Ljava/lang/Integer;>" | AdvancedGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/loom/test/unit/processor/classes/AdvancedGenericInterface"
 			loadedClass.constructors.first().newInstance().advancedGenericInjectedMethod().getClass() == AdvancedGenericTargetClass.Pair.class
 		}
 
 		// Class having two injected interfaces with one generic for each of them, including one provided by the class
-		"class_7" | "net/aoqia/loom/test/unit/processor/classes/FirstGenericInterface<Ljava/util/function/Predicate<TT;>;>" | DoubleGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/aoqia/loom/test/unit/processor/classes/FirstGenericInterface"
+		"class_7" | "dev/aoqia/loom/test/unit/processor/classes/FirstGenericInterface<Ljava/util/function/Predicate<TT;>;>" | DoubleGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/loom/test/unit/processor/classes/FirstGenericInterface"
 			loadedClass.constructors.first().newInstance().firstGenericInjectedMethod() == null
 		}
-		"class_7" | "net/aoqia/loom/test/unit/processor/classes/SecondGenericInterface<Ljava/lang/Integer;>" | DoubleGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.last().name == "net/aoqia/loom/test/unit/processor/classes/SecondGenericInterface"
+		"class_7" | "dev/aoqia/loom/test/unit/processor/classes/SecondGenericInterface<Ljava/lang/Integer;>" | DoubleGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.last().name == "dev/aoqia/loom/test/unit/processor/classes/SecondGenericInterface"
 			loadedClass.constructors.last().newInstance().secondGenericInjectedMethod() == null
 		}
 
 		// Self Generic Types + Signature Remapping Check
-		"class_8" | "net/aoqia/loom/test/unit/processor/classes/SelfGenericInterface<Lclass_7;>" | SelfGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/aoqia/loom/test/unit/proessor/classes/SelfGenericInterface"
+		"class_8" | "dev/aoqia/loom/test/unit/processor/classes/SelfGenericInterface<Lclass_7;>" | SelfGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/loom/test/unit/proessor/classes/SelfGenericInterface"
 			loadedClass.constructors.first().newInstance().selfGenericInjectedMethod() == null
 		}
 
 		// Class using double generics and passing them to the interface
-		"class_9" | "net/aoqia/loom/test/unit/processor/classes/DoublePassingGenericInterface<TF;TS;>" | DoublePassingGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/aoqia/loom/test/unit/processor/classes/DoublePassingGenericTargetClass"
+		"class_9" | "dev/aoqia/loom/test/unit/processor/classes/DoublePassingGenericInterface<TF;TS;>" | DoublePassingGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/loom/test/unit/processor/classes/DoublePassingGenericTargetClass"
 			loadedClass.constructors.first().newInstance().doublePassingGenericInjectedMethod().getClass() == DoublePassingGenericTargetClass.Pair.class
 		}
 	}
@@ -250,15 +250,15 @@ class InterfaceInjectionProcessorTest extends Specification {
 
 	private static final String MAPPINGS = """
 tiny\t2\t0\tofficial\tnamed
-c\tclass_1\tnet/aoqia/loom/test/unit/processor/classes/SimpleTargetClass
-c\tclass_1\$class_2\tnet/aoqia/loom/test/unit/processor/classes/SimpleTargetClass\$Inner
-c\tclass_3\tnet/aoqia/loom/test/unit/processor/classes/GenericTargetClass
-c\tclass_4\tnet/aoqia/loom/test/unit/processor/classes/PassingGenericTargetClass
-c\tclass_5\tnet/aoqia/loom/test/unit/processor/classes/AdvancedGenericTargetClass
-c\tclass_5\$class_6\tnet/aoqia/loom/test/unit/processor/classes/AdvancedGenericTargetClass\$Pair
-c\tclass_7\tnet/aoqia/loom/test/unit/processor/classes/DoubleGenericTargetClass
-c\tclass_8\tnet/aoqia/loom/test/unit/processor/classes/SelfGenericTargetClass
-c\tclass_9\tnet/aoqia/loom/test/unit/processor/classes/DoublePassingGenericTargetClass
-c\tclass_9\$class_10\tnet/aoqia/loom/test/unit/processor/classes/DoublePassingGenericTargetClass\$Pair
+c\tclass_1\tdev/aoqia/loom/test/unit/processor/classes/SimpleTargetClass
+c\tclass_1\$class_2\tdev/aoqia/loom/test/unit/processor/classes/SimpleTargetClass\$Inner
+c\tclass_3\tdev/aoqia/loom/test/unit/processor/classes/GenericTargetClass
+c\tclass_4\tdev/aoqia/loom/test/unit/processor/classes/PassingGenericTargetClass
+c\tclass_5\tdev/aoqia/loom/test/unit/processor/classes/AdvancedGenericTargetClass
+c\tclass_5\$class_6\tdev/aoqia/loom/test/unit/processor/classes/AdvancedGenericTargetClass\$Pair
+c\tclass_7\tdev/aoqia/loom/test/unit/processor/classes/DoubleGenericTargetClass
+c\tclass_8\tdev/aoqia/loom/test/unit/processor/classes/SelfGenericTargetClass
+c\tclass_9\tdev/aoqia/loom/test/unit/processor/classes/DoublePassingGenericTargetClass
+c\tclass_9\$class_10\tdev/aoqia/loom/test/unit/processor/classes/DoublePassingGenericTargetClass\$Pair
 """.trim()
 }

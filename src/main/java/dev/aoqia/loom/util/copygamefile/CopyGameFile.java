@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.copygamefile;
+package dev.aoqia.loom.util.copygamefile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,8 +39,8 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.IntConsumer;
 
-import net.aoqia.loom.util.AttributeHelper;
-import net.aoqia.loom.util.Checksum;
+import dev.aoqia.loom.util.AttributeHelper;
+import dev.aoqia.loom.util.Checksum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

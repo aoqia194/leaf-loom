@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api.remapping;
+package dev.aoqia.loom.api.remapping;
 
 import javax.inject.Inject;
 
-import net.aoqia.loom.api.LoomGradleExtensionAPI;
+import dev.aoqia.loom.api.LoomGradleExtensionAPI;
 import org.gradle.api.Action;
 import org.objectweb.asm.ClassVisitor;
 

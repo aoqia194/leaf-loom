@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import java.nio.charset.StandardCharsets
 
@@ -31,8 +31,8 @@ import spock.lang.Specification
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.aoqia.loom.configuration.ide.RunConfig
-import net.aoqia.loom.configuration.ide.idea.IdeaSyncTask
+import dev.aoqia.loom.configuration.ide.RunConfig
+import dev.aoqia.loom.configuration.ide.idea.IdeaSyncTask
 
 class IdeaClasspathModificationsTest extends Specification {
 

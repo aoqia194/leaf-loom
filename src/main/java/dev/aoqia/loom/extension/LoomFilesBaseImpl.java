@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.extension;
+package dev.aoqia.loom.extension;
 
 import java.io.File;
 
-import net.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.LoomGradleExtension;
 import org.gradle.api.Project;
 
 public abstract class LoomFilesBaseImpl implements LoomFiles {

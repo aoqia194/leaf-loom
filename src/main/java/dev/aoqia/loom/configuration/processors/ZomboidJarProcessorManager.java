@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.processors;
+package dev.aoqia.loom.configuration.processors;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,12 +30,12 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.processor.MappingProcessorContext;
-import net.aoqia.loom.api.processor.ProcessorContext;
-import net.aoqia.loom.api.processor.SpecContext;
-import net.aoqia.loom.api.processor.ZomboidJarProcessor;
-import net.aoqia.loom.util.Checksum;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.processor.MappingProcessorContext;
+import dev.aoqia.loom.api.processor.ProcessorContext;
+import dev.aoqia.loom.api.processor.SpecContext;
+import dev.aoqia.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.loom.util.Checksum;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Nullable;

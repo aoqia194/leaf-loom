@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.util
+package dev.aoqia.loom.test.util
 
 import java.time.Duration
 
@@ -31,11 +31,11 @@ import com.google.gson.GsonBuilder
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
-import net.aoqia.loom.configuration.providers.zomboid.VersionsManifest
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta
-import net.aoqia.loom.test.LoomTestConstants
-import net.aoqia.loom.util.MirrorUtil
-import net.aoqia.loom.util.copygamefile.CopyGameFile
+import dev.aoqia.loom.configuration.providers.zomboid.VersionsManifest
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta
+import dev.aoqia.loom.test.LoomTestConstants
+import dev.aoqia.loom.util.MirrorUtil
+import dev.aoqia.loom.util.copygamefile.CopyGameFile
 
 class ZomboidTestUtils {
 	private static final File TEST_DIR = new File(LoomTestConstants.TEST_DIR, "zomboid")

@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration;
+package dev.aoqia.loom.configuration;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.LoomRepositoryPlugin;
-import net.aoqia.loom.configuration.ide.idea.IdeaUtils;
-import net.aoqia.loom.util.Constants;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.LoomRepositoryPlugin;
+import dev.aoqia.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.loom.util.Constants;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ExternalModuleDependency;

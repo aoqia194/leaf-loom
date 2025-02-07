@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api.mappings.layered;
+package dev.aoqia.loom.api.mappings.layered;
 
 import java.io.IOException;
 import java.util.Collections;

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task.service;
+package dev.aoqia.loom.task.service;
 
 import java.io.Closeable;
 import java.io.File;
@@ -35,15 +35,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.extension.RemapperExtensionHolder;
-import net.aoqia.loom.task.AbstractRemapJarTask;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.kotlin.KotlinClasspathService;
-import net.aoqia.loom.util.kotlin.KotlinRemapperClassloader;
-import net.aoqia.loom.util.service.Service;
-import net.aoqia.loom.util.service.ServiceFactory;
-import net.aoqia.loom.util.service.ServiceType;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.extension.RemapperExtensionHolder;
+import dev.aoqia.loom.task.AbstractRemapJarTask;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.kotlin.KotlinClasspathService;
+import dev.aoqia.loom.util.kotlin.KotlinRemapperClassloader;
+import dev.aoqia.loom.util.service.Service;
+import dev.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.util.service.ServiceType;
 import net.fabricmc.tinyremapper.IMappingProvider;
 import net.fabricmc.tinyremapper.InputTag;
 import net.fabricmc.tinyremapper.TinyRemapper;

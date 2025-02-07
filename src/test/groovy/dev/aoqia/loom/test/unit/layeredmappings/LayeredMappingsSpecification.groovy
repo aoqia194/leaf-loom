@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.layeredmappings
+package dev.aoqia.loom.test.unit.layeredmappings
 
 import java.nio.file.Path
 import java.util.zip.ZipFile
@@ -44,20 +44,20 @@ import org.gradle.api.artifacts.MinimalExternalModuleDependency
 import org.gradle.api.logging.Logger
 import spock.lang.Specification
 
-import net.aoqia.loom.api.mappings.layered.MappingContext
-import net.aoqia.loom.api.mappings.layered.MappingLayer
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace
-import net.aoqia.loom.api.mappings.layered.spec.MappingsSpec
-import net.aoqia.loom.configuration.providers.mappings.LayeredMappingSpec
-import net.aoqia.loom.configuration.providers.mappings.LayeredMappingsProcessor
-import net.aoqia.loom.configuration.providers.mappings.extras.unpick.UnpickLayer
-import net.aoqia.loom.configuration.providers.mappings.utils.AddConstructorMappingVisitor
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidProvider
-import net.aoqia.loom.test.LoomTestConstants
-import net.aoqia.loom.util.copygamefile.CopyGameFile
-import net.aoqia.loom.util.copygamefile.CopyGameFileBuilder
-import net.aoqia.loom.util.download.Download
-import net.aoqia.loom.util.download.DownloadBuilder
+import dev.aoqia.loom.api.mappings.layered.MappingContext
+import dev.aoqia.loom.api.mappings.layered.MappingLayer
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace
+import dev.aoqia.loom.api.mappings.layered.spec.MappingsSpec
+import dev.aoqia.loom.configuration.providers.mappings.LayeredMappingSpec
+import dev.aoqia.loom.configuration.providers.mappings.LayeredMappingsProcessor
+import dev.aoqia.loom.configuration.providers.mappings.extras.unpick.UnpickLayer
+import dev.aoqia.loom.configuration.providers.mappings.utils.AddConstructorMappingVisitor
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidProvider
+import dev.aoqia.loom.test.LoomTestConstants
+import dev.aoqia.loom.util.copygamefile.CopyGameFile
+import dev.aoqia.loom.util.copygamefile.CopyGameFileBuilder
+import dev.aoqia.loom.util.download.Download
+import dev.aoqia.loom.util.download.DownloadBuilder
 
 abstract class LayeredMappingsSpecification extends Specification implements LayeredMappingsTestConstants {
 	Logger mockLogger = Mock(Logger)

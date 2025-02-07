@@ -21,20 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
 import javax.inject.Inject;
 
 import com.google.common.base.Preconditions;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.ide.RunConfigSettings;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta;
-import net.aoqia.loom.task.launch.GenerateDLIConfigTask;
-import net.aoqia.loom.task.launch.GenerateLog4jConfigTask;
-import net.aoqia.loom.task.launch.GenerateRemapClasspathTask;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.gradle.GradleUtils;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta;
+import dev.aoqia.loom.task.launch.GenerateDLIConfigTask;
+import dev.aoqia.loom.task.launch.GenerateLog4jConfigTask;
+import dev.aoqia.loom.task.launch.GenerateRemapClasspathTask;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.gradle.GradleUtils;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.provider.Provider;

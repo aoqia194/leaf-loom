@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,8 +33,8 @@ import javax.inject.Inject;
 import net.fabricmc.accesswidener.AccessWidenerFormatException;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.api.TrEnvironment;
 import org.gradle.api.DefaultTask;

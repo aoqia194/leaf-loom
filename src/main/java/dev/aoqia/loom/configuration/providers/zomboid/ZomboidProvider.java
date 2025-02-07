@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid;
+package dev.aoqia.loom.configuration.providers.zomboid;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,19 +32,19 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.ConfigContext;
-import net.aoqia.loom.configuration.providers.zomboid.assets.AssetIndex;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.FileSystemUtil;
-import net.aoqia.loom.util.JarUtil;
-import net.aoqia.loom.util.MirrorUtil;
-import net.aoqia.loom.util.copygamefile.CopyGameFileExecutor;
-import net.aoqia.loom.util.copygamefile.GradleCopyGameFileProgressListener;
-import net.aoqia.loom.util.gradle.GradleUtils;
-import net.aoqia.loom.util.gradle.ProgressGroup;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.ConfigContext;
+import dev.aoqia.loom.configuration.providers.zomboid.assets.AssetIndex;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.FileSystemUtil;
+import dev.aoqia.loom.util.JarUtil;
+import dev.aoqia.loom.util.MirrorUtil;
+import dev.aoqia.loom.util.copygamefile.CopyGameFileExecutor;
+import dev.aoqia.loom.util.copygamefile.GradleCopyGameFileProgressListener;
+import dev.aoqia.loom.util.gradle.GradleUtils;
+import dev.aoqia.loom.util.gradle.ProgressGroup;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.slf4j.Logger;

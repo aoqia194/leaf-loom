@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings.extras.signatures;
+package dev.aoqia.loom.configuration.providers.mappings.extras.signatures;
 
 import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;

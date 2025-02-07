@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.download;
+package dev.aoqia.loom.util.download;
 
 import static com.google.common.io.Files.createParentDirs;
 
@@ -54,8 +54,8 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.aoqia.loom.util.AttributeHelper;
-import net.aoqia.loom.util.Checksum;
+import dev.aoqia.loom.util.AttributeHelper;
+import dev.aoqia.loom.util.Checksum;
 
 public final class Download {
     private static final String E_TAG = "ETag";

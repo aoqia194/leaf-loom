@@ -1,4 +1,4 @@
-package net.aoqia.loom.bootstrap;
+package dev.aoqia.loom.bootstrap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public abstract class LoomGradlePluginBootstrap implements Plugin<PluginAware> {
 	private static final int MIN_SUPPORTED_MAJOR_JAVA_VERSION = 17;
 	private static final int MIN_SUPPORTED_MAJOR_IDEA_VERSION = 2022;
 
-	private static final String PLUGIN_CLASS_NAME = "net.aoqia.loom.LoomGradlePlugin";
+	private static final String PLUGIN_CLASS_NAME = "dev.aoqia.loom.LoomGradlePlugin";
 	private static final String IDEA_VERSION_PROP_KEY = "idea.version";
 
 	@Inject

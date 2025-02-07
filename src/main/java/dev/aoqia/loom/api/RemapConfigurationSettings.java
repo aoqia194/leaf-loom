@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api;
+package dev.aoqia.loom.api;
 
 import java.util.Set;
 import javax.inject.Inject;

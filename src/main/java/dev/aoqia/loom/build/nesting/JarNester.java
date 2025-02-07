@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.build.nesting;
+package dev.aoqia.loom.build.nesting;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
@@ -34,9 +34,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.aoqia.loom.util.Pair;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.loom.util.Pair;
+import dev.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.fmj.LeafModJsonFactory;
 import org.gradle.api.UncheckedIOException;
 import org.slf4j.Logger;
 

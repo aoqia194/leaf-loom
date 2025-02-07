@@ -21,22 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid;
+package dev.aoqia.loom.configuration.providers.zomboid;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.providers.zomboid.library.Library;
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryContext;
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
-import net.aoqia.loom.configuration.providers.zomboid.library.ZomboidLibraryHelper;
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.Platform;
-import net.aoqia.loom.util.gradle.GradleUtils;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.providers.zomboid.library.Library;
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryContext;
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
+import dev.aoqia.loom.configuration.providers.zomboid.library.ZomboidLibraryHelper;
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.Platform;
+import dev.aoqia.loom.util.gradle.GradleUtils;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;

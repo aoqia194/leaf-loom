@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration
+package dev.aoqia.loom.test.integration
 
 import java.nio.charset.StandardCharsets
 
@@ -31,10 +31,10 @@ import spock.lang.Unroll
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import net.aoqia.loom.test.util.GradleProjectTestTrait
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.loom.util.ZipUtils
 
-import static net.aoqia.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static dev.aoqia.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class ModJavadocTest extends Specification implements GradleProjectTestTrait {

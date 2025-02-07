@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.providers
+package dev.aoqia.loom.test.unit.providers
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -30,11 +30,11 @@ import org.intellij.lang.annotations.Language
 
 import org.intellij.lang.annotations.Language
 
-import net.aoqia.loom.configuration.providers.zomboid.ManifestLocations
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidMetadataProvider
-import net.aoqia.loom.test.LoomTestConstants
-import net.aoqia.loom.test.unit.download.DownloadTest
-import net.aoqia.loom.util.copygamefile.CopyGameFile
+import dev.aoqia.loom.configuration.providers.zomboid.ManifestLocations
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidMetadataProvider
+import dev.aoqia.loom.test.LoomTestConstants
+import dev.aoqia.loom.test.unit.download.DownloadTest
+import dev.aoqia.loom.util.copygamefile.CopyGameFile
 
 class ZomboidMetadataProviderTest extends DownloadTest {
 	Path testDir

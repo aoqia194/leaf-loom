@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
 import com.google.gson.JsonObject;
 import java.io.IOException;
@@ -34,23 +34,23 @@ import javax.inject.Inject;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerRemapper;
 import net.fabricmc.accesswidener.AccessWidenerWriter;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.build.nesting.JarNester;
-import net.aoqia.loom.build.nesting.NestableJarGenerationTask;
-import net.aoqia.loom.configuration.accesswidener.AccessWidenerFile;
-import net.aoqia.loom.configuration.mods.ArtifactMetadata;
-import net.aoqia.loom.task.service.ClientEntriesService;
-import net.aoqia.loom.task.service.MixinRefmapService;
-import net.aoqia.loom.task.service.TinyRemapperService;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.ExceptionUtil;
-import net.aoqia.loom.util.Pair;
-import net.aoqia.loom.util.SidedClassVisitor;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.fmj.LeafModJsonFactory;
-import net.aoqia.loom.util.fmj.LeafModJsonUtils;
-import net.aoqia.loom.util.service.ScopedServiceFactory;
-import net.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.build.nesting.JarNester;
+import dev.aoqia.loom.build.nesting.NestableJarGenerationTask;
+import dev.aoqia.loom.configuration.accesswidener.AccessWidenerFile;
+import dev.aoqia.loom.configuration.mods.ArtifactMetadata;
+import dev.aoqia.loom.task.service.ClientEntriesService;
+import dev.aoqia.loom.task.service.MixinRefmapService;
+import dev.aoqia.loom.task.service.TinyRemapperService;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.ExceptionUtil;
+import dev.aoqia.loom.util.Pair;
+import dev.aoqia.loom.util.SidedClassVisitor;
+import dev.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.loom.util.fmj.LeafModJsonUtils;
+import dev.aoqia.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.loom.util.service.ServiceFactory;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.gradle.api.artifacts.ConfigurationContainer;

@@ -21,19 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api.mappings.layered.spec;
+package dev.aoqia.loom.api.mappings.layered.spec;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Objects;
-import net.aoqia.loom.api.mappings.layered.MappingContext;
-import net.aoqia.loom.configuration.providers.mappings.utils.DependencyFileSpec;
-import net.aoqia.loom.configuration.providers.mappings.utils.LocalFileSpec;
-import net.aoqia.loom.configuration.providers.mappings.utils.MavenFileSpec;
-import net.aoqia.loom.configuration.providers.mappings.utils.MinimalExternalModuleDependencyFileSpec;
-import net.aoqia.loom.configuration.providers.mappings.utils.URLFileSpec;
+import dev.aoqia.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.loom.configuration.providers.mappings.utils.DependencyFileSpec;
+import dev.aoqia.loom.configuration.providers.mappings.utils.LocalFileSpec;
+import dev.aoqia.loom.configuration.providers.mappings.utils.MavenFileSpec;
+import dev.aoqia.loom.configuration.providers.mappings.utils.MinimalExternalModuleDependencyFileSpec;
+import dev.aoqia.loom.configuration.providers.mappings.utils.URLFileSpec;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.MinimalExternalModuleDependency;
 import org.gradle.api.file.FileSystemLocation;

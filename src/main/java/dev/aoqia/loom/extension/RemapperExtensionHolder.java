@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.extension;
+package dev.aoqia.loom.extension;
 
 import java.lang.reflect.Constructor;
 import javax.inject.Inject;
-import net.aoqia.loom.api.remapping.RemapperContext;
-import net.aoqia.loom.api.remapping.RemapperExtension;
-import net.aoqia.loom.api.remapping.RemapperParameters;
-import net.aoqia.loom.api.remapping.TinyRemapperExtension;
+import dev.aoqia.loom.api.remapping.RemapperContext;
+import dev.aoqia.loom.api.remapping.RemapperExtension;
+import dev.aoqia.loom.api.remapping.RemapperParameters;
+import dev.aoqia.loom.api.remapping.TinyRemapperExtension;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.api.TrClass;
 import org.gradle.api.provider.Property;

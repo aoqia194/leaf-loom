@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.decompilers.cache;
+package dev.aoqia.loom.decompilers.cache;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,8 +45,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
-import net.aoqia.loom.util.CompletableFutureCollector;
-import net.aoqia.loom.util.FileSystemUtil;
+import dev.aoqia.loom.util.CompletableFutureCollector;
+import dev.aoqia.loom.util.FileSystemUtil;
 import org.gradle.api.JavaVersion;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;

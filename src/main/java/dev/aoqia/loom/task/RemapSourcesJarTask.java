@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import javax.inject.Inject;
-import net.aoqia.loom.task.service.ClientEntriesService;
-import net.aoqia.loom.task.service.SourceRemapperService;
-import net.aoqia.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.loom.task.service.ClientEntriesService;
+import dev.aoqia.loom.task.service.SourceRemapperService;
+import dev.aoqia.loom.util.service.ScopedServiceFactory;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;

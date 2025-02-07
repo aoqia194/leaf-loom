@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.util
+package dev.aoqia.loom.test.util
 
 // A helper script to extract the test project from the resources and add the gradle wrapper
 // Useful for testing an intergration test project in a real environment

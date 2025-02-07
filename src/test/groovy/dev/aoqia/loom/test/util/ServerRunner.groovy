@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.util
+package dev.aoqia.loom.test.util
 
 import java.util.concurrent.TimeUnit
 
@@ -29,8 +29,8 @@ import groovy.transform.Immutable
 
 import groovy.transform.Immutable
 
-import net.aoqia.loom.test.LoomTestVersions
-import net.aoqia.loom.util.copygamefile.CopyGameFile
+import dev.aoqia.loom.test.LoomTestVersions
+import dev.aoqia.loom.util.copygamefile.CopyGameFile
 
 class ServerRunner {
 	static final String LOADER_VERSION = LoomTestVersions.FABRIC_LOADER.version()

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.providers
+package dev.aoqia.loom.test.unit.providers
 
 import java.nio.file.Path
 import java.util.jar.Attributes
@@ -33,8 +33,8 @@ import spock.lang.TempDir
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import net.aoqia.loom.configuration.providers.mappings.tiny.TinyJarInfo
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.configuration.providers.mappings.tiny.TinyJarInfo
+import dev.aoqia.loom.util.ZipUtils
 
 class TinyJarInfoTest extends Specification {
 	@TempDir

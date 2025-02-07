@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task.service;
+package dev.aoqia.loom.task.service;
 
 import com.google.gson.JsonObject;
 import java.io.IOException;
@@ -30,15 +30,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.extension.MixinExtension;
-import net.aoqia.loom.task.RemapJarTask;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.fmj.LeafModJson;
-import net.aoqia.loom.util.fmj.LeafModJsonFactory;
-import net.aoqia.loom.util.service.Service;
-import net.aoqia.loom.util.service.ServiceFactory;
-import net.aoqia.loom.util.service.ServiceType;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.extension.MixinExtension;
+import dev.aoqia.loom.task.RemapJarTask;
+import dev.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.fmj.LeafModJson;
+import dev.aoqia.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.loom.util.service.Service;
+import dev.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.util.service.ServiceType;
 import org.gradle.api.Project;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;

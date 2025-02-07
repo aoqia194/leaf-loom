@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -30,9 +30,9 @@ import spock.lang.Specification
 
 import spock.lang.Specification
 
-import net.aoqia.loom.test.util.ZipTestUtils
-import net.aoqia.loom.util.AsyncZipProcessor
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.test.util.ZipTestUtils
+import dev.aoqia.loom.util.AsyncZipProcessor
+import dev.aoqia.loom.util.ZipUtils
 
 class AsyncZipProcessorTest extends Specification {
 	def "process async"() {

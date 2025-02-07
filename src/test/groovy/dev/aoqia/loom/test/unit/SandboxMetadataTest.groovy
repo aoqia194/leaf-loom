@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import java.nio.file.Path
 
@@ -31,9 +31,9 @@ import spock.lang.Specification
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.aoqia.loom.configuration.sandbox.SandboxMetadata
-import net.aoqia.loom.test.util.PlatformTestUtils
-import net.aoqia.loom.test.util.ZipTestUtils
+import dev.aoqia.loom.configuration.sandbox.SandboxMetadata
+import dev.aoqia.loom.test.util.PlatformTestUtils
+import dev.aoqia.loom.test.util.ZipTestUtils
 
 class SandboxMetadataTest extends Specification {
 	def "test sandbox metadata"() {
@@ -41,7 +41,7 @@ class SandboxMetadataTest extends Specification {
 		def sandboxJar = createSandboxJar("""
             {
                 "version": 1,
-                "mainClass": "net.aoqia.loom.test.Main",
+                "mainClass": "dev.aoqia.loom.test.Main",
                 "platforms": {
                     "windows": [
                         "arm64",
@@ -58,7 +58,7 @@ class SandboxMetadataTest extends Specification {
 		def metadata = SandboxMetadata.readFromJar(sandboxJar)
 
 		then:
-		metadata.mainClass() == "net.aoqia.loom.test.Main"
+		metadata.mainClass() == "dev.aoqia.loom.test.Main"
 
 		metadata.supportsPlatform(PlatformTestUtils.WINDOWS_X64)
 		metadata.supportsPlatform(PlatformTestUtils.WINDOWS_ARM64)

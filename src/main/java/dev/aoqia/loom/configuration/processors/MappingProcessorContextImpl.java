@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.processors;
+package dev.aoqia.loom.configuration.processors;
 
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.api.processor.MappingProcessorContext;
-import net.aoqia.loom.configuration.ConfigContext;
-import net.aoqia.loom.util.LazyCloseable;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.api.processor.MappingProcessorContext;
+import dev.aoqia.loom.configuration.ConfigContext;
+import dev.aoqia.loom.util.LazyCloseable;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public record MappingProcessorContextImpl(ConfigContext configContext) implements MappingProcessorContext {

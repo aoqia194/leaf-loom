@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -38,11 +38,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.configuration.ide.RunConfig;
-import net.aoqia.loom.configuration.ide.RunConfigSettings;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.gradle.SyncTaskBuildService;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.configuration.ide.RunConfig;
+import dev.aoqia.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.gradle.SyncTaskBuildService;
 import org.gradle.api.Project;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;

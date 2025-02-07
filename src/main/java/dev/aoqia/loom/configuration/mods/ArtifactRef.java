@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.mods;
+package dev.aoqia.loom.configuration.mods;
 
-import static net.aoqia.loom.configuration.mods.ModConfigurationRemapper.MISSING_GROUP;
-import static net.aoqia.loom.configuration.mods.ModConfigurationRemapper.replaceIfNullOrEmpty;
+import static dev.aoqia.loom.configuration.mods.ModConfigurationRemapper.MISSING_GROUP;
+import static dev.aoqia.loom.configuration.mods.ModConfigurationRemapper.replaceIfNullOrEmpty;
 
 import java.nio.file.Path;
-import net.aoqia.loom.util.Checksum;
+import dev.aoqia.loom.util.Checksum;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;

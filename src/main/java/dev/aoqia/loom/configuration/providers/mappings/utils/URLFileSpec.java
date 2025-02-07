@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings.utils;
+package dev.aoqia.loom.configuration.providers.mappings.utils;
 
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Objects;
 
-import net.aoqia.loom.api.mappings.layered.MappingContext;
-import net.aoqia.loom.api.mappings.layered.spec.FileSpec;
-import net.aoqia.loom.util.download.DownloadException;
+import dev.aoqia.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.loom.util.download.DownloadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

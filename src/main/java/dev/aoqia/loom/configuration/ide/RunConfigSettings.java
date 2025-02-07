@@ -21,18 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.ide;
+package dev.aoqia.loom.configuration.ide;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.util.*;
 import java.util.function.Function;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.Platform;
-import net.aoqia.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.Platform;
+import dev.aoqia.loom.util.gradle.SourceSetHelper;
 import org.gradle.api.Named;
 import org.gradle.api.Project;
 import org.gradle.api.provider.Property;

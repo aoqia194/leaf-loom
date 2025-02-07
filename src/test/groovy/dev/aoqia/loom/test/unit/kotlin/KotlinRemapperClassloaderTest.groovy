@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.kotlin
+package dev.aoqia.loom.test.unit.kotlin
 
 import kotlin.KotlinVersion
 import org.objectweb.asm.ClassReader
@@ -37,9 +37,9 @@ import org.objectweb.asm.ClassReader
 import org.objectweb.asm.tree.ClassNode
 import spock.lang.Specification
 
-import net.aoqia.loom.util.kotlin.KotlinClasspath
-import net.aoqia.loom.util.kotlin.KotlinPluginUtils
-import net.aoqia.loom.util.kotlin.KotlinRemapperClassloader
+import dev.aoqia.loom.util.kotlin.KotlinClasspath
+import dev.aoqia.loom.util.kotlin.KotlinPluginUtils
+import dev.aoqia.loom.util.kotlin.KotlinRemapperClassloader
 
 class KotlinRemapperClassloaderTest extends Specification {
 	private static String KOTLIN_VERSION = KotlinVersion.CURRENT.toString()

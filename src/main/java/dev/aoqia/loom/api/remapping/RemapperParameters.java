@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api.remapping;
+package dev.aoqia.loom.api.remapping;
 
 import java.io.Serializable;
 import org.jetbrains.annotations.ApiStatus;

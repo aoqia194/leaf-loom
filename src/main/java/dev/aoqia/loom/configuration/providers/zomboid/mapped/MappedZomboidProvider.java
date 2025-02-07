@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid.mapped;
+package dev.aoqia.loom.configuration.providers.zomboid.mapped;
 
 import java.nio.file.Path;
 import java.util.List;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
-import net.aoqia.loom.configuration.providers.zomboid.SingleJarEnvType;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.loom.configuration.providers.zomboid.SingleJarEnvType;
 
 public interface MappedZomboidProvider {
     default List<Path> getZomboidJarPaths() {

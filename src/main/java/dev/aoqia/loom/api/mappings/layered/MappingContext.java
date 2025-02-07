@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api.mappings.layered;
+package dev.aoqia.loom.api.mappings.layered;
 
 import java.nio.file.Path;
 
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidProvider;
-import net.aoqia.loom.util.copygamefile.CopyGameFileBuilder;
-import net.aoqia.loom.util.download.DownloadBuilder;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidProvider;
+import dev.aoqia.loom.util.copygamefile.CopyGameFileBuilder;
+import dev.aoqia.loom.util.download.DownloadBuilder;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.MinimalExternalModuleDependency;
 import org.gradle.api.logging.Logger;

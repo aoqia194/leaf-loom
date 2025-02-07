@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration.buildSrc.remapext
+package dev.aoqia.loom.test.integration.buildSrc.remapext
 
 import javax.inject.Inject
 
@@ -31,10 +31,10 @@ import org.objectweb.asm.ClassVisitor
 import org.gradle.api.provider.MapProperty
 import org.objectweb.asm.ClassVisitor
 
-import net.aoqia.loom.api.remapping.RemapperContext
-import net.aoqia.loom.api.remapping.RemapperExtension
-import net.aoqia.loom.api.remapping.RemapperParameters
-import net.aoqia.loom.util.Constants
+import dev.aoqia.loom.api.remapping.RemapperContext
+import dev.aoqia.loom.api.remapping.RemapperExtension
+import dev.aoqia.loom.api.remapping.RemapperParameters
+import dev.aoqia.loom.util.Constants
 
 class TestRemapperExtension implements RemapperExtension<Params> {
 	final Params parameters

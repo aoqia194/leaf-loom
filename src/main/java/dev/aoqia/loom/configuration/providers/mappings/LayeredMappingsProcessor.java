@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings;
+package dev.aoqia.loom.configuration.providers.mappings;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,12 +30,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import net.aoqia.loom.api.mappings.layered.MappingContext;
-import net.aoqia.loom.api.mappings.layered.MappingLayer;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.api.mappings.layered.spec.MappingsSpec;
-import net.aoqia.loom.configuration.providers.mappings.extras.signatures.SignatureFixesLayer;
-import net.aoqia.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
+import dev.aoqia.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.api.mappings.layered.spec.MappingsSpec;
+import dev.aoqia.loom.configuration.providers.mappings.extras.signatures.SignatureFixesLayer;
+import dev.aoqia.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.jetbrains.annotations.Nullable;

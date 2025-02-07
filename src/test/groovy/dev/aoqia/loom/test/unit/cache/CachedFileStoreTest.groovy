@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.cache
+package dev.aoqia.loom.test.unit.cache
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -35,9 +35,9 @@ import spock.lang.TempDir
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import net.aoqia.loom.decompilers.cache.CachedFileStore
-import net.aoqia.loom.decompilers.cache.CachedFileStoreImpl
-import net.aoqia.loom.util.FileSystemUtil
+import dev.aoqia.loom.decompilers.cache.CachedFileStore
+import dev.aoqia.loom.decompilers.cache.CachedFileStoreImpl
+import dev.aoqia.loom.util.FileSystemUtil
 
 class CachedFileStoreTest extends Specification {
 	@TempDir

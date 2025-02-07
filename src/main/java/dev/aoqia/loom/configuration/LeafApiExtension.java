@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration;
+package dev.aoqia.loom.configuration;
 
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
@@ -32,8 +32,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.util.download.DownloadException;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.util.download.DownloadException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
@@ -70,7 +70,7 @@ public abstract class LeafApiExtension {
     }
 
     private String getDependencyNotation(String moduleName, String leafApiVersion) {
-        return String.format("net.aoqia.leaf-api:%s:%s", moduleName, moduleVersion(moduleName, leafApiVersion));
+        return String.format("dev.aoqia.leaf-api:%s:%s", moduleName, moduleVersion(moduleName, leafApiVersion));
     }
 
     private Map<String, String> getApiModuleVersions(String leafApiVersion) {
@@ -133,7 +133,8 @@ public abstract class LeafApiExtension {
             "leaf-api/%s-%s.pom".formatted(name, version));
 
         try {
-            extension.download(String.format("https://maven.aoqia.net/net/aoqia/leaf-api/%2$s/%1$s/%2$s-%1$s.pom",
+            // TODO: Update to maven central URL because I don't host my own maven.
+            extension.download(String.format("https://maven.aoqia.net/dev/aoqia/leaf-api/%2$s/%1$s/%2$s-%1$s.pom",
                     version,
                     name))
                 .defaultCache()

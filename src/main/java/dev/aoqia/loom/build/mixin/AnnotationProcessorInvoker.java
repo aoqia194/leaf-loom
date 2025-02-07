@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.build.mixin;
+package dev.aoqia.loom.build.mixin;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,12 +34,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.ide.idea.IdeaUtils;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
-import net.aoqia.loom.extension.MixinExtension;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.LoomVersions;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
+import dev.aoqia.loom.extension.MixinExtension;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.LoomVersions;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.gradle.daemon;
+package dev.aoqia.loom.util.gradle.daemon;
 
 import java.nio.file.Path;
 import java.util.List;

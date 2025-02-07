@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.decompilers.vineflower;
+package dev.aoqia.loom.decompilers.vineflower;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import net.fabricmc.fernflower.api.IFabricJavadocProvider;
-import net.aoqia.loom.decompilers.LoomInternalDecompiler;
+import dev.aoqia.loom.decompilers.LoomInternalDecompiler;
 import org.jetbrains.java.decompiler.main.Fernflower;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;

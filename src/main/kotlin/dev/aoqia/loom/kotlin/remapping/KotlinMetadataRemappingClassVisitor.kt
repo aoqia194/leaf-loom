@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.aoqia.loom.kotlin.remapping
+package dev.aoqia.loom.kotlin.remapping
 
 import org.jetbrains.annotations.VisibleForTesting
 import org.objectweb.asm.AnnotationVisitor

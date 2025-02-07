@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid.library;
+package dev.aoqia.loom.configuration.providers.zomboid.library;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import net.aoqia.loom.util.Platform;
+import dev.aoqia.loom.util.Platform;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
 public abstract class LibraryProcessor {

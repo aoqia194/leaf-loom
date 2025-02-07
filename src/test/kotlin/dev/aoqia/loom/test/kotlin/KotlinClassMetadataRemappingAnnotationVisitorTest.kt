@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-package net.aoqia.loom.test.kotlin
+package dev.aoqia.loom.test.kotlin
 
-import net.aoqia.loom.kotlin.remapping.KotlinMetadataRemappingClassVisitor
-import net.aoqia.loom.util.TinyRemapperHelper
+import dev.aoqia.loom.kotlin.remapping.KotlinMetadataRemappingClassVisitor
+import dev.aoqia.loom.util.TinyRemapperHelper
 import net.fabricmc.mappingio.MappingReader
 import net.fabricmc.mappingio.tree.MemoryMappingTree
 import net.fabricmc.tinyremapper.IMappingProvider

@@ -21,17 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings;
+package dev.aoqia.loom.configuration.providers.mappings;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import net.aoqia.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
-import net.aoqia.loom.api.mappings.layered.spec.FileSpec;
-import net.aoqia.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
-import net.aoqia.loom.api.mappings.layered.spec.MappingsSpec;
-import net.aoqia.loom.configuration.providers.mappings.extras.signatures.SignatureFixesSpec;
-import net.aoqia.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl;
+import dev.aoqia.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
+import dev.aoqia.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
+import dev.aoqia.loom.api.mappings.layered.spec.MappingsSpec;
+import dev.aoqia.loom.configuration.providers.mappings.extras.signatures.SignatureFixesSpec;
+import dev.aoqia.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl;
 import org.gradle.api.Action;
 
 public class LayeredMappingSpecBuilderImpl implements LayeredMappingSpecBuilder {

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid.mapped;
+package dev.aoqia.loom.configuration.providers.zomboid.mapped;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -32,15 +32,15 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.function.Function;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.ConfigContext;
-import net.aoqia.loom.configuration.mods.dependency.LocalMavenHelper;
-import net.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
-import net.aoqia.loom.configuration.providers.zomboid.*;
-import net.aoqia.loom.extension.LoomFiles;
-import net.aoqia.loom.util.SidedClassVisitor;
-import net.aoqia.loom.util.TinyRemapperHelper;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.ConfigContext;
+import dev.aoqia.loom.configuration.mods.dependency.LocalMavenHelper;
+import dev.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.loom.configuration.providers.zomboid.*;
+import dev.aoqia.loom.extension.LoomFiles;
+import dev.aoqia.loom.util.SidedClassVisitor;
+import dev.aoqia.loom.util.TinyRemapperHelper;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.gradle.api.Project;

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.download
+package dev.aoqia.loom.test.unit.download
 
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -35,11 +35,11 @@ import spock.lang.IgnoreIf
 import io.javalin.http.HttpStatus
 import spock.lang.IgnoreIf
 
-import net.aoqia.loom.util.Checksum
-import net.aoqia.loom.util.download.Download
-import net.aoqia.loom.util.download.DownloadException
-import net.aoqia.loom.util.download.DownloadExecutor
-import net.aoqia.loom.util.download.DownloadProgressListener
+import dev.aoqia.loom.util.Checksum
+import dev.aoqia.loom.util.download.Download
+import dev.aoqia.loom.util.download.DownloadException
+import dev.aoqia.loom.util.download.DownloadExecutor
+import dev.aoqia.loom.util.download.DownloadProgressListener
 
 class DownloadFileTest extends DownloadTest {
 	@IgnoreIf({

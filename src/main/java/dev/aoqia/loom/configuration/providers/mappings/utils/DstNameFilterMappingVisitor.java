@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings.utils;
+package dev.aoqia.loom.configuration.providers.mappings.utils;
 
 import java.io.IOException;
 import java.util.regex.Pattern;

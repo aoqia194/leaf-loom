@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api;
+package dev.aoqia.loom.api;
 
 import javax.inject.Inject;
-import net.aoqia.loom.util.gradle.SourceSetHelper;
-import net.aoqia.loom.util.gradle.SourceSetReference;
+import dev.aoqia.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.loom.util.gradle.SourceSetReference;
 import org.gradle.api.Named;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;

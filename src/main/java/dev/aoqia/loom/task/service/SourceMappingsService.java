@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task.service;
+package dev.aoqia.loom.task.service;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -31,16 +31,16 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.ConfigContextImpl;
-import net.aoqia.loom.configuration.processors.MappingProcessorContextImpl;
-import net.aoqia.loom.configuration.processors.ZomboidJarProcessorManager;
-import net.aoqia.loom.task.GenerateSourcesTask;
-import net.aoqia.loom.util.service.ScopedServiceFactory;
-import net.aoqia.loom.util.service.Service;
-import net.aoqia.loom.util.service.ServiceFactory;
-import net.aoqia.loom.util.service.ServiceType;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.ConfigContextImpl;
+import dev.aoqia.loom.configuration.processors.MappingProcessorContextImpl;
+import dev.aoqia.loom.configuration.processors.ZomboidJarProcessorManager;
+import dev.aoqia.loom.task.GenerateSourcesTask;
+import dev.aoqia.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.loom.util.service.Service;
+import dev.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.util.service.ServiceType;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;

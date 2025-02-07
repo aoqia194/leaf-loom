@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.accesswidener;
+package dev.aoqia.loom.configuration.accesswidener;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
-import net.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.ZipUtils;
 
 public record AccessWidenerFile(String path, String modId, byte[] content) {
     /**

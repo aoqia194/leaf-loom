@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.mods;
+package dev.aoqia.loom.configuration.mods;
 
 import com.google.gson.JsonObject;
 import java.io.ByteArrayInputStream;
@@ -36,11 +36,11 @@ import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.configuration.InstallerData;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.FileSystemUtil;
-import net.aoqia.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.configuration.InstallerData;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.FileSystemUtil;
+import dev.aoqia.loom.util.fmj.LeafModJsonFactory;
 import org.jetbrains.annotations.Nullable;
 
 public record ArtifactMetadata(

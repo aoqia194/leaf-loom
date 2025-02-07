@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api.processor;
+package dev.aoqia.loom.api.processor;
 
 import java.util.List;
 import java.util.stream.Stream;
-import net.aoqia.loom.util.fmj.LeafModJson;
+import dev.aoqia.loom.util.fmj.LeafModJson;
 
 public interface SpecContext {
     List<LeafModJson> modDependencies();

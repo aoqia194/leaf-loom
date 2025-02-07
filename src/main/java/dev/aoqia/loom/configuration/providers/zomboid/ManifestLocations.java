@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid;
+package dev.aoqia.loom.configuration.providers.zomboid;
 
 import java.nio.file.Path;
 import java.util.*;
 
-import net.aoqia.loom.api.manifest.VersionsManifestsAPI;
-import net.aoqia.loom.configuration.providers.zomboid.ManifestLocations.ManifestLocation;
+import dev.aoqia.loom.api.manifest.VersionsManifestsAPI;
+import dev.aoqia.loom.configuration.providers.zomboid.ManifestLocations.ManifestLocation;
 
 public class ManifestLocations implements VersionsManifestsAPI, Iterable<ManifestLocation> {
     private final Queue<ManifestLocation> locations = new PriorityQueue<>();

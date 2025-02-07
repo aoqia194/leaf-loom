@@ -21,21 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid.library;
+package dev.aoqia.loom.configuration.providers.zomboid.library;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.ArmNativesLibraryProcessor;
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.LWJGL3UpgradeLibraryProcessor;
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.LegacyASMLibraryProcessor;
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.LoomNativeSupportLibraryProcessor;
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.ObjcBridgeUpgradeLibraryProcessor;
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.RiscVNativesLibraryProcessor;
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor;
-import net.aoqia.loom.util.Platform;
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.ArmNativesLibraryProcessor;
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.LWJGL3UpgradeLibraryProcessor;
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.LegacyASMLibraryProcessor;
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.LoomNativeSupportLibraryProcessor;
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.ObjcBridgeUpgradeLibraryProcessor;
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.RiscVNativesLibraryProcessor;
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor;
+import dev.aoqia.loom.util.Platform;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.jetbrains.annotations.VisibleForTesting;
 

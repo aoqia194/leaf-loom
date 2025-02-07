@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid;
+package dev.aoqia.loom.configuration.providers.zomboid;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -30,13 +30,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.configuration.ConfigContext;
-import net.aoqia.loom.configuration.DependencyInfo;
-import net.aoqia.loom.configuration.providers.zomboid.ManifestLocations.ManifestLocation;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.download.DownloadBuilder;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.configuration.ConfigContext;
+import dev.aoqia.loom.configuration.DependencyInfo;
+import dev.aoqia.loom.configuration.providers.zomboid.ManifestLocations.ManifestLocation;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.download.DownloadBuilder;
 import org.gradle.api.Project;
 import org.gradle.api.provider.Property;
 import org.jetbrains.annotations.Nullable;

@@ -19,5 +19,5 @@ mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 java-debug = { module = "com.microsoft.java:com.microsoft.java.debug.core", version.ref = "java-debug" }
 mixin = { module = "net.fabricmc:sponge-mixin", version.ref = "mixin" }
 gradle-nightly = { module = "org.gradle:dummy", version.ref = "gradle-nightly" }
-leaf-loader = { module = "net.aoqia:leaf-loader", version.ref = "leaf-loader" }
+leaf-loader = { module = "dev.aoqia:leaf-loader", version.ref = "leaf-loader" }
 fabric-installer = { module = "net.fabricmc:fabric-installer", version.ref = "fabric-installer" }

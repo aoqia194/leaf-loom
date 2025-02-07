@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.mods;
+package dev.aoqia.loom.configuration.mods;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -29,9 +29,9 @@ import java.util.List;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerRemapper;
 import net.fabricmc.accesswidener.AccessWidenerWriter;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.util.fmj.LeafModJson;
-import net.aoqia.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.util.fmj.LeafModJson;
+import dev.aoqia.loom.util.fmj.LeafModJsonFactory;
 import org.objectweb.asm.commons.Remapper;
 
 public class AccessWidenerUtils {

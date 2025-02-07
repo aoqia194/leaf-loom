@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.ide.idea;
+package dev.aoqia.loom.configuration.ide.idea;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.ide.RunConfigSettings;
-import net.aoqia.loom.task.LoomTasks;
-import net.aoqia.loom.util.gradle.GradleUtils;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.loom.task.LoomTasks;
+import dev.aoqia.loom.util.gradle.GradleUtils;
 import org.gradle.StartParameter;
 import org.gradle.TaskExecutionRequest;
 import org.gradle.api.Project;

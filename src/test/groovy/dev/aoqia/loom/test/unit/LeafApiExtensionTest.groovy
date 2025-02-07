@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import org.gradle.api.Project
 import spock.lang.Specification
@@ -29,8 +29,8 @@ import spock.lang.Specification
 import org.gradle.api.Project
 import spock.lang.Specification
 
-import net.aoqia.loom.configuration.LeafApiExtension
-import net.aoqia.loom.test.util.GradleTestUtil
+import dev.aoqia.loom.configuration.LeafApiExtension
+import dev.aoqia.loom.test.util.GradleTestUtil
 
 class LeafApiExtensionTest extends Specification {
 	def "get module version"() {

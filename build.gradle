@@ -21,15 +21,15 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
-group = 'net.aoqia'
-def baseVersion = '0.1'
+group = 'dev.aoqia'
+def baseVersion = '0.1.0'
 
 def ENV = System.getenv()
 if (ENV.BUILD_NUMBER) {
     if (ENV.EXPERIMENTAL) {
-        version = baseVersion + '.0-alpha.' + ENV.BUILD_NUMBER
+        version = baseVersion + '-exp.' + ENV.BUILD_NUMBER
     } else {
-        version = baseVersion + '.' + ENV.BUILD_NUMBER
+        version = baseVersion + '-build.' + ENV.BUILD_NUMBER
     }
 } else {
     version = baseVersion + '.local'
@@ -221,7 +221,7 @@ spotless {
         indentWithSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
-        importOrder('java', 'javax', '', 'net.fabricmc', '', 'net.aoqia', '\\#')
+        importOrder('java', 'javax', '', 'net.fabricmc', '', 'dev.aoqia', '\\#')
         licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
         greclipse()
     }
@@ -256,7 +256,7 @@ gradlePlugin {
     plugins {
         leafLoom {
             id = 'leaf-loom'
-            implementationClass = 'net.aoqia.loom.bootstrap.LoomGradlePluginBootstrap'
+            implementationClass = 'dev.aoqia.loom.bootstrap.LoomGradlePluginBootstrap'
         }
     }
 }
@@ -362,7 +362,7 @@ tasks.withType(GenerateModuleMetadata).configureEach {
 tasks.register('writeActionsTestMatrix') {
     doLast {
         def testMatrix = []
-        file('src/test/groovy/net/aoqia/loom/test/integration').eachFile {
+        file('src/test/groovy/dev/aoqia/loom/test/integration').eachFile {
             if (it.name.endsWith("Test.groovy")) {
                 if (it.name.endsWith("ReproducibleBuildTest.groovy")) {
                     // This test gets a special case to run across all os's
@@ -375,15 +375,15 @@ tasks.register('writeActionsTestMatrix') {
                 }
 
                 def className = it.name.replace(".groovy", "")
-                testMatrix.add("net.aoqia.loom.test.integration.${className}")
+                testMatrix.add("dev.aoqia.loom.test.integration.${className}")
             }
         }
 
         // Run all the unit tests together
-        testMatrix.add("net.aoqia.loom.test.unit.*")
+        testMatrix.add("dev.aoqia.loom.test.unit.*")
 
         // Kotlin tests
-        testMatrix.add("net.aoqia.loom.test.kotlin.*")
+        testMatrix.add("dev.aoqia.loom.test.kotlin.*")
 
         def json = groovy.json.JsonOutput.toJson(testMatrix)
         def output = file("build/test_matrix.json")

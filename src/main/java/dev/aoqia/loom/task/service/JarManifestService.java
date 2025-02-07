@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task.service;
+package dev.aoqia.loom.task.service;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -29,10 +29,10 @@ import java.util.Optional;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.configuration.InstallerData;
-import net.aoqia.loom.util.Constants;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.configuration.InstallerData;
+import dev.aoqia.loom.util.Constants;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;

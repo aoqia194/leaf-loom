@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.build.nesting;
+package dev.aoqia.loom.build.nesting;
 
 import com.google.common.hash.Hashing;
 import com.google.gson.JsonObject;
@@ -37,10 +37,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.task.AbstractLoomTask;
-import net.aoqia.loom.util.ZipReprocessorUtil;
-import net.aoqia.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.task.AbstractLoomTask;
+import dev.aoqia.loom.util.ZipReprocessorUtil;
+import dev.aoqia.loom.util.fmj.LeafModJsonFactory;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.artifacts.ArtifactView;
 import org.gradle.api.artifacts.Configuration;

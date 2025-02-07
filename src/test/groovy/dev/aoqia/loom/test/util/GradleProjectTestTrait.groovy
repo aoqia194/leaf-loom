@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.util
+package dev.aoqia.loom.test.util
 
 import groovy.io.FileType
 import groovy.transform.Immutable
@@ -39,8 +39,8 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import spock.lang.Shared
 
-import net.aoqia.loom.test.LoomTestConstants
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.test.LoomTestConstants
+import dev.aoqia.loom.util.ZipUtils
 
 trait GradleProjectTestTrait {
 	@Lazy
@@ -295,7 +295,7 @@ trait GradleProjectTestTrait {
 			def buildSrcDir = new File(projectDir, "buildSrc")
 			buildSrcDir.mkdirs()
 
-			def pluginClass = "net.aoqia.loom.test.integration.buildSrc.${name}.TestPlugin"
+			def pluginClass = "dev.aoqia.loom.test.integration.buildSrc.${name}.TestPlugin"
 			new File(buildSrcDir, "build.gradle") << """
                 plugins {
                     id 'groovy-gradle-plugin'

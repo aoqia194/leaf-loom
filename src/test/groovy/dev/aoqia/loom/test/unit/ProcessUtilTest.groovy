@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import org.gradle.api.logging.LogLevel
 import spock.lang.Specification
@@ -29,7 +29,7 @@ import spock.lang.Specification
 import org.gradle.api.logging.LogLevel
 import spock.lang.Specification
 
-import net.aoqia.loom.util.ProcessUtil
+import dev.aoqia.loom.util.ProcessUtil
 
 class ProcessUtilTest extends Specification {
 	def "print process info"() {

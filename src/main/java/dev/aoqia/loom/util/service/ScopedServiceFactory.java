@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.service;
+package dev.aoqia.loom.util.service;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import net.aoqia.loom.util.gradle.GradleTypeAdapter;
+import dev.aoqia.loom.util.gradle.GradleTypeAdapter;
 
 /**
  * An implementation of {@link ServiceFactory} that creates services scoped to the factory instance.

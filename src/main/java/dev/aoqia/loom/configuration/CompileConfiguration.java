@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration;
+package dev.aoqia.loom.configuration;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -35,33 +35,33 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.InterfaceInjectionExtensionAPI;
-import net.aoqia.loom.build.mixin.GroovyApInvoker;
-import net.aoqia.loom.build.mixin.JavaApInvoker;
-import net.aoqia.loom.build.mixin.KaptApInvoker;
-import net.aoqia.loom.build.mixin.ScalaApInvoker;
-import net.aoqia.loom.configuration.accesswidener.AccessWidenerJarProcessor;
-import net.aoqia.loom.configuration.ifaceinject.InterfaceInjectionProcessor;
-import net.aoqia.loom.configuration.processors.ModJavadocProcessor;
-import net.aoqia.loom.configuration.processors.ZomboidJarProcessorManager;
-import net.aoqia.loom.configuration.providers.mappings.LayeredMappingsFactory;
-import net.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidMetadataProvider;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidProvider;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
-import net.aoqia.loom.configuration.providers.zomboid.mapped.AbstractMappedZomboidProvider;
-import net.aoqia.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
-import net.aoqia.loom.extension.MixinExtension;
-import net.aoqia.loom.util.Checksum;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.ExceptionUtil;
-import net.aoqia.loom.util.ProcessUtil;
-import net.aoqia.loom.util.gradle.GradleUtils;
-import net.aoqia.loom.util.gradle.SourceSetHelper;
-import net.aoqia.loom.util.gradle.daemon.DaemonUtils;
-import net.aoqia.loom.util.service.ScopedServiceFactory;
-import net.aoqia.loom.util.service.ServiceFactory;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.InterfaceInjectionExtensionAPI;
+import dev.aoqia.loom.build.mixin.GroovyApInvoker;
+import dev.aoqia.loom.build.mixin.JavaApInvoker;
+import dev.aoqia.loom.build.mixin.KaptApInvoker;
+import dev.aoqia.loom.build.mixin.ScalaApInvoker;
+import dev.aoqia.loom.configuration.accesswidener.AccessWidenerJarProcessor;
+import dev.aoqia.loom.configuration.ifaceinject.InterfaceInjectionProcessor;
+import dev.aoqia.loom.configuration.processors.ModJavadocProcessor;
+import dev.aoqia.loom.configuration.processors.ZomboidJarProcessorManager;
+import dev.aoqia.loom.configuration.providers.mappings.LayeredMappingsFactory;
+import dev.aoqia.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidMetadataProvider;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidProvider;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidSourceSets;
+import dev.aoqia.loom.configuration.providers.zomboid.mapped.AbstractMappedZomboidProvider;
+import dev.aoqia.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
+import dev.aoqia.loom.extension.MixinExtension;
+import dev.aoqia.loom.util.Checksum;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.ExceptionUtil;
+import dev.aoqia.loom.util.ProcessUtil;
+import dev.aoqia.loom.util.gradle.GradleUtils;
+import dev.aoqia.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.loom.util.gradle.daemon.DaemonUtils;
+import dev.aoqia.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.loom.util.service.ServiceFactory;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
@@ -74,7 +74,7 @@ import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.api.tasks.testing.Test;
 
-import static net.aoqia.loom.util.Constants.Configurations;
+import static dev.aoqia.loom.util.Constants.Configurations;
 
 public abstract class CompileConfiguration implements Runnable {
     private static Duration getDefaultTimeout() {

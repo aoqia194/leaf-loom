@@ -1,6 +1,6 @@
 package net.fabricmc.example;
 
-import net.aoqia.loader.impl.launch.knot.KnotServer;
+import dev.aoqia.loader.impl.launch.knot.KnotServer;
 
 public class Main {
 	public static void main(String[] args) {

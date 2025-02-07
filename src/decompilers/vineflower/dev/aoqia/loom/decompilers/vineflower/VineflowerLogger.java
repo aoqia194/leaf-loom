@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.decompilers.vineflower;
+package dev.aoqia.loom.decompilers.vineflower;
 
 import java.io.IOException;
-import net.aoqia.loom.decompilers.LoomInternalDecompiler;
+import dev.aoqia.loom.decompilers.LoomInternalDecompiler;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 
 public class VineflowerLogger extends IFernflowerLogger {

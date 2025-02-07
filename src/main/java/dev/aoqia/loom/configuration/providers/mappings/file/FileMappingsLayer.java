@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings.file;
+package dev.aoqia.loom.configuration.providers.mappings.file;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,11 +29,11 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import net.aoqia.loom.api.mappings.layered.MappingLayer;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
-import net.aoqia.loom.util.FileSystemUtil;
-import net.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
+import dev.aoqia.loom.util.FileSystemUtil;
+import dev.aoqia.loom.util.ZipUtils;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.MappingUtil;
 import net.fabricmc.mappingio.MappingVisitor;

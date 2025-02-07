@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.kotlin;
+package dev.aoqia.loom.util.kotlin;
 
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
-import net.aoqia.loom.LoomGradlePlugin;
-import net.aoqia.loom.kotlin.remapping.KotlinMetadataTinyRemapperExtensionImpl;
+import dev.aoqia.loom.LoomGradlePlugin;
+import dev.aoqia.loom.kotlin.remapping.KotlinMetadataTinyRemapperExtensionImpl;
 
 /**
  * Used to run the Kotlin remapper with a specific version of Kotlin that may not match the kotlin version included with gradle.
@@ -37,7 +37,7 @@ import net.aoqia.loom.kotlin.remapping.KotlinMetadataTinyRemapperExtensionImpl;
 public class KotlinRemapperClassloader extends URLClassLoader {
     // Packages that should be loaded from the gradle plugin classloader.
     private static final List<String> PARENT_PACKAGES =
-            List.of("net.fabricmc.tinyremapper", "net.aoqia.loom.util.kotlin", "org.objectweb.asm", "org.slf4j");
+            List.of("net.fabricmc.tinyremapper", "dev.aoqia.loom.util.kotlin", "org.objectweb.asm", "org.slf4j");
 
     private KotlinRemapperClassloader(URL[] urls) {
         super(urls, null);

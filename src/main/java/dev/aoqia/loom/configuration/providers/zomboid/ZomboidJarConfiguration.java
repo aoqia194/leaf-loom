@@ -21,19 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.zomboid;
+package dev.aoqia.loom.configuration.providers.zomboid;
 
 import java.util.List;
 
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.configuration.ConfigContext;
-import net.aoqia.loom.configuration.decompile.DecompileConfiguration;
-import net.aoqia.loom.configuration.decompile.SingleJarDecompileConfiguration;
-import net.aoqia.loom.configuration.decompile.SplitDecompileConfiguration;
-import net.aoqia.loom.configuration.processors.ZomboidJarProcessorManager;
-import net.aoqia.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
-import net.aoqia.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
-import net.aoqia.loom.configuration.providers.zomboid.mapped.ProcessedNamedZomboidProvider;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.configuration.ConfigContext;
+import dev.aoqia.loom.configuration.decompile.DecompileConfiguration;
+import dev.aoqia.loom.configuration.decompile.SingleJarDecompileConfiguration;
+import dev.aoqia.loom.configuration.decompile.SplitDecompileConfiguration;
+import dev.aoqia.loom.configuration.processors.ZomboidJarProcessorManager;
+import dev.aoqia.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
+import dev.aoqia.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
+import dev.aoqia.loom.configuration.providers.zomboid.mapped.ProcessedNamedZomboidProvider;
 import org.gradle.api.Project;
 
 public record ZomboidJarConfiguration<

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.fmj
+package dev.aoqia.loom.test.unit.fmj
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -33,10 +33,10 @@ import com.google.gson.JsonObject
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.aoqia.loom.util.Constants
-import net.aoqia.loom.util.fmj.LeafModJsonFactory
-import net.aoqia.loom.util.fmj.LeafModJsonSource
-import net.aoqia.loom.util.fmj.ModEnvironment
+import dev.aoqia.loom.util.Constants
+import dev.aoqia.loom.util.fmj.LeafModJsonFactory
+import dev.aoqia.loom.util.fmj.LeafModJsonSource
+import dev.aoqia.loom.util.fmj.ModEnvironment
 
 class LeafModJsonV1Test extends Specification {
 	@Language("json")

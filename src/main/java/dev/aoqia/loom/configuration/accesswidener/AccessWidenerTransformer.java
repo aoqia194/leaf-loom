@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.accesswidener;
+package dev.aoqia.loom.configuration.accesswidener;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -31,9 +31,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import net.fabricmc.accesswidener.AccessWidener;
 import net.fabricmc.accesswidener.AccessWidenerClassVisitor;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.Pair;
-import net.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.Pair;
+import dev.aoqia.loom.util.ZipUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;

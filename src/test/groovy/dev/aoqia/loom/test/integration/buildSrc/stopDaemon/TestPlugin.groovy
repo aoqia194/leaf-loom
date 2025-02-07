@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration.buildSrc.stopDaemon
+package dev.aoqia.loom.test.integration.buildSrc.stopDaemon
 
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
@@ -81,7 +81,7 @@ import org.gradle.launcher.daemon.server.SynchronizedDispatchConnection
 import org.gradle.launcher.daemon.server.api.DaemonState
 import org.gradle.util.GradleVersion
 
-import net.aoqia.loom.util.gradle.daemon.DaemonUtils
+import dev.aoqia.loom.util.gradle.daemon.DaemonUtils
 
 /**
  * An integration test that runs a dummy gradle daemon TCP server, to test the daemon shutdown mechanism.

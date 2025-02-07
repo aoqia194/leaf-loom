@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.providers.mappings.utils;
+package dev.aoqia.loom.configuration.providers.mappings.utils;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
-import net.aoqia.loom.api.mappings.layered.MappingContext;
-import net.aoqia.loom.api.mappings.layered.spec.FileSpec;
-import net.aoqia.loom.util.Checksum;
+import dev.aoqia.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.loom.util.Checksum;
 
 public class LocalFileSpec implements FileSpec {
     private final File file;

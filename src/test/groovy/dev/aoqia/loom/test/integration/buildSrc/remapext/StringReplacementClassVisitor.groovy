@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration.buildSrc.remapext
+package dev.aoqia.loom.test.integration.buildSrc.remapext
 
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor

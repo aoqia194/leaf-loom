@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import spock.lang.Specification
 
 import spock.lang.Specification
 
-import net.aoqia.loom.decompilers.ClassLineNumbers
+import dev.aoqia.loom.decompilers.ClassLineNumbers
 
 class ClassLineNumbersTest extends Specification {
 	def "read linemap"() {

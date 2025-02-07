@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import net.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.Constants;
 import net.fabricmc.tinyremapper.extension.mixin.common.data.Constant;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.ConfigurableFileCollection;

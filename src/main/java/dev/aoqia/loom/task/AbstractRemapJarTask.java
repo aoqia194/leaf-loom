@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.task;
+package dev.aoqia.loom.task;
 
 import com.google.common.base.Preconditions;
 import java.io.ByteArrayInputStream;
@@ -34,15 +34,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Manifest;
 import javax.inject.Inject;
-import net.aoqia.loom.LoomGradleExtension;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.task.service.ClientEntriesService;
-import net.aoqia.loom.task.service.JarManifestService;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.ZipReprocessorUtil;
-import net.aoqia.loom.util.ZipUtils;
-import net.aoqia.loom.util.gradle.SourceSetHelper;
-import net.aoqia.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.loom.LoomGradleExtension;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.task.service.ClientEntriesService;
+import dev.aoqia.loom.task.service.JarManifestService;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.ZipReprocessorUtil;
+import dev.aoqia.loom.util.ZipUtils;
+import dev.aoqia.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.loom.util.service.ScopedServiceFactory;
 import org.gradle.api.Action;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;

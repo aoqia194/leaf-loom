@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.mods;
+package dev.aoqia.loom.configuration.mods;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,8 +39,8 @@ import java.util.Objects;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Stream;
-import net.aoqia.loom.util.Constants;
-import net.aoqia.loom.util.FileSystemUtil;
+import dev.aoqia.loom.util.Constants;
+import dev.aoqia.loom.util.FileSystemUtil;
 import org.jetbrains.annotations.Nullable;
 
 public class JarSplitter {

@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.mods;
+package dev.aoqia.loom.configuration.mods;
 
 import java.io.IOException;
 import java.util.List;
 import net.fabricmc.accesswidener.AccessWidener;
 import net.fabricmc.accesswidener.AccessWidenerClassVisitor;
 import net.fabricmc.accesswidener.AccessWidenerReader;
-import net.aoqia.loom.configuration.mods.dependency.ModDependency;
-import net.aoqia.loom.util.Constants;
+import dev.aoqia.loom.configuration.mods.dependency.ModDependency;
+import dev.aoqia.loom.util.Constants;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.objectweb.asm.ClassVisitor;
 

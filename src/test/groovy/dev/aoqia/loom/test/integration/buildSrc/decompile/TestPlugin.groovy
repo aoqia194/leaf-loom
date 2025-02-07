@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.integration.buildSrc.decompile
+package dev.aoqia.loom.test.integration.buildSrc.decompile
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -29,7 +29,7 @@ import org.gradle.api.Project
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-import net.aoqia.loom.LoomGradleExtension
+import dev.aoqia.loom.LoomGradleExtension
 
 class TestPlugin implements Plugin<Project> {
 	@Override

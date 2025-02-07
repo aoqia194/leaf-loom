@@ -21,22 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api;
+package dev.aoqia.loom.api;
 
 import java.io.File;
 import java.util.List;
-import net.aoqia.loom.api.decompilers.DecompilerOptions;
-import net.aoqia.loom.api.manifest.VersionsManifestsAPI;
-import net.aoqia.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
-import net.aoqia.loom.api.processor.ZomboidJarProcessor;
-import net.aoqia.loom.api.remapping.RemapperExtension;
-import net.aoqia.loom.api.remapping.RemapperParameters;
-import net.aoqia.loom.configuration.ide.RunConfigSettings;
-import net.aoqia.loom.configuration.processors.JarProcessor;
-import net.aoqia.loom.configuration.providers.zomboid.ManifestLocations;
-import net.aoqia.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
-import net.aoqia.loom.task.GenerateSourcesTask;
-import net.aoqia.loom.util.DeprecationHelper;
+import dev.aoqia.loom.api.decompilers.DecompilerOptions;
+import dev.aoqia.loom.api.manifest.VersionsManifestsAPI;
+import dev.aoqia.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
+import dev.aoqia.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.loom.api.remapping.RemapperExtension;
+import dev.aoqia.loom.api.remapping.RemapperParameters;
+import dev.aoqia.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.loom.configuration.processors.JarProcessor;
+import dev.aoqia.loom.configuration.providers.zomboid.ManifestLocations;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
+import dev.aoqia.loom.task.GenerateSourcesTask;
+import dev.aoqia.loom.util.DeprecationHelper;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.NamedDomainObjectList;

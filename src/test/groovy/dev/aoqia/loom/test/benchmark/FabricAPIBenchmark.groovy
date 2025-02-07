@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.benchmark
+package dev.aoqia.loom.test.benchmark
 
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
@@ -29,8 +29,8 @@ import groovy.time.TimeDuration
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 
-import net.aoqia.loom.test.LoomTestConstants
-import net.aoqia.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.loom.test.LoomTestConstants
+import dev.aoqia.loom.test.util.GradleProjectTestTrait
 
 /**
  * Run this class, passing a working dir as the first argument.

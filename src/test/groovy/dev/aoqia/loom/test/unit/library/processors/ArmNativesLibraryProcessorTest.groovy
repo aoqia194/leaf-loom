@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.library.processors
+package dev.aoqia.loom.test.unit.library.processors
 
-import net.aoqia.loom.configuration.providers.zomboid.library.Library
-import net.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
-import net.aoqia.loom.configuration.providers.zomboid.library.processors.ArmNativesLibraryProcessor
-import net.aoqia.loom.test.util.PlatformTestUtils
+import dev.aoqia.loom.configuration.providers.zomboid.library.Library
+import dev.aoqia.loom.configuration.providers.zomboid.library.LibraryProcessor
+import dev.aoqia.loom.configuration.providers.zomboid.library.processors.ArmNativesLibraryProcessor
+import dev.aoqia.loom.test.util.PlatformTestUtils
 
 class ArmNativesLibraryProcessorTest extends LibraryProcessorTest {
 	def "Apply when adding macOS ARM64 support"() {

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.configuration.accesswidener;
+package dev.aoqia.loom.configuration.accesswidener;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,13 +33,13 @@ import java.util.Comparator;
 import java.util.List;
 import javax.inject.Inject;
 import net.fabricmc.accesswidener.AccessWidener;
-import net.aoqia.loom.api.mappings.layered.MappingsNamespace;
-import net.aoqia.loom.api.processor.ZomboidJarProcessor;
-import net.aoqia.loom.api.processor.ProcessorContext;
-import net.aoqia.loom.api.processor.SpecContext;
-import net.aoqia.loom.util.LazyCloseable;
-import net.aoqia.loom.util.fmj.LeafModJson;
-import net.aoqia.loom.util.fmj.ModEnvironment;
+import dev.aoqia.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.loom.api.processor.ProcessorContext;
+import dev.aoqia.loom.api.processor.SpecContext;
+import dev.aoqia.loom.util.LazyCloseable;
+import dev.aoqia.loom.util.fmj.LeafModJson;
+import dev.aoqia.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.gradle.api.file.RegularFileProperty;
 import org.jetbrains.annotations.Nullable;

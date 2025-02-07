@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.util
+package dev.aoqia.loom.test.util
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
@@ -55,10 +55,10 @@ import org.jetbrains.annotations.Nullable
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
-import net.aoqia.loom.LoomGradleExtension
-import net.aoqia.loom.extension.LoomFiles
-import net.aoqia.loom.test.LoomTestConstants
-import net.aoqia.loom.util.copygamefile.CopyGameFile
+import dev.aoqia.loom.LoomGradleExtension
+import dev.aoqia.loom.extension.LoomFiles
+import dev.aoqia.loom.test.LoomTestConstants
+import dev.aoqia.loom.util.copygamefile.CopyGameFile
 
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.*

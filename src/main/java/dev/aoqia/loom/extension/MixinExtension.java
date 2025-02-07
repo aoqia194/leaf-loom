@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.extension;
+package dev.aoqia.loom.extension;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import net.aoqia.loom.api.MixinExtensionAPI;
+import dev.aoqia.loom.api.MixinExtensionAPI;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;

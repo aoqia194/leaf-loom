@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.api.mappings.layered.spec;
+package dev.aoqia.loom.api.mappings.layered.spec;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import net.aoqia.loom.util.ClosureAction;
+import dev.aoqia.loom.util.ClosureAction;
 import org.gradle.api.Action;
 import org.jetbrains.annotations.ApiStatus;
 

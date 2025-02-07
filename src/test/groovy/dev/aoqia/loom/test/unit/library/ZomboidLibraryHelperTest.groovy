@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.library
+package dev.aoqia.loom.test.unit.library
 
 import spock.lang.Specification
 
 import spock.lang.Specification
 
-import net.aoqia.loom.configuration.providers.zomboid.library.Library
-import net.aoqia.loom.configuration.providers.zomboid.library.ZomboidLibraryHelper
-import net.aoqia.loom.test.util.PlatformTestUtils
-import net.aoqia.loom.test.util.ZomboidTestUtils
+import dev.aoqia.loom.configuration.providers.zomboid.library.Library
+import dev.aoqia.loom.configuration.providers.zomboid.library.ZomboidLibraryHelper
+import dev.aoqia.loom.test.util.PlatformTestUtils
+import dev.aoqia.loom.test.util.ZomboidTestUtils
 
 class ZomboidLibraryHelperTest extends Specification {
 	static List<String> VERSIONS = [

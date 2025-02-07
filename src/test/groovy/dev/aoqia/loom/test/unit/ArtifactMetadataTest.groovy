@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit
+package dev.aoqia.loom.test.unit
 
 import java.nio.file.Path
 
@@ -29,14 +29,14 @@ import spock.lang.Specification
 
 import spock.lang.Specification
 
-import net.aoqia.loom.configuration.mods.ArtifactMetadata
-import net.aoqia.loom.configuration.mods.ArtifactRef
+import dev.aoqia.loom.configuration.mods.ArtifactMetadata
+import dev.aoqia.loom.configuration.mods.ArtifactRef
 
-import static net.aoqia.loom.configuration.mods.ArtifactMetadata.MixinRemapType.MIXIN
-import static net.aoqia.loom.configuration.mods.ArtifactMetadata.MixinRemapType.STATIC
-import static net.aoqia.loom.configuration.mods.ArtifactMetadata.RemapRequirements.*
-import static net.aoqia.loom.test.util.ZipTestUtils.createZip
-import static net.aoqia.loom.test.util.ZipTestUtils.manifest
+import static dev.aoqia.loom.configuration.mods.ArtifactMetadata.MixinRemapType.MIXIN
+import static dev.aoqia.loom.configuration.mods.ArtifactMetadata.MixinRemapType.STATIC
+import static dev.aoqia.loom.configuration.mods.ArtifactMetadata.RemapRequirements.*
+import static dev.aoqia.loom.test.util.ZipTestUtils.createZip
+import static dev.aoqia.loom.test.util.ZipTestUtils.manifest
 
 class ArtifactMetadataTest extends Specification {
 	def "is fabric mod"() {

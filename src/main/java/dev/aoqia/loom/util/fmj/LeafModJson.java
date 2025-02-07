@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.util.fmj;
+package dev.aoqia.loom.util.fmj;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
-import static net.aoqia.loom.util.fmj.LeafModJsonUtils.readString;
+import static dev.aoqia.loom.util.fmj.LeafModJsonUtils.readString;
 
 public abstract sealed class LeafModJson
     permits LeafModJsonV0, LeafModJsonV1, LeafModJsonV2, LeafModJson.Mockable {

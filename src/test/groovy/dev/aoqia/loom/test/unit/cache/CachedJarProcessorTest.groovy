@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.aoqia.loom.test.unit.cache
+package dev.aoqia.loom.test.unit.cache
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -37,13 +37,13 @@ import org.objectweb.asm.Opcodes
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import net.aoqia.loom.decompilers.ClassLineNumbers
-import net.aoqia.loom.decompilers.cache.CachedData
-import net.aoqia.loom.decompilers.cache.CachedFileStore
-import net.aoqia.loom.decompilers.cache.CachedFileStoreImpl
-import net.aoqia.loom.decompilers.cache.CachedJarProcessor
-import net.aoqia.loom.test.util.ZipTestUtils
-import net.aoqia.loom.util.ZipUtils
+import dev.aoqia.loom.decompilers.ClassLineNumbers
+import dev.aoqia.loom.decompilers.cache.CachedData
+import dev.aoqia.loom.decompilers.cache.CachedFileStore
+import dev.aoqia.loom.decompilers.cache.CachedFileStoreImpl
+import dev.aoqia.loom.decompilers.cache.CachedJarProcessor
+import dev.aoqia.loom.test.util.ZipTestUtils
+import dev.aoqia.loom.util.ZipUtils
 
 class CachedJarProcessorTest extends Specification {
 	static Map<String, byte[]> jarEntries = [
