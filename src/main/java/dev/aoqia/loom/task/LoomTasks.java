@@ -29,7 +29,7 @@ import com.google.common.base.Preconditions;
 import dev.aoqia.loom.LoomGradleExtension;
 import dev.aoqia.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
-import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionManifest;
 import dev.aoqia.loom.task.launch.GenerateDLIConfigTask;
 import dev.aoqia.loom.task.launch.GenerateLog4jConfigTask;
 import dev.aoqia.loom.task.launch.GenerateRemapClasspathTask;
@@ -98,7 +98,7 @@ public abstract class LoomTasks implements Runnable {
                 return;
             }
 
-            final ZomboidVersionMeta versionInfo = extension.getZomboidProvider().getClientVersionInfo();
+            final ZomboidVersionManifest versionInfo = extension.getZomboidProvider().getClientVersionInfo();
             if (versionInfo == null) {
                 // Something has gone wrong, don't register the task.
                 System.out.println("LoomTasks: Version info is null.");

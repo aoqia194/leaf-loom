@@ -32,7 +32,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
 import dev.aoqia.loom.configuration.providers.zomboid.VersionsManifest
-import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionManifest
 import dev.aoqia.loom.test.LoomTestConstants
 import dev.aoqia.loom.util.MirrorUtil
 import dev.aoqia.loom.util.copygamefile.CopyGameFile
@@ -41,7 +41,7 @@ class ZomboidTestUtils {
 	private static final File TEST_DIR = new File(LoomTestConstants.TEST_DIR, "zomboid")
 	public static final Gson GSON = new GsonBuilder().create()
 
-	static ZomboidVersionMeta getVersionMeta(String id) {
+	static ZomboidVersionManifest getVersionMeta(String id) {
 		def versionManifest = download(MirrorUtil.getClientVersionManifests(null), "version_manifest.json")
 		def manifest = GSON.fromJson(versionManifest, VersionsManifest.class)
 		def version = manifest.versions().find {
@@ -49,7 +49,7 @@ class ZomboidTestUtils {
 		}
 
 		def metaJson = download(version.url, "${id}.json")
-		GSON.fromJson(metaJson, ZomboidVersionMeta.class)
+		GSON.fromJson(metaJson, ZomboidVersionManifest.class)
 	}
 
 	static String download(String url, String name) {

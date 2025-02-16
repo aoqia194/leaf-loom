@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 import dev.aoqia.loom.LoomGradleExtension;
 import dev.aoqia.loom.LoomGradlePlugin;
-import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionManifest;
 import dev.aoqia.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 import dev.aoqia.loom.task.AbstractLoomTask;
 import dev.aoqia.loom.util.Platform;
@@ -49,10 +49,13 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
         getVersionInfoJson()
             .set(LoomGradlePlugin.GSON.toJson(
                 getExtension().getZomboidProvider().getClientVersionInfo()));
-        getZomboidVersion().set(getExtension().getZomboidProvider().clientZomboidVersion());
+        getZomboidVersion().set(
+            getExtension().getZomboidProvider().clientZomboidVersion());
         getSplitSourceSets().set(getExtension().areEnvironmentSourceSetsSplit());
         getANSISupportedIDE().set(ansiSupportedIde(getProject()));
-        getPlainConsole().set(getProject().getGradle().getStartParameter().getConsoleOutput() == ConsoleOutput.Plain);
+        getPlainConsole().set(
+            getProject().getGradle().getStartParameter().getConsoleOutput() ==
+            ConsoleOutput.Plain);
 
         if (!getExtension().getMods().isEmpty()) {
             getClassPathGroups().set(buildClassPathGroups(getProject()));
@@ -65,8 +68,11 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
             getCommonGameJarPath().set(getGameJarPath("common"));
         }
 
-        getNativesDirectoryPath()
-            .set(getExtension().getFiles().getNativesDirectory(getProject()).getAbsolutePath());
+        getNativesDirectoryPath().set(getExtension().getFiles()
+            .getNativesDirectory(getProject())
+            .getAbsolutePath());
+        getExtractedDirectoryPath().set(
+            getExtension().getZomboidProvider().extractedDir().getAbsolutePath());
         getDevLauncherConfig().set(getExtension().getFiles().getDevLauncherConfig());
     }
 
@@ -84,9 +90,10 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
      */
     private static String buildClassPathGroups(Project project) {
         return LoomGradleExtension.get(project).getMods().stream()
-            .map(modSettings -> SourceSetHelper.getClasspath(modSettings, project).stream()
-                .map(File::getAbsolutePath)
-                .collect(Collectors.joining(File.pathSeparator)))
+            .map(
+                modSettings -> SourceSetHelper.getClasspath(modSettings, project).stream()
+                    .map(File::getAbsolutePath)
+                    .collect(Collectors.joining(File.pathSeparator)))
             .collect(Collectors.joining(File.pathSeparator + File.pathSeparator));
     }
 
@@ -140,13 +147,17 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
     @Input
     protected abstract Property<String> getNativesDirectoryPath();
 
+    @Input
+    protected abstract Property<String> getExtractedDirectoryPath();
+
     @OutputFile
     protected abstract RegularFileProperty getDevLauncherConfig();
 
     @TaskAction
     public void run() throws IOException {
-        final ZomboidVersionMeta versionInfo =
-            LoomGradlePlugin.GSON.fromJson(getVersionInfoJson().get(), ZomboidVersionMeta.class);
+        final ZomboidVersionManifest versionInfo =
+            LoomGradlePlugin.GSON.fromJson(getVersionInfoJson().get(),
+                ZomboidVersionManifest.class);
 
         final LaunchConfig launchConfig = new LaunchConfig()
             .property("leaf.development", "true")
@@ -162,15 +173,23 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
             if (arg.isString()) {
                 String str = arg.getAsJsonPrimitive().getAsString();
                 String key = str.subSequence(2, str.indexOf("=")).toString();
-                String value = str.subSequence(str.indexOf("=") + 1, str.length()).toString();
+                String value = str.subSequence(str.indexOf("=") + 1, str.length())
+                    .toString();
+
+                // Skip this because we set it in the runconfig's jvm args.
+                if (key.startsWith("java.library.path")) {
+                    continue;
+                }
 
                 launchConfig.property(key, value);
             } else {
-                var rule = LoomGradlePlugin.GSON.fromJson(arg, ZomboidVersionMeta.Rule.class);
+                var rule = LoomGradlePlugin.GSON.fromJson(arg,
+                    ZomboidVersionManifest.Rule.class);
                 if (rule.isAllowed() && rule.appliesToOS(Platform.CURRENT)) {
                     String str = rule.action();
                     String key = str.subSequence(2, str.indexOf("=")).toString();
-                    String value = str.subSequence(str.indexOf("=") + 1, str.length()).toString();
+                    String value = str.subSequence(str.indexOf("=") + 1, str.length())
+                        .toString();
 
                     launchConfig.property(key, value);
                 }
@@ -178,11 +197,14 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
         }
 
         if (versionInfo.hasNativesToExtract()) {
-            String nativesPath = getNativesDirectoryPath().get();
-
-            launchConfig
-                .property("client", "java.library.path", nativesPath)
-                .property("client", "org.lwjgl.librarypath", nativesPath);
+            throw new RuntimeException(
+                "GenerateDLIConfigTask.hasNativesToExtract() -> We shouldn't be here! " +
+                "Report me to a developer pls >w<");
+            //            String nativesPath = getNativesDirectoryPath().get();
+            //
+            //            launchConfig
+            //                .property("client", "java.library.path", nativesPath)
+            //                .property("client", "org.lwjgl.librarypath", nativesPath);
         }
 
         if (getSplitSourceSets().get()) {
@@ -197,13 +219,15 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
             launchConfig.property("leaf.classPathGroups", getClassPathGroups().get());
         }
 
-        // Enable ansi by default for idea and vscode when gradle is not ran with plain console.
+        // Enable ansi by default for idea and vscode when gradle is not ran with plain
+        // console.
         if (getANSISupportedIDE().get() && !getPlainConsole().get()) {
             launchConfig.property("leaf.log.disableAnsi", "false");
         }
 
         FileUtils.writeStringToFile(
-            getDevLauncherConfig().getAsFile().get(), launchConfig.asString(), StandardCharsets.UTF_8);
+            getDevLauncherConfig().getAsFile().get(), launchConfig.asString(),
+            StandardCharsets.UTF_8);
     }
 
     @InputFile

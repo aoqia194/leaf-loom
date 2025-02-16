@@ -33,15 +33,15 @@ import dev.aoqia.loom.util.Platform;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
-public record ZomboidVersionMeta(
+public record ZomboidVersionManifest(
     Arguments arguments,
     AssetIndex assetIndex,
-    @Nullable JavaVersion javaVersion,
+    int javaVersion,
     List<Library> libraries,
     String mainClass,
     String releaseTime,
     String time,
-    String version) {
+    String id) {
     private static final Map<Platform.OperatingSystem, String> OS_NAMES = Map.of(
         Platform.OperatingSystem.WINDOWS, "windows",
         Platform.OperatingSystem.MAC_OS, "osx",
@@ -157,8 +157,5 @@ public record ZomboidVersionMeta(
             Objects.requireNonNull(path(), "Cannot get relative file from a null path");
             return new File(baseDirectory, path());
         }
-    }
-
-    public record JavaVersion(String component, int majorVersion) {
     }
 }

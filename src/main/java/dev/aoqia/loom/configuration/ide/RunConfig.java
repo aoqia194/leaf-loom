@@ -133,6 +133,9 @@ public class RunConfig {
         runConfig.vmArgs.add("-Dleaf.runDir=" + runDir);
         // To prevent the log file from creating in workingdir.
         runConfig.vmArgs.add("-Dleaf.log.file=" + Path.of(runDir).resolve("leafloader.log"));
+        // Tells the game where to look for natives and libs. Since loom flattens the libs into
+        // one folder, we don't have to provide version-specific libs folder like vanilla game does.
+        runConfig.vmArgs.add("-Djava.library.path=" + workingDir);
 
         runConfig.eclipseProjectName = project.getExtensions()
             .getByType(EclipseModel.class)
@@ -147,8 +150,8 @@ public class RunConfig {
 
         // Custom parameters
         runConfig.programArgs.addAll(settings.getProgramArgs());
-        runConfig.vmArgs.addAll(settings.getVmArgs());
         runConfig.vmArgs.add("-Dfabric.dli.main=" + mainClass);
+        runConfig.vmArgs.addAll(settings.getVmArgs());
         runConfig.environmentVariables = new HashMap<>();
         runConfig.environmentVariables.putAll(settings.getEnvironmentVariables());
         runConfig.projectName = project.getName();

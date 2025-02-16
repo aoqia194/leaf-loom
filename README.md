@@ -40,4 +40,5 @@ _This guide assumes you are using IntelliJ IDEA, other IDE's have not been teste
 
 ## Credits
 
-I owe the FabricMC devs a small thanks here as the least I can do, as they helped me immensely. Especially **modmuss**!
+I owe the FabricMC devs a small thanks here as the least I can do, as they helped me immensely.
+Especially **modmuss**! I forgot I even wrote this here, but @modmuss yet again helped me. They deserve triple credits honestly.

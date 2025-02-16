@@ -83,7 +83,8 @@ public abstract class ZomboidProvider {
 
     public void provide() throws Exception {
         final Project project = getProject();
-        final int copyFileThreads = Math.min(Runtime.getRuntime().availableProcessors(), 10);
+        final int copyFileThreads = Math.min(Runtime.getRuntime().availableProcessors(),
+            10);
 
         initFiles();
 
@@ -97,26 +98,25 @@ public abstract class ZomboidProvider {
             packageGameFiles(project, copyFileThreads, true);
         }
 
-        final ZomboidLibraryProvider libraryProvider = new ZomboidLibraryProvider(this, configContext.project());
+        final ZomboidLibraryProvider libraryProvider = new ZomboidLibraryProvider(this,
+            configContext.project());
         libraryProvider.provide();
     }
 
-    private void packageGameFiles(Project project, int copyFileThreads, boolean isServer) throws IOException {
+    private void packageGameFiles(Project project, int copyFileThreads,
+        boolean isServer) throws IOException {
         final String envString = !isServer ? "Client" : "Server";
 
-        final String version = !isServer ? clientZomboidVersion() : serverZomboidVersion();
-        final ZomboidVersionMeta versionInfo = !isServer ? getClientVersionInfo() : getServerVersionInfo();
+        final String version =
+            !isServer ? clientZomboidVersion() : serverZomboidVersion();
+        final ZomboidVersionManifest versionInfo =
+            !isServer ? getClientVersionInfo() : getServerVersionInfo();
 
-        final ZomboidVersionMeta.JavaVersion javaVersion = versionInfo.javaVersion();
-        if (javaVersion != null) {
-            final int requiredMajorJavaVersion = versionInfo.javaVersion().majorVersion();
-            final JavaVersion requiredJavaVersion = JavaVersion.toVersion(requiredMajorJavaVersion);
-
-            if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
-                throw new IllegalStateException(
-                    "Zomboid " + version + " requires Java " + requiredJavaVersion +
-                    " but Gradle is using " + JavaVersion.current());
-            }
+        final JavaVersion requiredJavaVersion = JavaVersion.toVersion(versionInfo.javaVersion());
+        if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
+            throw new IllegalStateException(
+                "Zomboid " + version + " requires Java " + requiredJavaVersion +
+                " but Gradle is using " + JavaVersion.current());
         }
 
         final String gameInstallPath = !isServer ? MirrorUtil.getGameInstallPath(project)
@@ -125,16 +125,20 @@ public abstract class ZomboidProvider {
         final ArrayList<Path> extractedLibs = new ArrayList<>();
 
         final File jar = !isServer ? zomboidClientJar : zomboidServerJar;
-        try (final FileSystemUtil.Delegate outputJar = FileSystemUtil.getJarFileSystem(jar, true);
-             ProgressGroup progressGroup = new ProgressGroup(project, "Copy %s Game Assets".formatted(envString));
+        try (final FileSystemUtil.Delegate outputJar = FileSystemUtil.getJarFileSystem(
+            jar, true);
+             ProgressGroup progressGroup = new ProgressGroup(project,
+                 "Copy %s Game Assets".formatted(envString));
              CopyGameFileExecutor executor = new CopyGameFileExecutor(copyFileThreads)) {
-            final AssetIndex assetIndex = !isServer ? getClientAssetIndex() : getServerAssetIndex();
+            final AssetIndex assetIndex =
+                !isServer ? getClientAssetIndex() : getServerAssetIndex();
             for (AssetIndex.Object object : assetIndex.getObjects()) {
                 final String path = object.path();
 
                 // Exclude certain folders for dev environment.
                 if (path.startsWith("jre\\")
                     || path.startsWith("jre64\\")
+                    || path.startsWith("win32\\")
                     || path.startsWith("mods\\")
                     || path.startsWith("launcher\\")
                     || path.startsWith("license\\")
@@ -147,26 +151,39 @@ public abstract class ZomboidProvider {
 
                 final String sha1 = object.hash();
                 final Path srcPath = Path.of(gameInstallPath, path);
-                Path dstPath = outputJar.get().getPath(getGameFilePath(object).toString());
-                // System.out.println("copyGameAssets srcPath=(" + srcPath + "), dstPath=(" + dstPath + ")");
+                Path dstPath = outputJar.get()
+                    .getPath(getGameFilePath(object).toString());
+                // System.out.println("copyGameAssets srcPath=(" + srcPath + "),
+                // dstPath=(" + dstPath + ")");
 
                 // File exists check.
                 if (!srcPath.toFile().exists()) {
-                    if (GradleUtils.getBooleanProperty(project, Constants.Properties.IGNORE_MISSING_FILES)) {
+                    if (GradleUtils.getBooleanProperty(project,
+                        Constants.Properties.IGNORE_MISSING_FILES)) {
                         continue;
                     }
 
-                    throw new FileNotFoundException("%s game file '%s' does not exist.".formatted(envString, srcPath));
+                    throw new FileNotFoundException(
+                        "%s game file '%s' does not exist.".formatted(envString,
+                            srcPath));
                 }
 
-                // Send non class files (and some specific files) to the extracted folder. Speeds up processing time a LOT.
-                if (!path.endsWith(".class") && !path.endsWith(".lbc")) {
+                // Send non class files (like media/ folder) to the extracted folder.
+                // Speeds up processing time a LOT.
+                // .LBC compiled LuaByteCode file is with .class because otherwise
+                // KahLua will freak out.
+                if (!path.endsWith(".class")/* && !path.endsWith(".lbc")*/) {
                     // Add jar files to the classpath.
                     if (path.endsWith(".jar")) {
-                        dstPath = extractedDir().toPath().resolve(getGameFilePath(object).getFileName());
+                        dstPath = extractedDir().toPath()
+                            .resolve(getGameFilePath(object).getFileName());
                         extractedLibs.add(dstPath);
+                    } else if (path.startsWith("win64")) {
+                        dstPath = extractedDir().toPath()
+                            .resolve(getGameFilePath(object).getFileName());
                     } else {
-                        dstPath = extractedDir().toPath().resolve(getGameFilePath(object));
+                        dstPath = extractedDir().toPath()
+                            .resolve(getGameFilePath(object));
                     }
                 }
 
@@ -181,9 +198,11 @@ public abstract class ZomboidProvider {
         }
 
         // Add the extracted libs to compile libraries (which also adds to runtime).
-        final String config = !isServer ? Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES
-            : Constants.Configurations.ZOMBOID_SERVER_COMPILE_LIBRARIES;
-        project.getDependencies().add(config, project.files(extractedLibs));
+        final String config =
+            !isServer ? Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES
+                : Constants.Configurations.ZOMBOID_SERVER_COMPILE_LIBRARIES;
+        project.getDependencies()
+            .add(config, project.files(extractedLibs, extractedDir().toPath()));
     }
 
     private Path getGameFilePath(AssetIndex.Object object) {
@@ -191,13 +210,16 @@ public abstract class ZomboidProvider {
     }
 
     private AssetIndex getClientAssetIndex() throws IOException {
-        final ZomboidVersionMeta.AssetIndex assetIndex =
-            LoomGradlePlugin.GSON.fromJson(LoomGradlePlugin.GSON.toJson(getClientVersionInfo().assetIndex()),
-                ZomboidVersionMeta.AssetIndex.class);
-        final File indexFile = new File(workingDir(), "zomboid_client_index_manifest.json");
+        final ZomboidVersionManifest.AssetIndex assetIndex =
+            LoomGradlePlugin.GSON.fromJson(
+                LoomGradlePlugin.GSON.toJson(getClientVersionInfo().assetIndex()),
+                ZomboidVersionManifest.AssetIndex.class);
+        final File indexFile = new File(workingDir(),
+            "zomboid_client_index_manifest.json");
 
         final String json = getExtension()
-            .download(Constants.INDEX_MANIFEST_PATH + "client/" + MirrorUtil.getOsStringForUrl() + "/" +
+            .download(Constants.INDEX_MANIFEST_PATH + "client/" +
+                      MirrorUtil.getOsStringForUrl() + "/" +
                       clientZomboidVersion() + ".json")
             .sha1(assetIndex.sha1())
             .downloadString(indexFile.toPath());
@@ -206,13 +228,16 @@ public abstract class ZomboidProvider {
     }
 
     private AssetIndex getServerAssetIndex() throws IOException {
-        final ZomboidVersionMeta.AssetIndex assetIndex =
-            LoomGradlePlugin.GSON.fromJson(LoomGradlePlugin.GSON.toJson(getServerVersionInfo().assetIndex()),
-                ZomboidVersionMeta.AssetIndex.class);
-        final File indexFile = new File(workingDir(), "zomboid_server_index_manifest.json");
+        final ZomboidVersionManifest.AssetIndex assetIndex =
+            LoomGradlePlugin.GSON.fromJson(
+                LoomGradlePlugin.GSON.toJson(getServerVersionInfo().assetIndex()),
+                ZomboidVersionManifest.AssetIndex.class);
+        final File indexFile = new File(workingDir(),
+            "zomboid_server_index_manifest.json");
 
         final String json = getExtension()
-            .download(Constants.INDEX_MANIFEST_PATH + "server/" + MirrorUtil.getOsStringForUrl() + "/" +
+            .download(Constants.INDEX_MANIFEST_PATH + "server/" +
+                      MirrorUtil.getOsStringForUrl() + "/" +
                       serverZomboidVersion() + ".json")
             .sha1(assetIndex.sha1())
             .downloadString(indexFile.toPath());
@@ -230,8 +255,9 @@ public abstract class ZomboidProvider {
         }
     }
 
-    public ZomboidVersionMeta getClientVersionInfo() {
-        return Objects.requireNonNull(clientMetadataProvider, "Metadata provider not setup")
+    public ZomboidVersionManifest getClientVersionInfo() {
+        return Objects.requireNonNull(clientMetadataProvider,
+                "Metadata provider not setup")
             .getVersionMeta();
     }
 
@@ -240,7 +266,8 @@ public abstract class ZomboidProvider {
     }
 
     public File getZomboidClientJar() {
-        Preconditions.checkArgument(provideClient(), "Not configured to provide client jar");
+        Preconditions.checkArgument(provideClient(),
+            "Not configured to provide client jar");
         return zomboidClientJar;
     }
 
@@ -249,12 +276,14 @@ public abstract class ZomboidProvider {
     }
 
     public String serverZomboidVersion() {
-        return Objects.requireNonNull(serverMetadataProvider, "Metadata provider not setup")
+        return Objects.requireNonNull(serverMetadataProvider,
+                "Metadata provider not setup")
             .getZomboidVersion();
     }
 
-    public ZomboidVersionMeta getServerVersionInfo() {
-        return Objects.requireNonNull(serverMetadataProvider, "Metadata provider not setup")
+    public ZomboidVersionManifest getServerVersionInfo() {
+        return Objects.requireNonNull(serverMetadataProvider,
+                "Metadata provider not setup")
             .getVersionMeta();
     }
 
@@ -277,7 +306,8 @@ public abstract class ZomboidProvider {
     }
 
     public String clientZomboidVersion() {
-        return Objects.requireNonNull(clientMetadataProvider, "Metadata provider not setup")
+        return Objects.requireNonNull(clientMetadataProvider,
+                "Metadata provider not setup")
             .getZomboidVersion();
     }
 
@@ -286,7 +316,8 @@ public abstract class ZomboidProvider {
     }
 
     public File getZomboidServerJar() {
-        Preconditions.checkArgument(provideServer(), "Not configured to provide server jar");
+        Preconditions.checkArgument(provideServer(),
+            "Not configured to provide server jar");
         return zomboidServerJar;
     }
 

@@ -212,9 +212,7 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
             getProject(),
             configContext.serviceFactory(),
             toM);
-        final ZomboidVersionMeta.JavaVersion javaVersion =
-            zomboidProvider.getClientVersionInfo().javaVersion();
-        final boolean fixRecords = javaVersion != null && javaVersion.majorVersion() >= 16;
+        final boolean fixRecords = zomboidProvider.getClientVersionInfo().javaVersion() >= 16;
 
         TinyRemapper remapper = TinyRemapperHelper.getTinyRemapper(
             getProject(), configContext.serviceFactory(), fromM, toM, fixRecords, (builder) -> {

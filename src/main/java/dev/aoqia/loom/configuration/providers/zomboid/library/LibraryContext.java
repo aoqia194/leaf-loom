@@ -24,15 +24,15 @@
 package dev.aoqia.loom.configuration.providers.zomboid.library;
 
 import java.util.Arrays;
-import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionMeta;
+import dev.aoqia.loom.configuration.providers.zomboid.ZomboidVersionManifest;
 import dev.aoqia.loom.util.Platform;
 import org.gradle.api.JavaVersion;
 
 public final class LibraryContext {
-    private final ZomboidVersionMeta versionMeta;
+    private final ZomboidVersionManifest versionMeta;
     private final JavaVersion javaVersion;
 
-    public LibraryContext(ZomboidVersionMeta versionMeta, JavaVersion javaVersion) {
+    public LibraryContext(ZomboidVersionManifest versionMeta, JavaVersion javaVersion) {
         this.versionMeta = versionMeta;
         this.javaVersion = javaVersion;
     }
