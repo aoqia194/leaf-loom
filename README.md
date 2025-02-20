@@ -14,7 +14,7 @@ the Leaf toolchain.
 
 To get started developing your own mods please follow the guide
 on [Setting up a mod development environment](https://fabricmc.net/wiki/tutorial:setup). Even though this guide is
-originally for FabricMC/fabric, it willl also work for the most part here.
+originally for FabricMC/fabric, if you understand the concepts it presents, it also works here.
 
 ## Debugging Loom (Only needed if you want to work on Loom itself)
 
@@ -24,7 +24,7 @@ _This guide assumes you are using IntelliJ IDEA, other IDE's have not been teste
 2. Create a Gradle run configuration to run the following tasks `build publishToMavenLocal -x test`. This will build
    Loom and publish to a local maven repo without running the test suite. You can run it now.
 3. Prepare a project for using the local version of Loom:
-    * A good starting point is to clone the [leaf-example-mod](https://github.com/FabricMC/leaf-example-mod) into
+    * A good starting point is to clone the [leaf-example-mod](https://github.com/aoqia194/leaf-example-mod) into
       your working directory
     * Add `mavenLocal()` to the repositories:
         * If you're using `id 'leaf-loom'` inside `plugins`, the correct `repositories` block is
