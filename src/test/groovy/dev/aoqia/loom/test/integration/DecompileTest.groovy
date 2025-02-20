@@ -60,8 +60,8 @@ class DecompileTest extends Specification implements GradleProjectTestTrait {
 		gradle.buildSrc("decompile")
 		gradle.buildGradle << '''
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.18.1"
-                    mappings "net.fabricmc:yarn:1.18.1+build.18:v2"
+                    zomboid "com.theindiestone:zomboid:41.78.16"
+                    mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
                 }
             '''
 		when:
@@ -83,8 +83,8 @@ class DecompileTest extends Specification implements GradleProjectTestTrait {
 		gradle.buildSrc("decompile")
 		gradle.buildGradle << '''
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.20.4"
-                    mappings "net.fabricmc:yarn:1.20.4+build.3:v2"
+                    zomboid "com.theindiestone:zomboid:41.78.16"
+                    mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
                 }
         '''
 
@@ -94,7 +94,7 @@ class DecompileTest extends Specification implements GradleProjectTestTrait {
 		// Add fabric API to the project, this introduces some transitive access wideners
 		gradle.buildGradle << '''
                 dependencies {
-                    modImplementation "net.fabricmc.fabric-api:fabric-api:0.96.4+1.20.4"
+                    modImplementation "dev.aoqia:leaf-api:0.1.0+41.78.16"
                 }
         '''
 

@@ -42,8 +42,8 @@ class DaemonShutdownTest extends Specification implements GradleProjectTestTrait
 		gradle.buildSrc("stopDaemon")
 		gradle.buildGradle << '''
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.20.4"
-                    mappings "net.fabricmc:yarn:1.20.4+build.3:v2"
+                    zomboid "com.theindiestone:zomboid:41.78.16"
+                    mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
                 }
         '''
 		when:

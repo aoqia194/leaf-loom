@@ -46,7 +46,7 @@ class ModJavadocTest extends Specification implements GradleProjectTestTrait {
 
 		when:
 		def result = gradle.run(task: "genSources")
-		def blocks = getClassSource(gradle, "net/minecraft/block/Blocks.java")
+		def blocks = getClassSource(gradle, "zombie/characters/IsoPlayer.java")
 
 		then:
 		result.task(":genSources").outcome == SUCCESS
@@ -59,7 +59,7 @@ class ModJavadocTest extends Specification implements GradleProjectTestTrait {
 	}
 
 	private static String getClassSource(GradleProject gradle, String classname) {
-		File sourcesJar = gradle.getGeneratedLocalSources("1.17.1-net.fabricmc.yarn.1_17_1.1.17.1+build.59-v2")
+		File sourcesJar = gradle.getGeneratedLocalSources("41.78.16-dev.aoqia.leaf-yarn.41.78.16.41.78.16+build.1-v2")
 		return new String(ZipUtils.unpack(sourcesJar.toPath(), classname), StandardCharsets.UTF_8)
 	}
 }

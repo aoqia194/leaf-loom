@@ -50,7 +50,7 @@ class LocalRuntimeTest extends Specification implements GradleProjectTestTrait {
 		result.task(":build").outcome == SUCCESS
 		def pomFile = new File(gradle.getProjectDir(), "build/publications/mavenJava/pom-default.xml")
 		def pom = pomFile.text
-		!pom.contains("fabric-api")
+		!pom.contains("leaf-api")
 		!pom.contains("enigma")
 
 		where:

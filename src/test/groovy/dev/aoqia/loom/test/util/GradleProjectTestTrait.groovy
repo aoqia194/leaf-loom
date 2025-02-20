@@ -162,8 +162,8 @@ trait GradleProjectTestTrait {
 		BuildResult run(Map options) {
 			// Setup the system props to tell loom that its running in a test env
 			// And override the CI check to ensure that everything is ran
-			System.setProperty("fabric.loom.test", "true")
-			System.setProperty("fabric.loom.ci", "false")
+			System.setProperty("leaf.loom.test", "true")
+			System.setProperty("leaf.loom.ci", "false")
 			System.setProperty("maven.repo.local", mavenLocalDir.absolutePath)
 
 			def runner = this.runner

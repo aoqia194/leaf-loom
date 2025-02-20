@@ -50,9 +50,9 @@ class SimpleBenchmark implements GradleProjectTestTrait {
 
 		gradle.buildGradle << '''
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.18.1"
-                    mappings "net.fabricmc:yarn:1.18.1+build.17:v2"
-                    modImplementation "net.fabricmc.fabric-api:fabric-api:0.45.1+1.18"
+                    zomboid "com.theindiestone:zomboid:41.78.16"
+                    mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
+                    modImplementation "dev.aoqia:leaf-api:0.1.0+41.78.16"
                 }
             '''
 

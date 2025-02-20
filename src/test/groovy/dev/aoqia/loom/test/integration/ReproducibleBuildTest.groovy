@@ -56,8 +56,8 @@ class ReproducibleBuildTest extends Specification implements GradleProjectTestTr
 
 		then:
 		result.task(":build").outcome == SUCCESS
-		generateMD5(gradle.getOutputFile("fabric-example-mod-1.0.0.jar")) == modHash
-		generateMD5(gradle.getOutputFile("fabric-example-mod-1.0.0-sources.jar")) == sourceHash
+		generateMD5(gradle.getOutputFile("leaf-example-mod-1.0.0.jar")) == modHash
+		generateMD5(gradle.getOutputFile("leaf-example-mod-1.0.0-sources.jar")) == sourceHash
 
 		where:
 		version              | modHash                               | sourceHash

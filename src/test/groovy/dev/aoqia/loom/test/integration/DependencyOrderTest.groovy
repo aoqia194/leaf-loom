@@ -45,10 +45,10 @@ class DependencyOrderTest extends Specification implements GradleProjectTestTrai
 		def gradle = gradleProject(project: "minimalBase", version: version)
 		gradle.buildGradle << """
             dependencies {
-                minecraft 'com.mojang:minecraft:1.19.3'
-                mappings 'net.fabricmc:yarn:1.19.3+build.5:v2'
-                modApi 'net.fabricmc.fabric-api:fabric-api:0.73.0+1.19.3'
-                modImplementation 'net.fabricmc:fabric-loader:0.14.13'
+                zomboid 'com.theindiestone:zomboid:41.78.16'
+                mappings 'dev.aoqia:leaf-yarn:0.1.0+build.1:v2'
+                modApi 'dev.aoqia:leaf-api:0.1.0+41.78.16'
+                modImplementation 'dev.aoqia:leaf-loader:0.1.0'
             }
             """.stripIndent()
 		when:

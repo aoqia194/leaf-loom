@@ -40,11 +40,10 @@ class TestPlugin implements Plugin<Project> {
 		project.getExtensions().configure(BasePluginExtension.class) {
 			it.archivesName = project.rootProject.isolated.name + "-" + project.name
 		}
+		def gameVersion = project.name.substring(7)
 
-		def minecraftVersion = project.name.substring(7)
-
-		project.getDependencies().add("minecraft", "com.mojang:minecraft:$minecraftVersion")
-		project.getDependencies().add("mappings", "net.fabricmc:yarn:$minecraftVersion+build.1:v2")
-		project.getDependencies().add("modImplementation", "net.fabricmc:fabric-loader:0.16.9")
+		project.getDependencies().add("zomboid", "com.theindiestone:zomboid:$gameVersion")
+		project.getDependencies().add("mappings", "dev.aoqia:leaf-yarn:$gameVersion+build.1:v2")
+		project.getDependencies().add("modImplementation", "dev.aoqia:leaf-loader:0.1.0")
 	}
 }

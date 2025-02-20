@@ -33,22 +33,20 @@ import dev.aoqia.loom.test.LoomTestVersions
 import dev.aoqia.loom.util.copygamefile.CopyGameFile
 
 class ServerRunner {
-	static final String LOADER_VERSION = LoomTestVersions.FABRIC_LOADER.version()
-	static final String INSTALLER_VERSION = LoomTestVersions.FABRIC_INSTALLER.version()
-	static final Map<String, String> FABRIC_API_URLS = [
-		"1.16.5": "https://github.com/FabricMC/fabric/releases/download/0.37.1%2B1.16/fabric-api-0.37.1+1.16.jar",
-		"1.17.1": "https://github.com/FabricMC/fabric/releases/download/0.37.1%2B1.17/fabric-api-0.37.1+1.17.jar"
+	static final String LOADER_VERSION = LoomTestVersions.LEAF_LOADER.version()
+	static final String INSTALLER_VERSION = LoomTestVersions.LEAF_INSTALLER.version()
+	static final Map<String, String> LEAF_API_URLS = [
+		"41.78.16": "https://github.com/aoqia194/leaf-api/releases/download/0.1.0%2B41.78.16/leaf-api-0.1.0+41.78.16.jar",
 	]
-	static final String FABRIC_LANG_KOTLIN = "https://maven.fabricmc.net/net/fabricmc/fabric-language-kotlin/1.8.5%2Bkotlin.1.7.20/fabric-language-kotlin-1.8.5%2Bkotlin.1.7.20.jar"
 
 	final File serverDir
-	final String minecraftVersion
+	final String zomboidVersion
 
 	final List<File> mods = []
 
-	private ServerRunner(File serverDir, String minecraftVersion) {
+	private ServerRunner(File serverDir, String zomboidVersion) {
 		this.serverDir = serverDir
-		this.minecraftVersion = minecraftVersion
+		this.zomboidVersion = zomboidVersion
 
 		this.serverDir.mkdirs()
 	}
@@ -58,7 +56,7 @@ class ServerRunner {
 	}
 
 	def install() {
-		def url = "https://meta.fabricmc.net/v2/versions/loader/${minecraftVersion}/${LOADER_VERSION}/${INSTALLER_VERSION}/server/jar"
+		def url = "https://meta.fabricmc.net/v2/versions/loader/${zomboidVersion}/${LOADER_VERSION}/${INSTALLER_VERSION}/server/jar"
 		CopyGameFile.create(url)
 				.copyGameFileFromPath(serverDir.toPath().resolve("fabric-server-launch.jar"))
 
@@ -84,12 +82,12 @@ class ServerRunner {
 		return withMod(modFile)
 	}
 
-	ServerRunner withFabricApi() {
-		if (!FABRIC_API_URLS[minecraftVersion]) {
-			throw new UnsupportedOperationException("No Fabric api url for " + minecraftVersion)
+	ServerRunner withLeafApi() {
+		if (!LEAF_API_URLS[zomboidVersion]) {
+			throw new UnsupportedOperationException("No Leaf api url for " + zomboidVersion)
 		}
 
-		return downloadMod(FABRIC_API_URLS[minecraftVersion], "fabricapi.jar")
+		return downloadMod(LEAF_API_URLS[zomboidVersion], "leaf-api.jar")
 	}
 
 	ServerRunResult run() {

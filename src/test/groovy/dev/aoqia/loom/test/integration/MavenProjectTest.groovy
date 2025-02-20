@@ -57,8 +57,8 @@ class MavenProjectTest extends Specification implements MockMavenServerTrait, Gr
 
 		then:
 		result.task(":publish").outcome == SUCCESS
-		gradle.hasOutputZipEntry("fabric-example-lib-${version}.jar", "net/fabricmc/example/ExampleLib.class")
-		gradle.hasOutputZipEntry("fabric-example-lib-${version}-sources.jar", "net/fabricmc/example/ExampleLib.java")
+		gradle.hasOutputZipEntry("leaf-example-lib-${version}.jar", "dev/aoqia/example/ExampleLib.class")
+		gradle.hasOutputZipEntry("leaf-example-lib-${version}-sources.jar", "dev/aoqia/example/ExampleLib.java")
 
 		where:
 		version           | gradleVersion
@@ -76,7 +76,7 @@ class MavenProjectTest extends Specification implements MockMavenServerTrait, Gr
 	@Unroll
 	def "resolve #version #gradleVersion"() {
 		given:
-		setProperty('loom.test.resolve', "com.example:fabric-example-lib:${version}")
+		setProperty('loom.test.resolve', "com.example:leaf-example-lib:${version}")
 		def gradle = gradleProject(project: "maven", version: gradleVersion, sharedFiles: true)
 
 		when:
@@ -84,7 +84,7 @@ class MavenProjectTest extends Specification implements MockMavenServerTrait, Gr
 
 		then:
 		result.task(":build").outcome == SUCCESS
-		gradle.hasOutputZipEntry("fabric-example-mod-1.0.0.jar", "net/fabricmc/examplemod/ExampleMod.class")
+		gradle.hasOutputZipEntry("leaf-example-mod-1.0.0.jar", "dev/aoqia/examplemod/ExampleMod.class")
 
 		where:
 		version                      | gradleVersion

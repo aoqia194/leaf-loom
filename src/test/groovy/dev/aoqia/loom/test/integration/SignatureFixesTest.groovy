@@ -43,8 +43,8 @@ class SignatureFixesTest extends Specification implements GradleProjectTestTrait
 
 		gradle.buildGradle << '''
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.18-pre1"
-                    mappings "net.fabricmc:yarn:1.18-pre1+build.14:v2"
+                    zomboid "com.theindiestone:zomboid:1.18-pre1"
+                    mappings "dev.aoqia:leaf-yarn:1.18-pre1+build.14:v2"
                 }
             '''
 

@@ -54,9 +54,9 @@ class SandboxTest extends Specification implements GradleProjectTestTrait {
                 }
 
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.20.4"
-                    mappings "net.fabricmc:yarn:1.20.4+build.3:v2"
-                    modImplementation "net.fabricmc:fabric-loader:0.15.10"
+                    zomboid "com.theindiestone:zomboid:41.78.16"
+                    mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
+                    modImplementation "dev.aoqia:leaf-loader:0.1.0"
                 }
             '''
 		new File(gradle.getProjectDir(), "gradle.properties").text = "${Constants.Properties.SANDBOX}=dev.aoqia.loom.test:sandbox:1.0.0"

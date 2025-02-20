@@ -41,13 +41,13 @@ class CustomManifestTest extends Specification implements GradleProjectTestTrait
 		def gradle = gradleProject(project: "minimalBase", version: version)
 		gradle.buildGradle << '''
                 loom {
-                    customMinecraftManifest = "https://maven.fabricmc.net/net/minecraft/1_18_experimental-snapshot-1.json"
+                    customZomboidManifest = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests/client/win/41.78.16.json"
                 }
 
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.18_experimental-snapshot-1"
-                    mappings "net.fabricmc:yarn:1.18_experimental-snapshot-1+build.2:v2"
-                    modImplementation "net.fabricmc:fabric-loader:0.11.6"
+                    zomboid "com.theindiestone:zomboid:41.78.16"
+                    mappings "dev.aoqia:leaf-yarn:41.78.16+build.1:v2"
+                    modImplementation "dev.aoqia:leaf-loader:0.1.0"
                 }
             '''
 		when:

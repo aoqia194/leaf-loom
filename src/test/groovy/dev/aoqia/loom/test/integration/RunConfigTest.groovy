@@ -89,9 +89,9 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
 
 		gradle.buildGradle << '''
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.18.1"
-                    mappings "net.fabricmc:yarn:1.18.1+build.18:v2"
-                    modImplementation "net.fabricmc:fabric-loader:0.12.12"
+                    zomboid "com.theindiestone:zomboid:41.78.16"
+                    mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
+                    modImplementation "dev.aoqia:leaf-loader:0.1.0"
                 }
             '''
 
@@ -114,9 +114,9 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
 
 		gradle.buildGradle << '''
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.18.1"
-                    mappings "net.fabricmc:yarn:1.18.1+build.18:v2"
-                    modImplementation "net.fabricmc:fabric-loader:0.12.12"
+                    zomboid "com.theindiestone:zomboid:41.78.16"
+                    mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
+                    modImplementation "dev.aoqia:leaf-loader:0.1.0"
                 }
 
                 loom {

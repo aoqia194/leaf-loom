@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom'
+	id 'leaf-loom'
 	id 'maven-publish'
 }
 
@@ -19,15 +19,15 @@ configurations {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.16.5"
-	mappings "net.fabricmc:yarn:1.16.5+build.5:v2"
-	modImplementation "net.fabricmc:fabric-loader:0.11.2"
+	minecraft "com.theindiestone:zomboid:41.78.16"
+	mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
+	modImplementation "dev.aoqia:leaf-loader:0.1.0"
 
 	testConfig System.getProperty("loom.test.resolve")
 }
 
 base {
-	archivesName = "fabric-example-mod"
+	archivesName = "leaf-example-mod"
 }
 
 afterEvaluate {

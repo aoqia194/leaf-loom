@@ -25,7 +25,7 @@ package dev.aoqia.loom.test.unit.sandbox;
 
 public class SandboxEntrypoint {
     public static void main(String[] args) {
-        String realMain = System.getProperty("fabric.sandbox.realMain");
+        String realMain = System.getProperty("leaf.sandbox.realMain");
 
         if (realMain == null) {
             throw new IllegalStateException("Unable to find real main");

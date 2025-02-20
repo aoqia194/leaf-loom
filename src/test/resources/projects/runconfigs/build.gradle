@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom'
+	id 'leaf-loom'
 }
 
 loom {
@@ -35,20 +35,20 @@ loom {
 	}
 
 	runConfigs.configureEach {
-		vmArg "-Dfabric.loom.test.space=This contains a space"
+		vmArg "-Dleaf.loom.test.space=This contains a space"
 	}
 }
 
 version = "1.0.0"
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.18.1"
-	mappings "net.fabricmc:yarn:1.18.1+build.12:v2"
-	modImplementation "net.fabricmc:fabric-loader:0.15.11"
+	zomboid "com.theindiestone:zomboid:41.78.16"
+	mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
+	modImplementation "dev.aoqia:leaf-loader:0.1.0"
 }
 
 base {
-	archivesName = "fabric-example-mod"
+	archivesName = "leaf-example-mod"
 }
 
 runClient {
