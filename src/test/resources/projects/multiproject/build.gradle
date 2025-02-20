@@ -1,11 +1,11 @@
 plugins {
 	id "java"
 	id "java-library"
-	id 'fabric-loom' apply false
+	id 'leaf-loom' apply false
 }
 
 allprojects {
-	apply plugin: "fabric-loom"
+	apply plugin: "leaf-loom"
 
 	version = "1.0.0"
 
@@ -23,9 +23,9 @@ allprojects {
 
 	dependencies {
 		// To change the versions see the gradle.properties file
-		minecraft "com.mojang:minecraft:1.16.5"
-		mappings "net.fabricmc:yarn:1.16.5+build.5:v2"
-		modImplementation "net.fabricmc:fabric-loader:0.11.2"
+		zomboid "com.theindiestone:zomboid:41.78.16"
+		mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
+		modImplementation "dev.aoqia:leaf-loader:0.1.0"
 
 		modImplementation "net.fabricmc.fabric-api:fabric-api:0.31.0+1.16"
 	}

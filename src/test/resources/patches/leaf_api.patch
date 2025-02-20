@@ -1,0 +1,58 @@
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision 70277babddfaf52ee30013af94764da19473b3b1)
++++ b/build.gradle	(date 1732875235843)
+@@ -13,7 +13,7 @@
+
+ def ENV = System.getenv()
+
+-version = project.version + "+" + (ENV.GITHUB_RUN_NUMBER ? "" : "local-") + getBranch()
++version = "999.0.0"
+ logger.lifecycle("Building Leaf: " + version)
+
+ def metaProjects = [
+@@ -34,24 +34,7 @@
+ import org.apache.commons.codec.digest.DigestUtils
+
+ def getSubprojectVersion(project) {
+-	// Get the version from the gradle.properties file
+-	def version = project.properties["${project.name}-version"]
+-
+-	if (!version) {
+-		throw new NullPointerException("Could not find version for " + project.name)
+-	}
+-
+-	if (grgit == null) {
+-		return version + "+nogit"
+-	}
+-
+-	def latestCommits = grgit.log(paths: [project.name], maxCommits: 1)
+-
+-	if (latestCommits.isEmpty()) {
+-		return version + "+uncommited"
+-	}
+-
+-	return version + "+" + latestCommits.get(0).id.substring(0, 8) + DigestUtils.sha256Hex(project.rootProject.minecraft_version).substring(0, 2)
++	return "999.0.0"
+ }
+
+ def getBranch() {
+@@ -247,19 +230,6 @@
+
+ 	test {
+ 		useJUnitPlatform()
+-
+-		afterEvaluate {
+-			// See: https://github.com/FabricMC/fabric-loader/pull/585
+-			def classPathGroups = loom.mods.stream()
+-					.map { modSettings ->
+-						SourceSetHelper.getClasspath(modSettings, getProject()).stream()
+-								.map(File.&getAbsolutePath)
+-								.collect(Collectors.joining(File.pathSeparator))
+-					}
+-					.collect(Collectors.joining(File.pathSeparator+File.pathSeparator))
+-
+-			systemProperty("leaf.classPathGroups", classPathGroups)
+-		}
+ 	}
+
+ 	tasks.withType(ProcessResources).configureEach {

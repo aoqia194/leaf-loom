@@ -54,7 +54,7 @@ class LegacyProjectTest extends Specification implements GradleProjectTestTrait 
 	}
 
 	@Unroll
-	def "Unsupported minecraft (minecraft #version)"() {
+	def "Unsupported Project Zomboid (zomboid #version)"() {
 		setup:
 		def gradle = gradleProject(project: "minimalBase", version: PRE_RELEASE_GRADLE)
 		gradle.buildGradle << """
@@ -63,12 +63,12 @@ class LegacyProjectTest extends Specification implements GradleProjectTestTrait 
                 }
 
                 dependencies {
-                    minecraft "com.mojang:minecraft:${version}"
+                    zomboid "com.theindiestone:zomboid:${version}"
                     mappings loom.layered() {
                         // No names
                     }
 
-                    modImplementation "net.fabricmc:fabric-loader:0.12.12"
+                    modImplementation "dev.aoqia:leaf-loader:0.1.0"
                 }
             """
 
@@ -79,15 +79,9 @@ class LegacyProjectTest extends Specification implements GradleProjectTestTrait 
 		result.task(":configureClientLaunch").outcome == SUCCESS
 
 		where:
-		version 		| _
-		'1.13.2'		| _
-		'1.12.2'		| _
-		'1.8.9'			| _
-		'1.7.10'		| _
-		'1.7'			| _
-		'1.6.4'			| _
-		'1.4.7'			| _
-		'1.3.2'			| _
+		version | _
+		'41.78.16' | _
+		'42.3.1-unstable.26566' | _
 	}
 
 	@Unroll
@@ -97,16 +91,16 @@ class LegacyProjectTest extends Specification implements GradleProjectTestTrait 
 		gradle.buildGradle << """
                 loom {
                     noIntermediateMappings()
-                    clientOnlyMinecraftJar()
+                    clientOnlyZomboidJar()
                 }
 
                 dependencies {
-                    minecraft "com.mojang:minecraft:${version}"
+                    zomboid "com.theindiestone:zomboid:${version}"
                     mappings loom.layered() {
                         // No names
                     }
 
-                    modImplementation "net.fabricmc:fabric-loader:0.12.12"
+                    modImplementation "dev.aoqia:leaf-loader:0.1.0"
                 }
             """
 
@@ -117,36 +111,7 @@ class LegacyProjectTest extends Specification implements GradleProjectTestTrait 
 		result.task(":configureClientLaunch").outcome == SUCCESS
 
 		where:
-		version 		| _
-		'1.2.5'			| _
-		'b1.8.1'		| _
-		'a1.2.5'		| _
-	}
-
-	@Unroll
-	def "Legacy merged"() {
-		setup:
-		def mappings = Path.of("src/test/resources/mappings/1.2.5-intermediary.tiny.zip").toAbsolutePath()
-		def gradle = gradleProject(project: "minimalBase", version: PRE_RELEASE_GRADLE)
-
-		gradle.buildGradle << """
-                dependencies {
-                    minecraft "com.mojang:minecraft:1.2.5"
-                    mappings loom.layered() {
-                        // No names
-                    }
-
-                    modImplementation "net.fabricmc:fabric-loader:0.15.7"
-                }
-            """
-		gradle.buildSrc("legacyMergedIntermediary")
-
-		when:
-		def result = gradle.run(task: "build", args: [
-			"-Ploom.test.legacyMergedIntermediary.mappingPath=${mappings}"
-		])
-
-		then:
-		result.task(":build").outcome == SUCCESS
+		version | _
+		'40.43' | _
 	}
 }

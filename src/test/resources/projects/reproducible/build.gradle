@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom'
+	id 'leaf-loom'
 	id 'maven-publish'
 }
 
@@ -13,9 +13,9 @@ loom {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	zomboid "com.theindiestone:zomboid:${project.minecraft_version}"
+	mappings "dev.aoqia:leaf-yarn:${project.yarn_mappings}:v2"
+	modImplementation "dev.aoqia:leaf-loader:${project.loader_version}"
 }
 
 base {

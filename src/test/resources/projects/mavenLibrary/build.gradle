@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom'
+	id 'leaf-loom'
 	id 'maven-publish'
 }
 
@@ -7,9 +7,9 @@ version = System.getProperty("loom.test.version")
 group = "com.example"
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.16.5"
-	mappings "net.fabricmc:yarn:1.16.5+build.5:v2"
-	modImplementation "net.fabricmc:fabric-loader:0.11.2"
+	zomboid "com.theindiestone:zomboid:41.78.16"
+	mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
+	modImplementation "dev.aoqia:leaf-loader:0.1.0"
 	modCompileOnlyApi fabricApi.module('fabric-biome-api-v1', '0.42.0+1.16')
 	modRuntimeOnly fabricApi.module('fabric-command-api-v1', '0.42.0+1.16')
 }

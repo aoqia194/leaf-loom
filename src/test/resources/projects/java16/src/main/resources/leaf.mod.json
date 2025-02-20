@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "modid",
+  "version": "${version}",
+
+  "name": "Example Mod",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "sources": "https://github.com/aoqia194/leaf-example-mod"
+  },
+
+  "license": "CC0-1.0",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.aoqia.example.ExampleMod"
+    ]
+  },
+  "mixins": [
+    "modid.mixins.json"
+  ],
+
+  "depends": {
+    "leafloader": ">=0.1.0",
+    "leafapi": "*",
+    "zomboid": "41.78.x"
+  },
+  "suggests": {
+    "another-mod": "*"
+  },
+  "accessWidener" : "modid.accesswidener"
+}

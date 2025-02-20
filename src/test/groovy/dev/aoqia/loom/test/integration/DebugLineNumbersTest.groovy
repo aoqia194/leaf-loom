@@ -60,11 +60,10 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 @Timeout(value = 30, unit = TimeUnit.MINUTES)
 class DebugLineNumbersTest extends Specification implements GradleProjectTestTrait {
-	static final String MAPPINGS = "1.20.1-net.fabricmc.yarn.1_20_1.1.20.1+build.1-v2"
+	static final String MAPPINGS = "41.78.16-dev.aoqia.leaf-yarn.41.78.16.41.78.16+build.1-v2"
 	static final Map<String, Integer> BREAKPOINTS = [
-		"net.minecraft.server.dedicated.ServerPropertiesLoader": 16,
-		"net.minecraft.server.dedicated.MinecraftDedicatedServer": 107,
-		"net.minecraft.registry.RegistryOps": 67
+		"zombie.gameStates.MainScreenState": 109,
+		"zombie.network.CoopSlave": 31,
 	]
 
 	def "Debug test"() {
@@ -72,17 +71,17 @@ class DebugLineNumbersTest extends Specification implements GradleProjectTestTra
 		def gradle = gradleProject(project: "minimalBase", version: PRE_RELEASE_GRADLE)
 		gradle.buildGradle << '''
                 loom {
-                    // Just test with the server, no need to also decompile the client
-                    serverOnlyMinecraftJar()
+                    // Just test with the client, no need to also decompile the server
+                    clientOnlyZomboidJar()
                 }
 
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.20.1"
-                    mappings "net.fabricmc:yarn:1.20.1+build.1:v2"
-                    modImplementation 'net.fabricmc:fabric-loader:0.14.21'
+                    zomboid "com.theindiestone:zomboid:41.78.16"
+                    mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
+                    modImplementation 'dev.aoqia:leaf-loader:0.1.0'
                 }
 
-                runServer {
+                runClient {
                     debugOptions {
                        enabled = true
                        port = 8050
@@ -98,22 +97,19 @@ class DebugLineNumbersTest extends Specification implements GradleProjectTestTra
 		genSources.task(":genSources").outcome == SUCCESS
 
 		// Print out the source of the file
-		def lines = getClassSource(gradle, "net/minecraft/server/dedicated/ServerPropertiesLoader.java").lines().toList()
+		def lines = getClassSource(gradle, "zombie/network/NetworkVariables.java").lines().toList()
 		int l = 1
 		for (final def line in lines) {
 			//println(l++ + ": " + line)
 		}
 
-		// I agree
 		def runDir = new File(gradle.projectDir, "run")
 		runDir.mkdirs()
-		new File(runDir, "eula.txt") << "eula=true"
-		new File(runDir, "server.properties") << ""
 
 		// Run the gradle task off thread
 		def executor = Executors.newSingleThreadExecutor()
 		def resultCF = CompletableFuture.supplyAsync({
-			gradle.run(task: "runServer")
+			gradle.run(task: "runClient")
 		}, executor)
 
 		Map<String, CompletableFuture<BreakpointEvent>> futures

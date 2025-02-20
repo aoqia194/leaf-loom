@@ -24,7 +24,7 @@ _This guide assumes you are using IntelliJ IDEA, other IDE's have not been teste
 2. Create a Gradle run configuration to run the following tasks `build publishToMavenLocal -x test`. This will build
    Loom and publish to a local maven repo without running the test suite. You can run it now.
 3. Prepare a project for using the local version of Loom:
-    * A good starting point is to clone the [fabric-example-mod](https://github.com/FabricMC/fabric-example-mod) into
+    * A good starting point is to clone the [leaf-example-mod](https://github.com/FabricMC/leaf-example-mod) into
       your working directory
     * Add `mavenLocal()` to the repositories:
         * If you're using `id 'leaf-loom'` inside `plugins`, the correct `repositories` block is

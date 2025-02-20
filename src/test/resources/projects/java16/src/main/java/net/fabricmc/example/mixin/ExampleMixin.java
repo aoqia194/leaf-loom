@@ -1,4 +1,4 @@
-package net.fabricmc.example.mixin;
+package dev.aoqia.example.mixin;
 
 import net.minecraft.world.chunk.PalettedContainer;
 import org.spongepowered.asm.mixin.Mixin;

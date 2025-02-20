@@ -45,8 +45,8 @@ class NativesTest extends Specification implements GradleProjectTestTrait  {
 
 		gradle.buildGradle << '''
                     dependencies {
-                        minecraft "com.mojang:minecraft:1.18"
-                        mappings loom.officialMojangMappings()
+                        zomboid "com.theindiestone:zomboid:1.18"
+                        mappings loom.officialZomboidMappings()
                     }
                 '''
 
@@ -72,8 +72,8 @@ class NativesTest extends Specification implements GradleProjectTestTrait  {
 
 		gradle.buildGradle << '''
                     dependencies {
-                        minecraft "com.mojang:minecraft:1.18"
-                        mappings loom.officialMojangMappings()
+                        zomboid "com.theindiestone:zomboid:1.18"
+                        mappings loom.officialZomboidMappings()
                     }
                 '''
 
@@ -100,7 +100,7 @@ class NativesTest extends Specification implements GradleProjectTestTrait  {
                 }
 
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.19-pre1"
+                    zomboid "com.theindiestone:zomboid:41.78.16"
                     mappings loom.layered() {
                         // No names
                     }

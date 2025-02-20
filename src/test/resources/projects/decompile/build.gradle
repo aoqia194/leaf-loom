@@ -1,11 +1,11 @@
 plugins {
-	id 'fabric-loom'
+	id 'leaf-loom'
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:21w38a"
-	mappings "net.fabricmc:yarn:21w38a+build.11:v2"
-	modImplementation "net.fabricmc:fabric-loader:0.11.7"
+	zomboid "com.theindiestone:zomboid:21w38a"
+	mappings "dev.aoqia:leaf-yarn:21w38a+build.11:v2"
+	modImplementation "dev.aoqia:leaf-loader:0.1.0"
 }
 
 loom {

@@ -1,7 +1,7 @@
 // This is used by a range of tests that append to this file before running the gradle tasks.
 // Can be used for tests that require minimal custom setup
 plugins {
-	id 'fabric-loom'
+	id 'leaf-loom'
 	id 'maven-publish'
 }
 
@@ -9,9 +9,9 @@ version = "1.0.0"
 group = "com.example"
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.17.1"
-	mappings "net.fabricmc:yarn:1.17.1+build.59:v2"
-	modImplementation "net.fabricmc:fabric-loader:0.11.6"
+	zomboid "com.theindiestone:zomboid:41.78.16"
+	mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
+	modImplementation "dev.aoqia:leaf-loader:0.1.0"
 
 	// I-faces will still be applied as the jar is on both configurations.
 	modCompileOnly files("dummy.jar")
@@ -19,5 +19,5 @@ dependencies {
 }
 
 base {
-	archivesName = "fabric-example-mod"
+	archivesName = "leaf-example-mod"
 }

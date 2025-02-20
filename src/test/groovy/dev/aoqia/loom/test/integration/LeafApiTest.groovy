@@ -44,7 +44,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class LeafApiTest extends Specification implements GradleProjectTestTrait {
 	@Unroll
 	def "build and run (gradle #version, mixin ap disabled: #disableMixinAp)"() {
-		// Come back to this when maven is set up.
+		// TODO: Come back to this when maven is set up.
 		return
 
 		setup:
@@ -52,10 +52,10 @@ class LeafApiTest extends Specification implements GradleProjectTestTrait {
 				repo: "https://github.com/FabricMC/fabric.git",
 				commit: "70277babddfaf52ee30013af94764da19473b3b1",
 				version: version,
-				patch: "fabric_api"
+				patch: "leaf_api"
 				)
 
-		// Disable the mixin ap if needed. Fabric API is a large enough test project to see if something breaks.
+		// Disable the mixin ap if needed. Leaf API is a large enough test project to see if something breaks.
 		if (disableMixinAp) {
 			gradle.buildGradle << """
                 allprojects {
@@ -64,9 +64,9 @@ class LeafApiTest extends Specification implements GradleProjectTestTrait {
                 """.stripIndent()
 		}
 
-		def minecraftVersion = "1.21.4-pre3"
-		def server = ServerRunner.create(gradle.projectDir, minecraftVersion)
-				.withMod(gradle.getOutputFile("fabric-api-999.0.0.jar"))
+		def gameVersion = "41.78.16"
+		def server = ServerRunner.create(gradle.projectDir, gameVersion)
+				.withMod(gradle.getOutputFile("leaf-api-999.0.0.jar"))
 
 		// Test that the dependent mod can be built against the previously built fabric-api
 		def dependentMod = gradleProject(project: "minimalBase", version: version)
@@ -80,10 +80,10 @@ class LeafApiTest extends Specification implements GradleProjectTestTrait {
                 }
 
                 dependencies {
-                    minecraft "com.mojang:minecraft:${minecraftVersion}"
-                    mappings "net.fabricmc:yarn:${minecraftVersion}+build.2:v2"
+                    zomboid "com.theindiestone:zomboid:${gameVersion}"
+                    mappings "dev.aoqia:leaf-yarn:${gameVersion}+build.1:v2"
 
-                    modImplementation "net.fabricmc.fabric-api:fabric-api:999.0.0"
+                    modImplementation "dev.aoqia:leaf-api:999.0.0"
                 }
         """
 		when:
@@ -95,8 +95,6 @@ class LeafApiTest extends Specification implements GradleProjectTestTrait {
 			"--parallel",
 			"-x",
 			"check",
-			"-x",
-			"runDatagen",
 			"-x",
 			"runGametest"
 		], configurationCache: false) // Note: checkstyle does not appear to like being ran in a test runner

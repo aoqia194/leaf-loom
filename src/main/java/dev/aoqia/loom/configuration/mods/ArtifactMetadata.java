@@ -44,7 +44,7 @@ import dev.aoqia.loom.util.fmj.LeafModJsonFactory;
 import org.jetbrains.annotations.Nullable;
 
 public record ArtifactMetadata(
-        boolean isFabricMod,
+        boolean isLeafMod,
         RemapRequirements remapRequirements,
         @Nullable InstallerData installerData,
         MixinRemapType mixinRemapType,
@@ -142,7 +142,7 @@ public record ArtifactMetadata(
     }
 
     public enum RemapRequirements {
-        DEFAULT(ArtifactMetadata::isFabricMod),
+        DEFAULT(ArtifactMetadata::isLeafMod),
         OPT_IN(true),
         OPT_OUT(false);
 

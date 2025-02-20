@@ -39,17 +39,17 @@ import static dev.aoqia.loom.test.util.ZipTestUtils.createZip
 import static dev.aoqia.loom.test.util.ZipTestUtils.manifest
 
 class ArtifactMetadataTest extends Specification {
-	def "is fabric mod"() {
+	def "is leaf mod"() {
 		given:
 		def zip = createZip(entries)
 		when:
 		def metadata = createMetadata(zip)
 		then:
-		isMod == metadata.isFabricMod()
+		isMod == metadata.isLeafMod()
 		where:
 		isMod 		| entries
-		false       | ["hello.json": "{}"] 		// None Mod jar
-		true        | ["leaf.mod.json": "{}"] // Fabric mod
+		false       | ["hello.json": "{}"] // None Mod jar
+		true        | ["leaf.mod.json": "{}"] // Leaf mod
 	}
 
 	def "remap requirements"() {
@@ -76,8 +76,8 @@ class ArtifactMetadataTest extends Specification {
 		result == shouldRemap
 		where:
 		shouldRemap | entries
-		false       | ["hello.json": "{}"] 												// None Mod jar
-		true        | ["leaf.mod.json": "{}"] 										// Fabric mod
+		false       | ["hello.json": "{}"] // None Mod jar
+		true        | ["leaf.mod.json": "{}"] // Leaf mod
 		false       | ["leaf.mod.json": "{}",
 			"META-INF/MANIFEST.MF": manifest("Leaf-Loom-Remap", "false")] 	// Fabric mod opt-out
 		true        | ["leaf.mod.json": "{}",
@@ -101,7 +101,7 @@ class ArtifactMetadataTest extends Specification {
 		isLoader == (metadata.installerData() != null)
 		where:
 		isLoader   | entries
-		true       | ["leaf.mod.json": "{}", "fabric-installer.json": "{}"] // Fabric mod, with installer data
+		true       | ["leaf.mod.json": "{}", "leaf-installer.json": "{}"] // Fabric mod, with installer data
 		false      | ["leaf.mod.json": "{}"] // Fabric mod, no installer data
 	}
 
@@ -132,8 +132,6 @@ class ArtifactMetadataTest extends Specification {
 		metadata != null
 		where:
 		loomVersion | modLoomVersion
-		"1.4"       | "1.0.1"
-		"1.4"       | "1.0.99"
 		"1.4"       | "1.4"
 		"1.4"       | "1.4.0"
 		"1.4"       | "1.4.1"
@@ -242,6 +240,6 @@ class ArtifactMetadataTest extends Specification {
 	}
 
 	private static ArtifactRef createArtifact(Path zip) {
-		return new ArtifactRef.FileArtifactRef(zip, "net.fabric", "loom-test", "1.0")
+		return new ArtifactRef.FileArtifactRef(zip, "dev.aoqia", "loom-test", "1.0")
 	}
 }

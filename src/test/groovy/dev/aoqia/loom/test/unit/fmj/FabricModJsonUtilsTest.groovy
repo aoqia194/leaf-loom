@@ -79,7 +79,7 @@ class LeafModJsonUtilsTest extends Specification {
   ],
   "depends": {
     "fabricloader": "\\u003e\\u003d0.15.0",
-    "minecraft": "~1.20.4",
+    "zomboid": "~1.20.4",
     "java": "\\u003e\\u003d17",
     "fabric-api": "*"
   },
@@ -119,7 +119,7 @@ class LeafModJsonUtilsTest extends Specification {
   ],
   "depends": {
     "fabricloader": "\\u003e\\u003d0.15.0",
-    "minecraft": "~1.20.4",
+    "zomboid": "~1.20.4",
     "java": "\\u003e\\u003d17",
     "fabric-api": "*"
   },

@@ -57,7 +57,7 @@ class MixinApAutoRefmapTest extends Specification implements GradleProjectTestTr
 		result.task(":build").outcome == SUCCESS
 
 		// verify the ref-map name is correctly generated
-		def jar = new JarFile(gradle.getOutputFile("fabric-example-mod-1.0.0-universal.jar").absoluteFile)
+		def jar = new JarFile(gradle.getOutputFile("leaf-example-mod-1.0.0-universal.jar").absoluteFile)
 		jar.getEntry("refmap0000.json") == null
 		jar.getEntry("refmap0001.json") != null
 		jar.getEntry("refmap0002.json") != null

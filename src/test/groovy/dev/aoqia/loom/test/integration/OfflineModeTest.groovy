@@ -42,10 +42,10 @@ class OfflineModeTest extends Specification implements GradleProjectTestTrait {
 		def gradle = gradleProject(project: "minimalBase", version: PRE_RELEASE_GRADLE)
 		gradle.buildGradle << """
             dependencies {
-                minecraft 'com.mojang:minecraft:1.20.4'
-                mappings 'net.fabricmc:yarn:1.20.4+build.3:v2'
-                modImplementation 'net.fabricmc:fabric-loader:0.15.6'
-                modImplementation 'net.fabricmc.fabric-api:fabric-api:0.95.4+1.20.4'
+                zomboid 'com.theindiestone:zomboid:41.78.16'
+                mappings 'dev.aoqia:leaf-yarn:0.1.0+build.1:v2'
+                modImplementation 'dev.aoqia:leaf-loader:0.1.0'
+                modImplementation 'dev.aoqia:leaf-api:0.1.0+41.78.16'
             }
 
             import net.util.loom.aoqia.Checksum
@@ -60,7 +60,7 @@ class OfflineModeTest extends Specification implements GradleProjectTestTrait {
 		def projectHash = result1.output.split("%%")[1]
 
 		// Create a dummy lock file to ensure that the loom cache is rebuilt on the next run
-		def lockFile = new File(gradle.gradleHomeDir, "caches/fabric-loom/.${projectHash}.lock")
+		def lockFile = new File(gradle.gradleHomeDir, "caches/leaf-loom/.${projectHash}.lock")
 		lockFile.text = "12345"
 
 		// Run with --offline to ensure that nothing is downloaded.

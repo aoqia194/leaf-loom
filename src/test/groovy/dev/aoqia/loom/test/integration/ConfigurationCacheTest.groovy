@@ -42,10 +42,10 @@ class ConfigurationCacheTest extends Specification implements GradleProjectTestT
 		def gradle = gradleProject(project: "minimalBase", version: PRE_RELEASE_GRADLE)
 		gradle.buildGradle << """
             dependencies {
-                minecraft 'com.mojang:minecraft:1.20.4'
-                mappings 'net.fabricmc:yarn:1.20.4+build.3:v2'
-                modImplementation 'net.fabricmc:fabric-loader:0.15.6'
-                modImplementation 'net.fabricmc.fabric-api:fabric-api:0.95.4+1.20.4'
+                zomboid 'com.theindiestone:zomboid:41.78.16'
+                mappings 'dev.aoqia:leaf-yarn:0.1.0+build.1:v2'
+                modImplementation 'dev.aoqia:leaf-loader:0.1.0'
+                modImplementation 'dev.aoqia:leaf-api:0.1.0+41.78.16'
             }
             """.stripIndent()
 		when:
@@ -73,9 +73,9 @@ class ConfigurationCacheTest extends Specification implements GradleProjectTestT
 		def gradle = gradleProject(project: "minimalBase", version: version)
 		gradle.buildGradle << """
             dependencies {
-                minecraft 'com.mojang:minecraft:1.20.4'
-                mappings 'net.fabricmc:yarn:1.20.4+build.3:v2'
-                modImplementation 'net.fabricmc:fabric-loader:0.15.6'
+                zomboid 'com.theindiestone:zomboid:41.78.16'
+                mappings 'dev.aoqia:leaf-yarn:0.1.0+build.1:v2'
+                modImplementation 'dev.aoqia:leaf-loader:0.1.0'
             }
 
             abstract class TestTask extends DefaultTask {
