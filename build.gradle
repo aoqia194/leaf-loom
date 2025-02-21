@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.jreleaser' version '1.16.0'
     id 'java-gradle-plugin'
+    id 'maven-publish'
     id 'idea'
     id 'eclipse'
     id 'groovy'
@@ -14,18 +15,15 @@ tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = "21"
     }
 }
 
-group = 'dev.aoqia'
-def baseVersion = '0.1.0'
-
 def ENV = System.getenv()
 if (!ENV.MAVEN_USERNAME) {
-    version = baseVersion + '.local'
+    version = version + '.local'
 }
 
 // We must build against the version of Kotlin Gradle ships with.
@@ -187,13 +185,15 @@ base {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 17
+    it.options.release = 21
 }
 
 java {
     withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    withJavadocJar()
+
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 spotless {
@@ -248,7 +248,14 @@ spotless {
 gradlePlugin {
     plugins {
         leafLoom {
-            id = 'leaf-loom'
+            // Have to specify these here too instead of just the POM for publishing because
+            // https://github.com/gradle/gradle/blob/master/platforms/extensibility/plugin-development/src/main/java/org/gradle/plugin/devel/plugins/MavenPluginPublishPlugin.java#L114-L115
+            id = project.name
+            displayName = project.name
+            version = project.version
+            group = project.group
+            description = project.description
+            longDescription = project.longDescription
             implementationClass = 'dev.aoqia.loom.bootstrap.LoomGradlePluginBootstrap'
         }
     }
@@ -283,64 +290,110 @@ tasks.withType(Test).configureEach {
 }
 
 
-import org.gradle.api.internal.artifacts.configurations.ConfigurationRoles
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import org.gradle.util.GradleVersion
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-//publishing {
-//    publications {
-//        if (!ENV.EXPERIMENTAL) {
-//            // Also publish a snapshot so people can use the latest version if they wish
-//            snapshot(MavenPublication) { publication ->
-//                groupId project.group
-//                artifactId project.base.archivesName.get()
-//                version baseVersion + '-SNAPSHOT'
-//
-//                from components.java
-//            }
-//
-//            // Manually crate the plugin marker for snapshot versions
-//            snapshotPlugin(MavenPublication) { publication ->
-//                groupId 'leaf-loom'
-//                artifactId 'leaf-loom.gradle.plugin'
-//                version baseVersion + '-SNAPSHOT'
-//
-//                pom.withXml({
-//                    // Based off org.gradle.plugin.devel.plugins.MavenPluginPublishPlugin
-//                    Element root = asElement()
-//                    Document document = root.getOwnerDocument()
-//                    Node dependencies = root.appendChild(document.createElement('dependencies'))
-//                    Node dependency = dependencies.appendChild(document.createElement('dependency'))
-//                    Node groupId = dependency.appendChild(document.createElement('groupId'))
-//                    groupId.setTextContent(group)
-//                    Node artifactId = dependency.appendChild(document.createElement('artifactId'))
-//                    artifactId.setTextContent('leaf-loom')
-//                    Node version = dependency.appendChild(document.createElement('version'))
-//                    version.setTextContent(baseVersion + '-SNAPSHOT')
-//                })
-//            }
-//        }
-//    }
-//}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            pom {
+                name = project.name
+                description = project.description
+                url = project.url
+                inceptionYear = "2025"
+                licenses {
+                    license {
+                        name = "MIT"
+                        url = "https://spdx.org/licenses/MIT.html"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "aoqia194"
+                        name = "aoqia"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/aoqia194/" + project.name + "/.git"
+                    developerConnection = "scm:git:ssh://github.com/aoqia194/" + project.name + "/.git"
+                    url = project.url
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir("staging-deploy")
+        }
+    }
+}
+
+// Because jreleaser 1.16.0 doesnt create the dir some reason
+tasks.register('createJreleaserDir') {
+    layout.buildDirectory.file('jreleaser').get().asFile.mkdirs()
+}
+
+tasks.named('jreleaserFullRelease').configure {
+    dependsOn 'createJreleaserDir'
+}
 
 jreleaser {
+    project {
+        name = rootProject.name
+        version = rootProject.version
+        versionPattern = 'SEMVER'
+        description = rootProject.description
+        longDescription = rootProject.longDescription
+        authors = ['aoqia194', 'FabricMC']
+        maintainers = ['aoqia194']
+        license = 'MIT'
+        inceptionYear = '2025'
+        links {
+            homepage = rootProject.url
+            license = 'https://spdx.org/licenses/MIT.html'
+        }
+    }
+    checksum {
+        name = 'checksums.txt'
+        algorithm('MD5')
+        algorithm('SHA-1')
+        algorithm('SHA-256')
+        algorithm('SHA-512')
+        individual = true
+        artifacts = true
+        files = true
+    }
     signing {
         active = 'ALWAYS'
         armored = true
+        passphrase = ENV.GPG_PASSPHRASE_KEY
+        publicKey = ENV.GPG_PUBLIC_KEY
+        secretKey = ENV.GPG_PRIVATE_KEY
     }
     deploy {
         maven {
+            pomchecker {
+                version = "1.14.0"
+                failOnWarning = true
+                failOnError = true
+                strict = true
+            }
             mavenCentral {
                 sonatype {
                     applyMavenCentralRules = true
-                    active = 'ALWAYS'
+                    active = "ALWAYS"
                     snapshotSupported = true
+                    authorization = 'BEARER'
                     username = ENV.MAVEN_USERNAME
                     password = ENV.MAVEN_PASSWORD
-                    url = 'https://central.sonatype.com/api/v1/publisher'
-                    stagingRepository('target/staging-deploy')
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    stagingRepository("build/staging-deploy")
+                    verifyUrl = "https://repo1.maven.org/maven2/{{path}}/{{filename}}"
+                    namespace = rootProject.group
                 }
             }
         }
@@ -352,13 +405,13 @@ tasks.withType(GenerateModuleMetadata).configureEach {
     doLast {
         def file = outputFile.get().asFile
 
-        def metadata = new groovy.json.JsonSlurper().parseText(file.text)
+        def metadata = new JsonSlurper().parseText(file.text)
 
         metadata.variants.each {
             it.attributes["org.gradle.jvm.version"] = 8
         }
 
-        file.text = groovy.json.JsonOutput.toJson(metadata)
+        file.text = JsonOutput.toJson(metadata)
     }
 }
 
