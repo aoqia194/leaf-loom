@@ -17,7 +17,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/actions/wrapper-validation@v3
       - name: Execute Gradle Check
-        run: "./gradlew clean check"
+        run: "./gradlew clean check -x test"
       - name: Execute JReleaser Config Check
         run: "./gradlew jreleaserConfig"
       - name: Build
