@@ -1,7 +1,5 @@
-name: Publish
-on:
-  release:
-    types: [created]
+name: Publish Dry
+on: workflow_dispatch
 
 jobs:
   build:
