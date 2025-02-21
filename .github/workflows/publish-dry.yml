@@ -15,7 +15,7 @@ jobs:
       - name: Gradle wrapper validation
         uses: gradle/actions/wrapper-validation@v3
       - name: Build and publish Loom
-        run: ./gradlew build jreleaserFullRelease -x test --stacktrace
+        run: ./gradlew build jreleaserFullRelease -x test --stacktrace -Djreleaser.dry.run=true
         env:
           MAVEN_URL: ${{ secrets.CENTRAL_URL }}
           MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
