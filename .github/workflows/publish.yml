@@ -4,21 +4,31 @@ on:
     types: [created]
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup JDK
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           java-version: 21
-          distribution: 'temurin'
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Gradle wrapper validation
+          distribution: temurin
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Gradle Wrapper Validation
         uses: gradle/actions/wrapper-validation@v3
-      - name: Build and publish Loom
-        run: ./gradlew build jreleaserFullRelease -x test --stacktrace
+      - name: Execute Gradle Check
+        run: "./gradlew clean check"
+      - name: Execute JReleaser Config Check
+        run: "./gradlew jreleaserConfig"
+      - name: Build
+        run: "./gradlew build -x test --stracktrace"
+      - name: Publish
+        run: "./gradlew build jreleaserFullRelease -x test --stacktrace"
         env:
-          MAVEN_URL: ${{ secrets.CENTRAL_URL }}
+          GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE_KEY: ${{ secrets.GPG_PASSPHRASE_KEY }}
           MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}

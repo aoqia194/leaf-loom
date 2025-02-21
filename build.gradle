@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.jreleaser' version '1.16.0'
+    id 'org.jreleaser' version '1.15.0' // ver 1.15.0 has no dir not exist bug
     id 'java-gradle-plugin'
     id 'idea'
     id 'eclipse'
