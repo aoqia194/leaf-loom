@@ -18,8 +18,12 @@ jobs:
         uses: gradle/actions/wrapper-validation@v4
       - name: Execute Gradle Check
         run: "./gradlew clean check -x test"
-      - name: Build and Publish
-        run: "./gradlew build jreleaserFullRelease -Djreleaser.dry.run=true -x test --stacktrace"
+      - name: Build
+        run: "./gradlew build -x test"
+      - name: Stage Release
+        run: "./gradlew publish -x test"
+      - name: Dry Publish Release
+        run: "./gradlew jreleaserFullRelease -x test -Djreleaser.dry.run=true"
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
