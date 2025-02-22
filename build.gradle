@@ -331,7 +331,7 @@ jreleaser {
         armored = true
         passphrase = ENV.GPG_PASSPHRASE_KEY
         publicKey = ENV.GPG_PUBLIC_KEY
-        privateKey = ENV.GPG_PRIVATE_KEY
+        secretKey = ENV.GPG_PRIVATE_KEY
     }
     deploy {
         maven {
