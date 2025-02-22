@@ -21,7 +21,7 @@ jobs:
       - name: Execute Gradle Check
         run: "./gradlew clean check -x test"
       - name: Build
-        run: "./gradlew build -x test --stracktrace"
+        run: "./gradlew build -x test --stacktrace"
       - name: Publish
         run: "./gradlew build jreleaserFullRelease -x test --stacktrace"
         env:
