@@ -1,3 +1,4 @@
+// Because gradle makes it read only in build scripts
 rootProject.name = name
 
 dependencyResolutionManagement {

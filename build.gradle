@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'org.jreleaser' version '1.15.0' // ver 1.15.0 has no dir not exist bug
     id 'java-gradle-plugin'
     id 'maven-publish'
@@ -190,6 +190,8 @@ tasks.withType(JavaCompile).configureEach {
 
 java {
     withSourcesJar()
+    withJavadocJar()
+
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
 }
@@ -338,15 +340,24 @@ jreleaser {
     }
     deploy {
         maven {
+            pomchecker {
+                version = "1.14.0"
+                failOnWarning = true
+                failOnError = true
+                strict = true
+            }
+
             mavenCentral {
                 sonatype {
                     applyMavenCentralRules = true
-                    active = 'ALWAYS'
+                    active = "ALWAYS"
                     snapshotSupported = true
                     username = ENV.MAVEN_USERNAME
                     password = ENV.MAVEN_PASSWORD
-                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    url = "https://central.sonatype.com/api/v1/publisher"
                     stagingRepository("build/staging-deploy")
+                    verifyUrl = "https://repo1.maven.org/maven2/{{path}}/{{filename}}"
+                    namespace = rootProject.group
                 }
             }
         }
