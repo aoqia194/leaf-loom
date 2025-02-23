@@ -278,12 +278,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 publishing {
     publications {
-        maven(MavenPublication) {
+        mavenJava(MavenPublication) {
             from components.java
             pom {
-                name = project.name
-                description = project.description
-                url = project.url
+                name = rootProject.name
+                description = rootProject.description
+                url = rootProject.url
                 inceptionYear = "2025"
                 licenses {
                     license {
@@ -300,7 +300,7 @@ publishing {
                 scm {
                     connection = "scm:git:https://github.com/aoqia194/" + project.name + "/.git"
                     developerConnection = "scm:git:ssh://github.com/aoqia194/" + project.name + "/.git"
-                    url = project.url
+                    url = rootProject.url
                 }
             }
         }
