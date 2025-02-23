@@ -326,6 +326,11 @@ publishing {
     }
 }
 
+jreleaserFullRelease.doFirst {
+    // Because jreleaser 1.16.0 doesnt create the dir some reason
+    layout.buildDirectory.file('jreleaser').mkdirs()
+}
+
 jreleaser {
     project {
         name = project.name
