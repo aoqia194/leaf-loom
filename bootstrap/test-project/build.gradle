@@ -1,7 +1,0 @@
-plugins {
-	id 'leaf-loom' version '1.19.local'
-}
-
-dependencies {
-	zomboid "com.theindiestone:zomboid:41.78.16"
-}

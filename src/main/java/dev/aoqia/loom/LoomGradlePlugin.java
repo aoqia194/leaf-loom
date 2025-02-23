@@ -1,7 +1,7 @@
 /*
  * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2016-2023 aoqia, FabricMC
+ * Copyright (c) 2016-2025 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.aoqia.loom.api.LoomGradleExtensionAPI;
-import dev.aoqia.loom.bootstrap.BootstrappedPlugin;
 import dev.aoqia.loom.configuration.CompileConfiguration;
 import dev.aoqia.loom.configuration.LoomConfigurations;
 import dev.aoqia.loom.configuration.MavenPublication;
@@ -42,13 +41,15 @@ import dev.aoqia.loom.extension.LoomGradleExtensionImpl;
 import dev.aoqia.loom.task.LoomTasks;
 import dev.aoqia.loom.task.RemapTaskConfiguration;
 import dev.aoqia.loom.util.LibraryLocationLogger;
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 
-public class LoomGradlePlugin implements BootstrappedPlugin {
+public class LoomGradlePlugin implements Plugin<PluginAware> {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final String LOOM_VERSION =
-        Objects.requireNonNullElse(LoomGradlePlugin.class.getPackage().getImplementationVersion(), "0.0.0+unknown");
+        Objects.requireNonNullElse(LoomGradlePlugin.class.getPackage().getImplementationVersion(),
+            "0.0.0+unknown");
 
     /**
      * An ordered list of setup job classes.
@@ -72,7 +73,7 @@ public class LoomGradlePlugin implements BootstrappedPlugin {
         }
     }
 
-    public void apply(Project project) {
+    private void apply(Project project) {
         project.getLogger().lifecycle("Leaf Loom: " + LOOM_VERSION);
         LibraryLocationLogger.logLibraryVersions();
 
