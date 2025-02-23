@@ -1,5 +1,5 @@
 plugins {
-    id 'java-library'
+    id 'java'
     id 'org.jreleaser' version '1.16.0'
     id 'java-gradle-plugin'
     id 'maven-publish'
@@ -248,7 +248,14 @@ spotless {
 gradlePlugin {
     plugins {
         leafLoom {
+            // Have to specify these here too instead of just the POM for publishing because
+            // https://github.com/gradle/gradle/blob/master/platforms/extensibility/plugin-development/src/main/java/org/gradle/plugin/devel/plugins/MavenPluginPublishPlugin.java#L114-L115
             id = project.name
+            displayName = project.name
+            version = project.version
+            group = project.group
+            description = project.description
+            longDescription = project.longDescription
             implementationClass = 'dev.aoqia.loom.bootstrap.LoomGradlePluginBootstrap'
         }
     }
@@ -282,21 +289,20 @@ tasks.withType(Test).configureEach {
     ]
 }
 
+
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = rootProject.group
-            artifactId = rootProject.name
-
             from components.java
-
             pom {
-                name = rootProject.name
-                description = rootProject.description
-                url = rootProject.url
+                name = project.name
+                description = project.description
+                url = project.url
                 inceptionYear = "2025"
                 licenses {
                     license {
@@ -311,9 +317,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "scm:git:https://github.com/aoqia194/" + rootProject.name + "/.git"
-                    developerConnection = "scm:git:ssh://github.com/aoqia194/" + rootProject.name + "/.git"
-                    url = rootProject.url
+                    connection = "scm:git:https://github.com/aoqia194/" + project.name + "/.git"
+                    developerConnection = "scm:git:ssh://github.com/aoqia194/" + project.name + "/.git"
+                    url = project.url
                 }
             }
         }
@@ -399,13 +405,13 @@ tasks.withType(GenerateModuleMetadata).configureEach {
     doLast {
         def file = outputFile.get().asFile
 
-        def metadata = new groovy.json.JsonSlurper().parseText(file.text)
+        def metadata = new JsonSlurper().parseText(file.text)
 
         metadata.variants.each {
             it.attributes["org.gradle.jvm.version"] = 8
         }
 
-        file.text = groovy.json.JsonOutput.toJson(metadata)
+        file.text = JsonOutput.toJson(metadata)
     }
 }
 
