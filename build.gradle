@@ -327,6 +327,16 @@ publishing {
 }
 
 jreleaser {
+    checksum {
+        name = 'checksums.txt'
+        algorithm('MD5')
+        algorithm('SHA-1')
+        algorithm('SHA-256')
+        algorithm('SHA-512')
+        individual = true
+        artifacts = true
+        files = true
+    }
     signing {
         active = 'ALWAYS'
         armored = true
@@ -342,12 +352,12 @@ jreleaser {
                 failOnError = true
                 strict = true
             }
-
             mavenCentral {
                 sonatype {
                     applyMavenCentralRules = true
                     active = "ALWAYS"
                     snapshotSupported = true
+                    authorization = 'BEARER'
                     username = ENV.MAVEN_USERNAME
                     password = ENV.MAVEN_PASSWORD
                     url = "https://central.sonatype.com/api/v1/publisher"
