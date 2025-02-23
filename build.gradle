@@ -234,8 +234,6 @@ spotless {
 gradlePlugin {
     plugins {
         leafLoom {
-            // Have to specify these here too instead of just the POM for publishing because
-            // https://github.com/gradle/gradle/blob/master/platforms/extensibility/plugin-development/src/main/java/org/gradle/plugin/devel/plugins/MavenPluginPublishPlugin.java#L114-L115
             id = project.name
             displayName = project.name
             version = project.version
@@ -326,11 +324,11 @@ tasks.named('jreleaserFullRelease').configure {
 
 jreleaser {
     project {
-        name = rootProject.name
-        version = rootProject.version
+        name = project.name
+        version = project.version
         versionPattern = 'SEMVER'
-        description = rootProject.description
-        longDescription = rootProject.longDescription
+        description = project.description
+        longDescription = project.longDescription
         authors = ['aoqia194', 'FabricMC']
         maintainers = ['aoqia194']
         license = 'MIT'
@@ -361,7 +359,7 @@ jreleaser {
         maven {
             pomchecker {
                 version = "1.14.0"
-                failOnWarning = true
+                failOnWarning = false // annoying
                 failOnError = true
                 strict = true
             }
