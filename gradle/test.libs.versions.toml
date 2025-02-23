@@ -7,7 +7,7 @@ java-debug = "0.52.0"
 mixin = "0.15.5+mixin.0.8.7"
 
 gradle-nightly = "8.12-20241110002642+0000"
-leaf-loader = "0.16.9"
+leaf-loader = "0.1.0"
 leaf-installer = "0.1.0"
 
 [libraries]
