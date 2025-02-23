@@ -324,11 +324,11 @@ tasks.named('jreleaserFullRelease').configure {
 
 jreleaser {
     project {
-        name = project.name
-        version = project.version
+        name = rootProject.name
+        version = rootProject.version
         versionPattern = 'SEMVER'
-        description = project.description
-        longDescription = project.longDescription
+        description = rootProject.description
+        longDescription = rootProject.longDescription
         authors = ['aoqia194', 'FabricMC']
         maintainers = ['aoqia194']
         license = 'MIT'
