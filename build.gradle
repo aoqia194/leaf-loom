@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'org.jreleaser' version '1.15.0' // ver 1.15.0 has no dir not exist bug
+    id 'org.jreleaser' version '1.16.0'
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'idea'
@@ -306,7 +306,7 @@ publishing {
                 }
                 developers {
                     developer {
-                        id = "aoqia"
+                        id = "aoqia194"
                         name = "aoqia"
                     }
                 }
@@ -327,6 +327,21 @@ publishing {
 }
 
 jreleaser {
+    project {
+        name = project.name
+        version = project.version
+        versionPattern = 'SEMVER'
+        description = project.description
+        longDescription = project.longDescription
+        authors = ['aoqia194', 'FabricMC']
+        maintainers = ['aoqia194']
+        license = 'MIT'
+        inceptionYear = '2025'
+        links {
+            homepage = rootProject.url
+            license = 'https://spdx.org/licenses/MIT.html'
+        }
+    }
     checksum {
         name = 'checksums.txt'
         algorithm('MD5')
