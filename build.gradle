@@ -326,9 +326,13 @@ publishing {
     }
 }
 
-jreleaserFullRelease.doFirst {
-    // Because jreleaser 1.16.0 doesnt create the dir some reason
+// Because jreleaser 1.16.0 doesnt create the dir some reason
+tasks.register('createJreleaserDir') {
     layout.buildDirectory.file('jreleaser').get().asFile.mkdirs()
+}
+
+tasks.named('jreleaserFullRelease').configure {
+    dependsOn 'createJreleaserDir'
 }
 
 jreleaser {
