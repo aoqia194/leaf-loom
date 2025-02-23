@@ -15,7 +15,7 @@ tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = "21"
     }
@@ -282,12 +282,8 @@ tasks.withType(Test).configureEach {
     ]
 }
 
-
-import org.gradle.api.internal.artifacts.configurations.ConfigurationRoles
 import org.gradle.util.GradleVersion
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 publishing {
     publications {

@@ -16,8 +16,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Gradle Wrapper Validation
         uses: gradle/actions/wrapper-validation@v4
-      - name: Verify Release Configuration
-        run: "./gradlew jreleaserConfig"
+#      - name: Verify Release Configuration
+#        run: "./gradlew jreleaserConfig"
+#        env:
+#          JRELEASER_DRY_RUN: true
       - name: Clean and Check
         run: "./gradlew clean check -x test"
       - name: Build
@@ -25,8 +27,9 @@ jobs:
       - name: Stage Release
         run: "./gradlew publish"
       - name: Dry Deploy
-        run: "./gradlew jreleaserFullRelease -Djreleaser.dry.run=true"
+        run: "./gradlew jreleaserFullRelease"
         env:
+          JRELEASER_DRY_RUN: true
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
