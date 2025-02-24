@@ -1,8 +1,8 @@
 plugins {
     id 'java'
     id 'org.jreleaser' version '1.16.0'
-    id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '1.3.1'
     id 'idea'
     id 'eclipse'
     id 'groovy'
@@ -23,7 +23,7 @@ tasks.withType(KotlinCompile).configureEach {
 
 def ENV = System.getenv()
 if (!ENV.MAVEN_USERNAME) {
-    version = version + '.local'
+    version = "${version}.local"
 }
 
 // We must build against the version of Kotlin Gradle ships with.
@@ -182,6 +182,12 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
 spotless {
     setLineEndings(com.diffplug.spotless.LineEnding.UNIX)
 
@@ -232,15 +238,16 @@ spotless {
 //}
 
 gradlePlugin {
+    vcsUrl = project.url
+
     plugins {
         leafLoom {
-            id = project.name
+            id = "${project.group}.${project.name}"
             displayName = project.name
-            version = project.version
-            group = project.group
             description = project.description
-            longDescription = project.longDescription
-            implementationClass = 'dev.aoqia.loom.LoomGradlePlugin'
+            url = project.url
+            tags.set(['projectzomboid', 'zomboid', 'leaf'])
+            implementationClass = 'dev.aoqia.leaf.loom.LoomGradlePlugin'
         }
     }
 }
@@ -251,8 +258,8 @@ test {
     useJUnitPlatform()
 
     // Forward system prop onto tests.
-    if (System.getProperty("leaf.loom.test.homeDir")) {
-        systemProperty "leaf.loom.test.homeDir", System.getProperty("leaf.loom.test.homeDir")
+    if (System.getProperty("loom.test.homeDir")) {
+        systemProperty "loom.test.homeDir", System.getProperty("loom.test.homeDir")
     }
 
 
@@ -278,23 +285,28 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            from components.java
+        // Edit gradle's generated one because otherwise it will shit the bed
+        pluginMaven(MavenPublication) {
+            // Automatically inherits components.java I believe
+            // from components.java
+
             pom {
                 name = rootProject.name
+                group = rootProject.group
                 description = rootProject.description
                 url = rootProject.url
-                inceptionYear = "2025"
-                licenses {
-                    license {
-                        name = "MIT"
-                        url = "https://spdx.org/licenses/MIT.html"
-                    }
-                }
+                inceptionYear = '2025'
+                packaging = 'jar'
                 developers {
                     developer {
-                        id = "aoqia194"
-                        name = "aoqia"
+                        id = 'aoqia'
+                        name = 'aoqia'
+                    }
+                }
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://spdx.org/licenses/MIT.html'
                     }
                 }
                 scm {
@@ -305,7 +317,6 @@ publishing {
             }
         }
     }
-
     repositories {
         maven {
             url = layout.buildDirectory.dir("staging-deploy")
@@ -327,8 +338,6 @@ jreleaser {
         name = rootProject.name
         version = rootProject.version
         versionPattern = 'SEMVER'
-        description = rootProject.description
-        longDescription = rootProject.longDescription
         authors = ['aoqia194', 'FabricMC']
         maintainers = ['aoqia194']
         license = 'MIT'
@@ -398,15 +407,15 @@ tasks.register('writeActionsTestMatrix') {
                 }
 
                 def className = it.name.replace(".groovy", "")
-                testMatrix.add("dev.aoqia.loom.test.integration.${className}")
+                testMatrix.add("dev.aoqia.leaf.loom.test.integration.${className}")
             }
         }
 
         // Run all the unit tests together
-        testMatrix.add("dev.aoqia.loom.test.unit.*")
+        testMatrix.add("dev.aoqia.leaf.loom.test.unit.*")
 
         // Kotlin tests
-        testMatrix.add("dev.aoqia.loom.test.kotlin.*")
+        testMatrix.add("dev.aoqia.leaf.loom.test.kotlin.*")
 
         def json = groovy.json.JsonOutput.toJson(testMatrix)
         def output = file("build/test_matrix.json")
