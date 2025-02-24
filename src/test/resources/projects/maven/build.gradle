@@ -20,8 +20,8 @@ configurations {
 
 dependencies {
 	minecraft "com.theindiestone:zomboid:41.78.16"
-	mappings "dev.aoqia:leaf-yarn:0.1.0+build.1:v2"
-	modImplementation "dev.aoqia:leaf-loader:0.1.0"
+	mappings "dev.aoqia.leaf:yarn:0.1.0+build.1:v2"
+	modImplementation "dev.aoqia.leaf:loader:0.1.0"
 
 	testConfig System.getProperty("loom.test.resolve")
 }
