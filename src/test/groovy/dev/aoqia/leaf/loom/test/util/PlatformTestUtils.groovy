@@ -26,6 +26,8 @@ package dev.aoqia.leaf.loom.test.util
 
 import groovy.transform.Immutable
 
+import groovy.transform.Immutable
+
 import dev.aoqia.leaf.loom.util.Platform
 
 @Immutable

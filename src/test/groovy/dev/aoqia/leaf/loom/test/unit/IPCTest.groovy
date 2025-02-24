@@ -29,6 +29,9 @@ import java.util.function.Consumer
 import spock.lang.Specification
 import spock.lang.Timeout
 
+import spock.lang.Specification
+import spock.lang.Timeout
+
 import dev.aoqia.leaf.loom.util.ipc.IPCClient
 import dev.aoqia.leaf.loom.util.ipc.IPCServer
 

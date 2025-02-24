@@ -26,6 +26,8 @@ package dev.aoqia.leaf.loom.test.unit
 import java.nio.file.Files
 import java.nio.file.Path
 
+import spock.lang.TempDir
+
 import net.fabricmc.mappingio.MappingReader
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch
 import net.fabricmc.mappingio.tree.MemoryMappingTree

@@ -26,6 +26,11 @@ package dev.aoqia.leaf.loom.test.unit.processor
 import java.nio.file.Path
 import java.util.function.Consumer
 
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import spock.lang.Specification
+import spock.lang.TempDir
+
 import net.fabricmc.mappingio.MappingReader
 import net.fabricmc.mappingio.tree.MemoryMappingTree
 import net.fabricmc.tinyremapper.TinyRemapper

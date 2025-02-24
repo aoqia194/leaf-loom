@@ -26,6 +26,8 @@ package dev.aoqia.leaf.loom.test
 
 import org.gradle.util.GradleVersion
 
+import org.gradle.util.GradleVersion
+
 class LoomTestConstants {
 	private final static String NIGHTLY_VERSION = LoomTestVersions.GRADLE_NIGHTLY.version()
 	private final static boolean NIGHTLY_EXISTS = nightlyExists(NIGHTLY_VERSION)

@@ -33,6 +33,15 @@ import org.gradle.api.provider.Property
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import spock.lang.IgnoreIf
+import spock.lang.Specification
+
 import dev.aoqia.leaf.loom.util.gradle.GradleTypeAdapter
 
 class GradleTypeAdapterTest extends Specification {
