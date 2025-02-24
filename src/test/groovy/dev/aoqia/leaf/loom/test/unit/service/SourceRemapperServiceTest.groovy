@@ -30,10 +30,14 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.intellij.lang.annotations.Language
 
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.provider.Property
+import org.intellij.lang.annotations.Language
+
 import dev.aoqia.leaf.loom.task.service.MappingsService
 import dev.aoqia.leaf.loom.task.service.SourceRemapperService
-import dev.aoqia.loom.test.util.GradleTestUtil
 import dev.aoqia.leaf.loom.util.DeletingFileVisitor
+import dev.aoqia.loom.test.util.GradleTestUtil
 
 class SourceRemapperServiceTest extends ServiceTestBase {
 	def "remap sources"() {

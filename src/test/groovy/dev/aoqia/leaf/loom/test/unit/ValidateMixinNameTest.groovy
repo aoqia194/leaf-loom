@@ -28,6 +28,10 @@ import org.spongepowered.asm.mixin.Mixin
 import org.spongepowered.asm.mixin.gen.Accessor
 import spock.lang.Specification
 
+import org.spongepowered.asm.mixin.Mixin
+import org.spongepowered.asm.mixin.gen.Accessor
+import spock.lang.Specification
+
 import dev.aoqia.leaf.loom.task.ValidateMixinNameTask
 
 class ValidateMixinNameTest extends Specification {

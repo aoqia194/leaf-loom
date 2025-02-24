@@ -31,6 +31,13 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
+import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSet
+import org.intellij.lang.annotations.Language
+import spock.lang.Shared
+import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
+
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper
 import dev.aoqia.leaf.loom.util.gradle.SourceSetReference
 

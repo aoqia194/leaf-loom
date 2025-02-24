@@ -30,8 +30,8 @@ import groovy.time.TimeDuration
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 
-import dev.aoqia.loom.test.LoomTestConstants
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.loom.test.LoomTestConstants
 
 /**
  * Run this class, passing a working dir as the first argument.

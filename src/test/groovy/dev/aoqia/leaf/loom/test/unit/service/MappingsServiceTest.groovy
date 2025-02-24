@@ -27,6 +27,9 @@ package dev.aoqia.leaf.loom.test.unit.service
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+
 import dev.aoqia.leaf.loom.task.service.MappingsService
 import dev.aoqia.loom.test.util.GradleTestUtil
 

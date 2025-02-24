@@ -24,6 +24,8 @@
 package dev.aoqia.leaf.loom.test.integration.buildSrc.remapext
 
 
+import org.objectweb.asm.ClassVisitor
+
 import net.fabricmc.tinyremapper.TinyRemapper
 
 import org.objectweb.asm.ClassVisitor

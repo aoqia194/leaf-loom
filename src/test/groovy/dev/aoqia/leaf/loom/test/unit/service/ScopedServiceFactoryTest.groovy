@@ -30,10 +30,16 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import spock.lang.Specification
 
-import dev.aoqia.loom.test.util.GradleTestUtil
+import groovy.transform.InheritConstructors
+import groovy.transform.TupleConstructor
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import spock.lang.Specification
+
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory
 import dev.aoqia.leaf.loom.util.service.Service
 import dev.aoqia.leaf.loom.util.service.ServiceType
+import dev.aoqia.loom.test.util.GradleTestUtil
 
 class ScopedServiceFactoryTest extends Specification {
 	def "create service"() {

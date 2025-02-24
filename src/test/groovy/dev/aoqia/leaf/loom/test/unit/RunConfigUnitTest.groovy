@@ -26,6 +26,8 @@ package dev.aoqia.leaf.loom.test.unit
 
 import spock.lang.Specification
 
+import spock.lang.Specification
+
 import dev.aoqia.leaf.loom.configuration.ide.RunConfig
 
 class RunConfigUnitTest extends Specification {

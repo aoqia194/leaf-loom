@@ -26,6 +26,8 @@ package dev.aoqia.leaf.loom.test.unit.download
 
 import io.javalin.http.HttpStatus
 
+import io.javalin.http.HttpStatus
+
 import dev.aoqia.leaf.loom.util.download.Download
 import dev.aoqia.leaf.loom.util.download.DownloadException
 

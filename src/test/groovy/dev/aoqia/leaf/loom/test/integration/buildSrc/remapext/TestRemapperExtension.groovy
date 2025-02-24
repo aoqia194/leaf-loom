@@ -28,6 +28,9 @@ import javax.inject.Inject
 import org.gradle.api.provider.MapProperty
 import org.objectweb.asm.ClassVisitor
 
+import org.gradle.api.provider.MapProperty
+import org.objectweb.asm.ClassVisitor
+
 import dev.aoqia.leaf.loom.api.remapping.RemapperContext
 import dev.aoqia.leaf.loom.api.remapping.RemapperExtension
 import dev.aoqia.leaf.loom.api.remapping.RemapperParameters
