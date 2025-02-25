@@ -1,6 +1,6 @@
 name: build
 on:
-  push:
+#  push:
   pull_request:
   workflow_call:
   workflow_run:
