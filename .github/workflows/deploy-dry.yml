@@ -1,27 +1,14 @@
-name: Publish Dry
-on: workflow_dispatch
-
+name: deploy-dry
+on:
+  push:
+    branches:
+      - dev
 jobs:
-  publish:
+  build:
+    uses: .github/workflows/build.yml
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: 21
-          distribution: temurin
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-      - name: Gradle Wrapper Validation
-        uses: gradle/actions/wrapper-validation@v4
-      - name: Clean and Check
-        run: "./gradlew clean check -x test"
-      - name: Build
-        run: "./gradlew build -x test"
       - name: Stage Plugin
         run: "./gradlew publish"
       - name: Dry Deploy Plugin
