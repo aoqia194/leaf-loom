@@ -1,3 +1,6 @@
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'java'
     id 'org.jreleaser' version '1.16.0'
@@ -22,7 +25,7 @@ tasks.withType(KotlinCompile).configureEach {
 }
 
 def ENV = System.getenv()
-if (!ENV.MAVEN_USERNAME) {
+if (!ENV.containsKey("MAVEN_PASSWORD")) {
     version = "${version}.local"
 }
 
@@ -241,51 +244,28 @@ gradlePlugin {
     vcsUrl = project.url
 
     plugins {
-        leafLoom {
+        loom {
             id = "${project.group}.${project.name}"
             displayName = project.name
             description = project.description
-            url = project.url
             tags.set(['projectzomboid', 'zomboid', 'leaf'])
             implementationClass = 'dev.aoqia.leaf.loom.LoomGradlePlugin'
         }
     }
 }
 
-test {
-    maxHeapSize = "2560m"
-    jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
-    useJUnitPlatform()
-
-    // Forward system prop onto tests.
-    if (System.getProperty("loom.test.homeDir")) {
-        systemProperty "loom.test.homeDir", System.getProperty("loom.test.homeDir")
-    }
-
-
-    if (ENV.CI) {
-        retry {
-            maxRetries = 3
-        }
-    }
+// Because jreleaser 1.16.0 doesnt create the dir some reason
+tasks.register('createJreleaserDir') {
+    layout.buildDirectory.file('jreleaser').get().asFile.mkdirs()
 }
 
-// Workaround https://github.com/gradle/gradle/issues/25898
-tasks.withType(Test).configureEach {
-    jvmArgs = [
-        '--add-opens=java.base/java.lang=ALL-UNNAMED',
-        '--add-opens=java.base/java.util=ALL-UNNAMED',
-        '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
-        '--add-opens=java.base/java.net=ALL-UNNAMED'
-    ]
+tasks.named('jreleaserFullRelease').configure {
+    dependsOn 'createJreleaserDir'
 }
-
-import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 publishing {
     publications {
-        // Edit gradle's generated one because otherwise it will shit the bed
+        // Use gradle's generated one
         pluginMaven(MavenPublication) {
             // Automatically inherits components.java I believe
             // from components.java
@@ -324,13 +304,40 @@ publishing {
     }
 }
 
-// Because jreleaser 1.16.0 doesnt create the dir some reason
-tasks.register('createJreleaserDir') {
-    layout.buildDirectory.file('jreleaser').get().asFile.mkdirs()
-}
-
-tasks.named('jreleaserFullRelease').configure {
-    dependsOn 'createJreleaserDir'
+afterEvaluate {
+    publishing {
+        publications {
+            loomPluginMarkerMaven(MavenPublication) {
+                pom {
+                    name = rootProject.name
+                    group = rootProject.group
+                    description = rootProject.description
+                    url = rootProject.url
+                    inceptionYear = '2025'
+                    packaging = 'jar'
+                    developers {
+                        developer {
+                            id = 'aoqia'
+                            name = 'aoqia'
+                        }
+                    }
+                    licenses {
+                        license {
+                            name = 'MIT'
+                            url = 'https://spdx.org/licenses/MIT.html'
+                        }
+                    }
+                    scm {
+                        connection = "scm:git:https://github.com/aoqia194/" + project.name +
+                            "/.git"
+                        developerConnection = "scm:git:ssh://github.com/aoqia194/" +
+                            project.name + "/.git"
+                        url = rootProject.url
+                    }
+                }
+            }
+        }
+    }
 }
 
 jreleaser {
@@ -346,16 +353,6 @@ jreleaser {
             homepage = rootProject.url
             license = 'https://spdx.org/licenses/MIT.html'
         }
-    }
-    checksum {
-        name = 'checksums.txt'
-        algorithm('MD5')
-        algorithm('SHA-1')
-        algorithm('SHA-256')
-        algorithm('SHA-512')
-        individual = true
-        artifacts = true
-        files = true
     }
     signing {
         active = 'ALWAYS'
@@ -388,6 +385,34 @@ jreleaser {
             }
         }
     }
+}
+
+test {
+    maxHeapSize = "2560m"
+    jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+    useJUnitPlatform()
+
+    // Forward system prop onto tests.
+    if (System.getProperty("loom.test.homeDir")) {
+        systemProperty "loom.test.homeDir", System.getProperty("loom.test.homeDir")
+    }
+
+
+    if (ENV.CI) {
+        retry {
+            maxRetries = 3
+        }
+    }
+}
+
+// Workaround https://github.com/gradle/gradle/issues/25898
+tasks.withType(Test).configureEach {
+    jvmArgs = [
+        '--add-opens=java.base/java.lang=ALL-UNNAMED',
+        '--add-opens=java.base/java.util=ALL-UNNAMED',
+        '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
+        '--add-opens=java.base/java.net=ALL-UNNAMED'
+    ]
 }
 
 // A task to output a json file with a list of all the test to run
