@@ -3,13 +3,12 @@ on:
   push:
     tags:
       - '*'
-    branches:
-      - main
 jobs:
   build:
-    uses: .github/workflows/build.yml
-    secrets: inherit
+    name: build
+    uses: ./.github/workflows/build.yml
   deploy:
+    name: deploy
     needs: build
     runs-on: ubuntu-latest
     steps:
