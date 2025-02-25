@@ -367,10 +367,6 @@ jreleaser {
         github {
             releaseName = '{{tagName}}'
             sign = true
-
-            releaseNotes {
-                enabled = true
-            }
         }
     }
 }
