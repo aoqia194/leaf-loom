@@ -6,9 +6,9 @@ on:
   workflow_run:
     workflows:
       - manual
-    branches:
-      - main
-      - dev
+#    branches:
+#      - main
+#      - dev
     types:
       - requested
 jobs:
