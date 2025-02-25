@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -18,15 +20,15 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Gradle Wrapper Validation
         uses: gradle/actions/wrapper-validation@v4
-#      - name: Verify Release Configuration
-#        run: "./gradlew jreleaserConfig"
+      - name: Verify Jreleaser Configuration
+        run: "./gradlew jreleaserConfig"
       - name: Clean and Check
         run: "./gradlew clean check -x test"
       - name: Build
         run: "./gradlew build -x test"
-      - name: Stage Release
-        run: "./gradlew publish"
-      - name: Deploy
+      - name: Stage Plugin
+        run: "./gradlew publishPluginMavenPublicationToMavenRepository"
+      - name: Deploy Plugin
         run: "./gradlew jreleaserFullRelease"
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -35,3 +37,10 @@ jobs:
           GPG_PASSPHRASE_KEY: ${{ secrets.GPG_PASSPHRASE_KEY }}
           MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+      - name: Stage Plugin Marker
+        run: "./gradlew publishLeafLoomPluginMarkerMavenPublicationToMavenRepository"
+      - name: Deploy Plugin to Gradle Plugin Portal
+        run: "./gradlew publishPlugins"
+        env:
+          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
