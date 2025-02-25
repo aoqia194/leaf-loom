@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: "./gradlew build -x test"
       - name: Stage Plugin
-        run: "./gradlew publishPluginMavenPublicationToMavenRepository"
+        run: "./gradlew publish"
       - name: Deploy Plugin
         run: "./gradlew jreleaserFullRelease"
         env:
@@ -37,8 +37,6 @@ jobs:
           GPG_PASSPHRASE_KEY: ${{ secrets.GPG_PASSPHRASE_KEY }}
           MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
-      - name: Stage Plugin Marker
-        run: "./gradlew publishLeafLoomPluginMarkerMavenPublicationToMavenRepository"
       - name: Deploy Plugin to Gradle Plugin Portal
         run: "./gradlew publishPlugins"
         env:
