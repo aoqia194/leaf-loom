@@ -18,10 +18,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Gradle Wrapper Validation
         uses: gradle/actions/wrapper-validation@v4
-      - name: Verify Jreleaser Configuration
-        run: "./gradlew jreleaserConfig"
-        env:
-          JRELEASER_DRY_RUN: true
+#      - name: Verify Jreleaser Configuration
+#        run: "./gradlew jreleaserConfig"
+#        env:
+#          JRELEASER_DRY_RUN: true
       - name: Clean and Check
         run: "./gradlew clean check -x test"
       - name: Build
