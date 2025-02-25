@@ -262,8 +262,10 @@ gradlePlugin {
 tasks.register('createJreleaserDir') {
     layout.buildDirectory.file('jreleaser').get().asFile.mkdirs()
 }
-
 tasks.named('jreleaserFullRelease').configure {
+    dependsOn 'createJreleaserDir'
+}
+tasks.named('jreleaserConfig').configure {
     dependsOn 'createJreleaserDir'
 }
 
