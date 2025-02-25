@@ -1,0 +1,39 @@
+name: deploy
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    name: build
+    uses: ./.github/workflows/build.yml
+  deploy:
+    name: deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch Build Output
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: build/
+      - name: Stage Plugin
+        run: ./gradlew publish
+      - name: Deploy Plugin
+        run: ./gradlew jreleaserFullRelease
+        env:
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE_KEY: ${{ secrets.GPG_PASSPHRASE_KEY }}
+          MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+      - name: Deploy Plugin to Gradle Plugin Portal
+        run: ./gradlew publishPlugins
+        env:
+          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+#      - name: Delete Build Output
+#        run: |
+#          rm -rf build/

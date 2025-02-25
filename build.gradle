@@ -1,14 +1,20 @@
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'java'
-    id 'org.jreleaser' version '1.16.0'
-    id 'java-gradle-plugin'
-    id 'maven-publish'
     id 'idea'
     id 'eclipse'
     id 'groovy'
     alias(libs.plugins.kotlin)
     alias(libs.plugins.spotless)
     alias(libs.plugins.retry)
+    // Publishing to Maven Central
+    id 'org.jreleaser' version '1.16.0'
+    id 'maven-publish'
+    // Publishing to Gradle Plugin Portal
+    id 'com.gradle.plugin-publish' version '1.3.1'
+//    id 'signing'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -22,8 +28,8 @@ tasks.withType(KotlinCompile).configureEach {
 }
 
 def ENV = System.getenv()
-if (!ENV.MAVEN_USERNAME) {
-    version = version + '.local'
+if (!ENV.CI) {
+    version = "${version}.local"
 }
 
 // We must build against the version of Kotlin Gradle ships with.
@@ -182,6 +188,12 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
 spotless {
     setLineEndings(com.diffplug.spotless.LineEnding.UNIX)
 
@@ -232,83 +244,16 @@ spotless {
 //}
 
 gradlePlugin {
+    website = project.url
+    vcsUrl = project.url
+
     plugins {
         leafLoom {
-            id = project.name
+            id = "${project.group}.${project.name}"
             displayName = project.name
-            version = project.version
-            group = project.group
             description = project.description
-            longDescription = project.longDescription
-            implementationClass = 'dev.aoqia.loom.LoomGradlePlugin'
-        }
-    }
-}
-
-test {
-    maxHeapSize = "2560m"
-    jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
-    useJUnitPlatform()
-
-    // Forward system prop onto tests.
-    if (System.getProperty("leaf.loom.test.homeDir")) {
-        systemProperty "leaf.loom.test.homeDir", System.getProperty("leaf.loom.test.homeDir")
-    }
-
-
-    if (ENV.CI) {
-        retry {
-            maxRetries = 3
-        }
-    }
-}
-
-// Workaround https://github.com/gradle/gradle/issues/25898
-tasks.withType(Test).configureEach {
-    jvmArgs = [
-        '--add-opens=java.base/java.lang=ALL-UNNAMED',
-        '--add-opens=java.base/java.util=ALL-UNNAMED',
-        '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
-        '--add-opens=java.base/java.net=ALL-UNNAMED'
-    ]
-}
-
-import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            pom {
-                name = rootProject.name
-                description = rootProject.description
-                url = rootProject.url
-                inceptionYear = "2025"
-                licenses {
-                    license {
-                        name = "MIT"
-                        url = "https://spdx.org/licenses/MIT.html"
-                    }
-                }
-                developers {
-                    developer {
-                        id = "aoqia194"
-                        name = "aoqia"
-                    }
-                }
-                scm {
-                    connection = "scm:git:https://github.com/aoqia194/" + project.name + "/.git"
-                    developerConnection = "scm:git:ssh://github.com/aoqia194/" + project.name + "/.git"
-                    url = rootProject.url
-                }
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            url = layout.buildDirectory.dir("staging-deploy")
+            tags.set(['projectzomboid', 'zomboid', 'leaf'])
+            implementationClass = "${project.group}.${project.name}.LoomGradlePlugin"
         }
     }
 }
@@ -317,9 +262,50 @@ publishing {
 tasks.register('createJreleaserDir') {
     layout.buildDirectory.file('jreleaser').get().asFile.mkdirs()
 }
-
 tasks.named('jreleaserFullRelease').configure {
     dependsOn 'createJreleaserDir'
+}
+tasks.named('jreleaserConfig').configure {
+    dependsOn 'createJreleaserDir'
+}
+
+publishing {
+    publications.withType(MavenPublication) {
+        pom {
+            name = rootProject.name
+            group = rootProject.group
+            description = rootProject.description
+            url = rootProject.url
+            inceptionYear = '2025'
+            packaging = 'jar'
+            developers {
+                developer {
+                    id = 'aoqia'
+                    name = 'aoqia'
+                }
+            }
+            issueManagement {
+                system = 'GitHub'
+                url = "${rootProject.url}/issues"
+            }
+            licenses {
+                license {
+                    name = 'MIT'
+                    url = 'https://spdx.org/licenses/MIT.html'
+                }
+            }
+            scm {
+                connection = "scm:git:https://github.com/aoqia194/" + project.name + "/.git"
+                developerConnection = "scm:git:ssh://github.com/aoqia194/" + project.name + "/.git"
+                url = rootProject.url
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir("staging-deploy")
+        }
+    }
 }
 
 jreleaser {
@@ -327,8 +313,6 @@ jreleaser {
         name = rootProject.name
         version = rootProject.version
         versionPattern = 'SEMVER'
-        description = rootProject.description
-        longDescription = rootProject.longDescription
         authors = ['aoqia194', 'FabricMC']
         maintainers = ['aoqia194']
         license = 'MIT'
@@ -337,16 +321,6 @@ jreleaser {
             homepage = rootProject.url
             license = 'https://spdx.org/licenses/MIT.html'
         }
-    }
-    checksum {
-        name = 'checksums.txt'
-        algorithm('MD5')
-        algorithm('SHA-1')
-        algorithm('SHA-256')
-        algorithm('SHA-512')
-        individual = true
-        artifacts = true
-        files = true
     }
     signing {
         active = 'ALWAYS'
@@ -375,10 +349,58 @@ jreleaser {
                     stagingRepository("build/staging-deploy")
                     verifyUrl = "https://repo1.maven.org/maven2/{{path}}/{{filename}}"
                     namespace = rootProject.group
+
+                    // Override the plugin marker artifact to disable maven jar checks.
+                    artifactOverride {
+                        groupId = "${rootProject.group}.${rootProject.name}"
+                        artifactId = "${rootProject.group}.${rootProject.name}.gradle.plugin"
+                        jar = false
+                        sourceJar = false
+                        javadocJar = false
+                        verifyPom = true
+                    }
                 }
             }
         }
     }
+    release {
+        github {
+            releaseName = '{{tagName}}'
+            sign = true
+
+            releaseNotes {
+                enabled = true
+            }
+        }
+    }
+}
+
+test {
+    maxHeapSize = "2560m"
+    jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+    useJUnitPlatform()
+
+    // Forward system prop onto tests.
+    if (System.getProperty("loom.test.homeDir")) {
+        systemProperty "loom.test.homeDir", System.getProperty("loom.test.homeDir")
+    }
+
+
+    if (ENV.CI) {
+        retry {
+            maxRetries = 3
+        }
+    }
+}
+
+// Workaround https://github.com/gradle/gradle/issues/25898
+tasks.withType(Test).configureEach {
+    jvmArgs = [
+        '--add-opens=java.base/java.lang=ALL-UNNAMED',
+        '--add-opens=java.base/java.util=ALL-UNNAMED',
+        '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
+        '--add-opens=java.base/java.net=ALL-UNNAMED'
+    ]
 }
 
 // A task to output a json file with a list of all the test to run
@@ -398,15 +420,15 @@ tasks.register('writeActionsTestMatrix') {
                 }
 
                 def className = it.name.replace(".groovy", "")
-                testMatrix.add("dev.aoqia.loom.test.integration.${className}")
+                testMatrix.add("dev.aoqia.leaf.loom.test.integration.${className}")
             }
         }
 
         // Run all the unit tests together
-        testMatrix.add("dev.aoqia.loom.test.unit.*")
+        testMatrix.add("dev.aoqia.leaf.loom.test.unit.*")
 
         // Kotlin tests
-        testMatrix.add("dev.aoqia.loom.test.kotlin.*")
+        testMatrix.add("dev.aoqia.leaf.loom.test.kotlin.*")
 
         def json = groovy.json.JsonOutput.toJson(testMatrix)
         def output = file("build/test_matrix.json")

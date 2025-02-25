@@ -185,7 +185,7 @@ public abstract class NestableJarGenerationTask extends AbstractLoomTask {
         jsonObject.addProperty("name", metadata.name());
 
         JsonObject custom = new JsonObject();
-        custom.addProperty("fabric-loom:generated", true);
+        custom.addProperty("leaf-loom:generated", true);
         jsonObject.add("custom", custom);
 
         return LoomGradlePlugin.GSON.toJson(jsonObject);

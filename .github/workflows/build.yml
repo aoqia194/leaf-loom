@@ -1,0 +1,36 @@
+name: build
+on:
+#  push:
+  pull_request:
+  workflow_call:
+  workflow_run:
+    workflows:
+      - manual
+#    branches:
+#      - main
+#      - dev
+    types:
+      - requested
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        run: ./gradlew build -x test --scan --stacktrace
+      - name: Upload Build Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: build/
+          retention-days: 7
+          if-no-files-found: error
+          overwrite: true

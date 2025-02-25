@@ -1,0 +1,8 @@
+# This workflow doesn't do any jobs on it's own, but it essentially triggers `build` and `publish`.
+name: manual
+on: workflow_dispatch
+jobs:
+  manual:
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 0
