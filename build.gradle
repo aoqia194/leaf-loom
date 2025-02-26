@@ -349,6 +349,8 @@ jreleaser {
                     stagingRepository("build/staging-deploy")
                     verifyUrl = "https://repo1.maven.org/maven2/{{path}}/{{filename}}"
                     namespace = rootProject.group
+					retryDelay = 60
+					maxRetries = 30
 
                     // Override the plugin marker artifact to disable maven jar checks.
                     artifactOverride {
