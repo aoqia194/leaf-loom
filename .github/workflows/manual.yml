@@ -1,6 +1,9 @@
-# This workflow doesn't do any jobs on it's own, but it essentially triggers `build` and `publish`.
-name: manual
+# This workflow doesn't do any jobs on it's own, but it essentially triggers `build`.
+
+name: Manual Build
+
 on: workflow_dispatch
+
 jobs:
   manual:
     runs-on: ubuntu-latest
