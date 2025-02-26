@@ -1,27 +1,43 @@
-name: deploy-dry
+name: Dry Release
+
 on:
   push:
     branches:
       - dev
+
+permissions:
+  actions: write
+  id-token: write
+  contents: write
+
 jobs:
   build:
-    name: build
-    uses: ./.github/workflows/build.yml
-  deploy-dry:
-    name: deploy-dry
+    uses: ./.github/workflows/build.yml@main
+
+  dry-release:
+    name: Dry Release
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
       - name: Fetch Build Output
         uses: actions/download-artifact@v4
         with:
           name: build-output
           path: build/
-      - name: Stage Plugin
-        run: ./gradlew publish
-      - name: Dry Deploy Plugin
-        run: ./gradlew jreleaserFullRelease
+
+#      - name: Deploy Plugin to Gradle Plugin Portal
+#        env:
+#          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+#          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+#        run: ./gradlew publishPlugins --validate-only -S
+
+      - name: Deploy Plugin to Sonatype Maven Central
         env:
           JRELEASER_DRY_RUN: true
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -30,11 +46,4 @@ jobs:
           GPG_PASSPHRASE_KEY: ${{ secrets.GPG_PASSPHRASE_KEY }}
           MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
-      - name: Deploy Plugin to Gradle Plugin Portal
-        run: ./gradlew publishPlugins --validate-only
-        env:
-          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
-          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
-#      - name: Delete Build Output
-#        run: |
-#          rm -rf build/
+        run: ./gradlew jreleaserFullRelease -S
