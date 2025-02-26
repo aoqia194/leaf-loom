@@ -13,7 +13,7 @@ permissions:
 jobs:
   build:
     name: Build
-    uses: ./.github/workflows/build.yml@main
+    uses: ./.github/workflows/build.yml
 
   dry-release:
     name: Dry Release

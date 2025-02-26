@@ -15,7 +15,7 @@ permissions:
 jobs:
   build:
     name: Build
-    uses: ./.github/workflows/build.yml@main
+    uses: ./.github/workflows/build.yml
 
   release:
     name: Release
