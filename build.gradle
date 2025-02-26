@@ -33,7 +33,10 @@ if (!ENV.CI) {
 
 // We must build against the version of Kotlin Gradle ships with.
 def props = new Properties()
-Project.class.getClassLoader().getResource("gradle-kotlin-dsl-versions.properties").openStream().withCloseable {
+Project
+    .class
+    .getClassLoader()
+    .getResource("gradle-kotlin-dsl-versions.properties").openStream().withCloseable {
     props.load(it)
 }
 def kotlinVersion = props.getProperty("kotlin")
@@ -348,8 +351,8 @@ jreleaser {
                     stagingRepository("build/staging-deploy")
                     verifyUrl = "https://repo1.maven.org/maven2/{{path}}/{{filename}}"
                     namespace = rootProject.group
-					retryDelay = 60
-					maxRetries = 30
+                    retryDelay = 60
+                    maxRetries = 30
 
                     // Override the plugin marker artifact to disable maven jar checks.
                     artifactOverride {
@@ -364,10 +367,27 @@ jreleaser {
             }
         }
     }
+
     release {
         github {
+            enabled = true
+            repoOwner = 'aoqia194'
+            name = 'leaf-loom'
+            host = 'github.com'
             releaseName = '{{tagName}}'
             sign = true
+            overwrite = true
+
+            changelog {
+                formatted = 'ALWAYS'
+                preset = 'conventional-commits'
+
+                append {
+                    enabled = true
+                }
+
+                extraProperties.put('categorizeScopes', 'true')
+            }
         }
     }
 }
@@ -439,12 +459,14 @@ tasks.named('wrapper') {
 }
 
 /**
- * Run this task to download the gradle sources next to the api jar, you may need to manually attach the sources jar
+ * Run this task to download the gradle sources next to the api jar, you may need to manually
+ * attach the sources jar
  */
 tasks.register('downloadGradleSources') {
     doLast {
         // Awful hack to find the gradle api location
-        def gradleApiFile = project.configurations.detachedConfiguration(dependencies.gradleApi()).files.stream()
+        def gradleApiFile = project.configurations.detachedConfiguration(dependencies.gradleApi())
+            .files.stream()
             .find {
                 it.name.startsWith("gradle-api")
             }
