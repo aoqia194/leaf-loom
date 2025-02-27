@@ -33,6 +33,9 @@ jobs:
           name: build-output
           path: build/
 
+      - name: Deploy
+        run: ./gradlew publish -S
+
       - name: Release Plugin (Gradle Plugin Portal)
         env:
           GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
