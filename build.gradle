@@ -1,5 +1,7 @@
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import groovy.json.JsonOutput
+import com.diffplug.spotless.LineEnding
 
 plugins {
     id 'java'
@@ -12,7 +14,7 @@ plugins {
     // Publishing to Maven Central
     id 'org.jreleaser' version '1.16.0'
     id 'maven-publish'
-    // Publishing to Gradle Plugin Portal (currently not doing this)
+    // Publishing to Gradle Plugin Portal
     id 'com.gradle.plugin-publish' version '1.3.1'
 }
 
@@ -197,7 +199,7 @@ javadoc {
 }
 
 spotless {
-    setLineEndings(com.diffplug.spotless.LineEnding.UNIX)
+    setLineEndings(LineEnding.UNIX)
 
     java {
         targetExclude("**/loom/util/DownloadUtil.java")
@@ -272,14 +274,13 @@ tasks.named('jreleaserConfig').configure {
 }
 
 publishing {
-    publications.withType(MavenPublication) {
+    publications.withType(MavenPublication).configureEach {
         pom {
             name = rootProject.name
             group = rootProject.group
             description = rootProject.description
             url = rootProject.url
             inceptionYear = '2025'
-            packaging = 'jar'
             developers {
                 developer {
                     id = 'aoqia'
@@ -447,7 +448,7 @@ tasks.register('writeActionsTestMatrix') {
         // Kotlin tests
         testMatrix.add("dev.aoqia.leaf.loom.test.kotlin.*")
 
-        def json = groovy.json.JsonOutput.toJson(testMatrix)
+        def json = JsonOutput.toJson(testMatrix)
         def output = file("build/test_matrix.json")
         output.parentFile.mkdir()
         output.text = json
