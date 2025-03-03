@@ -42,6 +42,8 @@ jobs:
 #        run: ./gradlew publishPlugins --validate-only -S
 
       - name: Release (Sonatype Maven Central)
+        # Because it will error when there's a version already published.
+        continue-on-error: true
         env:
           JRELEASER_DRY_RUN: true
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
