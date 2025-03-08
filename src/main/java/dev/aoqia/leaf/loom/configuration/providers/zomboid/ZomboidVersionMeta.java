@@ -28,13 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonElement;
 import dev.aoqia.leaf.loom.util.Platform;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
-public record ZomboidVersionManifest(
+public record ZomboidVersionMeta(
     Arguments arguments,
     AssetIndex assetIndex,
     int javaVersion,
@@ -57,7 +56,11 @@ public record ZomboidVersionManifest(
     }
 
     public record Library(
-        Downloads downloads, String name, Map<String, String> natives, List<Rule> rules, Object extract) {
+        Downloads downloads,
+        String name,
+        Map<String, String> natives,
+        List<Rule> rules,
+        Object extract) {
         public boolean hasNativesForOS(Platform platform) {
             if (!hasNatives()) {
                 return false;
@@ -124,7 +127,7 @@ public record ZomboidVersionManifest(
         }
     }
 
-    public record Arguments(List<JsonObject> game, List<JsonObject> jvm) {
+    public record Arguments(List<JsonElement> game, List<JsonElement> jvm) {
     }
 
     public record AssetIndex(String sha1, long size, String url) {
@@ -149,7 +152,8 @@ public record ZomboidVersionManifest(
 
     public record OS(String name) {
         public boolean isValidForOS(Platform platform) {
-            return name() == null || name().equalsIgnoreCase(OS_NAMES.get(platform.getOperatingSystem()));
+            return name() == null ||
+                   name().equalsIgnoreCase(OS_NAMES.get(platform.getOperatingSystem()));
         }
     }
 
