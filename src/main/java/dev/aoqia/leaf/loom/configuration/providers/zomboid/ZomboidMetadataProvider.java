@@ -47,7 +47,7 @@ public final class ZomboidMetadataProvider {
     private final Function<String, DownloadBuilder> download;
 
     private ManifestEntryLocation versionEntry;
-    private ZomboidVersionManifest versionMeta;
+    private ZomboidVersionMeta versionMeta;
 
     private ZomboidMetadataProvider(boolean isServer, Options options, Function<String, DownloadBuilder> download) {
         this.isServer = isServer;
@@ -72,7 +72,7 @@ public final class ZomboidMetadataProvider {
         return options.zomboidVersion();
     }
 
-    public ZomboidVersionManifest getVersionMeta() {
+    public ZomboidVersionMeta getVersionMeta() {
         try {
             if (versionEntry == null) {
                 versionEntry = getVersionEntry();
@@ -158,7 +158,7 @@ public final class ZomboidMetadataProvider {
         return null;
     }
 
-    private ZomboidVersionManifest readVersionMeta() throws IOException {
+    private ZomboidVersionMeta readVersionMeta() throws IOException {
         final DownloadBuilder builder = download.apply(versionEntry.entry.url);
 
         if (versionEntry.entry.sha1 != null) {
@@ -170,7 +170,7 @@ public final class ZomboidMetadataProvider {
         final String fileName = getVersionMetaFileName();
         final Path cacheFile = options.workingDir().resolve(fileName);
         final String json = builder.downloadString(cacheFile);
-        return LoomGradlePlugin.GSON.fromJson(json, ZomboidVersionManifest.class);
+        return LoomGradlePlugin.GSON.fromJson(json, ZomboidVersionMeta.class);
     }
 
     private String getVersionMetaFileName() {

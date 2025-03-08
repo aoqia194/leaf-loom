@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionManifest;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 import dev.aoqia.leaf.loom.util.Platform;
@@ -41,8 +41,8 @@ import org.gradle.api.Project;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.logging.configuration.ConsoleOutput;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.Optional;
 
 public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
     public GenerateDLIConfigTask() {
@@ -155,9 +155,9 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 
     @TaskAction
     public void run() throws IOException {
-        final ZomboidVersionManifest versionInfo =
+        final ZomboidVersionMeta versionInfo =
             LoomGradlePlugin.GSON.fromJson(getVersionInfoJson().get(),
-                ZomboidVersionManifest.class);
+                ZomboidVersionMeta.class);
 
         final LaunchConfig launchConfig = new LaunchConfig()
             .property("leaf.development", "true")
@@ -170,11 +170,10 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
         // I don't add game args from the versionInfo manifest because I don't need them rn.
         // Add the jvm args from the versionInfo manifest.
         for (final var arg : versionInfo.arguments().jvm()) {
-            if (arg.isString()) {
+            if (arg.isJsonPrimitive()) {
                 String str = arg.getAsJsonPrimitive().getAsString();
                 String key = str.subSequence(2, str.indexOf("=")).toString();
-                String value = str.subSequence(str.indexOf("=") + 1, str.length())
-                    .toString();
+                String value = str.subSequence(str.indexOf("=") + 1, str.length()).toString();
 
                 // Skip this because we set it in the runconfig's jvm args.
                 if (key.startsWith("java.library.path")) {
@@ -183,13 +182,16 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 
                 launchConfig.property(key, value);
             } else {
-                var rule = LoomGradlePlugin.GSON.fromJson(arg,
-                    ZomboidVersionManifest.Rule.class);
+                var rule = LoomGradlePlugin.GSON.fromJson(arg, ZomboidVersionMeta.Rule.class);
                 if (rule.isAllowed() && rule.appliesToOS(Platform.CURRENT)) {
                     String str = rule.action();
                     String key = str.subSequence(2, str.indexOf("=")).toString();
-                    String value = str.subSequence(str.indexOf("=") + 1, str.length())
-                        .toString();
+                    String value = str.subSequence(str.indexOf("=") + 1, str.length()).toString();
+
+                    // Skip this because we set it in the runconfig's jvm args.
+                    if (key.startsWith("java.library.path")) {
+                        continue;
+                    }
 
                     launchConfig.property(key, value);
                 }
@@ -225,9 +227,8 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
             launchConfig.property("leaf.log.disableAnsi", "false");
         }
 
-        FileUtils.writeStringToFile(
-            getDevLauncherConfig().getAsFile().get(), launchConfig.asString(),
-            StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(getDevLauncherConfig().getAsFile().get(),
+            launchConfig.asString(), StandardCharsets.UTF_8);
     }
 
     @InputFile
