@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionManifest;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.util.Platform;
 
 /**
@@ -38,10 +38,10 @@ public class ZomboidLibraryHelper {
     private static final Pattern NATIVES_PATTERN =
             Pattern.compile("^(?<group>.*)/(.*?)/(?<version>.*)/((?<name>.*?)-(\\k<version>)-)(?<classifier>.*).jar$");
 
-    public static List<Library> getLibrariesForPlatform(ZomboidVersionManifest versionMeta, Platform platform) {
+    public static List<Library> getLibrariesForPlatform(ZomboidVersionMeta versionMeta, Platform platform) {
         var libraries = new ArrayList<Library>();
 
-        for (ZomboidVersionManifest.Library library : versionMeta.libraries()) {
+        for (ZomboidVersionMeta.Library library : versionMeta.libraries()) {
             if (!library.isValidForOS(platform)) {
                 continue;
             }
@@ -58,7 +58,7 @@ public class ZomboidLibraryHelper {
 //            }
 
             if (library.hasNativesForOS(platform)) {
-                final ZomboidVersionManifest.Download download = library.classifierForOS(platform);
+                final ZomboidVersionMeta.Download download = library.classifierForOS(platform);
 
                 if (download != null) {
                     libraries.add(downloadToLibrary(download));
@@ -69,7 +69,7 @@ public class ZomboidLibraryHelper {
         return Collections.unmodifiableList(libraries);
     }
 
-    private static Library downloadToLibrary(ZomboidVersionManifest.Download download) {
+    private static Library downloadToLibrary(ZomboidVersionMeta.Download download) {
         final String path = download.path();
         final Matcher matcher = NATIVES_PATTERN.matcher(path);
 

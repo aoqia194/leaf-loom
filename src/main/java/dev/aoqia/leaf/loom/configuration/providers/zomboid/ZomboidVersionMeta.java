@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.aoqia.leaf.loom.util.Platform;
 import org.jetbrains.annotations.Nullable;
@@ -123,7 +124,7 @@ public record ZomboidVersionManifest(
         }
     }
 
-    public record Arguments(List<JsonPrimitive> game, List<JsonPrimitive> jvm) {
+    public record Arguments(List<JsonObject> game, List<JsonObject> jvm) {
     }
 
     public record AssetIndex(String sha1, long size, String url) {

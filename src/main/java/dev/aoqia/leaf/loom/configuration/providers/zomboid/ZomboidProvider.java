@@ -109,7 +109,7 @@ public abstract class ZomboidProvider {
 
         final String version =
             !isServer ? clientZomboidVersion() : serverZomboidVersion();
-        final ZomboidVersionManifest versionInfo =
+        final ZomboidVersionMeta versionInfo =
             !isServer ? getClientVersionInfo() : getServerVersionInfo();
 
         final JavaVersion requiredJavaVersion = JavaVersion.toVersion(versionInfo.javaVersion());
@@ -210,10 +210,10 @@ public abstract class ZomboidProvider {
     }
 
     private AssetIndex getClientAssetIndex() throws IOException {
-        final ZomboidVersionManifest.AssetIndex assetIndex =
+        final ZomboidVersionMeta.AssetIndex assetIndex =
             LoomGradlePlugin.GSON.fromJson(
                 LoomGradlePlugin.GSON.toJson(getClientVersionInfo().assetIndex()),
-                ZomboidVersionManifest.AssetIndex.class);
+                ZomboidVersionMeta.AssetIndex.class);
         final File indexFile = new File(workingDir(),
             "zomboid_client_index_manifest.json");
 
@@ -228,10 +228,10 @@ public abstract class ZomboidProvider {
     }
 
     private AssetIndex getServerAssetIndex() throws IOException {
-        final ZomboidVersionManifest.AssetIndex assetIndex =
+        final ZomboidVersionMeta.AssetIndex assetIndex =
             LoomGradlePlugin.GSON.fromJson(
                 LoomGradlePlugin.GSON.toJson(getServerVersionInfo().assetIndex()),
-                ZomboidVersionManifest.AssetIndex.class);
+                ZomboidVersionMeta.AssetIndex.class);
         final File indexFile = new File(workingDir(),
             "zomboid_server_index_manifest.json");
 
@@ -255,7 +255,7 @@ public abstract class ZomboidProvider {
         }
     }
 
-    public ZomboidVersionManifest getClientVersionInfo() {
+    public ZomboidVersionMeta getClientVersionInfo() {
         return Objects.requireNonNull(clientMetadataProvider,
                 "Metadata provider not setup")
             .getVersionMeta();
@@ -281,7 +281,7 @@ public abstract class ZomboidProvider {
             .getZomboidVersion();
     }
 
-    public ZomboidVersionManifest getServerVersionInfo() {
+    public ZomboidVersionMeta getServerVersionInfo() {
         return Objects.requireNonNull(serverMetadataProvider,
                 "Metadata provider not setup")
             .getVersionMeta();
