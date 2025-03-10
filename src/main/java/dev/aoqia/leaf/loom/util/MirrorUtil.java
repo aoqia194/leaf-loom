@@ -24,24 +24,26 @@
 package dev.aoqia.leaf.loom.util;
 
 
+import java.nio.file.Path;
+
 import org.gradle.api.plugins.ExtensionAware;
 import org.jetbrains.annotations.Nullable;
 
 public class MirrorUtil {
-    public static String getGameInstallPath(ExtensionAware aware) {
+    public static Path getClientInstallPath(ExtensionAware aware) {
         if (aware.getExtensions().getExtraProperties().has("loom_game_install_path")) {
-            return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_game_install_path"));
+            return Path.of(String.valueOf(aware.getExtensions().getExtraProperties().get("loom_game_install_path")));
         }
 
-        return Constants.GAME_INSTALL_PATH;
+        return Constants.getClientInstallPath();
     }
 
-    public static String getServerInstallPath(@Nullable ExtensionAware aware) {
+    public static Path getServerInstallPath(@Nullable ExtensionAware aware) {
         if (aware != null && aware.getExtensions().getExtraProperties().has("loom_server_install_path")) {
-            return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_server_install_path"));
+            return Path.of(String.valueOf(aware.getExtensions().getExtraProperties().get("loom_server_install_path")));
         }
 
-        return Constants.SERVER_INSTALL_PATH;
+        return Constants.getServerInstallPath();
     }
 
     public static String getClientVersionManifests(@Nullable ExtensionAware aware) {
