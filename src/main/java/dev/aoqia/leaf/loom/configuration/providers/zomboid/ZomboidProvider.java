@@ -37,14 +37,12 @@ import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.assets.AssetIndex;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.FileSystemUtil;
-import dev.aoqia.leaf.loom.util.JarUtil;
-import dev.aoqia.leaf.loom.util.MirrorUtil;
+import dev.aoqia.leaf.loom.util.*;
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileExecutor;
 import dev.aoqia.leaf.loom.util.copygamefile.GradleCopyGameFileProgressListener;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 import dev.aoqia.leaf.loom.util.gradle.ProgressGroup;
+import org.apache.commons.io.FilenameUtils;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.slf4j.Logger;
@@ -105,7 +103,9 @@ public abstract class ZomboidProvider {
 
     private void packageGameFiles(Project project, int copyFileThreads,
         boolean isServer) throws IOException {
-        final String envString = !isServer ? "Client" : "Server";
+        final Platform.OperatingSystem os = Platform.CURRENT.getOperatingSystem();
+        final String osLibsStr = os.isWindows() ? "win" : "linux";
+        final String envStr = !isServer ? "Client" : "Server";
 
         final String version =
             !isServer ? clientZomboidVersion() : serverZomboidVersion();
@@ -128,33 +128,34 @@ public abstract class ZomboidProvider {
         try (final FileSystemUtil.Delegate outputJar = FileSystemUtil.getJarFileSystem(
             jar, true);
              ProgressGroup progressGroup = new ProgressGroup(project,
-                 "Copy %s Game Assets".formatted(envString));
+                 "Copy %s Game Assets".formatted(envStr));
              CopyGameFileExecutor executor = new CopyGameFileExecutor(copyFileThreads)) {
             final AssetIndex assetIndex =
                 !isServer ? getClientAssetIndex() : getServerAssetIndex();
             for (AssetIndex.Object object : assetIndex.getObjects()) {
-                final String path = object.path();
+                final Path path = Path.of(FilenameUtils.separatorsToSystem(object.path()));
+                // A string specifically for literal checking like with `contains` below.
+                final String safePath = FilenameUtils.separatorsToUnix(path.toString());
 
                 // Exclude certain folders for dev environment.
-                if (path.startsWith("jre\\")
-                    || path.startsWith("jre64\\")
-                    || path.startsWith("win32\\")
-                    || path.startsWith("mods\\")
-                    || path.startsWith("launcher\\")
-                    || path.startsWith("license\\")
-                    || path.startsWith("Workshop\\")
-                    || path.endsWith(".bat")
-                    || path.endsWith(".exe")
-                    || path.endsWith(".sh")) {
+                if (safePath.contains("jre/")
+                    || safePath.contains("jre64/")
+                    || safePath.contains("mods/")
+                    || safePath.contains("launcher/")
+                    || safePath.contains("license/")
+                    || safePath.contains("Workshop/")
+                    || safePath.endsWith(".bat")
+                    || safePath.endsWith(".exe")
+                    || safePath.endsWith(".sh")
+                    || safePath.endsWith(".desktop")
+                    || safePath.endsWith("/projectzomboid")
+                    || safePath.contains(osLibsStr + "32/")) {
                     continue;
                 }
 
                 final String sha1 = object.hash();
                 final Path srcPath = gameInstallPath.resolve(path);
-                Path dstPath = outputJar.get()
-                    .getPath(getGameFilePath(object).toString());
-                // System.out.println("copyGameAssets srcPath=(" + srcPath + "),
-                // dstPath=(" + dstPath + ")");
+                Path dstPath = outputJar.get().getPath(path.toString());
 
                 // File exists check.
                 if (!srcPath.toFile().exists()) {
@@ -164,26 +165,22 @@ public abstract class ZomboidProvider {
                     }
 
                     throw new FileNotFoundException(
-                        "%s game file '%s' does not exist.".formatted(envString,
-                            srcPath));
+                        "%s game file '%s' does not exist.".formatted(envStr, srcPath));
                 }
 
                 // Send non class files (like media/ folder) to the extracted folder.
                 // Speeds up processing time a LOT.
                 // .LBC compiled LuaByteCode file is with .class because otherwise
-                // KahLua will freak out.
-                if (!path.endsWith(".class")/* && !path.endsWith(".lbc")*/) {
+                // KahLua will freak out. EDIT: This seems to not be the case anymore?
+                if (!safePath.endsWith(".class")/* && !path.endsWith(".lbc")*/) {
                     // Add jar files to the classpath.
-                    if (path.endsWith(".jar")) {
-                        dstPath = extractedDir().toPath()
-                            .resolve(getGameFilePath(object).getFileName());
+                    if (safePath.endsWith(".jar")) {
+                        dstPath = extractedDir().toPath().resolve(path.getFileName());
                         extractedLibs.add(dstPath);
-                    } else if (path.startsWith("win64")) {
-                        dstPath = extractedDir().toPath()
-                            .resolve(getGameFilePath(object).getFileName());
+                    } else if (safePath.contains(osLibsStr + "64/")) {
+                        dstPath = extractedDir().toPath().resolve(path.getFileName());
                     } else {
-                        dstPath = extractedDir().toPath()
-                            .resolve(getGameFilePath(object));
+                        dstPath = extractedDir().toPath().resolve(path);
                     }
                 }
 
@@ -203,10 +200,6 @@ public abstract class ZomboidProvider {
                 : Constants.Configurations.ZOMBOID_SERVER_COMPILE_LIBRARIES;
         project.getDependencies()
             .add(config, project.files(extractedLibs, extractedDir().toPath()));
-    }
-
-    private Path getGameFilePath(AssetIndex.Object object) {
-        return Path.of(object.path().replace("\\", File.separator));
     }
 
     private AssetIndex getClientAssetIndex() throws IOException {

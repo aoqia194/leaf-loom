@@ -36,9 +36,9 @@ public class Constants {
         "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests/";
     public static final String FABRIC_REPOSITORY = "https://maven.fabricmc.net/";
     public static final int ASM_VERSION = Opcodes.ASM9;
-    public static final String CLIENT_INSTALL_PATH = "steamapps/common/ProjectZomboid";
-    public static final String SERVER_INSTALL_PATH = "steamapps/common/" +
-                                                     "Project Zomboid Dedicated Server";
+    public static final Path CLIENT_INSTALL_PATH = Path.of("steamapps", "common", "ProjectZomboid");
+    public static final Path SERVER_INSTALL_PATH = Path.of("steamapps", "common",
+        "Project Zomboid Dedicated Server");
 
     private Constants() {}
 
