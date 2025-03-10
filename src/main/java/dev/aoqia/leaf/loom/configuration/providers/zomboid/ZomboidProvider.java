@@ -119,7 +119,7 @@ public abstract class ZomboidProvider {
                 " but Gradle is using " + JavaVersion.current());
         }
 
-        final String gameInstallPath = !isServer ? MirrorUtil.getGameInstallPath(project)
+        final Path gameInstallPath = !isServer ? MirrorUtil.getClientInstallPath(project)
             : MirrorUtil.getServerInstallPath(project);
 
         final ArrayList<Path> extractedLibs = new ArrayList<>();
@@ -150,7 +150,7 @@ public abstract class ZomboidProvider {
                 }
 
                 final String sha1 = object.hash();
-                final Path srcPath = Path.of(gameInstallPath, path);
+                final Path srcPath = gameInstallPath.resolve(path);
                 Path dstPath = outputJar.get()
                     .getPath(getGameFilePath(object).toString());
                 // System.out.println("copyGameAssets srcPath=(" + srcPath + "),
