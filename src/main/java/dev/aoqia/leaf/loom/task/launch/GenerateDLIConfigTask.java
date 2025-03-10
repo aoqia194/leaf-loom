@@ -71,8 +71,6 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
         getNativesDirectoryPath().set(getExtension().getFiles()
             .getNativesDirectory(getProject())
             .getAbsolutePath());
-        getExtractedDirectoryPath().set(
-            getExtension().getZomboidProvider().extractedDir().getAbsolutePath());
         getDevLauncherConfig().set(getExtension().getFiles().getDevLauncherConfig());
     }
 
@@ -146,9 +144,6 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 
     @Input
     protected abstract Property<String> getNativesDirectoryPath();
-
-    @Input
-    protected abstract Property<String> getExtractedDirectoryPath();
 
     @OutputFile
     protected abstract RegularFileProperty getDevLauncherConfig();
