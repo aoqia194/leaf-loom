@@ -133,9 +133,13 @@ public abstract class ZomboidProvider {
             final AssetIndex assetIndex =
                 !isServer ? getClientAssetIndex() : getServerAssetIndex();
             for (AssetIndex.Object object : assetIndex.getObjects()) {
-                final Path path = Path.of(FilenameUtils.separatorsToSystem(object.path()));
+                Path path = Path.of(FilenameUtils.separatorsToSystem(object.path()));
+                // Strip the stupid subfolder away if there is one
+                if (os.isLinux() && path.startsWith("projectzomboid" + File.pathSeparatorChar)) {
+                    path = path.subpath(1, path.getNameCount());
+                }
                 // A string specifically for literal checking like with `contains` below.
-                final String safePath = FilenameUtils.separatorsToUnix(path.toString());
+                String safePath = FilenameUtils.separatorsToUnix(path.toString());
 
                 // Exclude certain folders for dev environment.
                 if (safePath.contains("jre/")
