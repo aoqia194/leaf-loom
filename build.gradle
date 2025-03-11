@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.spotless)
     alias(libs.plugins.retry)
     // Publishing to Maven Central
-    id 'org.jreleaser' version '1.16.0'
+    id 'org.jreleaser' version '1.17.0'
     id 'maven-publish'
     // Publishing to Gradle Plugin Portal
     id 'com.gradle.plugin-publish' version '1.3.1'
@@ -260,17 +260,6 @@ gradlePlugin {
             implementationClass = "${project.group}.${project.name}.LoomGradlePlugin"
         }
     }
-}
-
-// Because jreleaser 1.16.0 doesnt create the dir some reason
-tasks.register('createJreleaserDir') {
-    layout.buildDirectory.file('jreleaser').get().asFile.mkdirs()
-}
-tasks.named('jreleaserFullRelease').configure {
-    dependsOn 'createJreleaserDir'
-}
-tasks.named('jreleaserConfig').configure {
-    dependsOn 'createJreleaserDir'
 }
 
 publishing {
