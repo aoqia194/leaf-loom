@@ -107,10 +107,9 @@ public abstract class ZomboidProvider {
         final String osLibsStr = os.isWindows() ? "win" : "linux";
         final String envStr = !isServer ? "Client" : "Server";
 
-        final String version =
-            !isServer ? clientZomboidVersion() : serverZomboidVersion();
-        final ZomboidVersionMeta versionInfo =
-            !isServer ? getClientVersionInfo() : getServerVersionInfo();
+        final String version = !isServer ? clientZomboidVersion() : serverZomboidVersion();
+        final ZomboidVersionMeta versionInfo = !isServer ? getClientVersionInfo()
+            : getServerVersionInfo();
 
         final JavaVersion requiredJavaVersion = JavaVersion.toVersion(versionInfo.javaVersion());
         if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
@@ -123,23 +122,21 @@ public abstract class ZomboidProvider {
             : MirrorUtil.getServerInstallPath(project);
 
         final ArrayList<Path> extractedLibs = new ArrayList<>();
-
         final File jar = !isServer ? zomboidClientJar : zomboidServerJar;
-        try (final FileSystemUtil.Delegate outputJar = FileSystemUtil.getJarFileSystem(
-            jar, true);
+        try (final FileSystemUtil.Delegate outputJar = FileSystemUtil.getJarFileSystem(jar, true);
              ProgressGroup progressGroup = new ProgressGroup(project,
                  "Copy %s Game Assets".formatted(envStr));
              CopyGameFileExecutor executor = new CopyGameFileExecutor(copyFileThreads)) {
-            final AssetIndex assetIndex =
-                !isServer ? getClientAssetIndex() : getServerAssetIndex();
+            final AssetIndex assetIndex = !isServer ? getClientAssetIndex() : getServerAssetIndex();
             for (AssetIndex.Object object : assetIndex.getObjects()) {
                 Path path = Path.of(FilenameUtils.separatorsToSystem(object.path()));
+                Path flatPath = path;
                 // Strip the stupid subfolder away if there is one
-                if (os.isLinux() && path.startsWith("projectzomboid" + File.pathSeparatorChar)) {
-                    path = path.subpath(1, path.getNameCount());
+                if (os.isLinux() && flatPath.startsWith("projectzomboid")) {
+                    flatPath = flatPath.subpath(1, flatPath.getNameCount());
                 }
                 // A string specifically for literal checking like with `contains` below.
-                String safePath = FilenameUtils.separatorsToUnix(path.toString());
+                String safePath = FilenameUtils.separatorsToUnix(flatPath.toString());
 
                 // Exclude certain folders for dev environment.
                 if (safePath.contains("jre/")
@@ -153,13 +150,16 @@ public abstract class ZomboidProvider {
                     || safePath.endsWith(".sh")
                     || safePath.endsWith(".desktop")
                     || safePath.endsWith("/projectzomboid")
-                    || safePath.contains(osLibsStr + "32/")) {
+                    || safePath.contains(osLibsStr + "32/")
+                    || safePath.startsWith("ProjectZomboid64")
+                    || safePath.startsWith("ProjectZomboid32")) {
                     continue;
                 }
 
                 final String sha1 = object.hash();
+                // Because the src path still uses the unflattened path.
                 final Path srcPath = gameInstallPath.resolve(path);
-                Path dstPath = outputJar.get().getPath(path.toString());
+                Path dstPath = outputJar.get().getPath(flatPath.toString());
 
                 // File exists check.
                 if (!srcPath.toFile().exists()) {
@@ -179,12 +179,12 @@ public abstract class ZomboidProvider {
                 if (!safePath.endsWith(".class")/* && !path.endsWith(".lbc")*/) {
                     // Add jar files to the classpath.
                     if (safePath.endsWith(".jar")) {
-                        dstPath = extractedDir().toPath().resolve(path.getFileName());
+                        dstPath = extractedDir().toPath().resolve(flatPath.getFileName());
                         extractedLibs.add(dstPath);
                     } else if (safePath.contains(osLibsStr + "64/")) {
-                        dstPath = extractedDir().toPath().resolve(path.getFileName());
+                        dstPath = extractedDir().toPath().resolve(flatPath.getFileName());
                     } else {
-                        dstPath = extractedDir().toPath().resolve(path);
+                        dstPath = extractedDir().toPath().resolve(flatPath);
                     }
                 }
 
