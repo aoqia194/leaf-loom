@@ -176,20 +176,50 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
                 }
 
                 launchConfig.property(key, value);
-            } else {
-                var rule = LoomGradlePlugin.GSON.fromJson(arg, ZomboidVersionMeta.Rule.class);
-                if (rule.isAllowed() && rule.appliesToOS(Platform.CURRENT)) {
-                    String str = rule.action();
-                    String key = str.subSequence(2, str.indexOf("=")).toString();
-                    String value = str.subSequence(str.indexOf("=") + 1, str.length()).toString();
+            } else if (arg.isJsonObject()) {
+                final var argument = LoomGradlePlugin.GSON.fromJson(arg,
+                    ZomboidVersionMeta.Argument.class);
+                final var argumentRules = argument.rules();
+                final var argumentValue = argument.value();
 
-                    // Skip this because we set it in the runconfig's jvm args.
-                    if (key.startsWith("java.library.path")) {
-                        continue;
+                boolean allowed = false;
+                for (final var rule : argumentRules) {
+                    if (rule.isAllowed() && rule.appliesToOS(Platform.CURRENT)) {
+                        allowed = true;
                     }
-
-                    launchConfig.property(key, value);
                 }
+
+                if (!allowed) {
+                    continue;
+                }
+
+                HashMap<String, String> props = new HashMap<>();
+                if (argumentValue.isJsonPrimitive()) {
+                    final String str = argumentValue.getAsJsonPrimitive().getAsString();
+                    final String key = str.subSequence(2, str.indexOf("=")).toString();
+                    final String value = str.subSequence(str.indexOf("=") + 1, str.length())
+                        .toString();
+                    props.put(key, value);
+                } else if (argumentValue.isJsonArray()) {
+                    final var arguments = argumentValue.getAsJsonArray();
+                    for (final var e : arguments) {
+                        final String str = e.getAsString();
+                        final String key = str.subSequence(2, str.indexOf("=")).toString();
+                        final String value = str.subSequence(str.indexOf("=") + 1, str.length())
+                            .toString();
+                        props.put(key, value);
+                    }
+                } else {
+                    throw new IllegalStateException(
+                        "values in ZomboidVersionMeta json wasn't a string or list of strings.");
+                }
+
+                // Skip this because we set it in the runconfig's jvm args.
+                props.remove("java.library.path");
+                props.forEach(launchConfig::property);
+            } else {
+                throw new IllegalStateException(
+                    "arg in ZomboidVersionMeta json wasn't a string or object.");
             }
         }
 

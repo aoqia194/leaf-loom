@@ -127,8 +127,11 @@ public record ZomboidVersionMeta(
         }
     }
 
-    public record Arguments(List<JsonElement> game, List<JsonElement> jvm) {
-    }
+    // JsonElement here can be a String or an Arg object. Don't know how to do union types tho.
+    public record Arguments(List<JsonElement> game, List<JsonElement> jvm) {}
+
+    // JsonElement here can be a String or a list of String.
+    public record Argument(List<Rule> rules, JsonElement value) {}
 
     public record AssetIndex(String sha1, long size, String url) {
     }
