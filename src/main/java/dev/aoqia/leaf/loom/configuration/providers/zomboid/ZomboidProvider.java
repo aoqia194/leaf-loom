@@ -107,10 +107,9 @@ public abstract class ZomboidProvider {
         final String osLibsStr = os.isWindows() ? "win" : "linux";
         final String envStr = !isServer ? "Client" : "Server";
 
-        final String version =
-            !isServer ? clientZomboidVersion() : serverZomboidVersion();
-        final ZomboidVersionMeta versionInfo =
-            !isServer ? getClientVersionInfo() : getServerVersionInfo();
+        final String version = !isServer ? clientZomboidVersion() : serverZomboidVersion();
+        final ZomboidVersionMeta versionInfo = !isServer ? getClientVersionInfo()
+            : getServerVersionInfo();
 
         final JavaVersion requiredJavaVersion = JavaVersion.toVersion(versionInfo.javaVersion());
         if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
@@ -123,19 +122,18 @@ public abstract class ZomboidProvider {
             : MirrorUtil.getServerInstallPath(project);
 
         final ArrayList<Path> extractedLibs = new ArrayList<>();
-
         final File jar = !isServer ? zomboidClientJar : zomboidServerJar;
-        try (final FileSystemUtil.Delegate outputJar = FileSystemUtil.getJarFileSystem(
-            jar, true);
+        try (final FileSystemUtil.Delegate outputJar = FileSystemUtil.getJarFileSystem(jar, true);
              ProgressGroup progressGroup = new ProgressGroup(project,
                  "Copy %s Game Assets".formatted(envStr));
              CopyGameFileExecutor executor = new CopyGameFileExecutor(copyFileThreads)) {
-            final AssetIndex assetIndex =
-                !isServer ? getClientAssetIndex() : getServerAssetIndex();
+            final AssetIndex assetIndex = !isServer ? getClientAssetIndex() : getServerAssetIndex();
             for (AssetIndex.Object object : assetIndex.getObjects()) {
                 Path path = Path.of(FilenameUtils.separatorsToSystem(object.path()));
                 // Strip the stupid subfolder away if there is one
-                if (os.isLinux() && path.startsWith("projectzomboid" + File.pathSeparatorChar)) {
+                System.out.println("[AOQIA] loom: isLinux=" + os.isLinux() + " startsWith=" +
+                                   path.startsWith("projectzomboid"));
+                if (os.isLinux() && path.startsWith("projectzomboid")) {
                     path = path.subpath(1, path.getNameCount());
                 }
                 // A string specifically for literal checking like with `contains` below.
@@ -153,7 +151,9 @@ public abstract class ZomboidProvider {
                     || safePath.endsWith(".sh")
                     || safePath.endsWith(".desktop")
                     || safePath.endsWith("/projectzomboid")
-                    || safePath.contains(osLibsStr + "32/")) {
+                    || safePath.contains(osLibsStr + "32/")
+                    || safePath.contains("ProjectZomboid64")
+                    || safePath.contains("ProjectZomboid32")) {
                     continue;
                 }
 
