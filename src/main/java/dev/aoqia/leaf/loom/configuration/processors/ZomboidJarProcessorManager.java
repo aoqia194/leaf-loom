@@ -54,18 +54,20 @@ public final class ZomboidJarProcessorManager {
     @Nullable
     public static ZomboidJarProcessorManager create(Project project) {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);
-        List<ZomboidJarProcessor<?>> processors =
-            new ArrayList<>(extension.getZomboidJarProcessors().get());
+        List<ZomboidJarProcessor<?>> processors = new ArrayList<>(
+            extension.getZomboidJarProcessors().get());
 
         for (JarProcessor legacyProcessor : extension.getGameJarProcessors().get()) {
-            processors.add(project.getObjects().newInstance(LegacyJarProcessorWrapper.class, legacyProcessor));
+            processors.add(
+                project.getObjects().newInstance(LegacyJarProcessorWrapper.class, legacyProcessor));
         }
 
         return ZomboidJarProcessorManager.create(processors, SpecContextImpl.create(project));
     }
 
     @Nullable
-    public static ZomboidJarProcessorManager create(List<ZomboidJarProcessor<?>> processors, SpecContext context) {
+    public static ZomboidJarProcessorManager create(List<ZomboidJarProcessor<?>> processors,
+        SpecContext context) {
         List<ProcessorEntry<?>> entries = new ArrayList<>();
 
         for (ZomboidJarProcessor<?> processor : processors) {
@@ -132,7 +134,8 @@ public final class ZomboidJarProcessorManager {
                 entry.processJar(jar, context);
             } catch (IOException e) {
                 throw new IOException(
-                    "Failed to process jar when running jar processor: %s".formatted(entry.name()), e);
+                    "Failed to process jar when running jar processor: %s".formatted(entry.name()),
+                    e);
             }
         }
     }
@@ -165,7 +168,8 @@ public final class ZomboidJarProcessorManager {
             processor().processJar(jar, spec, context);
         }
 
-        private boolean processMappings(MemoryMappingTree mappings, MappingProcessorContext context) {
+        private boolean processMappings(MemoryMappingTree mappings,
+            MappingProcessorContext context) {
             if (mappingsProcessor() == null) {
                 return false;
             }

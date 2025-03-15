@@ -23,7 +23,6 @@
  */
 package dev.aoqia.leaf.loom.configuration;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -62,6 +61,7 @@ import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 import dev.aoqia.leaf.loom.util.gradle.daemon.DaemonUtils;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import javax.inject.Inject;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
@@ -102,7 +102,8 @@ public abstract class CompileConfiguration implements Runnable {
         });
 
         afterEvaluationWithService((serviceFactory) -> {
-            final ConfigContext configContext = new ConfigContextImpl(getProject(), serviceFactory, extension);
+            final ConfigContext configContext = new ConfigContextImpl(getProject(), serviceFactory,
+                extension);
 
             ZomboidSourceSets.get(getProject()).afterEvaluate(getProject());
             final boolean previousRefreshDeps = extension.refreshDeps();
@@ -112,7 +113,8 @@ public abstract class CompileConfiguration implements Runnable {
                 getProject()
                     .getLogger()
                     .lifecycle(
-                        "Found existing cache lock file ({}), rebuilding loom cache. This may have been "
+                        "Found existing cache lock file ({}), rebuilding loom cache. This may " +
+                        "have been "
                         + "caused by a failed or canceled build.",
                         lockResult);
                 extension.setRefreshDeps(true);
@@ -121,7 +123,8 @@ public abstract class CompileConfiguration implements Runnable {
             try {
                 setupZomboid(configContext);
 
-                if (!GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
+                if (!GradleUtils.getBooleanProperty(getProject(),
+                    Constants.Properties.ONLY_PROVIDE_JARS)) {
                     LoomDependencyManager dependencyManager = new LoomDependencyManager();
                     extension.setDependencyManager(dependencyManager);
                     dependencyManager.handleDependencies(getProject(), serviceFactory);
@@ -129,14 +132,16 @@ public abstract class CompileConfiguration implements Runnable {
             } catch (Exception e) {
                 ExceptionUtil.processException(e, DaemonUtils.Context.fromProject(getProject()));
                 disownLock();
-                throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to setup Zomboid", e);
+                throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new,
+                    "Failed to setup Zomboid", e);
             }
 
             releaseLock();
             extension.setRefreshDeps(previousRefreshDeps);
 
             // If only providing jars, we dont do mixin stuff or decompile tasks.
-            if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
+            if (GradleUtils.getBooleanProperty(getProject(),
+                Constants.Properties.ONLY_PROVIDE_JARS)) {
                 return;
             }
 
@@ -161,27 +166,34 @@ public abstract class CompileConfiguration implements Runnable {
         // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
         getTasks()
             .withType(AbstractCopyTask.class)
-            .configureEach(abstractCopyTask -> abstractCopyTask.setFilteringCharset(StandardCharsets.UTF_8.name()));
+            .configureEach(abstractCopyTask -> abstractCopyTask.setFilteringCharset(
+                StandardCharsets.UTF_8.name()));
         getTasks()
             .withType(JavaCompile.class)
-            .configureEach(javaCompile -> javaCompile.getOptions().setEncoding(StandardCharsets.UTF_8.name()));
+            .configureEach(
+                javaCompile -> javaCompile.getOptions().setEncoding(StandardCharsets.UTF_8.name()));
 
         if (getProject().getPluginManager().hasPlugin("org.jetbrains.kotlin.kapt")) {
-            // If loom is applied after kapt, then kapt will use the AP arguments too early for loom to pass the
+            // If loom is applied after kapt, then kapt will use the AP arguments too early for
+            // loom to pass the
             // arguments we need for mixin.
-            throw new IllegalArgumentException("leaf-loom must be applied BEFORE kapt in the plugins { } block.");
+            throw new IllegalArgumentException(
+                "leaf-loom must be applied BEFORE kapt in the plugins { } block.");
         }
     }
 
-    // This is not thread safe across getProject()s synchronize it here just to be sure, might be possible to move
+    // This is not thread safe across getProject()s synchronize it here just to be sure, might be
+    // possible to move
     // this further down, but for now this will do.
     private synchronized void setupZomboid(ConfigContext configContext) throws Exception {
         final Project project = configContext.project();
         final LoomGradleExtension extension = configContext.extension();
 
-        final ZomboidMetadataProvider clientMetadataProvider = ZomboidMetadataProvider.create(false, configContext);
+        final ZomboidMetadataProvider clientMetadataProvider = ZomboidMetadataProvider.create(false,
+            configContext);
         extension.setClientMetadataProvider(clientMetadataProvider);
-        final ZomboidMetadataProvider serverMetadataProvider = ZomboidMetadataProvider.create(true, configContext);
+        final ZomboidMetadataProvider serverMetadataProvider = ZomboidMetadataProvider.create(true,
+            configContext);
         extension.setServerMetadataProvider(serverMetadataProvider);
 
         var jarConfiguration = extension.getZomboidJarConfiguration().get();
@@ -197,10 +209,15 @@ public abstract class CompileConfiguration implements Runnable {
             return;
         }
 
+        // Realise the dependencies without actually resolving them, this forces any lazy
+        // providers to be created, populating the layered mapping factories.
+        project.getConfigurations().getByName(Configurations.MAPPINGS).getDependencies().toArray();
+
         // Created any layered mapping files.
         LayeredMappingsFactory.afterEvaluate(configContext);
 
-        final DependencyInfo mappingsDep = DependencyInfo.create(getProject(), Configurations.MAPPINGS);
+        final DependencyInfo mappingsDep = DependencyInfo.create(getProject(),
+            Configurations.MAPPINGS);
         final MappingConfiguration mappingConfiguration =
             MappingConfiguration.create(getProject(),
                 configContext.serviceFactory(),
@@ -209,10 +226,12 @@ public abstract class CompileConfiguration implements Runnable {
         extension.setMappingConfiguration(mappingConfiguration);
         mappingConfiguration.applyToProject(getProject(), mappingsDep);
 
-        NamedZomboidProvider<?> namedZomboidProvider = jarConfiguration.createNamedZomboidProvider(project);
+        NamedZomboidProvider<?> namedZomboidProvider = jarConfiguration.createNamedZomboidProvider(
+            project);
         registerGameProcessors(configContext);
 
-        ZomboidJarProcessorManager zomboidJarProcessorManager = ZomboidJarProcessorManager.create(getProject());
+        ZomboidJarProcessorManager zomboidJarProcessorManager = ZomboidJarProcessorManager.create(
+            getProject());
         if (zomboidJarProcessorManager != null) {
             // Wrap the named MC provider for one that will provide the processed jars
             namedZomboidProvider = jarConfiguration.createProcessedNamedZomboidProvider(
@@ -234,12 +253,12 @@ public abstract class CompileConfiguration implements Runnable {
             extension.getEnableTransitiveAccessWideners().get();
         extension.addZomboidJarProcessor(
             AccessWidenerJarProcessor.class,
-            "leaf-loom:access-widener",
+            "loom:access-widener",
             enableTransitiveAccessWideners,
             extension.getAccessWidenerPath());
 
         if (extension.getEnableModProvidedJavadoc().get()) {
-            extension.addZomboidJarProcessor(ModJavadocProcessor.class, "leaf-loom:mod-javadoc");
+            extension.addZomboidJarProcessor(ModJavadocProcessor.class, "loom:mod-javadoc");
         }
 
         final InterfaceInjectionExtensionAPI interfaceInjection = extension.getInterfaceInjection();
@@ -247,7 +266,7 @@ public abstract class CompileConfiguration implements Runnable {
         if (interfaceInjection.isEnabled()) {
             extension.addZomboidJarProcessor(
                 InterfaceInjectionProcessor.class,
-                "leaf-loom:interface-inject",
+                "loom:interface-inject",
                 interfaceInjection.getEnableDependencyInterfaceInjection().get());
         }
     }
@@ -255,7 +274,8 @@ public abstract class CompileConfiguration implements Runnable {
     private void setupMixinAp(MixinExtension mixin) {
         mixin.init();
 
-        // Disable some things used by log4j via the mixin AP that prevent it from being garbage collected
+        // Disable some things used by log4j via the mixin AP that prevent it from being garbage
+        // collected
         System.setProperty("log4j2.disable.jmx", "true");
         System.setProperty("log4j.shutdownHookEnabled", "false");
         System.setProperty("log4j.skipJansi", "true");
@@ -337,7 +357,8 @@ public abstract class CompileConfiguration implements Runnable {
 
     // Returns true if our process already owns the lock
     @SuppressWarnings("BusyWait")
-    private LockResult acquireProcessLockWaiting_(LockFile lockFile, Duration timeout) throws IOException {
+    private LockResult acquireProcessLockWaiting_(LockFile lockFile, Duration timeout) throws
+        IOException {
         final long timeoutMs = timeout.toMillis();
         final Logger logger = Logging.getLogger("loom_acquireProcessLockWaiting");
         final long currentPid = ProcessHandle.current().pid();
@@ -354,7 +375,8 @@ public abstract class CompileConfiguration implements Runnable {
                     disowned = true;
                 } else {
                     lockingProcessId = Long.parseLong(lockValue);
-                    logger.lifecycle("\"{}\" is currently held by pid '{}'.", lockFile, lockingProcessId);
+                    logger.lifecycle("\"{}\" is currently held by pid '{}'.", lockFile,
+                        lockingProcessId);
                 }
             } catch (final Exception ignored) {
                 // ignored
@@ -367,10 +389,13 @@ public abstract class CompileConfiguration implements Runnable {
             Optional<ProcessHandle> handle = ProcessHandle.of(lockingProcessId);
 
             if (disowned) {
-                logger.lifecycle("Previous process has disowned the lock due to abrupt termination.");
+                logger.lifecycle(
+                    "Previous process has disowned the lock due to abrupt termination.");
                 Files.deleteIfExists(lockFile.file);
             } else if (handle.isEmpty()) {
-                logger.lifecycle("Locking process does not exist, assuming abrupt termination and deleting lock file.");
+                logger.lifecycle(
+                    "Locking process does not exist, assuming abrupt termination and deleting " +
+                    "lock file.");
                 Files.deleteIfExists(lockFile.file);
                 abrupt = true;
             } else {
@@ -400,7 +425,9 @@ public abstract class CompileConfiguration implements Runnable {
 
                     if (sleptMs >= timeoutMs) {
                         throw new GradleException(
-                            "Have been waiting on lock file '%s' for %s ms. Giving up as timeout is %s ms."
+                            ("Have been waiting on lock file '%s' for %s ms. Giving up as timeout" +
+                             " " +
+                             "is %s ms.")
                                 .formatted(lockFile, sleptMs, timeoutMs));
                     }
                 }
@@ -445,12 +472,14 @@ public abstract class CompileConfiguration implements Runnable {
             Files.delete(lock);
         } catch (IOException e1) {
             try {
-                // If we failed to delete the lock file, moving it before trying to delete it may help.
+                // If we failed to delete the lock file, moving it before trying to delete it may
+                // help.
                 final Path del = lock.resolveSibling(lock.getFileName() + ".del");
                 Files.move(lock, del);
                 Files.delete(del);
             } catch (IOException e2) {
-                var exception = new UncheckedIOException("Failed to release getProject() configuration lock", e2);
+                var exception = new UncheckedIOException(
+                    "Failed to release getProject() configuration lock", e2);
                 exception.addSuppressed(e1);
                 throw exception;
             }
