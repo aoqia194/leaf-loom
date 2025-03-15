@@ -287,8 +287,8 @@ publishing {
                 }
             }
             scm {
-                connection = "scm:git:https://github.com/aoqia194/" + project.name + "/.git"
-                developerConnection = "scm:git:ssh://github.com/aoqia194/" + project.name + "/.git"
+                connection = "scm:git:https://github.com/aoqia194/leaf-" + project.name + "/.git"
+                developerConnection = "scm:git:ssh://github.com/aoqia194/leaf-" + project.name + "/.git"
                 url = rootProject.url
             }
         }
