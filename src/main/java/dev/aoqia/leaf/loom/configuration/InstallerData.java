@@ -47,11 +47,9 @@ public record InstallerData(String version, JsonObject installerJson) {
         if (extension.getInstallerData() != null) {
             throw new IllegalStateException("Already applied installer data");
         }
-
         extension.setInstallerData(this);
 
         final JsonObject libraries = installerJson.get("libraries").getAsJsonObject();
-
         applyDependendencies(libraries.get("common").getAsJsonArray(), project);
 
         // Apply development dependencies if they exist.
@@ -62,10 +60,10 @@ public record InstallerData(String version, JsonObject installerJson) {
 
     private void applyDependendencies(JsonArray jsonArray, Project project) {
         LoomGradleExtension extension = LoomGradleExtension.get(project);
-        Configuration loaderDepsConfig =
-                project.getConfigurations().getByName(Constants.Configurations.LOADER_DEPENDENCIES);
-        Configuration annotationProcessor =
-                project.getConfigurations().getByName(JavaPlugin.ANNOTATION_PROCESSOR_CONFIGURATION_NAME);
+        Configuration loaderDepsConfig = project.getConfigurations()
+            .getByName(Constants.Configurations.LOADER_DEPENDENCIES);
+        Configuration annotationProcessor = project.getConfigurations()
+            .getByName(JavaPlugin.ANNOTATION_PROCESSOR_CONFIGURATION_NAME);
 
         for (JsonElement jsonElement : jsonArray) {
             final JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -73,8 +71,8 @@ public record InstallerData(String version, JsonObject installerJson) {
 
             LOGGER.debug("Adding dependency ({}) from installer JSON", name);
 
-            ExternalModuleDependency modDep =
-                    (ExternalModuleDependency) project.getDependencies().create(name);
+            ExternalModuleDependency modDep = (ExternalModuleDependency) project.getDependencies()
+                .create(name);
             modDep.setTransitive(false); // Match the launcher in not being transitive
             loaderDepsConfig.getDependencies().add(modDep);
 
@@ -101,17 +99,17 @@ public record InstallerData(String version, JsonObject installerJson) {
 
         final String url = jsonObject.get("url").getAsString();
         final boolean isPresent = project.getRepositories().stream()
-                .filter(artifactRepository -> artifactRepository instanceof MavenArtifactRepository)
-                .map(artifactRepository -> (MavenArtifactRepository) artifactRepository)
-                .anyMatch(mavenArtifactRepository ->
-                        mavenArtifactRepository.getUrl().toString().equalsIgnoreCase(url));
+            .filter(artifactRepository -> artifactRepository instanceof MavenArtifactRepository)
+            .map(artifactRepository -> (MavenArtifactRepository) artifactRepository)
+            .anyMatch(mavenArtifactRepository ->
+                mavenArtifactRepository.getUrl().toString().equalsIgnoreCase(url));
 
         if (isPresent) {
             return;
         }
 
         project.getRepositories()
-                .maven(mavenArtifactRepository ->
-                        mavenArtifactRepository.setUrl(jsonObject.get("url").getAsString()));
+            .maven(mavenArtifactRepository ->
+                mavenArtifactRepository.setUrl(jsonObject.get("url").getAsString()));
     }
 }
