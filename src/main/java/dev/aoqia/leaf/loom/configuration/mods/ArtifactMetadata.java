@@ -94,7 +94,6 @@ public record ArtifactMetadata(
             }
 
             final Path installerPath = fs.getPath(INSTALLER_PATH);
-
             if (isFabricMod && Files.exists(installerPath)) {
                 final JsonObject jsonObject = LoomGradlePlugin.GSON.fromJson(
                         Files.readString(installerPath, StandardCharsets.UTF_8), JsonObject.class);

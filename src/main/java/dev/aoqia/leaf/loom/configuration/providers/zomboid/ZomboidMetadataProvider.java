@@ -49,7 +49,8 @@ public final class ZomboidMetadataProvider {
     private ManifestEntryLocation versionEntry;
     private ZomboidVersionMeta versionMeta;
 
-    private ZomboidMetadataProvider(boolean isServer, Options options, Function<String, DownloadBuilder> download) {
+    private ZomboidMetadataProvider(boolean isServer, Options options,
+        Function<String, DownloadBuilder> download) {
         this.isServer = isServer;
         this.options = options;
         this.download = download;
@@ -64,7 +65,8 @@ public final class ZomboidMetadataProvider {
     }
 
     private static String resolveZomboidVersion(Project project) {
-        final DependencyInfo dependency = DependencyInfo.create(project, Constants.Configurations.ZOMBOID);
+        final DependencyInfo dependency = DependencyInfo.create(project,
+            Constants.Configurations.ZOMBOID);
         return dependency.getDependency().getVersion();
     }
 
@@ -148,7 +150,8 @@ public final class ZomboidMetadataProvider {
             : location.serverCacheFile(options.userCache()));
 
         final String versionManifest = builder.downloadString(cacheFile);
-        final VersionsManifest manifest = LoomGradlePlugin.GSON.fromJson(versionManifest, VersionsManifest.class);
+        final VersionsManifest manifest = LoomGradlePlugin.GSON.fromJson(versionManifest,
+            VersionsManifest.class);
         final VersionsManifest.Version version = manifest.getVersion(options.zomboidVersion());
 
         if (version != null) {
@@ -176,11 +179,13 @@ public final class ZomboidMetadataProvider {
     private String getVersionMetaFileName() {
         // custom version metadata
         if (versionEntry.manifest == null) {
-            return "zomboid_info_" + Integer.toHexString(versionEntry.entry.url.hashCode()) + ".json";
+            return "zomboid_info_" + Integer.toHexString(versionEntry.entry.url.hashCode()) +
+                   ".json";
         }
 
         // metadata url taken from versions manifest
-        return versionEntry.manifest.name() + (!this.isServer ? "_client" : "_server") + "_version_info.json";
+        return versionEntry.manifest.name() + (!this.isServer ? "_client" : "_server") +
+               "_version_info.json";
     }
 
     @FunctionalInterface
@@ -198,7 +203,8 @@ public final class ZomboidMetadataProvider {
         public static Options create(String zomboidVersion, Project project) {
             final LoomGradleExtension extension = LoomGradleExtension.get(project);
             final Path userCache = extension.getFiles().getUserCache().toPath();
-            final Path workingDir = ZomboidProvider.zomboidWorkingDirectory(project, zomboidVersion).toPath();
+            final Path workingDir = ZomboidProvider.zomboidWorkingDirectory(project, zomboidVersion)
+                .toPath();
 
             final ManifestLocations clientManifestLocations = extension.getClientVersionManifests();
             final ManifestLocations serverManifestLocations = extension.getServerVersionManifests();
@@ -213,6 +219,8 @@ public final class ZomboidMetadataProvider {
         }
     }
 
-    private record ManifestEntryLocation(ManifestLocation manifest, VersionsManifest.Version entry) {
+    private record ManifestEntryLocation(
+        ManifestLocation manifest,
+        VersionsManifest.Version entry) {
     }
 }

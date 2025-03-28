@@ -45,8 +45,8 @@ public final class AttributeHelper {
         }
 
         try {
-            final UserDefinedFileAttributeView attributeView =
-                    Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+            final UserDefinedFileAttributeView attributeView = Files.getFileAttributeView(path,
+                UserDefinedFileAttributeView.class);
 
             if (!attributeView.list().contains(key)) {
                 return Optional.empty();
@@ -66,8 +66,16 @@ public final class AttributeHelper {
         final Path attributesFile = getFallbackPath(path, key);
 
         try {
-            final UserDefinedFileAttributeView attributeView =
-                    Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+            final UserDefinedFileAttributeView attributeView;
+
+            // Try-catch required due to getFileAttributeView going crazy when writing to zip/jar.
+            try {
+                attributeView = Files.getFileAttributeView(path,
+                    UserDefinedFileAttributeView.class);
+            } catch (UnsupportedOperationException ignored) {
+                throw new FileSystemException("AttributeView was not supported, probably ZipFs.");
+            }
+
             if (attributeView == null) {
                 throw new FileSystemException("AttributeView was null");
             }
@@ -92,6 +100,7 @@ public final class AttributeHelper {
 
     // A faster exists check
     private static boolean exists(Path path) {
-        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists() : Files.exists(path);
+        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists()
+            : Files.exists(path);
     }
 }
