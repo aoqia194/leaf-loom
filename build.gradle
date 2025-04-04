@@ -371,11 +371,6 @@ jreleaser {
             changelog {
                 formatted = 'ALWAYS'
                 preset = 'conventional-commits'
-
-                append {
-                    enabled = true
-                }
-
                 extraProperties.put('categorizeScopes', 'true')
             }
         }
