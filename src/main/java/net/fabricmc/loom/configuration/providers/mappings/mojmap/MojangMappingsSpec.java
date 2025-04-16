@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2016-2021 FabricMC
+ * Copyright (c) 2016-2025 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import net.fabricmc.loom.api.mappings.layered.MappingContext;
 import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
 import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import net.fabricmc.loom.util.Constants;
 import net.fabricmc.loom.util.download.DownloadException;
 
 public record MojangMappingsSpec(boolean nameSyntheticMembers) implements MappingsSpec<MojangMappingLayer> {
@@ -66,6 +67,8 @@ public record MojangMappingsSpec(boolean nameSyntheticMembers) implements Mappin
 				clientMappings,
 				serverMappings,
 				nameSyntheticMembers(),
+				context.hasProperty(Constants.Properties.DROP_NON_INTERMEDIATE_ROOT_METHODS),
+				context.isUsingIntermediateMappings() ? context.intermediaryTree() : null,
 				context.getLogger()
 		);
 	}
