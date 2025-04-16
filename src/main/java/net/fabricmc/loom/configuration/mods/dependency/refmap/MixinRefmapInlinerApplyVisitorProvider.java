@@ -22,29 +22,39 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit
+package net.fabricmc.loom.configuration.mods.dependency.refmap;
 
-import spock.lang.Specification
+import java.util.function.Predicate;
 
-import net.fabricmc.loom.configuration.mods.dependency.ModDependencyOptions
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.CacheKey
+import org.objectweb.asm.ClassVisitor;
 
-class ModDependencyOptionsTest extends Specification {
-	def "test ModDependencyOptions cache key and json value"() {
-		given:
-		def project = GradleTestUtil.mockProject()
-		def modDependencyOptions = CacheKey.create(project, ModDependencyOptions) {
-			it.getMappings().set("testMappings")
-			it.getInlineRefmap().set(false)
+import net.fabricmc.tinyremapper.InputTag;
+import net.fabricmc.tinyremapper.TinyRemapper;
+import net.fabricmc.tinyremapper.api.TrClass;
+
+public record MixinRefmapInlinerApplyVisitorProvider(
+		MixinReferenceRemapper remapper,
+		// A set of input tags that do NOT need their refmaps inlined
+		Predicate<InputTag> staticRemappedMixins) implements TinyRemapper.ApplyVisitorProvider, TinyRemapper.Extension {
+	@Override
+	public ClassVisitor insertApplyVisitor(TrClass cls, ClassVisitor next) {
+		return new MixinRefmapInlinerClassVisitor(remapper, next);
+	}
+
+	@Override
+	public ClassVisitor insertApplyVisitor(TrClass cls, ClassVisitor next, InputTag[] inputTags) {
+		for (InputTag tag : inputTags) {
+			if (staticRemappedMixins.test(tag)) {
+				// No need to inline the refmaps for this tag, as we know this was originally a statically remapped mixin with no refmap
+				return next;
+			}
 		}
 
-		when:
-		def json = modDependencyOptions.getJson()
-		def cacheKey = modDependencyOptions.getCacheKey()
+		return new MixinRefmapInlinerClassVisitor(remapper, next);
+	}
 
-		then:
-		json == '{"__inlineRefmap__":false,"__mappings__":"testMappings"}'
-		cacheKey == "1b04231e"
+	@Override
+	public void attach(TinyRemapper.Builder builder) {
+		builder.extraPreApplyVisitor(this);
 	}
 }

@@ -22,29 +22,37 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit
+package net.fabricmc.loom.configuration.mods.extension;
 
-import spock.lang.Specification
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.function.Predicate;
 
-import net.fabricmc.loom.configuration.mods.dependency.ModDependencyOptions
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.CacheKey
+import net.fabricmc.loom.configuration.mods.ArtifactMetadata;
+import net.fabricmc.loom.configuration.mods.dependency.ModDependency;
+import net.fabricmc.loom.configuration.mods.dependency.refmap.MixinRefmapInliner;
+import net.fabricmc.tinyremapper.InputTag;
+import net.fabricmc.tinyremapper.TinyRemapper;
+import net.fabricmc.tinyremapper.extension.mixin.MixinExtension;
 
-class ModDependencyOptionsTest extends Specification {
-	def "test ModDependencyOptions cache key and json value"() {
-		given:
-		def project = GradleTestUtil.mockProject()
-		def modDependencyOptions = CacheKey.create(project, ModDependencyOptions) {
-			it.getMappings().set("testMappings")
-			it.getInlineRefmap().set(false)
-		}
+final class MixinRemap implements ModProcessorExtension {
+	static final MixinRemap INSTANCE = new MixinRemap();
 
-		when:
-		def json = modDependencyOptions.getJson()
-		def cacheKey = modDependencyOptions.getCacheKey()
+	private MixinRemap() {
+	}
 
-		then:
-		json == '{"__inlineRefmap__":false,"__mappings__":"testMappings"}'
-		cacheKey == "1b04231e"
+	@Override
+	public boolean appliesTo(ModDependency modDependency) {
+		return modDependency.getMetadata().mixinRemapType() == ArtifactMetadata.MixinRemapType.STATIC;
+	}
+
+	@Override
+	public TinyRemapper.Extension createExtension(Context ctx, Predicate<InputTag> applyPredicate) {
+		return new MixinExtension(applyPredicate);
+	}
+
+	@Override
+	public void finalise(ModDependency modDependency, Path path) throws IOException {
+		MixinRefmapInliner.removeRefmap(modDependency, path);
 	}
 }

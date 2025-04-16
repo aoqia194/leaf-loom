@@ -22,29 +22,40 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit
+package net.fabricmc.loom.configuration.mods.extension;
 
-import spock.lang.Specification
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.function.Predicate;
 
-import net.fabricmc.loom.configuration.mods.dependency.ModDependencyOptions
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.CacheKey
+import net.fabricmc.loom.configuration.mods.dependency.ModDependency;
+import net.fabricmc.tinyremapper.InputTag;
+import net.fabricmc.tinyremapper.TinyRemapper;
 
-class ModDependencyOptionsTest extends Specification {
-	def "test ModDependencyOptions cache key and json value"() {
-		given:
-		def project = GradleTestUtil.mockProject()
-		def modDependencyOptions = CacheKey.create(project, ModDependencyOptions) {
-			it.getMappings().set("testMappings")
-			it.getInlineRefmap().set(false)
-		}
+/**
+ * An interface to aid with applying mod-specific remapping extensions.
+ */
+public interface ModProcessorExtension {
+	List<ModProcessorExtension> EXTENSIONS = List.of(
+			MixinRemap.INSTANCE,
+			InlineRefmap.INSTANCE
+	);
 
-		when:
-		def json = modDependencyOptions.getJson()
-		def cacheKey = modDependencyOptions.getCacheKey()
+	/**
+	 * Return true if the extension applies to the given mod dependency.
+	 */
+	boolean appliesTo(ModDependency modDependency);
 
-		then:
-		json == '{"__inlineRefmap__":false,"__mappings__":"testMappings"}'
-		cacheKey == "1b04231e"
-	}
+	/**
+	 * Create a TinyRemapper extension that uses the predicate to only apply to mods that match appliesTo.
+	 */
+	TinyRemapper.Extension createExtension(Context ctx, Predicate<InputTag> applyPredicate) throws IOException;
+
+	void finalise(ModDependency modDependency, Path path) throws IOException;
+
+	record Context(
+			String from,
+			String to,
+			List<ModDependency> mods) { }
 }

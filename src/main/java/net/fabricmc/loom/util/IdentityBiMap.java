@@ -22,29 +22,28 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit
+package net.fabricmc.loom.util;
 
-import spock.lang.Specification
+import java.util.IdentityHashMap;
+import java.util.Map;
 
-import net.fabricmc.loom.configuration.mods.dependency.ModDependencyOptions
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.CacheKey
+public final class IdentityBiMap<K, V> {
+	private final Map<K, V> keyToValue = new IdentityHashMap<>();
+	private final Map<V, K> valueToKey = new IdentityHashMap<>();
 
-class ModDependencyOptionsTest extends Specification {
-	def "test ModDependencyOptions cache key and json value"() {
-		given:
-		def project = GradleTestUtil.mockProject()
-		def modDependencyOptions = CacheKey.create(project, ModDependencyOptions) {
-			it.getMappings().set("testMappings")
-			it.getInlineRefmap().set(false)
-		}
+	public IdentityBiMap() {
+	}
 
-		when:
-		def json = modDependencyOptions.getJson()
-		def cacheKey = modDependencyOptions.getCacheKey()
+	public void put(K key, V value) {
+		keyToValue.put(key, value);
+		valueToKey.put(value, key);
+	}
 
-		then:
-		json == '{"__inlineRefmap__":false,"__mappings__":"testMappings"}'
-		cacheKey == "1b04231e"
+	public V getByKey(K key) {
+		return keyToValue.get(key);
+	}
+
+	public K getByValue(V value) {
+		return valueToKey.get(value);
 	}
 }

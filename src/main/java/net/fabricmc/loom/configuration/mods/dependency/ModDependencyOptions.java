@@ -33,4 +33,6 @@ import net.fabricmc.loom.util.CacheKey;
  */
 public abstract class ModDependencyOptions extends CacheKey {
 	public abstract Property<String> getMappings();
+
+	public abstract Property<Boolean> getInlineRefmap();
 }

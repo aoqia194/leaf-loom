@@ -22,29 +22,8 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit
+package net.fabricmc.loom.configuration.mods.dependency.refmap;
 
-import spock.lang.Specification
-
-import net.fabricmc.loom.configuration.mods.dependency.ModDependencyOptions
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.CacheKey
-
-class ModDependencyOptionsTest extends Specification {
-	def "test ModDependencyOptions cache key and json value"() {
-		given:
-		def project = GradleTestUtil.mockProject()
-		def modDependencyOptions = CacheKey.create(project, ModDependencyOptions) {
-			it.getMappings().set("testMappings")
-			it.getInlineRefmap().set(false)
-		}
-
-		when:
-		def json = modDependencyOptions.getJson()
-		def cacheKey = modDependencyOptions.getCacheKey()
-
-		then:
-		json == '{"__inlineRefmap__":false,"__mappings__":"testMappings"}'
-		cacheKey == "1b04231e"
-	}
+public interface MixinReferenceRemapper {
+	String remapReference(String mixinClassName, String reference);
 }
