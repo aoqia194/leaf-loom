@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2023 FabricMC
+ * Copyright (c) 2025 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,46 +22,30 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util;
+package net.fabricmc.loom.task;
 
-public interface Platform {
-	Platform CURRENT = CurrentPlatform.INSTANCE;
+import java.io.IOException;
 
-	enum OperatingSystem {
-		WINDOWS,
-		MAC_OS,
-		LINUX; // Or Unknown
+import org.gradle.api.DefaultTask;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.TaskAction;
 
-		public boolean isWindows() {
-			return this == WINDOWS;
-		}
+import net.fabricmc.loom.util.Constants;
 
-		public boolean isMacOS() {
-			return this == MAC_OS;
-		}
+public abstract class RenderDocRunUITask extends DefaultTask {
+	@InputFile
+	public abstract RegularFileProperty getRenderDocExecutable();
 
-		public boolean isLinux() {
-			return this == LINUX;
-		}
+	public RenderDocRunUITask() {
+		setGroup(Constants.TaskGroup.FABRIC);
 	}
 
-	OperatingSystem getOperatingSystem();
-
-	interface Architecture {
-		boolean is64Bit();
-
-		boolean isArm();
-
-		boolean isRiscV();
-
-		default boolean isX64() {
-			return is64Bit() && !isArm() && !isRiscV();
-		}
+	@TaskAction
+	public void run() throws IOException {
+		ProcessBuilder builder = new ProcessBuilder()
+				.command(getRenderDocExecutable().getAsFile().get().getAbsolutePath());
+		builder.start();
+		// Allow to run in the background.
 	}
-
-	Architecture getArchitecture();
-
-	boolean supportsUnixDomainSockets();
-
-	boolean isRaspberryPi();
 }
