@@ -303,7 +303,8 @@ public class RunConfigSettings implements Named {
         // Zomboid specific JVM args that aren't added to the manifests.
         // They aren't added to manifests so the user can change them freely in the run config.
         // Because they aren't critical to the game's execution.
-        // TODO: Maybe also move these to the manifest since they could change in a later game version?
+        // TODO: Maybe also move these to the manifest since
+        //       they could change in a later game version?
         property("zomboid.steam", "0");
         property("zomboid.znetlog", "1");
 
