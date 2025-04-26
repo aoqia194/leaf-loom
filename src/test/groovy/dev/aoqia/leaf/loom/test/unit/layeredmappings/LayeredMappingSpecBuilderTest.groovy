@@ -34,6 +34,8 @@ import dev.aoqia.leaf.loom.configuration.providers.mappings.file.FileMappingsSpe
 import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.MavenFileSpec
 import dev.aoqia.leaf.loom.util.ClosureAction
 
+import spock.lang.Specification
+
 class LayeredMappingSpecBuilderTest extends Specification {
 	def "simple mojmap" () {
 		when:

@@ -32,6 +32,8 @@ import spock.lang.Specification
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef
 
+import spock.lang.Specification
+
 import static dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata.MixinRemapType.MIXIN
 import static dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata.MixinRemapType.STATIC
 import static dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata.RemapRequirements.*

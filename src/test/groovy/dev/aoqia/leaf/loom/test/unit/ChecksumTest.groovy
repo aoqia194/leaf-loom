@@ -32,6 +32,9 @@ import spock.lang.Specification
 
 import dev.aoqia.leaf.loom.util.Checksum
 
+import org.gradle.api.Project
+import spock.lang.Specification
+
 class ChecksumTest extends Specification {
 	def "project hash"() {
 		given:

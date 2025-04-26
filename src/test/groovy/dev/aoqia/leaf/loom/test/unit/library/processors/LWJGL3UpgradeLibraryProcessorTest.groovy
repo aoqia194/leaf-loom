@@ -24,14 +24,18 @@
 package dev.aoqia.leaf.loom.test.unit.library.processors
 
 
+import dev.aoqia.loom.test.util.PlatformTestUtils
 import org.gradle.api.JavaVersion
 
+import dev.aoqia.loom.test.util.PlatformTestUtils
 import org.gradle.api.JavaVersion
 
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessor
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LWJGL3UpgradeLibraryProcessor
+
 import dev.aoqia.loom.test.util.PlatformTestUtils
+import org.gradle.api.JavaVersion
 
 class LWJGL3UpgradeLibraryProcessorTest extends LibraryProcessorTest {
 	def "Only apply to LWJGL3"() {

@@ -64,6 +64,11 @@ import dev.aoqia.leaf.loom.util.Pair
 import dev.aoqia.leaf.loom.util.TinyRemapperHelper
 import dev.aoqia.leaf.loom.util.ZipUtils
 
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import spock.lang.Specification
+import spock.lang.TempDir
+
 class InterfaceInjectionProcessorTest extends Specification {
 	@TempDir
 	Path tempDir

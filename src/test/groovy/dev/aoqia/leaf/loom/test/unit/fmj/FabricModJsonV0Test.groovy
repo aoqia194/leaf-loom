@@ -38,6 +38,11 @@ import dev.aoqia.leaf.loom.util.Constants
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonSource
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import org.intellij.lang.annotations.Language
+import spock.lang.Specification
+
 class LeafModJsonV0Test extends Specification {
 	// I think this is the old v0 format ¯\_(ツ)_/¯
 	@Language("json")

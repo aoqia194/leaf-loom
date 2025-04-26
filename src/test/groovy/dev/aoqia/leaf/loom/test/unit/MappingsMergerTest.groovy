@@ -36,6 +36,8 @@ import spock.lang.TempDir
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace
 
+import spock.lang.TempDir
+
 class MappingsMergerTest {
 	@TempDir
 	Path tempDir

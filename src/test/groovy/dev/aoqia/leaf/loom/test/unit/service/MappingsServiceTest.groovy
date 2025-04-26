@@ -24,14 +24,19 @@
 package dev.aoqia.leaf.loom.test.unit.service
 
 
+import dev.aoqia.loom.test.util.GradleTestUtil
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 
+import dev.aoqia.loom.test.util.GradleTestUtil
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 
 import dev.aoqia.leaf.loom.task.service.MappingsService
+
 import dev.aoqia.loom.test.util.GradleTestUtil
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 
 class MappingsServiceTest extends ServiceTestBase {
 	def "get mapping tree"() {

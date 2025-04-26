@@ -36,6 +36,11 @@ import spock.lang.Specification
 
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import org.intellij.lang.annotations.Language
+import spock.lang.Specification
+
 class LeafModJsonUtilsTest extends Specification {
 	// Test that the schemaVersion is moved to the first position
 	def "optimize FMJ"() {

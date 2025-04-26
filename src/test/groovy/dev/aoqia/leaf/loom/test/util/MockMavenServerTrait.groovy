@@ -29,6 +29,9 @@ import org.apache.commons.io.IOUtils
 import io.javalin.Javalin
 import org.apache.commons.io.IOUtils
 
+import io.javalin.Javalin
+import org.apache.commons.io.IOUtils
+
 trait MockMavenServerTrait {
 	public final int mavenServerPort = 9876
 	public final File testMavenDir = File.createTempDir()

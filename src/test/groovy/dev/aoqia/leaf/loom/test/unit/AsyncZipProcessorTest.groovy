@@ -34,6 +34,8 @@ import dev.aoqia.leaf.loom.test.util.ZipTestUtils
 import dev.aoqia.leaf.loom.util.AsyncZipProcessor
 import dev.aoqia.leaf.loom.util.ZipUtils
 
+import spock.lang.Specification
+
 class AsyncZipProcessorTest extends Specification {
 	def "process async"() {
 		given:

@@ -26,14 +26,19 @@ package dev.aoqia.leaf.loom.test.integration
 import java.util.jar.JarFile
 
 import com.google.gson.JsonParser
+import dev.aoqia.loom.test.util.GradleProjectTestTrait
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import com.google.gson.JsonParser
+import dev.aoqia.loom.test.util.GradleProjectTestTrait
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import com.google.gson.JsonParser
 import dev.aoqia.loom.test.util.GradleProjectTestTrait
+import spock.lang.Specification
+import spock.lang.Unroll
 
 import static dev.aoqia.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

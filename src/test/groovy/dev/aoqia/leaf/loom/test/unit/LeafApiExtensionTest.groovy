@@ -33,6 +33,9 @@ import spock.lang.Specification
 import dev.aoqia.leaf.loom.configuration.LeafApiExtension
 import dev.aoqia.leaf.loom.test.util.GradleTestUtil
 
+import org.gradle.api.Project
+import spock.lang.Specification
+
 class LeafApiExtensionTest extends Specification {
 	def "get module version"() {
 		when:

@@ -24,14 +24,15 @@
 package dev.aoqia.leaf.loom.test.unit.service
 
 
-import groovy.transform.InheritConstructors
-import groovy.transform.TupleConstructor
+import dev.aoqia.loom.test.util.GradleTestUtil
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import spock.lang.Specification
 
 import groovy.transform.InheritConstructors
 import groovy.transform.TupleConstructor
+
+import dev.aoqia.loom.test.util.GradleTestUtil
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import spock.lang.Specification
@@ -39,7 +40,11 @@ import spock.lang.Specification
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory
 import dev.aoqia.leaf.loom.util.service.Service
 import dev.aoqia.leaf.loom.util.service.ServiceType
+
 import dev.aoqia.loom.test.util.GradleTestUtil
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import spock.lang.Specification
 
 class ScopedServiceFactoryTest extends Specification {
 	def "create service"() {

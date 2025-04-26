@@ -33,16 +33,32 @@ import com.google.gson.GsonBuilder
 
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.VersionsManifest
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta
+import dev.aoqia.leaf.loom.test.LoomTestConstants
 import dev.aoqia.leaf.loom.util.MirrorUtil
-import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFile
-import dev.aoqia.loom.test.LoomTestConstants
+import dev.aoqia.leaf.loom.util.download.Download
+
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 
 class ZomboidTestUtils {
 	private static final File TEST_DIR = new File(LoomTestConstants.TEST_DIR, "zomboid")
 	public static final Gson GSON = new GsonBuilder().create()
 
 	static ZomboidVersionMeta getVersionMeta(String id) {
-		def versionManifest = download(MirrorUtil.getClientVersionManifests(null), "version_manifest.json")
+		def versionManifest = download(MirrorUtil.getClientVersionManifests(null),
+				"version_manifest.json")
+		def manifest = GSON.fromJson(versionManifest, VersionsManifest.class)
+		def version = manifest.versions().find {
+			it.id == id
+		}
+
+		def metaJson = download(version.url, "${id}.json")
+		GSON.fromJson(metaJson, ZomboidVersionMeta.class)
+	}
+
+	static ZomboidVersionMeta getServerVersionMeta(String id) {
+		def versionManifest = download(MirrorUtil.getServerVersionManifests(null),
+				"version_manifest.json")
 		def manifest = GSON.fromJson(versionManifest, VersionsManifest.class)
 		def version = manifest.versions().find {
 			it.id == id
@@ -53,7 +69,7 @@ class ZomboidTestUtils {
 	}
 
 	static String download(String url, String name) {
-		CopyGameFile.create(url)
+		Download.create(url)
 				.maxAge(Duration.ofDays(31))
 				.downloadString(new File(TEST_DIR, name).toPath())
 	}

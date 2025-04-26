@@ -31,6 +31,8 @@ import io.javalin.http.HttpStatus
 import dev.aoqia.leaf.loom.util.download.Download
 import dev.aoqia.leaf.loom.util.download.DownloadException
 
+import io.javalin.http.HttpStatus
+
 class DownloadStringTest extends DownloadTest {
 	def "String: Download"() {
 		setup:

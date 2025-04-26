@@ -35,6 +35,8 @@ import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec
 import dev.aoqia.leaf.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl
 import dev.aoqia.leaf.loom.util.ZipUtils
 
+import spock.lang.Unroll
+
 class FileMappingLayerTest extends LayeredMappingsSpecification {
 	@Unroll
 	def "read Yarn mappings from #setupType.displayName"() {

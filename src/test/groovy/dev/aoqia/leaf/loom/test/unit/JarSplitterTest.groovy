@@ -30,6 +30,8 @@ import spock.lang.Specification
 
 import dev.aoqia.leaf.loom.configuration.mods.JarSplitter
 
+import spock.lang.Specification
+
 class JarSplitterTest extends Specification {
 	public static final String SPLIT_INPUT_JAR_URL = "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-lifecycle-events-v1/2.1.0%2B33fbc738a9/fabric-lifecycle-events-v1-2.1.0%2B33fbc738a9.jar"
 	public static final String CLIENT_INPUT_JAR_URL = "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-renderer-indigo/0.6.10%2B5187d39f95/fabric-renderer-indigo-0.6.10%2B5187d39f95.jar"

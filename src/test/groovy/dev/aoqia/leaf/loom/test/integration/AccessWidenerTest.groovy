@@ -33,6 +33,9 @@ import spock.lang.Unroll
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 import dev.aoqia.leaf.loom.util.ZipUtils
 
+import spock.lang.Specification
+import spock.lang.Unroll
+
 import static dev.aoqia.loom.test.LoomTestConstants.DEFAULT_GRADLE
 import static dev.aoqia.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

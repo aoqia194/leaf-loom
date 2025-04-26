@@ -35,6 +35,8 @@ import dev.aoqia.leaf.loom.api.remapping.RemapperExtension
 import dev.aoqia.leaf.loom.api.remapping.RemapperParameters
 import dev.aoqia.leaf.loom.api.remapping.TinyRemapperExtension
 
+import org.objectweb.asm.ClassVisitor
+
 class TestTinyRemapperExtension implements RemapperExtension<RemapperParameters.None>, TinyRemapperExtension {
 	@Override
 	ClassVisitor insertVisitor(String className, RemapperContext remapperContext, ClassVisitor classVisitor) {

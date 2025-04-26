@@ -41,6 +41,10 @@ import dev.aoqia.leaf.loom.util.Pair
 import dev.aoqia.leaf.loom.util.ZipReprocessorUtil
 import dev.aoqia.leaf.loom.util.ZipUtils
 
+import com.google.gson.JsonObject
+import org.gradle.api.tasks.bundling.ZipEntryCompression
+import spock.lang.Specification
+
 class ZipUtilsTest extends Specification {
 	def "pack"() {
 		given:
