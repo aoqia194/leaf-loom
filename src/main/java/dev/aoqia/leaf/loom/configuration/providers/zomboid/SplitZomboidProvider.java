@@ -44,9 +44,9 @@ public final class SplitZomboidProvider extends ZomboidProvider {
     public void provide() throws Exception {
         super.provide();
 
-        boolean requiresRefresh =
-            getExtension().refreshDeps() || Files.notExists(clientOnlyJar) || Files.notExists(commonJar);
-
+        boolean requiresRefresh = getExtension().refreshDeps() ||
+                                  Files.notExists(clientOnlyJar) ||
+                                  Files.notExists(commonJar);
         if (!requiresRefresh) {
             return;
         }
