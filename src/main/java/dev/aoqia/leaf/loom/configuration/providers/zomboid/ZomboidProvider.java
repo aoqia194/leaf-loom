@@ -39,6 +39,7 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.assets.AssetIndex;
 import dev.aoqia.leaf.loom.util.*;
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileExecutor;
 import dev.aoqia.leaf.loom.util.copygamefile.GradleCopyGameFileProgressListener;
+import dev.aoqia.leaf.loom.util.download.DownloadException;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 import dev.aoqia.leaf.loom.util.gradle.ProgressGroup;
 
@@ -213,10 +214,17 @@ public abstract class ZomboidProvider {
                         dstPath = extractedDir().toPath().resolve(flatPath.getFileName());
                         extractedLibs.add(dstPath);
                     } else if ((!isServer && safePath.contains(osLibsStr + includedArchStr)) ||
-                               (isServer && safePath.contains("natives/"))) {
+                               (isServer && safePath.contains("natives/")) ||
+                               safePath.contains("java/")) {
+                        // Flatten the path so that it gets extracted to root folder.
                         dstPath = extractedDir().toPath().resolve(flatPath.getFileName());
                     } else {
                         dstPath = extractedDir().toPath().resolve(flatPath);
+                    }
+                } else {
+                    // Server java files are inside of a "java" subfolder which we dont want.
+                    if (safePath.contains("java/")) {
+                        dstPath = extractedDir().toPath().resolve(flatPath.getFileName());
                     }
                 }
 
@@ -249,19 +257,27 @@ public abstract class ZomboidProvider {
         return LoomGradlePlugin.GSON.fromJson(json, AssetIndex.class);
     }
 
-    private AssetIndex getServerAssetIndex() throws IOException {
+    private AssetIndex getServerAssetIndex() throws DownloadException {
         final ZomboidVersionMeta.AssetIndex assetIndex = getServerVersionInfo().assetIndex();
-        final File indexFile = new File(workingDir(), "zomboid_server_index_manifest.json");
-
-        // TODO: This needs to be merged with the server-common asset indexes too.
-        // Do we do this here? Is there another place where AssetIndex is passed around that
-        // needs to be compensated for as well apart from here???
+        final File serverIndexFile = new File(workingDir(), "zomboid_server_index_manifest.json");
+        final File commonIndexFile = new File(workingDir(),
+            "zomboid_server-common_index_manifest.json");
 
         final String serverJson = getExtension()
             .download(assetIndex.url())
             .sha1(assetIndex.sha1())
-            .downloadString(indexFile.toPath());
-        return LoomGradlePlugin.GSON.fromJson(serverJson, AssetIndex.class);
+            .downloadString(serverIndexFile.toPath());
+        final var serverIndexes = LoomGradlePlugin.GSON.fromJson(serverJson, AssetIndex.class);
+
+        final String commonJson = getExtension()
+            .download(assetIndex.url().replace(MirrorUtil.getOsStringForUrl(), "common"))
+            // .sha1(assetIndex.sha1())
+            .downloadString(commonIndexFile.toPath());
+        final var commonIndexes = LoomGradlePlugin.GSON.fromJson(commonJson, AssetIndex.class);
+
+        // Merging server-common indexes into server indexes index class and returning that.
+        serverIndexes.objects().putAll(commonIndexes.objects());
+        return serverIndexes;
     }
 
     protected void initFiles() {
