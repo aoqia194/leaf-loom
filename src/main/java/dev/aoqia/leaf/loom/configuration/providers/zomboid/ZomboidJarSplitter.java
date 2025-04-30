@@ -34,10 +34,11 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import com.google.common.collect.Sets;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import dev.aoqia.leaf.loom.util.JarUtil;
+
+import com.google.common.collect.Sets;
 
 public class ZomboidJarSplitter implements AutoCloseable {
     private final Path clientInputJar;
@@ -56,14 +57,16 @@ public class ZomboidJarSplitter implements AutoCloseable {
         Objects.requireNonNull(commonOutputJar);
 
         if (entryData == null) {
-            entryData = new EntryData(JarUtil.getJarEntries(clientInputJar), JarUtil.getJarEntries(serverInputJar));
+            entryData = new EntryData(JarUtil.getJarEntries(clientInputJar),
+                JarUtil.getJarEntries(serverInputJar));
         }
 
         // Not something we expect, will require 3 jars, server, client and common.
         assert entryData.serverOnlyEntries.isEmpty();
 
         copyEntriesToJar(entryData.commonEntries, serverInputJar, commonOutputJar, "common");
-        copyEntriesToJar(entryData.clientOnlyEntries, clientInputJar, clientOnlyOutputJar, "client");
+        copyEntriesToJar(entryData.clientOnlyEntries, clientInputJar, clientOnlyOutputJar,
+            "client");
     }
 
     private void createManifest(FileSystemUtil.Delegate outputFs, String env) throws IOException {
@@ -77,8 +80,8 @@ public class ZomboidJarSplitter implements AutoCloseable {
     }
 
     // A duplicate from JarUtil for env specific manifest.
-    private void copyEntriesToJar(Set<String> entries, Path inputJar, Path outputJar, String env) throws
-        IOException {
+    private void copyEntriesToJar(Set<String> entries, Path inputJar, Path outputJar, String env)
+        throws IOException {
         Files.deleteIfExists(outputJar);
 
         try (FileSystemUtil.Delegate inputFs = FileSystemUtil.getJarFileSystem(inputJar);
@@ -113,15 +116,15 @@ public class ZomboidJarSplitter implements AutoCloseable {
     }
 
     private final class EntryData {
-        private final Set<String> clientEntries;
-        private final Set<String> serverEntries;
         private final Set<String> commonEntries;
         private final Set<String> clientOnlyEntries;
         private final Set<String> serverOnlyEntries;
 
         private EntryData(Set<String> clientEntries, Set<String> serverEntries) {
-            this.clientEntries = clientEntries;
-            this.serverEntries = serverEntries;
+            // TODO: Store hashes in value part of entries hashmap, check the hash in a filter func.
+            //   For example when checking the client only entries, if there are any files in
+            //   both client and server that have different hashes from common, put them in client.
+            //   This may be needed in the future if client and server code becomes different a lot.
 
             this.commonEntries = Sets.newHashSet(clientEntries);
             this.commonEntries.retainAll(serverEntries);
