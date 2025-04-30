@@ -30,6 +30,8 @@ import spock.lang.Specification
 
 import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers
 
+import spock.lang.Specification
+
 class ClassLineNumbersTest extends Specification {
 	def "read linemap"() {
 		when:

@@ -216,7 +216,7 @@ spotless {
         indentWithSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
-        importOrder('java', 'javax', '', 'net.fabricmc', '', 'dev.aoqia', '\\#')
+        importOrder('java', 'javax', '', 'groovy', 'net.fabricmc', '', "${rootProject.group}", '', '\\#')
         licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
         greclipse()
     }

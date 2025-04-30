@@ -32,6 +32,9 @@ import org.gradle.api.Project
 
 import dev.aoqia.leaf.loom.LoomGradleExtension
 
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
 class TestPlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {

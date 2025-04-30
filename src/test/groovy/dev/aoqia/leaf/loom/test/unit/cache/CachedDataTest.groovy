@@ -37,6 +37,9 @@ import spock.lang.TempDir
 import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers
 import dev.aoqia.leaf.loom.decompilers.cache.CachedData
 
+import spock.lang.Specification
+import spock.lang.TempDir
+
 class CachedDataTest extends Specification {
 	@TempDir
 	Path testPath

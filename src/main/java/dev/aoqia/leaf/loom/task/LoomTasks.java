@@ -40,8 +40,12 @@ import org.gradle.api.Task;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class LoomTasks implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoomTasks.class);
+
     @Override
     public void run() {
         // If only provide jars then dont setup tasks or anything else.
@@ -92,16 +96,13 @@ public abstract class LoomTasks implements Runnable {
 
             if (extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY) {
                 // Server only, nothing more to do.
-                //                final ZomboidVersionMeta serverVersionInfo = extension.getZomboidProvider()
-                //                .getServerVersionInfo();
-                //                registerServerSetupTasks(getTasks(), serverVersionInfo.hasNativesToExtract());
                 return;
             }
 
             final ZomboidVersionMeta versionInfo = extension.getZomboidProvider().getClientVersionInfo();
             if (versionInfo == null) {
                 // Something has gone wrong, don't register the task.
-                System.out.println("LoomTasks: Version info is null.");
+                LOGGER.error("LoomTasks: Version info is null.");
                 return;
             }
 
@@ -187,7 +188,7 @@ public abstract class LoomTasks implements Runnable {
         }
 
         tasks.register("configureClientLaunch", task -> {
-            // task.dependsOn(tasks.named("copyClientAssets"));
+            // task.dependsOn(tasks.named("copyClientGameFiles"));
             task.dependsOn(tasks.named("configureLaunch"));
 
             if (extractNatives) {

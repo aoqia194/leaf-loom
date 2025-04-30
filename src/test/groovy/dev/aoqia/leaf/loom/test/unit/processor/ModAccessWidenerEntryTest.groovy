@@ -31,6 +31,8 @@ import spock.lang.Specification
 import dev.aoqia.leaf.loom.configuration.accesswidener.ModAccessWidenerEntry
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment
 
+import spock.lang.Specification
+
 class ModAccessWidenerEntryTest extends Specification {
 	def "read local mod"() {
 		given:

@@ -23,13 +23,15 @@
  */
 package dev.aoqia.leaf.loom.test.benchmark
 
-import groovy.time.TimeCategory
-import groovy.time.TimeDuration
+import dev.aoqia.loom.test.LoomTestConstants
 
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
+
+import dev.aoqia.loom.test.LoomTestConstants
 
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+
 import dev.aoqia.loom.test.LoomTestConstants
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

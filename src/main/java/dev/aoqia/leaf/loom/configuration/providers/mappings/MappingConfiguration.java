@@ -25,12 +25,11 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
 import java.nio.file.*;
+import java.nio.file.FileSystem;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.gson.JsonObject;
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.configuration.DependencyInfo;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.tiny.TinyJarInfo;
@@ -40,6 +39,8 @@ import dev.aoqia.leaf.loom.util.DeletingFileVisitor;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import dev.aoqia.leaf.loom.util.ZipUtils;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+
+import com.google.gson.JsonObject;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.format.MappingFormat;
 import net.fabricmc.stitch.Command;
@@ -87,15 +88,16 @@ public class MappingConfiguration {
             .orElseThrow(() -> new RuntimeException("Could not resolve mappings: " + dependency))
             .toPath();
         final String mappingsName = StringUtils.removeSuffix(
-            dependency.getDependency().getGroup() + "."
-            + dependency.getDependency().getName(),
+            dependency.getDependency().getGroup() + "." + dependency.getDependency().getName(),
             "-unmerged");
 
         final TinyJarInfo jarInfo = TinyJarInfo.get(inputJar);
         jarInfo.zomboidVersionId().ifPresent(id -> {
             if (!zomboidProvider.clientZomboidVersion().equals(id)) {
-                LOGGER.warn("The mappings (%s) were not built for Zomboid version %s, proceed with caution."
-                    .formatted(dependency.getDepString(), zomboidProvider.clientZomboidVersion()));
+                LOGGER.warn(
+                    "The mappings (%s) were not built for Zomboid version %s, proceed with caution."
+                        .formatted(dependency.getDepString(),
+                            zomboidProvider.clientZomboidVersion()));
             }
         });
 
@@ -112,7 +114,8 @@ public class MappingConfiguration {
             mappingProvider.setup(project, serviceFactory, zomboidProvider, inputJar);
         } catch (IOException e) {
             cleanWorkingDirectory(workingDir);
-            throw new UncheckedIOException("Failed to setup mappings: " + dependency.getDepString(), e);
+            throw new UncheckedIOException("Failed to setup mappings: " + dependency.getDepString(),
+                e);
         }
 
         return mappingProvider;
@@ -141,7 +144,8 @@ public class MappingConfiguration {
     }
 
     public static void extractMappings(FileSystem jar, Path extractTo) throws IOException {
-        Files.copy(jar.getPath("mappings/mappings.tiny"), extractTo, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(jar.getPath("mappings/mappings.tiny"), extractTo,
+            StandardCopyOption.REPLACE_EXISTING);
     }
 
     private static void cleanWorkingDirectory(Path mappingsWorkingDir) {
@@ -161,7 +165,8 @@ public class MappingConfiguration {
         //          mappingsName      . mcVersion . version        classifier
         // Example: net.fabricmc.yarn . 1_16_5    . 1.16.5+build.5 -v2
         return mappingsName + "."
-               + minecraftVersion.replace(' ', '_').replace('.', '_').replace('-', '_') + "." + version + classifier;
+               + minecraftVersion.replace(' ', '_').replace('.', '_').replace('-', '_') + "." +
+               version + classifier;
     }
 
     public TinyMappingsService getMappingsService(Project project, ServiceFactory serviceFactory) {
@@ -172,7 +177,8 @@ public class MappingConfiguration {
         return TinyMappingsService.createOptions(project, Objects.requireNonNull(tinyMappings));
     }
 
-    private void setup(Project project, ServiceFactory serviceFactory, ZomboidProvider zomboidProvider, Path inputJar)
+    private void setup(Project project, ServiceFactory serviceFactory,
+        ZomboidProvider zomboidProvider, Path inputJar)
         throws IOException {
         if (zomboidProvider.refreshDeps()) {
             cleanWorkingDirectory(mappingsWorkingDir);
@@ -188,7 +194,8 @@ public class MappingConfiguration {
 
         if (Files.notExists(tinyMappingsJar) || zomboidProvider.refreshDeps()) {
             Files.deleteIfExists(tinyMappingsJar);
-            ZipUtils.add(tinyMappingsJar, "mappings/mappings.tiny", Files.readAllBytes(tinyMappings));
+            ZipUtils.add(tinyMappingsJar, "mappings/mappings.tiny",
+                Files.readAllBytes(tinyMappings));
         }
     }
 
@@ -204,7 +211,8 @@ public class MappingConfiguration {
             populateUnpickClasspath(project);
         }
 
-        project.getDependencies().add(Constants.Configurations.MAPPINGS_FINAL, project.files(tinyMappingsJar.toFile()));
+        project.getDependencies()
+            .add(Constants.Configurations.MAPPINGS_FINAL, project.files(tinyMappingsJar.toFile()));
     }
 
     public boolean hasUnpickDefinitions() {
@@ -217,11 +225,16 @@ public class MappingConfiguration {
             .add(
                 Constants.Configurations.UNPICK_CLASSPATH,
                 String.format(
-                    "%s:%s:%s", unpickMetadata.unpickGroup, unpickCliName, unpickMetadata.unpickVersion));
+                    "%s:%s:%s", unpickMetadata.unpickGroup, unpickCliName,
+                    unpickMetadata.unpickVersion));
 
-        // Unpick ships with a slightly older version of asm, ensure it runs with at least the same version as loom.
+        // Unpick ships with a slightly older version of asm, ensure it runs with at least the
+        // same version as loom.
         String[] asmDeps = new String[] {
-            "org.ow2.asm:asm:%s", "org.ow2.asm:asm-tree:%s", "org.ow2.asm:asm-commons:%s", "org.ow2.asm:asm-util:%s"
+            "org.ow2.asm:asm:%s",
+            "org.ow2.asm:asm-tree:%s",
+            "org.ow2.asm:asm-commons:%s",
+            "org.ow2.asm:asm-util:%s"
         };
 
         for (String asm : asmDeps) {
@@ -233,7 +246,8 @@ public class MappingConfiguration {
     }
 
     private void storeMappings(
-        Project project, ServiceFactory serviceFactory, ZomboidProvider zomboidProvider, Path inputJar)
+        Project project, ServiceFactory serviceFactory, ZomboidProvider zomboidProvider,
+        Path inputJar)
         throws IOException {
         LOGGER.info(":extracting " + inputJar.getFileName());
 
@@ -244,7 +258,8 @@ public class MappingConfiguration {
 
         // Don't really need to support V1 for the time being (or foreseeable future).
         if (!areMappingsV2(tinyMappings)) {
-            throw new UnsupportedOperationException("Mappings are using V1 which is unsupported currently.");
+            throw new UnsupportedOperationException(
+                "Mappings are using V1 which is unsupported currently.");
         }
 
         // V1 mappings
@@ -252,7 +267,8 @@ public class MappingConfiguration {
         //            final List<Path> zomboidJars = zomboidProvider.getZomboidJars();
         //
         //            if (zomboidJars.size() != 1) {
-        //                throw new UnsupportedOperationException("V1 mappings only support single jar providers");
+        //                throw new UnsupportedOperationException("V1 mappings only support
+        //                single jar providers");
         //            }
         //
         //            // These are merged v1 mappings
@@ -288,15 +304,17 @@ public class MappingConfiguration {
             return;
         }
 
-        try (Reader reader = Files.newBufferedReader(recordSignaturesJsonPath, StandardCharsets.UTF_8)) {
-            //noinspection unchecked
+        try (Reader reader = Files.newBufferedReader(recordSignaturesJsonPath,
+            StandardCharsets.UTF_8)) {
+            // noinspection unchecked
             signatureFixes = LoomGradlePlugin.GSON.fromJson(reader, Map.class);
         }
     }
 
     private UnpickMetadata parseUnpickMetadata(Path input) throws IOException {
         JsonObject jsonObject =
-            LoomGradlePlugin.GSON.fromJson(Files.readString(input, StandardCharsets.UTF_8), JsonObject.class);
+            LoomGradlePlugin.GSON.fromJson(Files.readString(input, StandardCharsets.UTF_8),
+                JsonObject.class);
 
         if (!jsonObject.has("version") || jsonObject.get("version").getAsInt() != 1) {
             throw new UnsupportedOperationException("Unsupported unpick version");

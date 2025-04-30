@@ -31,6 +31,8 @@ import spock.lang.Specification
 import dev.aoqia.leaf.loom.api.processor.SpecContext
 import dev.aoqia.leaf.loom.test.util.processor.TestZomboidJarProcessor
 
+import spock.lang.Specification
+
 class ZomboidJarProcessorManagerTest extends Specification {
 	def "Cache value matches"() {
 		when:

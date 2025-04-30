@@ -41,6 +41,11 @@ import spock.lang.Specification
 import dev.aoqia.leaf.loom.util.kotlin.KotlinClasspath
 import dev.aoqia.leaf.loom.util.kotlin.KotlinRemapperClassloader
 
+import kotlin.KotlinVersion
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.tree.ClassNode
+import spock.lang.Specification
+
 class KotlinRemapperClassloaderTest extends Specification {
 	private static String KOTLIN_VERSION = KotlinVersion.CURRENT.toString()
 	private static String KOTLIN_URL = "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/${KOTLIN_VERSION}/kotlin-stdlib-${KOTLIN_VERSION}.jar"

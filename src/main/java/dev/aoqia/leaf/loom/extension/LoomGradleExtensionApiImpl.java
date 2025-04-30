@@ -52,6 +52,7 @@ import dev.aoqia.leaf.loom.util.MirrorUtil;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+
 import org.gradle.api.*;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -81,10 +82,12 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
     protected final Property<Boolean> transitiveAccessWideners;
     protected final Property<Boolean> modProvidedJavadoc;
     protected final ListProperty<RemapperExtensionHolder> remapperExtensions;
-    // A common mistake with layered mappings is to call the wrong `officialMojangMappings` method, use this to keep
-    // track of when we are building a layered mapping spec.
-    protected final ThreadLocal<Boolean> layeredSpecBuilderScope = ThreadLocal.withInitial(() -> false);
-    protected final Map<LayeredMappingSpec, LayeredMappingsFactory> layeredMappingsDependencyMap = new HashMap<>();
+    // A common mistake with layered mappings is to call the wrong `officialMojangMappings` method.
+    // Use this to keep track of when we are building a layered mapping spec.
+    protected final ThreadLocal<Boolean> layeredSpecBuilderScope = ThreadLocal.withInitial(
+        () -> false);
+    protected final Map<LayeredMappingSpec, LayeredMappingsFactory> layeredMappingsDependencyMap
+        = new HashMap<>();
     private final Property<Boolean> runtimeOnlyLog4j;
     private final Property<Boolean> splitModDependencies;
     private final Property<ZomboidJarConfiguration<?, ?, ?>> zomboidJarConfiguration;
@@ -98,46 +101,50 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
     protected boolean hasEvaluatedLayeredMappings = false;
 
     protected LoomGradleExtensionApiImpl(Project project, LoomFiles directories) {
-        this.jarProcessors =
-            project.getObjects().listProperty(JarProcessor.class).empty();
+        this.jarProcessors = project.getObjects().listProperty(JarProcessor.class).empty();
         this.log4jConfigs = project.files(directories.getDefaultLog4jConfigFile());
         this.accessWidener = project.getObjects().fileProperty();
 
         this.clientVersionManifests = new ManifestLocations();
-        this.clientVersionManifests.add("zomboid", MirrorUtil.getClientVersionManifests(project), -2);
+        this.clientVersionManifests.add("zomboid", MirrorUtil.getClientVersionManifests(project),
+            -2);
 
         this.serverVersionManifests = new ManifestLocations();
-        this.serverVersionManifests.add("zomboid", MirrorUtil.getServerVersionManifests(project), -2);
+        this.serverVersionManifests.add("zomboid", MirrorUtil.getServerVersionManifests(project),
+            -2);
 
         this.customMetadata = project.getObjects().property(String.class);
         this.knownIndyBsms = project.getObjects()
             .setProperty(String.class)
-            .convention(Set.of(
-                "java/lang/invoke/StringConcatFactory",
+            .convention(Set.of("java/lang/invoke/StringConcatFactory",
                 "java/lang/runtime/ObjectMethods",
                 "org/codehaus/groovy/vmplugin/v8/IndyInterface"));
         this.knownIndyBsms.finalizeValueOnRead();
-        this.transitiveAccessWideners =
-            project.getObjects().property(Boolean.class).convention(true);
+        this.transitiveAccessWideners = project.getObjects()
+            .property(Boolean.class)
+            .convention(true);
         this.transitiveAccessWideners.finalizeValueOnRead();
         this.modProvidedJavadoc = project.getObjects().property(Boolean.class).convention(true);
         this.modProvidedJavadoc.finalizeValueOnRead();
 
         this.deprecationHelper = new DeprecationHelper.ProjectBased(project);
 
-        this.runConfigs = project.container(RunConfigSettings.class, baseName -> project.getObjects()
-            .newInstance(RunConfigSettings.class, project, baseName));
+        this.runConfigs = project.container(RunConfigSettings.class, baseName -> {
+            return project.getObjects().newInstance(RunConfigSettings.class, project, baseName);
+        });
         this.decompilers = project.getObjects().domainObjectContainer(DecompilerOptions.class);
         this.mods = project.getObjects().domainObjectContainer(ModSettings.class);
-        this.remapConfigurations = project.getObjects().namedDomainObjectList(RemapConfigurationSettings.class);
-        //noinspection unchecked
+        this.remapConfigurations = project.getObjects()
+            .namedDomainObjectList(RemapConfigurationSettings.class);
+        // noinspection unchecked
         this.zomboidJarProcessors = (ListProperty<ZomboidJarProcessor<?>>)
             (Object) project.getObjects().listProperty(ZomboidJarProcessor.class);
         this.zomboidJarProcessors.finalizeValueOnRead();
 
-        //noinspection unchecked
+        // noinspection unchecked
         this.zomboidJarConfiguration = project.getObjects()
-            .property((Class<ZomboidJarConfiguration<?, ?, ?>>) (Class<?>) ZomboidJarConfiguration.class)
+            .property((Class<ZomboidJarConfiguration<?, ?, ?>>) (Class<?>)
+                ZomboidJarConfiguration.class)
             .convention(project.provider(() -> {
                 // If no configuration is selected by the user, assume client only.
                 return ZomboidJarConfiguration.CLIENT_ONLY;
@@ -153,11 +160,13 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
         this.splitModDependencies = project.getObjects().property(Boolean.class).convention(true);
         this.splitModDependencies.finalizeValueOnRead();
 
-        this.interfaceInjectionExtension = project.getObjects().newInstance(InterfaceInjectionExtensionAPI.class);
+        this.interfaceInjectionExtension = project.getObjects()
+            .newInstance(InterfaceInjectionExtensionAPI.class);
         this.interfaceInjectionExtension.getIsEnabled().convention(true);
 
-        this.splitEnvironmentalSourceSet =
-            project.getObjects().property(Boolean.class).convention(false);
+        this.splitEnvironmentalSourceSet = project.getObjects()
+            .property(Boolean.class)
+            .convention(false);
         this.splitEnvironmentalSourceSet.finalizeValueOnRead();
 
         remapperExtensions = project.getObjects().listProperty(RemapperExtensionHolder.class);
@@ -203,7 +212,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
     }
 
     @Override
-    public void addZomboidJarProcessor(Class<? extends ZomboidJarProcessor<?>> clazz, Object... parameters) {
+    public void addZomboidJarProcessor(Class<? extends ZomboidJarProcessor<?>> clazz,
+        Object... parameters) {
         getZomboidJarProcessors().add(getProject().getObjects().newInstance(clazz, parameters));
     }
 
@@ -261,12 +271,14 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
     }
 
     @Override
-    public RemapConfigurationSettings addRemapConfiguration(String name, Action<RemapConfigurationSettings> action) {
+    public RemapConfigurationSettings addRemapConfiguration(String name,
+        Action<RemapConfigurationSettings> action) {
         final RemapConfigurationSettings configurationSettings =
             getProject().getObjects().newInstance(RemapConfigurationSettings.class, name);
 
         // TODO remove in 2.0, this is a fallback to mimic the previous (Broken) behaviour
-        configurationSettings.getSourceSet().convention(SourceSetHelper.getMainSourceSet(getProject()));
+        configurationSettings.getSourceSet()
+            .convention(SourceSetHelper.getMainSourceSet(getProject()));
 
         action.execute(configurationSettings);
         RemapConfigurations.applyToProject(getProject(), configurationSettings);
@@ -318,7 +330,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
                     SourceSetHelper.getMainSourceSet(getProject()));
 
             if (leafModJson == null) {
-                throw new RuntimeException("Could not find a leaf.mod.json file in the main sourceset");
+                throw new RuntimeException(
+                    "Could not find a leaf.mod.json file in the main sourceset");
             }
 
             return leafModJson.getModVersion();
@@ -351,7 +364,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
         final String taskName;
 
         if (areEnvironmentSourceSetsSplit()) {
-            taskName = "gen%sSourcesWith%s".formatted(client ? "ClientOnly" : "Common", decompilerName);
+            taskName = "gen%sSourcesWith%s".formatted(client ? "ClientOnly" : "Common",
+                decompilerName);
         } else {
             taskName = "genSourcesWith" + decompilerName;
         }
@@ -405,7 +419,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
             parameterAction.execute(parameters);
             holder = objectFactory.newInstance(RemapperExtensionHolder.class, parameters);
         } else {
-            holder = objectFactory.newInstance(RemapperExtensionHolder.class, RemapperParameters.None.INSTANCE);
+            holder = objectFactory.newInstance(RemapperExtensionHolder.class,
+                RemapperParameters.None.INSTANCE);
         }
 
         holder.getRemapperExtensionClass().set(remapperExtensionClass.getName());
@@ -423,7 +438,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
     public FileCollection getNamedZomboidJars() {
         final ConfigurableFileCollection jars = getProject().getObjects().fileCollection();
         jars.from(getProject()
-            .provider(() -> LoomGradleExtension.get(getProject()).getZomboidJars(MappingsNamespace.NAMED)));
+            .provider(() -> LoomGradleExtension.get(getProject())
+                .getZomboidJars(MappingsNamespace.NAMED)));
         return jars;
     }
 
@@ -431,7 +447,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
     protected abstract LoomFiles getFiles();
 
-    // This is here to ensure that LoomGradleExtensionApiImpl compiles without any unimplemented methods
+    // This is here to ensure that LoomGradleExtensionApiImpl compiles without any unimplemented
+    // methods
     private final class EnsureCompile extends LoomGradleExtensionApiImpl {
         private EnsureCompile() {
             super(null, null);

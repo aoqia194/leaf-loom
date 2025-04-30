@@ -24,8 +24,7 @@
 package dev.aoqia.leaf.loom.test.util
 
 
-import groovy.io.FileType
-import groovy.transform.Immutable
+import dev.aoqia.loom.test.LoomTestConstants
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -34,6 +33,8 @@ import spock.lang.Shared
 
 import groovy.io.FileType
 import groovy.transform.Immutable
+
+import dev.aoqia.loom.test.LoomTestConstants
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -41,7 +42,13 @@ import org.gradle.util.GradleVersion
 import spock.lang.Shared
 
 import dev.aoqia.leaf.loom.util.ZipUtils
+
 import dev.aoqia.loom.test.LoomTestConstants
+import org.apache.commons.io.FileUtils
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.testkit.runner.GradleRunner
+import org.gradle.util.GradleVersion
+import spock.lang.Shared
 
 trait GradleProjectTestTrait {
 	@Lazy

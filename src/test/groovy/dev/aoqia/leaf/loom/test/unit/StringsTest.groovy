@@ -32,6 +32,9 @@ import spock.lang.Unroll
 
 import dev.aoqia.leaf.loom.util.Strings
 
+import spock.lang.Specification
+import spock.lang.Unroll
+
 class StringsTest extends Specification {
 	@Unroll
 	def "capitalize '#input'"() {

@@ -24,15 +24,19 @@
 package dev.aoqia.leaf.loom.test.unit.processor
 
 
+import dev.aoqia.loom.test.util.GradleTestUtil
 import spock.lang.Specification
 
+import dev.aoqia.loom.test.util.GradleTestUtil
 import spock.lang.Specification
 
 import dev.aoqia.leaf.loom.api.processor.SpecContext
 import dev.aoqia.leaf.loom.configuration.accesswidener.AccessWidenerJarProcessor
 import dev.aoqia.leaf.loom.util.fmj.LeafModJson
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment
+
 import dev.aoqia.loom.test.util.GradleTestUtil
+import spock.lang.Specification
 
 class AccessWidenerJarProcessorTest extends Specification {
 	def "Local AW"() {

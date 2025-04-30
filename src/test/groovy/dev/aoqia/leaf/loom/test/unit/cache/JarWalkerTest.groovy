@@ -24,17 +24,23 @@
 package dev.aoqia.leaf.loom.test.unit.cache
 
 
+import dev.aoqia.loom.test.util.ZipTestUtils
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 import spock.lang.Specification
 
+import dev.aoqia.loom.test.util.ZipTestUtils
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 import spock.lang.Specification
 
 import dev.aoqia.leaf.loom.decompilers.cache.JarWalker
 import dev.aoqia.leaf.loom.util.FileSystemUtil
+
 import dev.aoqia.loom.test.util.ZipTestUtils
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Opcodes
+import spock.lang.Specification
 
 class JarWalkerTest extends Specification {
 	def "find classes in jar"() {

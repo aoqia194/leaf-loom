@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
@@ -40,8 +39,11 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.assets.AssetIndex;
 import dev.aoqia.leaf.loom.util.*;
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileExecutor;
 import dev.aoqia.leaf.loom.util.copygamefile.GradleCopyGameFileProgressListener;
+import dev.aoqia.leaf.loom.util.download.DownloadException;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 import dev.aoqia.leaf.loom.util.gradle.ProgressGroup;
+
+import com.google.common.base.Preconditions;
 import org.apache.commons.io.FilenameUtils;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
@@ -69,6 +71,7 @@ public abstract class ZomboidProvider {
         ConfigContext configContext) {
         this.clientMetadataProvider = clientMetadataProvider;
         this.configContext = configContext;
+
         serverMetadataProvider = null;
     }
 
@@ -104,6 +107,9 @@ public abstract class ZomboidProvider {
     private void packageGameFiles(Project project, int copyFileThreads,
         boolean isServer) throws IOException {
         final Platform.OperatingSystem os = Platform.CURRENT.getOperatingSystem();
+        final Platform.Architecture arch = Platform.CURRENT.getArchitecture();
+        final String includedArchStr = arch.is64Bit() ? "64/" : "32/";
+        final String excludedArchStr = arch.is64Bit() ? "32/" : "64/";
         final String osLibsStr = os.isWindows() ? "win" : "linux";
         final String envStr = !isServer ? "Client" : "Server";
 
@@ -127,41 +133,61 @@ public abstract class ZomboidProvider {
              ProgressGroup progressGroup = new ProgressGroup(project,
                  "Copy %s Game Assets".formatted(envStr));
              CopyGameFileExecutor executor = new CopyGameFileExecutor(copyFileThreads)) {
+
             final AssetIndex assetIndex = !isServer ? getClientAssetIndex() : getServerAssetIndex();
             for (AssetIndex.Object object : assetIndex.getObjects()) {
                 Path path = Path.of(FilenameUtils.separatorsToSystem(object.path()));
                 Path flatPath = path;
                 // Strip the stupid subfolder away if there is one
-                if (os.isLinux() && flatPath.startsWith("projectzomboid")) {
+                if ((os.isLinux() && flatPath.startsWith("projectzomboid/")) ||
+                    isServer && flatPath.startsWith("java/")) {
                     flatPath = flatPath.subpath(1, flatPath.getNameCount());
                 }
                 // A string specifically for literal checking like with `contains` below.
                 String safePath = FilenameUtils.separatorsToUnix(flatPath.toString());
 
                 // Exclude certain folders for dev environment.
-                if (safePath.contains("jre/")
-                    || safePath.contains("jre64/")
-                    || safePath.contains("mods/")
-                    || safePath.contains("launcher/")
-                    || safePath.contains("license/")
-                    || safePath.contains("Workshop/")
-                    || safePath.endsWith(".bat")
-                    || safePath.endsWith(".exe")
-                    || safePath.endsWith(".sh")
-                    || safePath.endsWith(".desktop")
-                    || safePath.endsWith("/projectzomboid")
-                    || safePath.contains(osLibsStr + "32/")
-                    || safePath.startsWith("ProjectZomboid64")
-                    || safePath.startsWith("ProjectZomboid32")) {
-                    continue;
+                if (!safePath.endsWith(".class")) {
+                    if (safePath.startsWith("ProjectZomboid64")
+                        || safePath.startsWith("ProjectZomboid32")
+                        || safePath.startsWith("projectzomboid")
+                        || safePath.startsWith("terms and conditions.txt")
+                        || safePath.startsWith("SVNRevision.txt")
+                        || safePath.startsWith("jre/")
+                        || safePath.startsWith("jre64/")
+                        || safePath.startsWith("mods/")
+                        || safePath.startsWith("logs/")
+                        || safePath.startsWith("depotcache/")
+                        || safePath.startsWith("steamapps/")
+                        || safePath.startsWith("userdata/")
+                        || safePath.startsWith("config/")
+                        || safePath.startsWith("appcache/")
+                        || safePath.startsWith("launcher/")
+                        || safePath.startsWith("license/")
+                        || safePath.startsWith("Workshop/")
+                        || safePath.startsWith("steamapps/")
+                        || safePath.startsWith(osLibsStr + excludedArchStr)
+                        || safePath.endsWith(".json")
+                        || safePath.endsWith(".bat")
+                        || safePath.endsWith(".exe")
+                        || safePath.endsWith(".sh")
+                        || safePath.endsWith(".desktop")) {
+                        continue;
+                    }
+
+                    if (isServer) {
+                        if (safePath.startsWith("natives/" + osLibsStr + excludedArchStr)) {
+                            continue;
+                        }
+                    }
                 }
 
-                final String sha1 = object.hash();
+                final String hash = object.hash();
                 // Because the src path still uses the unflattened path.
                 final Path srcPath = gameInstallPath.resolve(path);
                 Path dstPath = outputJar.get().getPath(flatPath.toString());
 
-                // File exists check.
+                // File exists check. We already check existing files in CopyGameFile.
                 if (!srcPath.toFile().exists()) {
                     if (GradleUtils.getBooleanProperty(project,
                         Constants.Properties.IGNORE_MISSING_FILES)) {
@@ -181,7 +207,10 @@ public abstract class ZomboidProvider {
                     if (safePath.endsWith(".jar")) {
                         dstPath = extractedDir().toPath().resolve(flatPath.getFileName());
                         extractedLibs.add(dstPath);
-                    } else if (safePath.contains(osLibsStr + "64/")) {
+                    } else if ((!isServer && safePath.contains(osLibsStr + includedArchStr)) ||
+                               (isServer && safePath.contains("natives/")) ||
+                               safePath.contains("java/")) {
+                        // Flatten the path so that it gets extracted to root folder.
                         dstPath = extractedDir().toPath().resolve(flatPath.getFileName());
                     } else {
                         dstPath = extractedDir().toPath().resolve(flatPath);
@@ -189,7 +218,7 @@ public abstract class ZomboidProvider {
                 }
 
                 getExtension().copyGameFile(srcPath.toString())
-                    .sha1(sha1)
+                    .sha1(hash)
                     .progress(new GradleCopyGameFileProgressListener(object.path(),
                         progressGroup::createProgressLogger))
                     .copyGameFileFromPathAsync(dstPath, executor);
@@ -207,39 +236,37 @@ public abstract class ZomboidProvider {
     }
 
     private AssetIndex getClientAssetIndex() throws IOException {
-        final ZomboidVersionMeta.AssetIndex assetIndex =
-            LoomGradlePlugin.GSON.fromJson(
-                LoomGradlePlugin.GSON.toJson(getClientVersionInfo().assetIndex()),
-                ZomboidVersionMeta.AssetIndex.class);
-        final File indexFile = new File(workingDir(),
-            "zomboid_client_index_manifest.json");
+        final ZomboidVersionMeta.AssetIndex assetIndex = getClientVersionInfo().assetIndex();
+        final File indexFile = new File(workingDir(), "zomboid_client_index_manifest.json");
 
         final String json = getExtension()
-            .download(Constants.INDEX_MANIFEST_PATH + "client/" +
-                      MirrorUtil.getOsStringForUrl() + "/" +
-                      clientZomboidVersion() + ".json")
+            .download(assetIndex.url())
             .sha1(assetIndex.sha1())
             .downloadString(indexFile.toPath());
-
         return LoomGradlePlugin.GSON.fromJson(json, AssetIndex.class);
     }
 
-    private AssetIndex getServerAssetIndex() throws IOException {
-        final ZomboidVersionMeta.AssetIndex assetIndex =
-            LoomGradlePlugin.GSON.fromJson(
-                LoomGradlePlugin.GSON.toJson(getServerVersionInfo().assetIndex()),
-                ZomboidVersionMeta.AssetIndex.class);
-        final File indexFile = new File(workingDir(),
-            "zomboid_server_index_manifest.json");
+    private AssetIndex getServerAssetIndex() throws DownloadException {
+        final ZomboidVersionMeta.AssetIndex assetIndex = getServerVersionInfo().assetIndex();
+        final File serverIndexFile = new File(workingDir(), "zomboid_server_index_manifest.json");
+        final File commonIndexFile = new File(workingDir(),
+            "zomboid_server-common_index_manifest.json");
 
-        final String json = getExtension()
-            .download(Constants.INDEX_MANIFEST_PATH + "server/" +
-                      MirrorUtil.getOsStringForUrl() + "/" +
-                      serverZomboidVersion() + ".json")
+        final String serverJson = getExtension()
+            .download(assetIndex.url())
             .sha1(assetIndex.sha1())
-            .downloadString(indexFile.toPath());
+            .downloadString(serverIndexFile.toPath());
+        final var serverIndexes = LoomGradlePlugin.GSON.fromJson(serverJson, AssetIndex.class);
 
-        return LoomGradlePlugin.GSON.fromJson(json, AssetIndex.class);
+        final String commonJson = getExtension()
+            .download(assetIndex.url().replace(MirrorUtil.getOsStringForUrl(), "common"))
+            // .sha1(assetIndex.sha1())
+            .downloadString(commonIndexFile.toPath());
+        final var commonIndexes = LoomGradlePlugin.GSON.fromJson(commonJson, AssetIndex.class);
+
+        // Merging server-common indexes into server indexes index class and returning that.
+        serverIndexes.objects().putAll(commonIndexes.objects());
+        return serverIndexes;
     }
 
     protected void initFiles() {
@@ -319,7 +346,7 @@ public abstract class ZomboidProvider {
     }
 
     protected boolean provideServer() {
-        return false;
+        return true;
     }
 
     public abstract List<Path> getZomboidJars();

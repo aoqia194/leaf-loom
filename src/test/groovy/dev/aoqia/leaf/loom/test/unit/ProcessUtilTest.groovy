@@ -30,6 +30,8 @@ import spock.lang.Specification
 
 import dev.aoqia.leaf.loom.util.ProcessUtil
 
+import spock.lang.Specification
+
 class ProcessUtilTest extends Specification {
 	def "print process info"() {
 		when:

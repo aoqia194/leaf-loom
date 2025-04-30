@@ -33,18 +33,18 @@ import com.microsoft.java.debug.core.DebugUtility
 import com.microsoft.java.debug.core.IDebugSession
 import com.sun.jdi.Bootstrap
 import com.sun.jdi.event.BreakpointEvent
-import groovy.transform.CompileStatic
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.functions.Function
 import spock.lang.Specification
 import spock.lang.Timeout
 
+import groovy.transform.CompileStatic
+
 import com.microsoft.java.debug.core.DebugUtility
 import com.microsoft.java.debug.core.IDebugSession
 import com.sun.jdi.Bootstrap
 import com.sun.jdi.event.BreakpointEvent
-import groovy.transform.CompileStatic
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.functions.Function
@@ -54,6 +54,16 @@ import spock.lang.Timeout
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 import dev.aoqia.leaf.loom.util.ZipUtils
+
+import com.microsoft.java.debug.core.DebugUtility
+import com.microsoft.java.debug.core.IDebugSession
+import com.sun.jdi.Bootstrap
+import com.sun.jdi.event.BreakpointEvent
+import io.reactivex.Maybe
+import io.reactivex.Observable
+import io.reactivex.functions.Function
+import spock.lang.Specification
+import spock.lang.Timeout
 
 import static dev.aoqia.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

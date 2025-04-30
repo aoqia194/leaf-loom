@@ -23,15 +23,11 @@
  */
 package dev.aoqia.leaf.loom.test.benchmark
 
-
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 
-import groovy.time.TimeCategory
-import groovy.time.TimeDuration
-
+import dev.aoqia.leaf.loom.test.LoomTestConstants
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
-import dev.aoqia.loom.test.LoomTestConstants
 
 /**
  * Run this class, passing a working dir as the first argument.
@@ -40,7 +36,7 @@ import dev.aoqia.loom.test.LoomTestConstants
 @Singleton
 class LeafAPIBenchmark implements GradleProjectTestTrait {
 	def run(File dir) {
-		return; // TODO: Implement.
+		return // TODO: Implement.
 		def gradle = gradleProject(
 				version: LoomTestConstants.DEFAULT_GRADLE,
 				projectDir: new File(dir, "project"),

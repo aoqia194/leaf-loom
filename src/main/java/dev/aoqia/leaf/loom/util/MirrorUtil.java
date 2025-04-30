@@ -31,27 +31,43 @@ import org.jetbrains.annotations.Nullable;
 
 public class MirrorUtil {
     public static Path getClientInstallPath(ExtensionAware aware) {
-        if (aware.getExtensions().getExtraProperties().has("loom_game_install_path")) {
-            return Path.of(String.valueOf(aware.getExtensions().getExtraProperties().get("loom_game_install_path")));
+        if (aware.getExtensions().getExtraProperties().has("loom_client_install_path")) {
+            return Path.of(String.valueOf(
+                aware.getExtensions().getExtraProperties().get("loom_client_install_path")));
         }
 
         return Constants.getClientInstallPath();
     }
 
     public static Path getServerInstallPath(@Nullable ExtensionAware aware) {
-        if (aware != null && aware.getExtensions().getExtraProperties().has("loom_server_install_path")) {
-            return Path.of(String.valueOf(aware.getExtensions().getExtraProperties().get("loom_server_install_path")));
+        if (aware != null &&
+            aware.getExtensions().getExtraProperties().has("loom_server_install_path")) {
+            return Path.of(String.valueOf(
+                aware.getExtensions().getExtraProperties().get("loom_server_install_path")));
         }
 
         return Constants.getServerInstallPath();
     }
 
     public static String getClientVersionManifests(@Nullable ExtensionAware aware) {
-        if (aware != null && aware.getExtensions().getExtraProperties().has("loom_version_manifests")) {
-            return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_version_manifests"));
+        if (aware != null &&
+            aware.getExtensions().getExtraProperties().has("loom_version_manifests")) {
+            return String.valueOf(
+                aware.getExtensions().getExtraProperties().get("loom_version_manifests"));
         }
 
-        return Constants.VERSION_MANIFESTS + "client/" + getOsStringForUrl() + "/version_manifest.json";
+        return Constants.VERSION_MANIFESTS + "client/" + getOsStringForUrl() +
+               "/version_manifest.json";
+    }
+
+    public static String getServerVersionManifests(ExtensionAware aware) {
+        if (aware.getExtensions().getExtraProperties().has("loom_server_version_manifests")) {
+            return String.valueOf(
+                aware.getExtensions().getExtraProperties().get("loom_server_version_manifests"));
+        }
+
+        return Constants.VERSION_MANIFESTS + "server/" + getOsStringForUrl() +
+               "/version_manifest.json";
     }
 
     public static String getOsStringForUrl() throws RuntimeException {
@@ -67,17 +83,10 @@ public class MirrorUtil {
         }
     }
 
-    public static String getServerVersionManifests(ExtensionAware aware) {
-        if (aware.getExtensions().getExtraProperties().has("loom_server_version_manifests")) {
-            return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_server_version_manifests"));
-        }
-
-        return Constants.VERSION_MANIFESTS + "server/" + getOsStringForUrl() + "/version_manifest.json";
-    }
-
     public static String getFabricRepository(ExtensionAware aware) {
         if (aware.getExtensions().getExtraProperties().has("loom_fabric_repository")) {
-            return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_fabric_repository"));
+            return String.valueOf(
+                aware.getExtensions().getExtraProperties().get("loom_fabric_repository"));
         }
 
         return Constants.FABRIC_REPOSITORY;

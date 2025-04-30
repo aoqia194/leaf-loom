@@ -36,6 +36,9 @@ import dev.aoqia.leaf.loom.api.remapping.RemapperExtension
 import dev.aoqia.leaf.loom.api.remapping.RemapperParameters
 import dev.aoqia.leaf.loom.util.Constants
 
+import org.gradle.api.provider.MapProperty
+import org.objectweb.asm.ClassVisitor
+
 class TestRemapperExtension implements RemapperExtension<Params> {
 	final Params parameters
 

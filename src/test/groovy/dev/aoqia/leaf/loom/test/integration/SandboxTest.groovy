@@ -25,10 +25,14 @@ package dev.aoqia.leaf.loom.test.integration
 
 import java.nio.file.Path
 
+import dev.aoqia.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.loom.test.util.ZipTestUtils
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import dev.aoqia.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.loom.test.util.ZipTestUtils
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -37,8 +41,12 @@ import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper
 import dev.aoqia.leaf.loom.test.unit.sandbox.SandboxEntrypoint
 import dev.aoqia.leaf.loom.util.Constants
 import dev.aoqia.leaf.loom.util.ZipUtils
+
 import dev.aoqia.loom.test.util.GradleProjectTestTrait
 import dev.aoqia.loom.test.util.ZipTestUtils
+import org.intellij.lang.annotations.Language
+import spock.lang.Specification
+import spock.lang.Unroll
 
 import static dev.aoqia.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
