@@ -139,7 +139,8 @@ public abstract class ZomboidProvider {
                 Path path = Path.of(FilenameUtils.separatorsToSystem(object.path()));
                 Path flatPath = path;
                 // Strip the stupid subfolder away if there is one
-                if (os.isLinux() && flatPath.startsWith("projectzomboid")) {
+                if ((os.isLinux() && flatPath.startsWith("projectzomboid/")) ||
+                    isServer && flatPath.startsWith("java/")) {
                     flatPath = flatPath.subpath(1, flatPath.getNameCount());
                 }
                 // A string specifically for literal checking like with `contains` below.
@@ -147,53 +148,46 @@ public abstract class ZomboidProvider {
 
                 // Exclude certain folders for dev environment.
                 if (!safePath.endsWith(".class")) {
-                    if (!isServer) {
-                        if (safePath.contains("jre/")
-                            || safePath.contains("jre64/")
-                            || safePath.contains("mods/")
-                            || safePath.contains("launcher/")
-                            || safePath.contains("license/")
-                            || safePath.contains("Workshop/")
-                            || safePath.contains("steamapps/")
-                            || safePath.endsWith(".bat")
-                            || safePath.endsWith(".exe")
-                            || safePath.endsWith(".sh")
-                            || safePath.endsWith(".desktop")
-                            || safePath.endsWith("/projectzomboid")
-                            || safePath.contains(osLibsStr + excludedArchStr)
-                            || safePath.startsWith("ProjectZomboid64")
-                            || safePath.startsWith("ProjectZomboid32")) {
-                            continue;
-                        }
-                    } else {
-                        if (safePath.contains("jre/")
-                            || safePath.contains("jre64/")
-                            || safePath.contains("mods/")
-                            || safePath.contains("logs/")
-                            || safePath.contains("license/")
-                            || safePath.contains("depotcache/")
-                            || safePath.contains("steamapps/")
-                            || safePath.contains("userdata/")
-                            || safePath.contains("config/")
-                            || safePath.contains("appcache/")
-                            || safePath.endsWith(".bat")
-                            || safePath.endsWith(".exe")
-                            || safePath.endsWith(".sh")
-                            || safePath.endsWith(".desktop")
-                            || safePath.contains("natives/" + osLibsStr + excludedArchStr)
-                            || safePath.startsWith("ProjectZomboid64")
-                            || safePath.startsWith("ProjectZomboid32")) {
+                    if (safePath.startsWith("ProjectZomboid64")
+                        || safePath.startsWith("ProjectZomboid32")
+                        || safePath.startsWith("projectzomboid")
+                        || safePath.startsWith("terms and conditions.txt")
+                        || safePath.startsWith("SVNRevision.txt")
+                        || safePath.startsWith("jre/")
+                        || safePath.startsWith("jre64/")
+                        || safePath.startsWith("mods/")
+                        || safePath.startsWith("logs/")
+                        || safePath.startsWith("depotcache/")
+                        || safePath.startsWith("steamapps/")
+                        || safePath.startsWith("userdata/")
+                        || safePath.startsWith("config/")
+                        || safePath.startsWith("appcache/")
+                        || safePath.startsWith("launcher/")
+                        || safePath.startsWith("license/")
+                        || safePath.startsWith("Workshop/")
+                        || safePath.startsWith("steamapps/")
+                        || safePath.startsWith(osLibsStr + excludedArchStr)
+                        || safePath.endsWith(".json")
+                        || safePath.endsWith(".bat")
+                        || safePath.endsWith(".exe")
+                        || safePath.endsWith(".sh")
+                        || safePath.endsWith(".desktop")) {
+                        continue;
+                    }
+
+                    if (isServer) {
+                        if (safePath.startsWith("natives/" + osLibsStr + excludedArchStr)) {
                             continue;
                         }
                     }
                 }
 
-                final String sha1 = object.hash();
+                final String hash = object.hash();
                 // Because the src path still uses the unflattened path.
                 final Path srcPath = gameInstallPath.resolve(path);
                 Path dstPath = outputJar.get().getPath(flatPath.toString());
 
-                // File exists check.
+                // File exists check. We already check existing files in CopyGameFile.
                 if (!srcPath.toFile().exists()) {
                     if (GradleUtils.getBooleanProperty(project,
                         Constants.Properties.IGNORE_MISSING_FILES)) {
@@ -221,15 +215,10 @@ public abstract class ZomboidProvider {
                     } else {
                         dstPath = extractedDir().toPath().resolve(flatPath);
                     }
-                } else {
-                    // Server java files are inside of a "java" subfolder which we dont want.
-                    if (safePath.contains("java/")) {
-                        dstPath = extractedDir().toPath().resolve(flatPath.getFileName());
-                    }
                 }
 
                 getExtension().copyGameFile(srcPath.toString())
-                    .sha1(sha1)
+                    .sha1(hash)
                     .progress(new GradleCopyGameFileProgressListener(object.path(),
                         progressGroup::createProgressLogger))
                     .copyGameFileFromPathAsync(dstPath, executor);
