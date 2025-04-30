@@ -45,8 +45,18 @@ public final class AttributeHelper {
         }
 
         try {
-            final UserDefinedFileAttributeView attributeView = Files.getFileAttributeView(path,
-                UserDefinedFileAttributeView.class);
+            final UserDefinedFileAttributeView attributeView;
+
+            try {
+                attributeView = Files.getFileAttributeView(path,
+                    UserDefinedFileAttributeView.class);
+            } catch (UnsupportedOperationException ignored) {
+                throw new FileSystemException("AttributeView was not supported, probably ZipFs.");
+            }
+
+            if (attributeView == null) {
+                throw new FileSystemException("AttributeView was null");
+            }
 
             if (!attributeView.list().contains(key)) {
                 return Optional.empty();
