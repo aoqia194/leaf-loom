@@ -28,8 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Stream;
@@ -66,6 +65,41 @@ public class JarUtil {
                 }
 
                 entries.add(entryPath);
+            }
+        }
+
+        return entries;
+    }
+
+    /**
+     * Collects all the entries in a JAR and their hashes.
+     *
+     * @param input Path to the JAR file.
+     * @return A map of JAR entries with hashes.
+     */
+    public static Map<String, String> getJarEntriesWithHashes(Path input) throws IOException {
+        Map<String, String> entries = new HashMap<>();
+
+        try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(input);
+             Stream<Path> walk = Files.walk(fs.get().getPath("/"))) {
+            Iterator<Path> iterator = walk.iterator();
+
+            while (iterator.hasNext()) {
+                Path fsPath = iterator.next();
+
+                if (!Files.isRegularFile(fsPath)) {
+                    continue;
+                }
+
+                final Path entryPath = fs.get().getPath("/").relativize(fsPath);
+                final Optional<String> hash = AttributeHelper.readAttribute(entryPath, "LoomHash");
+
+                if (entryPath.toString().startsWith("META-INF/") ||
+                    entryPath.toString().endsWith(".att")) {
+                    continue;
+                }
+
+                entries.put(entryPath.toString(), hash.orElse(""));
             }
         }
 
