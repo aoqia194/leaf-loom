@@ -53,6 +53,11 @@ public abstract class LoomTasks implements Runnable {
             return;
         }
 
+        // Used for clearing loom cache from IDE when there are lots of versions.
+        getTasks().register("clearLoomCache", ClearLoomCacheTask.class, t -> {
+           t.setDescription("Clears the leaf-loom gradle caches.");
+        });
+
         var generateLog4jConfig = getTasks().register("generateLog4jConfig", GenerateLog4jConfigTask.class, t -> {
             t.setDescription("Generate the log4j config file");
         });
