@@ -452,6 +452,6 @@ class DownloadFileTest extends DownloadTest {
 				.downloadPath(file)
 
 		then:
-		Checksum.sha1Hex(file) == "8e8c9be5dc27802caba47053d4fdea328f7f89bd"
+		Checksum.of(file).sha1().hex() == "8e8c9be5dc27802caba47053d4fdea328f7f89bd"
 	}
 }
