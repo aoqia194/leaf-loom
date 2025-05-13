@@ -30,20 +30,13 @@ import dev.aoqia.leaf.loom.util.Constants;
 
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.TaskAction;
 
 public abstract class ClearLoomCacheTask extends DefaultTask {
     public ClearLoomCacheTask() {
         setGroup(Constants.TaskGroup.LEAF);
-
-        getCacheDir().set(getExtension().getFiles().getUserCache());
     }
-
-    @InputFile
-    public abstract RegularFileProperty getCacheDir();
 
     @Internal
     protected LoomGradleExtension getExtension() {
@@ -53,7 +46,7 @@ public abstract class ClearLoomCacheTask extends DefaultTask {
     @TaskAction
     public void run() {
         try {
-            FileUtils.deleteDirectory(getCacheDir().get().getAsFile());
+            FileUtils.deleteDirectory(getExtension().getFiles().getUserCache());
         } catch (IOException e) {
             throw new RuntimeException("Failed to delete leaf-loom gradle cache directory.");
         } catch (IllegalArgumentException e) {
