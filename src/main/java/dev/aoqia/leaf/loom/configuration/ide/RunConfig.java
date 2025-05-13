@@ -26,7 +26,9 @@ package dev.aoqia.leaf.loom.configuration.ide;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,11 +49,15 @@ import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.ResolvedModuleVersion;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class RunConfig {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RunConfig.class);
+
     public String configName;
     public String eclipseProjectName;
     public String ideaModuleName;
@@ -69,7 +75,7 @@ public class RunConfig {
     // Turns camelCase/PascalCase into Capital Case
     // caseConversionExample -> Case Conversion Example
     private static String capitalizeCamelCaseName(String name) {
-        if (name.length() == 0) {
+        if (name.isEmpty()) {
             return "";
         }
 
@@ -117,6 +123,13 @@ public class RunConfig {
 
         String workingDir = extension.getZomboidProvider().extractedDir().toString();
         String runDir = settings.getRunDir();
+        LOGGER.info("Loom RunConfig workingdir={}, runDir={}", workingDir, runDir);
+        // Create rundir here and pray it's the correct point to do so.
+        try {
+            Files.createDirectories(Paths.get(workingDir));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create rundir for project: ", e);
+        }
 
         boolean appendProjectPath = settings.getAppendProjectPathToConfigName().get();
         RunConfig runConfig = new RunConfig();
