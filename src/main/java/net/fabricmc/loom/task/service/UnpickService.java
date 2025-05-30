@@ -24,42 +24,62 @@
 
 package net.fabricmc.loom.task.service;
 
+import java.io.Closeable;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
+import daomephsta.unpick.api.ConstantUninliner;
+import daomephsta.unpick.api.classresolvers.ClassResolvers;
+import daomephsta.unpick.api.classresolvers.IClassResolver;
+import daomephsta.unpick.api.constantgroupers.ConstantGroupers;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputFile;
-import org.gradle.workers.WorkAction;
-import org.gradle.workers.WorkParameters;
-import org.gradle.workers.WorkQueue;
-import org.gradle.workers.WorkerExecutor;
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.ClassNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.loom.configuration.providers.mappings.MappingConfiguration;
+import net.fabricmc.loom.configuration.providers.mappings.unpick.UnpickMetadata;
 import net.fabricmc.loom.task.GenerateSourcesTask;
+import net.fabricmc.loom.util.AsyncZipProcessor;
 import net.fabricmc.loom.util.Checksum;
 import net.fabricmc.loom.util.Constants;
+import net.fabricmc.loom.util.FileSystemUtil;
 import net.fabricmc.loom.util.SLF4JAdapterHandler;
 import net.fabricmc.loom.util.service.Service;
 import net.fabricmc.loom.util.service.ServiceFactory;
 import net.fabricmc.loom.util.service.ServiceType;
 
 public class UnpickService extends Service<UnpickService.Options> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(UnpickService.class);
+	private static final java.util.logging.Logger JAVA_LOGGER = java.util.logging.Logger.getLogger("loom-unpick-service");
+
+	static {
+		JAVA_LOGGER.setUseParentHandlers(false);
+		JAVA_LOGGER.addHandler(new SLF4JAdapterHandler(LOGGER, true));
+	}
+
 	public static final ServiceType<Options, UnpickService> TYPE = new ServiceType<>(Options.class, UnpickService.class);
 
 	public interface Options extends Service.Options {
@@ -72,11 +92,11 @@ public class UnpickService extends Service<UnpickService.Options> {
 		@InputFiles
 		ConfigurableFileCollection getUnpickClasspath();
 
-		@InputFiles
-		ConfigurableFileCollection getUnpickRuntimeClasspath();
-
 		@OutputFile
 		RegularFileProperty getUnpickOutputJar();
+
+		@Input
+		Property<Boolean> getLenient();
 	}
 
 	public static Provider<Options> createOptions(GenerateSourcesTask task) {
@@ -89,16 +109,25 @@ public class UnpickService extends Service<UnpickService.Options> {
 				return false;
 			}
 
+			UnpickMetadata unpickMetadata = mappingConfiguration.getUnpickMetadata();
+
+			if (unpickMetadata instanceof UnpickMetadata.V2 v2) {
+				if (!Objects.equals(v2.namespace(), MappingsNamespace.NAMED.toString())) {
+					// TODO!
+					throw new IllegalStateException("Unpick metadata with a namespace other than named is not yet supported");
+				}
+			}
+
 			ConfigurationContainer configurations = project.getConfigurations();
 			File mappingsWorkingDir = mappingConfiguration.mappingsWorkingDir().toFile();
 
-			options.getUnpickRuntimeClasspath().from(configurations.getByName(Constants.Configurations.UNPICK_CLASSPATH));
 			options.getUnpickDefinitions().set(mappingConfiguration.getUnpickDefinitionsFile());
 			options.getUnpickOutputJar().set(task.getInputJarName().map(s -> project.getLayout()
 					.dir(project.provider(() -> mappingsWorkingDir)).get().file(s + "-unpicked.jar")));
 			options.getUnpickConstantJar().setFrom(configurations.getByName(Constants.Configurations.MAPPING_CONSTANTS));
 			options.getUnpickClasspath().setFrom(configurations.getByName(Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES));
 			options.getUnpickClasspath().from(configurations.getByName(Constants.Configurations.MOD_COMPILE_CLASSPATH_MAPPED));
+			options.getLenient().set(unpickMetadata instanceof UnpickMetadata.V1);
 			extension.getMinecraftJars(MappingsNamespace.NAMED).forEach(options.getUnpickClasspath()::from);
 			return true;
 		});
@@ -108,73 +137,107 @@ public class UnpickService extends Service<UnpickService.Options> {
 		super(options, serviceFactory);
 	}
 
-	public Path unpickJar(WorkerExecutor workerExecutor, Path inputJar, @Nullable Path existingClasses) {
+	public Path unpickJar(Path inputJar, @Nullable Path existingClasses) throws IOException {
+		final List<Path> classpath = Stream.of(
+				getOptions().getUnpickClasspath().getFiles().stream().map(File::toPath),
+				getOptions().getUnpickConstantJar().getFiles().stream().map(File::toPath),
+				Stream.of(inputJar),
+				Stream.ofNullable(existingClasses)
+			).flatMap(Function.identity()).toList();
+		final Path unpickDefinitionsPath = getOptions().getUnpickDefinitions().getAsFile().get().toPath();
 		final Path outputJar = getOptions().getUnpickOutputJar().get().getAsFile().toPath();
-		final List<String> args = getUnpickArgs(inputJar, outputJar, existingClasses);
 
-		WorkQueue workQueue = workerExecutor.classLoaderIsolation(spec -> {
-			spec.getClasspath().from(getOptions().getUnpickRuntimeClasspath());
-		});
+		Files.deleteIfExists(outputJar);
 
-		workQueue.submit(UnpickAction.class, params -> {
-			params.getMainClass().set("daomephsta.unpick.cli.Main");
-			params.getArgs().set(args);
-		});
+		try (ZipFsClasspath zipFsClasspath = ZipFsClasspath.create(classpath);
+				InputStream unpickDefinitions = Files.newInputStream(unpickDefinitionsPath)) {
+			IClassResolver classResolver = zipFsClasspath.createClassResolver().chain(ClassResolvers.classpath());
+			ConstantUninliner uninliner = ConstantUninliner.builder()
+					.logger(JAVA_LOGGER)
+					.classResolver(classResolver)
+					.grouper(ConstantGroupers.dataDriven()
+							.logger(JAVA_LOGGER)
+							.lenient(getOptions().getLenient().get())
+							.classResolver(classResolver)
+							.mappingSource(unpickDefinitions)
+							.build())
+					.build();
 
-		workQueue.await();
+			AsyncZipProcessor.processEntries(inputJar, outputJar, new UnpickZipProcessor(uninliner));
+		}
 
 		return outputJar;
-	}
-
-	private List<String> getUnpickArgs(Path inputJar, Path outputJar, @Nullable Path existingClasses) {
-		var fileArgs = new ArrayList<File>();
-
-		fileArgs.add(inputJar.toFile());
-		fileArgs.add(outputJar.toFile());
-		fileArgs.add(getOptions().getUnpickDefinitions().get().getAsFile());
-		fileArgs.add(getOptions().getUnpickConstantJar().getSingleFile());
-
-		for (File file : getOptions().getUnpickClasspath()) {
-			fileArgs.add(file);
-		}
-
-		if (existingClasses != null) {
-			fileArgs.add(existingClasses.toFile());
-		}
-
-		return fileArgs.stream()
-				.map(File::getAbsolutePath)
-				.toList();
 	}
 
 	public String getUnpickCacheKey() {
 		return Checksum.of(List.of(
 				Checksum.of(getOptions().getUnpickDefinitions().getAsFile().get()),
-				Checksum.of(getOptions().getUnpickConstantJar()),
-				Checksum.of(getOptions().getUnpickRuntimeClasspath())
+				Checksum.of(getOptions().getUnpickConstantJar())
 		)).sha256().hex();
 	}
 
-	public interface UnpickParams extends WorkParameters {
-		Property<String> getMainClass();
-		ListProperty<String> getArgs();
+	private record UnpickZipProcessor(ConstantUninliner uninliner) implements AsyncZipProcessor {
+		@Override
+		public void processEntryAsync(Path input, Path output) throws IOException {
+			Files.createDirectories(output.getParent());
+
+			String fileName = input.toAbsolutePath().toString();
+
+			if (!fileName.endsWith(".class")) {
+				// Copy non-class files
+				Files.copy(input, output);
+				return;
+			}
+
+			ClassNode classNode = new ClassNode();
+
+			try (InputStream is = Files.newInputStream(input)) {
+				ClassReader reader = new ClassReader(is);
+				reader.accept(classNode, 0);
+			}
+
+			LOGGER.debug("Unpick class: {}", classNode.name);
+			uninliner.transform(classNode);
+
+			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+			classNode.accept(writer);
+
+			Files.write(output, writer.toByteArray());
+		}
 	}
 
-	public abstract static class UnpickAction implements WorkAction<UnpickParams> {
-		private static final Logger LOGGER = LoggerFactory.getLogger(UnpickAction.class);
+	private record ZipFsClasspath(List<FileSystemUtil.Delegate> fileSystems) implements Closeable {
+		private ZipFsClasspath {
+			if (fileSystems.isEmpty()) {
+				throw new IllegalArgumentException("No resolvers provided");
+			}
+		}
+
+		public static ZipFsClasspath create(List<Path> classpath) throws IOException {
+			var fileSystems = new ArrayList<FileSystemUtil.Delegate>();
+
+			for (Path path : classpath) {
+				FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(path, false);
+				fileSystems.add(fs);
+			}
+
+			return new ZipFsClasspath(fileSystems);
+		}
+
+		public IClassResolver createClassResolver() {
+			IClassResolver resolver = ClassResolvers.fromDirectory(fileSystems.getFirst().getRoot());
+
+			for (int i = 1; i < fileSystems.size(); i++) {
+				resolver = resolver.chain(ClassResolvers.fromDirectory(fileSystems.get(i).getRoot()));
+			}
+
+			return resolver;
+		}
 
 		@Override
-		public void execute() {
-			java.util.logging.Logger logger = java.util.logging.Logger.getLogger("unpick");
-			logger.setUseParentHandlers(false);
-			logger.addHandler(new SLF4JAdapterHandler(LOGGER, true));
-
-			try {
-				Class<?> unpickEntrypoint = Class.forName(getParameters().getMainClass().get());
-				unpickEntrypoint.getMethod("main", String[].class)
-						.invoke(null, (Object) getParameters().getArgs().get().toArray(String[]::new));
-			} catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-				throw new RuntimeException("Failed to run unpick", e);
+		public void close() throws IOException {
+			for (FileSystemUtil.Delegate fileSystem : fileSystems) {
+				fileSystem.close();
 			}
 		}
 	}
