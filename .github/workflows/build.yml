@@ -1,7 +1,9 @@
 name: Build
 
 on:
-#  push:
+  push:
+    branches:
+      - dev
   pull_request:
   workflow_call:
   workflow_run:
