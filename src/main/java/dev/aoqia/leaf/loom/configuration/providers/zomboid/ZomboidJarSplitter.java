@@ -23,19 +23,12 @@
  */
 package dev.aoqia.leaf.loom.configuration.providers.zomboid;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import dev.aoqia.leaf.loom.util.JarUtil;
 
 import com.google.common.collect.Sets;
@@ -64,43 +57,10 @@ public class ZomboidJarSplitter implements AutoCloseable {
         // Not something we expect, will require 3 jars, server, client and common.
         assert entryData.serverOnlyEntries.isEmpty();
 
-        copyEntriesToJar(entryData.commonEntries, serverInputJar, commonOutputJar, "common");
-        copyEntriesToJar(entryData.clientOnlyEntries, clientInputJar, clientOnlyOutputJar,
+        JarUtil.copyEntriesToJar(entryData.commonEntries, serverInputJar, commonOutputJar,
+            "common");
+        JarUtil.copyEntriesToJar(entryData.clientOnlyEntries, clientInputJar, clientOnlyOutputJar,
             "client");
-    }
-
-    private void createManifest(FileSystemUtil.Delegate outputFs, String env) throws IOException {
-        final Manifest manifest = new Manifest();
-        manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-        manifest.getMainAttributes().putValue(Constants.Manifest.SPLIT_ENV_NAME, env);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        manifest.write(out);
-        Files.createDirectories(outputFs.get().getPath("META-INF"));
-        Files.write(outputFs.get().getPath(Constants.Manifest.PATH), out.toByteArray());
-    }
-
-    // A duplicate from JarUtil for env specific manifest.
-    private void copyEntriesToJar(Set<String> entries, Path inputJar, Path outputJar, String env)
-        throws IOException {
-        Files.deleteIfExists(outputJar);
-
-        try (FileSystemUtil.Delegate inputFs = FileSystemUtil.getJarFileSystem(inputJar);
-             FileSystemUtil.Delegate outputFs = FileSystemUtil.getJarFileSystem(outputJar, true)) {
-            for (String entry : entries) {
-                Path inputPath = inputFs.get().getPath(entry);
-                Path outputPath = outputFs.get().getPath(entry);
-                assert Files.isRegularFile(inputPath);
-
-                Path outputPathParent = outputPath.getParent();
-                if (outputPathParent != null) {
-                    Files.createDirectories(outputPathParent);
-                }
-
-                Files.copy(inputPath, outputPath, StandardCopyOption.COPY_ATTRIBUTES);
-            }
-
-            createManifest(outputFs, env);
-        }
     }
 
     public void sharedEntry(String path) {

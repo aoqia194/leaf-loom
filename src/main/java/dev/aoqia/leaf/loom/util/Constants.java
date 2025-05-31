@@ -186,7 +186,7 @@ public class Constants {
                                                                       "-Extensions-Version";
         public static final String ZOMBOID_VERSION = "Leaf-Zomboid-Version";
         public static final String TINY_REMAPPER_VERSION = "Leaf-Tiny-Remapper-Version";
-        public static final String FABRIC_LOADER_VERSION = "Leaf-Loader-Version";
+        public static final String LEAF_LOADER_VERSION = "Leaf-Loader-Version";
         public static final String MIXIN_VERSION = "Leaf-Mixin-Version";
         public static final String MIXIN_GROUP = "Leaf-Mixin-Group";
         public static final String KNOWN_IDY_BSMS = "Leaf-Loom-Known-Indy-BSMS";
