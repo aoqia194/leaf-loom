@@ -3,7 +3,7 @@ name: Dry Release
 on:
   push:
     branches:
-      - dev
+      - main
 
 permissions:
   actions: write
