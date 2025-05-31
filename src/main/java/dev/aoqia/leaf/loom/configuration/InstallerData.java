@@ -23,15 +23,26 @@
  */
 package dev.aoqia.leaf.loom.configuration;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.LoomRepositoryPlugin;
 import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
 import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.apache.commons.io.FileSystem;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.ExternalModuleDependency;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.plugins.JavaPlugin;
@@ -65,21 +76,87 @@ public record InstallerData(String version, JsonObject installerJson) {
         Configuration annotationProcessor = project.getConfigurations()
             .getByName(JavaPlugin.ANNOTATION_PROCESSOR_CONFIGURATION_NAME);
 
+        boolean appliedJijJars = false;
         for (JsonElement jsonElement : jsonArray) {
             final JsonObject jsonObject = jsonElement.getAsJsonObject();
             final String name = jsonObject.get("name").getAsString();
 
-            LOGGER.debug("Adding dependency ({}) from installer JSON", name);
+            if (jsonObject.has("file")) {
+                final URI file = URI.create(jsonObject.get("file").getAsString());
 
-            ExternalModuleDependency modDep = (ExternalModuleDependency) project.getDependencies()
-                .create(name);
-            modDep.setTransitive(false); // Match the launcher in not being transitive
-            loaderDepsConfig.getDependencies().add(modDep);
+                if (file.getScheme().equalsIgnoreCase("loader")) {
+                    if (appliedJijJars) {
+                        break;
+                    }
 
-            // Work around https://github.com/FabricMC/Mixin/pull/60 and
-            // https://github.com/FabricMC/fabric-mixin-compile-extensions/issues/14.
-            if (!IdeaUtils.isIdeaSync() && extension.getMixin().getUseLegacyMixinAp().get()) {
-                annotationProcessor.getDependencies().add(modDep);
+                    File loaderJar = null;
+
+                    final var cfg = project.getConfigurations().getByName("modImplementation");
+                    if (!cfg.isCanBeResolved()) {
+                        throw new RuntimeException(
+                            String.format("Skipping configuration (%s) because it cant be resolved",
+                                cfg.getName()));
+                    }
+                    var result = cfg.getIncoming()
+                        .getArtifacts()
+                        .getArtifacts()
+                        .stream()
+                        .filter(artifact -> artifact.getId()
+                            .getComponentIdentifier()
+                            .toString()
+                            .startsWith("dev.aoqia.leaf:loader"))
+                        .toList();
+
+                    if (!result.isEmpty()) {
+                        loaderJar = result.get(0).getFile();
+                    }
+
+                    if (loaderJar == null) {
+                        throw new RuntimeException(
+                            String.format("Expected loader jar with string (%s) but found nothing.",
+                                file));
+                    }
+
+                    final String walkPath = "/META-INF/jars";
+                    try (var fs = FileSystemUtil.getJarFileSystem(loaderJar, false);
+                         var walk = Files.walk(fs.getPath(walkPath), 1)) {
+                        for (var iterator = walk.iterator(); iterator.hasNext(); ) {
+                            Path entry = iterator.next();
+
+                            // Files.walk includes the start path too, so skip it. :c
+                            if (entry.toString().equals(walkPath)) {
+                                continue;
+                            }
+
+                            Path src = fs.getPath("/").resolve(entry);
+                            Path srcFile = src.getFileName(); // is jars, not the jar itself
+                            Path dest = extension.getFiles()
+                                .getProjectBuildCache()
+                                .toPath()
+                                .resolve(FileSystem.getCurrent()
+                                    .normalizeSeparators(srcFile.toString()));
+
+                            // TODO: Maybe make this not replace existing if it takes too long.
+                            Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
+
+                            Dependency modDep = project.getDependencies()
+                                .create(project.files(dest));
+                            addDependency(modDep, extension, annotationProcessor,
+                                loaderDepsConfig);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to extract loader JiJ jars", e);
+                    }
+
+                    appliedJijJars = true;
+                }
+            } else {
+                ExternalModuleDependency modDep = (ExternalModuleDependency)
+                    project.getDependencies().create(name);
+
+                // Match the launcher in not being transitive
+                modDep.setTransitive(false);
+                addDependency(modDep, extension, annotationProcessor, loaderDepsConfig);
             }
 
             // If user choose to use dependencyResolutionManagement, then they should declare
@@ -89,6 +166,17 @@ public record InstallerData(String version, JsonObject installerJson) {
             }
 
             addRepository(jsonObject, project);
+        }
+    }
+
+    private void addDependency(Dependency dep, LoomGradleExtension extension, Configuration ap,
+        Configuration loaderDeps) {
+        loaderDeps.getDependencies().add(dep);
+
+        // Work around https://github.com/FabricMC/Mixin/pull/60 and
+        // https://github.com/FabricMC/fabric-mixin-compile-extensions/issues/14.
+        if (!IdeaUtils.isIdeaSync() && extension.getMixin().getUseLegacyMixinAp().get()) {
+            ap.getDependencies().add(dep);
         }
     }
 
