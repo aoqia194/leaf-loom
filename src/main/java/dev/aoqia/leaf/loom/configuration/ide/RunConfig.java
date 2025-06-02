@@ -123,7 +123,7 @@ public class RunConfig {
 
         String workingDir = extension.getZomboidProvider().extractedDir().toString();
         String runDir = settings.getRunDir();
-        LOGGER.info("Loom RunConfig workingdir={}, runDir={}", workingDir, runDir);
+
         // Create rundir here and pray it's the correct point to do so.
         try {
             Files.createDirectories(Paths.get(workingDir));
