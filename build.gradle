@@ -35,9 +35,7 @@ if (!ENV.CI) {
 
 // We must build against the version of Kotlin Gradle ships with.
 def props = new Properties()
-Project
-    .class
-    .getClassLoader()
+Project.class.getClassLoader()
     .getResource("gradle-kotlin-dsl-versions.properties").openStream().withCloseable {
     props.load(it)
 }

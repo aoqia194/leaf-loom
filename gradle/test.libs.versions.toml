@@ -6,9 +6,9 @@ mockito = "5.14.2"
 java-debug = "0.52.0"
 mixin = "0.15.5+mixin.0.8.7"
 
-gradle-nightly = "8.12-20241110002642+0000"
-leaf-loader = "0.1.0"
-leaf-installer = "0.1.0"
+gradle-nightly = "8.14-20250208001853+0000"
+leaf-loader = "1.2.0"
+leaf-installer = "1.0.1"
 
 [libraries]
 spock = { module = "org.spockframework:spock-core", version.ref = "spock" }

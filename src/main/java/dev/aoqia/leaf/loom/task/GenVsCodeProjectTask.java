@@ -23,26 +23,24 @@
  */
 package dev.aoqia.leaf.loom.task;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import javax.inject.Inject;
+import java.util.*;
+
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.gradle.SyncTaskBuildService;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import javax.inject.Inject;
 import org.gradle.api.Project;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
@@ -55,6 +53,18 @@ import org.gradle.api.tasks.TaskAction;
 // Recommended vscode plugin pack:
 // https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
 public abstract class GenVsCodeProjectTask extends AbstractLoomTask {
+    @Inject
+    public GenVsCodeProjectTask() {
+        setGroup(Constants.TaskGroup.IDE);
+        getLaunchConfigurations().set(getProject().provider(this::getConfigurations));
+        getLaunchJson()
+            .convention(getProject()
+                .getRootProject()
+                .getLayout()
+                .getProjectDirectory()
+                .file(".vscode/launch.json"));
+    }
+
     // Prevent Gradle from running vscode task asynchronously
     @ServiceReference(SyncTaskBuildService.NAME)
     abstract Property<SyncTaskBuildService> getSyncTask();
@@ -65,18 +75,6 @@ public abstract class GenVsCodeProjectTask extends AbstractLoomTask {
     @OutputFile
     protected abstract RegularFileProperty getLaunchJson();
 
-    @Inject
-    public GenVsCodeProjectTask() {
-        setGroup(Constants.TaskGroup.IDE);
-        getLaunchConfigurations().set(getProject().provider(this::getConfigurations));
-        getLaunchJson()
-                .convention(getProject()
-                        .getRootProject()
-                        .getLayout()
-                        .getProjectDirectory()
-                        .file(".vscode/launch.json"));
-    }
-
     private List<VsCodeConfiguration> getConfigurations() {
         List<VsCodeConfiguration> configurations = new ArrayList<>();
 
@@ -86,7 +84,8 @@ public abstract class GenVsCodeProjectTask extends AbstractLoomTask {
             }
 
             final VsCodeConfiguration configuration =
-                    VsCodeConfiguration.fromRunConfig(getProject(), RunConfig.runConfig(getProject(), settings));
+                VsCodeConfiguration.fromRunConfig(getProject(),
+                    RunConfig.runConfig(getProject(), settings));
             configurations.add(configuration);
         }
 
@@ -105,7 +104,7 @@ public abstract class GenVsCodeProjectTask extends AbstractLoomTask {
 
         if (Files.exists(launchJson)) {
             root = LoomGradlePlugin.GSON.fromJson(
-                    Files.readString(launchJson, StandardCharsets.UTF_8), JsonObject.class);
+                Files.readString(launchJson, StandardCharsets.UTF_8), JsonObject.class);
         } else {
             root = new JsonObject();
             root.addProperty("version", "0.2.0");
@@ -151,37 +150,42 @@ public abstract class GenVsCodeProjectTask extends AbstractLoomTask {
     }
 
     public record VsCodeConfiguration(
-            String type,
-            String name,
-            String request,
-            String cwd,
-            String console,
-            boolean stopOnEntry,
-            String mainClass,
-            String vmArgs,
-            String args,
-            Map<String, Object> env,
-            String projectName,
-            String runDir)
-            implements Serializable {
+        String type,
+        String name,
+        String request,
+        String cwd,
+        String console,
+        boolean stopOnEntry,
+        String mainClass,
+        String vmArgs,
+        String args,
+        Map<String, Object> env,
+        String projectName,
+        String runDir)
+        implements Serializable {
         public static VsCodeConfiguration fromRunConfig(Project project, RunConfig runConfig) {
+            Path rootPath = project.getRootDir().toPath();
+            Path projectPath = project.getProjectDir().toPath();
+            String relativeRunDir = rootPath.relativize(projectPath)
+                .resolve(runConfig.runDir)
+                .toString();
             return new VsCodeConfiguration(
-                    "java",
-                    runConfig.configName,
-                    "launch",
-                    "${workspaceFolder}/" + runConfig.runDir,
-                    "integratedTerminal",
-                    false,
-                    runConfig.mainClass,
-                    RunConfig.joinArguments(runConfig.vmArgs),
-                    RunConfig.joinArguments(runConfig.programArgs),
-                    new HashMap<>(runConfig.environmentVariables),
-                    runConfig.projectName,
-                    project.getProjectDir()
-                            .toPath()
-                            .resolve(runConfig.runDir)
-                            .toAbsolutePath()
-                            .toString());
+                "java",
+                runConfig.configName,
+                "launch",
+                "${workspaceFolder}/" + relativeRunDir,
+                "integratedTerminal",
+                false,
+                runConfig.mainClass,
+                RunConfig.joinArguments(runConfig.vmArgs),
+                RunConfig.joinArguments(runConfig.programArgs),
+                new HashMap<>(runConfig.environmentVariables),
+                runConfig.projectName,
+                project.getProjectDir()
+                    .toPath()
+                    .resolve(relativeRunDir)
+                    .toAbsolutePath()
+                    .toString());
         }
     }
 }

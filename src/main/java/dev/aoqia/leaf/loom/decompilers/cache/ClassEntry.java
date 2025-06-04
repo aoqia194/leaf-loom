@@ -30,37 +30,79 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+
 import dev.aoqia.leaf.loom.util.Checksum;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @param name The class name
  * @param innerClasses A list of inner class names
- * @param superClasses A list of parent classes (super and interface) from the class and all inner classes
+ * @param superClasses A list of parent classes (super and interface) from the class and all inner
+ * classes
  */
 public record ClassEntry(String name, List<String> innerClasses, List<String> superClasses) {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassEntry.class);
 
+    public ClassEntry {
+        if (!name.endsWith(".class")) {
+            throw new IllegalArgumentException("Class name must end with '.class': " + name);
+        }
+
+        if (!name.contains("/")) {
+            throw new IllegalArgumentException("Class name must be in a package: " + name);
+        }
+
+
+        String className = name.replace(".class", "");
+
+        for (String innerClass : innerClasses) {
+            if (!innerClass.endsWith(".class")) {
+                throw new IllegalArgumentException(
+                    "Inner class name must end with '.class': " + name);
+            }
+            if (!innerClass.startsWith(className)) {
+                throw new IllegalArgumentException("Inner class (" + innerClass +
+                                                   ") does not have the parent class name as a " +
+                                                   "prefix: " +
+                                                   name);
+            }
+        }
+
+        for (String superClass : superClasses) {
+            if (!superClass.endsWith(".class")) {
+                throw new IllegalArgumentException(
+                    "Super class name must end with '.class': " + superClass);
+            }
+        }
+    }
+
+    private void copy(Path source, Path target) throws IOException {
+        LOGGER.debug("Copying class entry `{}` from `{}` to `{}`", name, source, target);
+        Files.copy(source, target);
+    }
+
     /**
      * Copy the class and its inner classes to the target root.
+     *
      * @param sourceRoot The root of the source jar
      * @param targetRoot The root of the target jar
-     *
      * @throws IOException If an error occurs while copying the files
      */
     public void copyTo(Path sourceRoot, Path targetRoot) throws IOException {
         Path targetPath = targetRoot.resolve(name);
         Files.createDirectories(targetPath.getParent());
-        Files.copy(sourceRoot.resolve(name), targetPath);
+        copy(sourceRoot.resolve(name), targetPath);
 
         for (String innerClass : innerClasses) {
-            Files.copy(sourceRoot.resolve(innerClass), targetRoot.resolve(innerClass));
+            copy(sourceRoot.resolve(innerClass), targetRoot.resolve(innerClass));
         }
     }
 
     /**
      * Hash the class and its inner classes using sha256.
+     *
      * @param root The root of the jar
      * @return The hash of the class and its inner classes
      *
@@ -82,7 +124,8 @@ public record ClassEntry(String name, List<String> innerClasses, List<String> su
      * Return a hash of the class and its super classes.
      */
     public String hashSuperHierarchy(Map<String, String> hashes) throws IOException {
-        final String selfHash = Objects.requireNonNull(hashes.get(name), "Hash for own class not found");
+        final String selfHash = Objects.requireNonNull(hashes.get(name),
+            "Hash for own class not found");
 
         if (superClasses.isEmpty()) {
             return selfHash;
@@ -92,7 +135,7 @@ public record ClassEntry(String name, List<String> innerClasses, List<String> su
         joiner.add(selfHash);
 
         for (String superClass : superClasses) {
-            final String superHash = hashes.get(superClass + ".class");
+            final String superHash = hashes.get(superClass);
 
             if (superHash != null) {
                 joiner.add(superHash);
