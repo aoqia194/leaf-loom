@@ -36,6 +36,11 @@ public class MirrorUtil {
             return Path.of(ext.get("clientGamePath").toString());
         }
 
+        final var envVar = System.getenv("LEAF_CLIENT_GAME_PATH");
+        if (envVar != null) {
+            return Path.of(envVar);
+        }
+
         return Constants.getDefaultClientGamePath();
     }
 
@@ -44,6 +49,11 @@ public class MirrorUtil {
         if (ext.has("serverGamePath")) {
             // noinspection DataFlowIssue
             return Path.of(ext.get("serverGamePath").toString());
+        }
+
+        final var envVar = System.getenv("LEAF_SERVER_GAME_PATH");
+        if (envVar != null) {
+            return Path.of(envVar);
         }
 
         return Constants.getDefaultServerGamePath();
