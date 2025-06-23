@@ -1,55 +1,65 @@
-import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import groovy.json.JsonOutput
+import org.apache.commons.io.FileUtils
 import com.diffplug.spotless.LineEnding
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jreleaser.model.Active
+import org.jreleaser.model.Http
+import java.nio.file.Files
+import java.time.LocalDate
+import java.util.*
+import kotlin.io.path.writeText
 
-plugins {
-    id 'java'
-    id 'idea'
-    id 'eclipse'
-    id 'groovy'
-    alias(libs.plugins.kotlin)
-    alias(libs.plugins.spotless)
-    alias(libs.plugins.retry)
-    // Publishing to Maven Central
-    id 'org.jreleaser' version '1.17.0'
-    id 'maven-publish'
-    // Publishing to Gradle Plugin Portal
-    id 'com.gradle.plugin-publish' version '1.3.1'
-}
-
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-}
-
-tasks.withType(KotlinCompile).configureEach {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-}
-
-def ENV = System.getenv()
-if (!ENV.CI) {
-    version = "${version}.local"
-}
+val env = System.getenv()!!
+val isCiEnv = env["CI"].toBoolean()
+val gpgKeyPassphrase = env["GPG_PASSPHRASE_KEY"]
+val gpgKeyPublic = env["GPG_PUBLIC_KEY"]
+val gpgKeyPrivate = env["GPG_PRIVATE_KEY"]
+val mavenUsername = env["MAVEN_USERNAME"]
+val mavenPassword = env["MAVEN_PASSWORD"]
 
 // We must build against the version of Kotlin Gradle ships with.
-def props = new Properties()
-Project.class.getClassLoader()
-    .getResource("gradle-kotlin-dsl-versions.properties").openStream().withCloseable {
-    props.load(it)
-}
-def kotlinVersion = props.getProperty("kotlin")
+val props = Properties()
+Project::class.java.classLoader.getResource("gradle-kotlin-dsl-versions.properties")!!
+    .openStream().use { output ->
+        props.load(output)
+    }
+
+val kotlinVersion: String? = props.getProperty("kotlin")
 if (libs.versions.kotlin.get() != kotlinVersion) {
-    throw new IllegalStateException("Requires Kotlin version: ${kotlinVersion}")
+    throw IllegalStateException("Requires Kotlin version: ${kotlinVersion}")
 }
 
 repositories {
     maven {
-        name = 'Fabric'
-        url = 'https://maven.fabricmc.net/'
+        name = "Fabric"
+        url = uri("https://maven.fabricmc.net/")
     }
+    gradlePluginPortal()
     mavenCentral()
+}
+
+plugins {
+    java
+    idea
+    eclipse
+    groovy
+
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.retry)
+
+    // Publishing to Maven Central
+    id("org.jreleaser") version "1.17.0"
+    id("maven-publish")
+}
+
+base {
+    archivesName = project.name
+}
+
+allprojects {
+    if (!isCiEnv) {
+        version = "${version}.local"
+    }
 }
 
 configurations.configureEach {
@@ -57,31 +67,34 @@ configurations.configureEach {
         failOnNonReproducibleResolution()
     }
 
-    if (canBeConsumed) {
+    if (isCanBeConsumed) {
         attributes {
             attribute(GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-                objects.named(GradlePluginApiVersion, GradleVersion.current().getVersion()))
+                objects.named(GradlePluginApiVersion::class.java, GradleVersion.current().getVersion()))
         }
     }
 }
 
 sourceSets {
-    commonDecompiler {
+    create("commonDecompiler") {
         java {
             srcDir("src/decompilers/common")
         }
     }
-    fernflower {
+
+    create("fernflower") {
         java {
             srcDir("src/decompilers/fernflower")
         }
     }
-    cfr {
+
+    create("cfr") {
         java {
             srcDir("src/decompilers/cfr")
         }
     }
-    vineflower {
+
+    create("vineflower") {
         java {
             srcDir("src/decompilers/vineflower")
         }
@@ -89,97 +102,78 @@ sourceSets {
 }
 
 dependencies {
-    implementation gradleApi()
+    implementation(gradleApi())
 
     // libraries
-    implementation libs.commons.io
-    implementation libs.gson
-    implementation libs.guava
-    implementation libs.bundles.asm
+    implementation(libs.commons.io)
+    implementation(libs.gson)
+    implementation(libs.guava)
+    implementation(libs.bundles.asm)
 
     // game handling utils
     implementation(libs.fabric.stitch) {
-        exclude module: 'enigma'
+        exclude(module = "enigma")
     }
 
     // tinyfile management
-    implementation libs.fabric.tiny.remapper
-    implementation libs.fabric.access.widener
-    implementation libs.fabric.mapping.io
+    implementation(libs.fabric.tiny.remapper)
+    implementation(libs.fabric.access.widener)
+    implementation(libs.fabric.mapping.io)
     implementation(libs.fabric.lorenz.tiny) {
-        transitive = false
+        isTransitive = false
     }
 
-    implementation libs.fabric.loom.nativelib
+    implementation(libs.fabric.loom.nativelib)
 
     // decompilers
-    fernflowerCompileOnly runtimeLibs.fernflower
-    fernflowerCompileOnly libs.fabric.mapping.io
+    "fernflowerCompileOnly"(runtimeLibs.fernflower)
+    "fernflowerCompileOnly"(libs.fabric.mapping.io)
 
-    cfrCompileOnly runtimeLibs.cfr
-    cfrCompileOnly libs.fabric.mapping.io
+    "cfrCompileOnly"(runtimeLibs.cfr)
+    "cfrCompileOnly"(libs.fabric.mapping.io)
 
-    vineflowerCompileOnly runtimeLibs.vineflower
-    vineflowerCompileOnly libs.fabric.mapping.io
+    "vineflowerCompileOnly"(runtimeLibs.vineflower)
+    "vineflowerCompileOnly"(libs.fabric.mapping.io)
 
-    fernflowerApi sourceSets.commonDecompiler.output
-    cfrApi sourceSets.commonDecompiler.output
-    vineflowerApi sourceSets.commonDecompiler.output
+    "fernflowerApi"(sourceSets.named("commonDecompiler").get().output)
+    "cfrApi"(sourceSets.named("commonDecompiler").get().output)
+    "vineflowerApi"(sourceSets.named("commonDecompiler").get().output)
 
-    implementation sourceSets.commonDecompiler.output
-    implementation sourceSets.fernflower.output
-    implementation sourceSets.cfr.output
-    implementation sourceSets.vineflower.output
+    implementation(sourceSets.named("commonDecompiler").get().output)
+    implementation(sourceSets.named("fernflower").get().output)
+    implementation(sourceSets.named("cfr").get().output)
+    implementation(sourceSets.named("vineflower").get().output)
 
     // source code remapping
-    implementation libs.fabric.mercury
+    implementation(libs.fabric.mercury)
 
     // Kotlin
     implementation(libs.kotlin.metadata) {
-        transitive = false
+        isTransitive = false
     }
 
     // Kapt integration
-    compileOnly libs.kotlin.gradle.plugin
+    compileOnly(libs.kotlin.gradle.plugin)
 
     // Testing
     testImplementation(gradleTestKit())
     testImplementation(testLibs.spock) {
-        exclude module: 'groovy-all'
+        exclude(module = "groovy-all")
     }
-    testImplementation testLibs.junit.jupiter.engine
-    testRuntimeOnly testLibs.junit.platform.launcher
+    testImplementation(testLibs.junit.jupiter.engine)
+    testRuntimeOnly(testLibs.junit.platform.launcher)
     testImplementation(testLibs.javalin) {
-        exclude group: 'org.jetbrains.kotlin'
+        exclude(group = "org.jetbrains.kotlin")
     }
-    testImplementation testLibs.mockito
-    testImplementation testLibs.java.debug
+    testImplementation(testLibs.mockito)
+    testImplementation(testLibs.java.debug)
 
-    compileOnly runtimeLibs.jetbrains.annotations
-    testCompileOnly runtimeLibs.jetbrains.annotations
+    compileOnly(runtimeLibs.jetbrains.annotations)
+    testCompileOnly(runtimeLibs.jetbrains.annotations)
 
     testCompileOnly(testLibs.mixin) {
-        transitive = false
+        isTransitive = false
     }
-}
-
-jar {
-    manifest {
-        attributes 'Implementation-Version': project.version
-    }
-
-    from sourceSets.commonDecompiler.output.classesDirs
-    from sourceSets.cfr.output.classesDirs
-    from sourceSets.fernflower.output.classesDirs
-    from sourceSets.vineflower.output.classesDirs
-}
-
-base {
-    archivesName = project.name
-}
-
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = 17
 }
 
 java {
@@ -190,9 +184,121 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-javadoc {
-    if (JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    options.release = 17
+}
+
+tasks.jar {
+    manifest {
+        attributes("Implementation-Version" to project.version)
+    }
+
+    from(sourceSets.named("commonDecompiler").get().output.classesDirs)
+    from(sourceSets.named("cfr").get().output.classesDirs)
+    from(sourceSets.named("fernflower").get().output.classesDirs)
+    from(sourceSets.named("vineflower").get().output.classesDirs)
+}
+
+tasks.javadoc {
+    if (JavaVersion.current().isJava9Compatible) {
+        (options as CoreJavadocOptions).addBooleanOption("html5", true)
+    }
+}
+
+generateVersionConstants(sourceSets.main.get(),
+    "runtimeLibs",
+    "${group.toString().replace(".", "/")}/${name}/util/LoomVersions")
+generateVersionConstants(sourceSets.test.get(),
+    "testLibs",
+    "${group.toString().replace(".", "/")}/${name}/test/LoomTestVersions")
+
+fun generateVersionConstants(sourceSet: SourceSet, catalogName: String, sourcesName: String) {
+    val versionCatalog = extensions.getByType(VersionCatalogsExtension::class.java)
+        .named(catalogName)
+
+    val task = tasks.register("${catalogName}GenerateConstants",
+        GenerateVersions::class.java) {
+        versionCatalog.libraryAliases.forEach {
+            val lib = versionCatalog.findLibrary(it).get().get()
+            versions.put(it, lib.toString())
+        }
+
+        className = sourcesName
+        headerFile = file("HEADER")
+        outputDir = file("src/${sourceSet.name}/generated")
+    }
+
+    sourceSet.java.srcDir(task)
+    tasks.named("compileKotlin").configure { dependsOn(task) }
+    tasks.named("sourcesJar").configure { dependsOn(task) }
+}
+
+abstract class GenerateVersions : DefaultTask() {
+    @get:Input
+    abstract val versions: MapProperty<String, String>
+
+    @get:Input
+    abstract val className: Property<String>
+
+    @get:InputFile
+    abstract val headerFile: RegularFileProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun run() {
+        val output = outputDir.get().asFile
+        FileUtils.deleteDirectory(output)
+
+        val className = className.get()
+        val si = className.lastIndexOf("/")
+        val packageName = className.substring(0, si)
+        val packagePath = output.toPath().resolve(packageName)
+        val sourceName = className.substring(si + 1, className.length)
+        val sourcesPath = packagePath.resolve("${sourceName}.java")
+        Files.createDirectories(packagePath)
+
+        val constants = versions.get().map { (key, value) ->
+            val split = value.split(":")
+            if (split.size == 3) {
+                "\tpublic static final $sourceName ${toSnakeCase(key)} = new $sourceName" +
+                    "(\"${split[0]}\", \"${split[1]}\", \"${split[2]}\");"
+            } else {
+                ""
+            }
+        }.filter { it.isNotBlank() }.joinToString("\n")
+
+        val header = headerFile.get().asFile.readText()
+            .replace("\$YEAR", "${LocalDate.now().year}").trim()
+
+        sourcesPath.writeText(
+            """$header
+
+package ${packageName.replace("/", ".")};
+
+/**
+ * Auto generated class, do not edit.
+ */
+public record ${sourceName}(String group, String module, String version) {
+$constants
+
+    public String mavenNotation() {
+        return "%s:%s:%s".formatted(group, module, version);
+    }
+}
+""".trimIndent())
+    }
+
+    fun toSnakeCase(input: String): String {
+        return input.trim().replace(Regex("[^a-zA-Z0-9]+"), "_").uppercase()
     }
 }
 
@@ -214,13 +320,13 @@ spotless {
         indentWithSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
-        importOrder('java', 'javax', '', 'groovy', 'net.fabricmc', '', "${rootProject.group}", '', '\\#')
+        importOrder("java", "javax", "", "groovy", "net.fabricmc", "", "${rootProject.group}", "", "\\#")
         licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
         greclipse()
     }
 
     groovyGradle {
-        target('src/**/*.gradle', '*.gradle')
+        target("src/**/*.gradle", "*.gradle")
         // Exclude build.gradle because it keeps pestering me about it!
         targetExclude("**/build.gradle")
         indentWithSpaces(4)
@@ -240,60 +346,45 @@ spotless {
     }
 }
 
-//codenarc {
-//    toolVersion = libs.versions.codenarc.get()
-//    configFile = file("codenarc.groovy")
-//}
-
-gradlePlugin {
-    website = project.url
-    vcsUrl = project.url
-
-    plugins {
-        leafLoom {
-            id = "${project.group}.${project.name}"
-            displayName = project.name
-            description = project.description
-            tags.set(['projectzomboid', 'zomboid', 'leaf'])
-            implementationClass = "${project.group}.${project.name}.LoomGradlePlugin"
-        }
-    }
-}
-
 publishing {
-    publications.withType(MavenPublication).configureEach {
+    publications.withType<MavenPublication>().configureEach {
         pom {
             name = rootProject.name
             group = rootProject.group
             description = rootProject.description
-            url = rootProject.url
-            inceptionYear = '2025'
+            url = property("url").toString()
+            inceptionYear = "2025"
+
             developers {
                 developer {
-                    id = 'aoqia'
-                    name = 'aoqia'
+                    id = "aoqia"
+                    name = "aoqia"
                 }
             }
+
             issueManagement {
-                system = 'GitHub'
-                url = "${rootProject.url}/issues"
+                system = "GitHub"
+                url = "${property("url").toString()}/issues"
             }
+
             licenses {
                 license {
-                    name = 'MIT'
-                    url = 'https://spdx.org/licenses/MIT.html'
+                    name = "MIT"
+                    url = "https://spdx.org/licenses/MIT.html"
                 }
             }
+
             scm {
-                connection = "scm:git:https://github.com/aoqia194/leaf-" + project.name + "/.git"
-                developerConnection = "scm:git:ssh://github.com/aoqia194/leaf-" + project.name + "/.git"
-                url = rootProject.url
+                connection = "scm:git:https://github.com/aoqia194/leaf-${project.name}/.git"
+                developerConnection = "scm:git:ssh://github.com/aoqia194/leaf-${project.name}/.git"
+                url = property("url").toString()
             }
         }
     }
+
     repositories {
         maven {
-            url = layout.buildDirectory.dir("staging-deploy")
+            url = uri(layout.buildDirectory.dir("staging-deploy"))
         }
     }
 }
@@ -301,24 +392,27 @@ publishing {
 jreleaser {
     project {
         name = rootProject.name
-        version = rootProject.version
-        versionPattern = 'SEMVER'
-        authors = ['aoqia194', 'FabricMC']
-        maintainers = ['aoqia194']
-        license = 'MIT'
-        inceptionYear = '2025'
+        version = rootProject.version.toString()
+        versionPattern = "SEMVER"
+        authors = listOf("aoqia194", "FabricMC")
+        maintainers = listOf("aoqia194")
+        license = "MIT"
+        inceptionYear = "2025"
+
         links {
-            homepage = rootProject.url
-            license = 'https://spdx.org/licenses/MIT.html'
+            homepage = property("url").toString()
+            license = "https://spdx.org/licenses/MIT.html"
         }
     }
+
     signing {
-        active = 'ALWAYS'
+        active = Active.ALWAYS
         armored = true
-        passphrase = ENV.GPG_PASSPHRASE_KEY
-        publicKey = ENV.GPG_PUBLIC_KEY
-        secretKey = ENV.GPG_PRIVATE_KEY
+        passphrase = gpgKeyPassphrase
+        publicKey = gpgKeyPublic
+        secretKey = gpgKeyPrivate
     }
+
     deploy {
         maven {
             pomchecker {
@@ -327,18 +421,19 @@ jreleaser {
                 failOnError = true
                 strict = true
             }
+
             mavenCentral {
-                sonatype {
+                create("sonatype") {
                     applyMavenCentralRules = true
-                    active = "ALWAYS"
+                    active = Active.ALWAYS
                     snapshotSupported = true
-                    authorization = 'BEARER'
-                    username = ENV.MAVEN_USERNAME
-                    password = ENV.MAVEN_PASSWORD
+                    authorization = Http.Authorization.BEARER
+                    username = mavenUsername
+                    password = mavenPassword
                     url = "https://central.sonatype.com/api/v1/publisher"
                     stagingRepository("build/staging-deploy")
                     verifyUrl = "https://repo1.maven.org/maven2/{{path}}/{{filename}}"
-                    namespace = rootProject.group
+                    namespace = rootProject.group.toString()
                     retryDelay = 60
                     maxRetries = 30
 
@@ -359,132 +454,23 @@ jreleaser {
     release {
         github {
             enabled = true
-            repoOwner = 'aoqia194'
-            name = 'leaf-loom'
-            host = 'github.com'
-            releaseName = '{{tagName}}'
-            
+            repoOwner = "aoqia194"
+            name = "leaf-${project.name}"
+            host = "github.com"
+            releaseName = "{{tagName}}"
+
             sign = true
             overwrite = true
-            uploadAssets = 'ALWAYS'
+            uploadAssets = Active.ALWAYS
             artifacts = true
             checksums = true
             signatures = true
 
             changelog {
-                formatted = 'ALWAYS'
-                preset = 'conventional-commits'
-                extraProperties.put('categorizeScopes', 'true')
+                formatted = Active.ALWAYS
+                preset = "conventional-commits"
+                extraProperties.put("categorizeScopes", "true")
             }
         }
     }
 }
-
-test {
-    maxHeapSize = "2560m"
-    jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
-    useJUnitPlatform()
-
-    // Forward system prop onto tests.
-    if (System.getProperty("loom.test.homeDir")) {
-        systemProperty "loom.test.homeDir", System.getProperty("loom.test.homeDir")
-    }
-
-
-    if (ENV.CI) {
-        retry {
-            maxRetries = 3
-        }
-    }
-}
-
-// Workaround https://github.com/gradle/gradle/issues/25898
-tasks.withType(Test).configureEach {
-    jvmArgs = [
-        '--add-opens=java.base/java.lang=ALL-UNNAMED',
-        '--add-opens=java.base/java.util=ALL-UNNAMED',
-        '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
-        '--add-opens=java.base/java.net=ALL-UNNAMED'
-    ]
-}
-
-// A task to output a json file with a list of all the test to run
-tasks.register('writeActionsTestMatrix') {
-    doLast {
-        def testMatrix = []
-        file('src/test/groovy/dev/aoqia/loom/test/integration').eachFile {
-            if (it.name.endsWith("Test.groovy")) {
-                if (it.name.endsWith("ReproducibleBuildTest.groovy")) {
-                    // This test gets a special case to run across all os's
-                    return
-                }
-
-                if (it.name.endsWith("DebugLineNumbersTest.groovy")) {
-                    // Known flakey test
-                    return
-                }
-
-                def className = it.name.replace(".groovy", "")
-                testMatrix.add("dev.aoqia.leaf.loom.test.integration.${className}")
-            }
-        }
-
-        // Run all the unit tests together
-        testMatrix.add("dev.aoqia.leaf.loom.test.unit.*")
-
-        // Kotlin tests
-        testMatrix.add("dev.aoqia.leaf.loom.test.kotlin.*")
-
-        def json = JsonOutput.toJson(testMatrix)
-        def output = file("build/test_matrix.json")
-        output.parentFile.mkdir()
-        output.text = json
-    }
-}
-
-tasks.named('wrapper') {
-    distributionType = Wrapper.DistributionType.ALL
-}
-
-/**
- * Run this task to download the gradle sources next to the api jar, you may need to manually
- * attach the sources jar
- */
-tasks.register('downloadGradleSources') {
-    doLast {
-        // Awful hack to find the gradle api location
-        def gradleApiFile = project.configurations.detachedConfiguration(dependencies.gradleApi())
-            .files.stream()
-            .find {
-                it.name.startsWith("gradle-api")
-            }
-
-        def gradleApiSources = new File(gradleApiFile.absolutePath.replace(".jar", "-sources.jar"))
-        def url = "https://services.gradle.org/distributions/gradle-${GradleVersion.current().getVersion()}-src.zip"
-
-        gradleApiSources.delete()
-
-        println("Downloading (${url}) to (${gradleApiSources})")
-        gradleApiSources << new URL(url).newInputStream()
-    }
-}
-
-tasks.register('printActionsTestName', PrintActionsTestName) {
-}
-
-/**
- * Replaces invalid characters in test names for GitHub Actions artifacts.
- */
-abstract class PrintActionsTestName extends DefaultTask {
-    @Input
-    @Option(option = "name", description = "The test name")
-    String testName
-
-    @TaskAction
-    def run() {
-        def sanitised = testName.replace('*', '_')
-        new File(System.getenv().GITHUB_OUTPUT) << "\ntest=$sanitised"
-    }
-}
-
-apply from: rootProject.file('gradle/versions.gradle')
