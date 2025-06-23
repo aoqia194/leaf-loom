@@ -79,8 +79,8 @@ public abstract class IdeaSyncTask extends AbstractLoomTask {
     private List<IntelijRunConfig> getRunConfigs() throws IOException {
         Project rootProject = getProject().getRootProject();
         LoomGradleExtension extension = LoomGradleExtension.get(getProject());
-        String projectPath =
-            getProject() == rootProject ? "" : getProject().getPath().replace(':', '_');
+        String projectPath = (getProject() == rootProject) ? ""
+            : getProject().getPath().replace(':', '_');
         File runConfigsDir = new File(rootProject.file(".idea"), "runConfigurations");
 
         List<IntelijRunConfig> configs = new ArrayList<>();
@@ -94,7 +94,8 @@ public abstract class IdeaSyncTask extends AbstractLoomTask {
             String name = config.configName.replaceAll("[^a-zA-Z0-9$_]", "_");
 
             File runConfigFile = new File(runConfigsDir, name + projectPath + ".xml");
-            String runConfigXml = config.fromDummy("idea_run_config_template.xml", true, getProject());
+            // Set relativeDir to false because we don't use projectPath for workingDir anymore.
+            String runConfigXml = config.fromDummy("idea_run_config_template.xml", false, getProject());
 
             IntelijRunConfig irc = getProject().getObjects().newInstance(IntelijRunConfig.class);
             irc.getRunConfigXml().set(runConfigXml);
