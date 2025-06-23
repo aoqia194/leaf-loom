@@ -31,9 +31,9 @@ import org.objectweb.asm.Opcodes;
 
 public class Constants {
     public static final String INDEX_MANIFEST_PATH =
-        "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/indexes/";
+        "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/indexes";
     public static final String VERSION_MANIFESTS =
-        "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests/";
+        "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests";
     public static final String FABRIC_REPOSITORY = "https://maven.fabricmc.net/";
     public static final int ASM_VERSION = Opcodes.ASM9;
     public static final Path CLIENT_INSTALL_PATH = Path.of("steamapps", "common", "ProjectZomboid");
@@ -42,7 +42,7 @@ public class Constants {
 
     private Constants() {}
 
-    public static Path getSteamInstallPath() {
+    public static Path getDefaultSteamLibraryPath() {
         if (OperatingSystem.current() == OperatingSystem.MAC_OS) {
             return Path.of(System.getProperty("user.home"), "Library/Application Support/Steam");
         } else if (OperatingSystem.current() == OperatingSystem.LINUX) {
@@ -52,12 +52,12 @@ public class Constants {
         return Path.of("C:\\Program Files (x86)\\Steam");
     }
 
-    public static Path getClientInstallPath() {
-        return getSteamInstallPath().resolve(CLIENT_INSTALL_PATH);
+    public static Path getDefaultClientGamePath() {
+        return getDefaultSteamLibraryPath().resolve(CLIENT_INSTALL_PATH);
     }
 
-    public static Path getServerInstallPath() {
-        return getSteamInstallPath().resolve(SERVER_INSTALL_PATH);
+    public static Path getDefaultServerGamePath() {
+        return getDefaultSteamLibraryPath().resolve(SERVER_INSTALL_PATH);
     }
 
     /**
