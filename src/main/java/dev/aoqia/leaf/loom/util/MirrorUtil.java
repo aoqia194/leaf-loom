@@ -27,47 +27,58 @@ package dev.aoqia.leaf.loom.util;
 import java.nio.file.Path;
 
 import org.gradle.api.plugins.ExtensionAware;
-import org.jetbrains.annotations.Nullable;
 
 public class MirrorUtil {
-    public static Path getClientInstallPath(ExtensionAware aware) {
-        if (aware.getExtensions().getExtraProperties().has("loom_client_install_path")) {
-            return Path.of(String.valueOf(
-                aware.getExtensions().getExtraProperties().get("loom_client_install_path")));
+    public static Path getClientGamePath(ExtensionAware aware) {
+        final var ext = aware.getExtensions().getExtraProperties();
+        if (ext.has("clientGamePath")) {
+            // noinspection DataFlowIssue
+            return Path.of(ext.get("clientGamePath").toString());
         }
 
-        return Constants.getClientInstallPath();
+        final var envVar = System.getenv("LEAF_CLIENT_GAME_PATH");
+        if (envVar != null) {
+            return Path.of(envVar);
+        }
+
+        return Constants.getDefaultClientGamePath();
     }
 
-    public static Path getServerInstallPath(@Nullable ExtensionAware aware) {
-        if (aware != null &&
-            aware.getExtensions().getExtraProperties().has("loom_server_install_path")) {
-            return Path.of(String.valueOf(
-                aware.getExtensions().getExtraProperties().get("loom_server_install_path")));
+    public static Path getServerGamePath(ExtensionAware aware) {
+        final var ext = aware.getExtensions().getExtraProperties();
+        if (ext.has("serverGamePath")) {
+            // noinspection DataFlowIssue
+            return Path.of(ext.get("serverGamePath").toString());
         }
 
-        return Constants.getServerInstallPath();
+        final var envVar = System.getenv("LEAF_SERVER_GAME_PATH");
+        if (envVar != null) {
+            return Path.of(envVar);
+        }
+
+        return Constants.getDefaultServerGamePath();
     }
 
-    public static String getClientVersionManifests(@Nullable ExtensionAware aware) {
-        if (aware != null &&
-            aware.getExtensions().getExtraProperties().has("loom_version_manifests")) {
-            return String.valueOf(
-                aware.getExtensions().getExtraProperties().get("loom_version_manifests"));
+    public static String getClientVersionManifestUrl(ExtensionAware aware) {
+        final var ext = aware.getExtensions().getExtraProperties();
+        if (ext.has("clientVersionManifestUrl")) {
+            // noinspection DataFlowIssue
+            return ext.get("clientVersionManifestUrl").toString();
         }
 
-        return Constants.VERSION_MANIFESTS + "client/" + getOsStringForUrl() +
-               "/version_manifest.json";
+        return String.format("%s/client/%s/version_manifest.json", Constants.VERSION_MANIFESTS,
+            getOsStringForUrl());
     }
 
-    public static String getServerVersionManifests(ExtensionAware aware) {
-        if (aware.getExtensions().getExtraProperties().has("loom_server_version_manifests")) {
-            return String.valueOf(
-                aware.getExtensions().getExtraProperties().get("loom_server_version_manifests"));
+    public static String getServerVersionManifestUrl(ExtensionAware aware) {
+        final var ext = aware.getExtensions().getExtraProperties();
+        if (ext.has("serverVersionManifestUrl")) {
+            // noinspection DataFlowIssue
+            return ext.get("serverVersionManifestUrl").toString();
         }
 
-        return Constants.VERSION_MANIFESTS + "server/" + getOsStringForUrl() +
-               "/version_manifest.json";
+        return String.format("%s/server/%s/version_manifest.json", Constants.VERSION_MANIFESTS,
+            getOsStringForUrl());
     }
 
     public static String getOsStringForUrl() throws RuntimeException {
@@ -78,15 +89,16 @@ public class MirrorUtil {
             return "mac";
         } else if (os.isLinux()) {
             return "linux";
-        } else {
-            throw new RuntimeException("Unsupported operating system: " + os);
         }
+
+        throw new RuntimeException("Unsupported operating system: " + os);
     }
 
     public static String getFabricRepository(ExtensionAware aware) {
-        if (aware.getExtensions().getExtraProperties().has("loom_fabric_repository")) {
-            return String.valueOf(
-                aware.getExtensions().getExtraProperties().get("loom_fabric_repository"));
+        final var ext = aware.getExtensions().getExtraProperties();
+        if (ext.has("fabricRepositoryUrl")) {
+            // noinspection DataFlowIssue
+            return ext.get("fabricRepositoryUrl").toString();
         }
 
         return Constants.FABRIC_REPOSITORY;

@@ -45,7 +45,7 @@ class ZomboidTestUtils {
 	public static final Gson GSON = new GsonBuilder().create()
 
 	static ZomboidVersionMeta getVersionMeta(String id) {
-		def versionManifest = download(MirrorUtil.getClientVersionManifests(null),
+		def versionManifest = download(MirrorUtil.getClientVersionManifestUrl(null),
 				"version_manifest.json")
 		def manifest = GSON.fromJson(versionManifest, VersionsManifest.class)
 		def version = manifest.versions().find {
@@ -57,7 +57,7 @@ class ZomboidTestUtils {
 	}
 
 	static ZomboidVersionMeta getServerVersionMeta(String id) {
-		def versionManifest = download(MirrorUtil.getServerVersionManifests(null),
+		def versionManifest = download(MirrorUtil.getServerVersionManifestUrl(null),
 				"version_manifest.json")
 		def manifest = GSON.fromJson(versionManifest, VersionsManifest.class)
 		def version = manifest.versions().find {

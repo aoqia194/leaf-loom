@@ -124,8 +124,8 @@ public abstract class ZomboidProvider {
                 " but Gradle is using " + JavaVersion.current());
         }
 
-        final Path gameInstallPath = !isServer ? MirrorUtil.getClientInstallPath(project)
-            : MirrorUtil.getServerInstallPath(project);
+        final Path gameInstallPath = !isServer ? MirrorUtil.getClientGamePath(project)
+            : MirrorUtil.getServerGamePath(project);
 
         final ArrayList<Path> extractedLibs = new ArrayList<>();
         final File jar = !isServer ? zomboidClientJar : zomboidServerJar;

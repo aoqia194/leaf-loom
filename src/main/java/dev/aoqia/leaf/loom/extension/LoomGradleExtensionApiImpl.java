@@ -106,11 +106,11 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
         this.accessWidener = project.getObjects().fileProperty();
 
         this.clientVersionManifests = new ManifestLocations();
-        this.clientVersionManifests.add("zomboid", MirrorUtil.getClientVersionManifests(project),
+        this.clientVersionManifests.add("zomboid", MirrorUtil.getClientVersionManifestUrl(project),
             -2);
 
         this.serverVersionManifests = new ManifestLocations();
-        this.serverVersionManifests.add("zomboid", MirrorUtil.getServerVersionManifests(project),
+        this.serverVersionManifests.add("zomboid", MirrorUtil.getServerVersionManifestUrl(project),
             -2);
 
         this.customMetadata = project.getObjects().property(String.class);
