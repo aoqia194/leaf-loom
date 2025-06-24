@@ -1,5 +1,5 @@
-import org.apache.commons.io.FileUtils
 import com.diffplug.spotless.LineEnding
+import org.apache.commons.io.FileUtils
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jreleaser.model.Active
 import org.jreleaser.model.Http
@@ -69,8 +69,13 @@ configurations.configureEach {
 
     if (isCanBeConsumed) {
         attributes {
-            attribute(GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-                objects.named(GradlePluginApiVersion::class.java, GradleVersion.current().getVersion()))
+            attribute(
+                GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                objects.named(
+                    GradlePluginApiVersion::class.java,
+                    GradleVersion.current().getVersion()
+                )
+            )
         }
     }
 }
@@ -300,7 +305,8 @@ $constants
         return "%s:%s:%s".formatted(group, module, version);
     }
 }
-""".trimIndent())
+""".trimIndent()
+        )
     }
 
     fun toSnakeCase(input: String): String {
@@ -326,7 +332,17 @@ spotless {
         indentWithSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
-        importOrder("java", "javax", "", "groovy", "net.fabricmc", "", "${rootProject.group}", "", "\\#")
+        importOrder(
+            "java",
+            "javax",
+            "",
+            "groovy",
+            "net.fabricmc",
+            "",
+            "${rootProject.group}",
+            "",
+            "\\#"
+        )
         licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
         greclipse()
     }
