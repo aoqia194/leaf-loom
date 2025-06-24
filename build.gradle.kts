@@ -369,38 +369,40 @@ spotless {
 }
 
 publishing {
-    publications.withType<MavenPublication>().configureEach {
-        pom {
-            name = rootProject.name
-            group = rootProject.group
-            description = rootProject.description
-            url = property("url").toString()
-            inceptionYear = "2025"
-
-            developers {
-                developer {
-                    id = "aoqia"
-                    name = "aoqia"
-                }
-            }
-
-            issueManagement {
-                system = "GitHub"
-                url = "${property("url").toString()}/issues"
-            }
-
-            licenses {
-                license {
-                    name = "MIT"
-                    url = "https://spdx.org/licenses/MIT.html"
-                }
-            }
-
-            scm {
-                connection = "scm:git:${property("url").toString()}.git"
-                developerConnection =
-                    "scm:git:${property("url").toString().replace("https", "ssh")}.git"
+    publications {
+        create<MavenPublication>("maven") {
+            pom {
+                name = rootProject.name
+                group = rootProject.group
+                description = rootProject.description
                 url = property("url").toString()
+                inceptionYear = "2025"
+
+                developers {
+                    developer {
+                        id = "aoqia"
+                        name = "aoqia"
+                    }
+                }
+
+                issueManagement {
+                    system = "GitHub"
+                    url = "${property("url").toString()}/issues"
+                }
+
+                licenses {
+                    license {
+                        name = "MIT"
+                        url = "https://spdx.org/licenses/MIT.html"
+                    }
+                }
+
+                scm {
+                    connection = "scm:git:${property("url").toString()}.git"
+                    developerConnection =
+                        "scm:git:${property("url").toString().replace("https", "ssh")}.git"
+                    url = property("url").toString()
+                }
             }
         }
     }
