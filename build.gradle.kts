@@ -1,5 +1,5 @@
-import org.apache.commons.io.FileUtils
 import com.diffplug.spotless.LineEnding
+import org.apache.commons.io.FileUtils
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jreleaser.model.Active
 import org.jreleaser.model.Http
@@ -69,8 +69,13 @@ configurations.configureEach {
 
     if (isCanBeConsumed) {
         attributes {
-            attribute(GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-                objects.named(GradlePluginApiVersion::class.java, GradleVersion.current().getVersion()))
+            attribute(
+                GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                objects.named(
+                    GradlePluginApiVersion::class.java,
+                    GradleVersion.current().getVersion()
+                )
+            )
         }
     }
 }
@@ -212,19 +217,25 @@ tasks.javadoc {
     }
 }
 
-generateVersionConstants(sourceSets.main.get(),
+generateVersionConstants(
+    sourceSets.main.get(),
     "runtimeLibs",
-    "${group.toString().replace(".", "/")}/${name}/util/LoomVersions")
-generateVersionConstants(sourceSets.test.get(),
+    "${group.toString().replace(".", "/")}/${project.name}/util/LoomVersions"
+)
+generateVersionConstants(
+    sourceSets.test.get(),
     "testLibs",
-    "${group.toString().replace(".", "/")}/${name}/test/LoomTestVersions")
+    "${group.toString().replace(".", "/")}/${project.name}/test/LoomTestVersions"
+)
 
 fun generateVersionConstants(sourceSet: SourceSet, catalogName: String, sourcesName: String) {
     val versionCatalog = extensions.getByType(VersionCatalogsExtension::class.java)
         .named(catalogName)
 
-    val task = tasks.register("${catalogName}GenerateConstants",
-        GenerateVersions::class.java) {
+    val task = tasks.register(
+        "${catalogName}GenerateConstants",
+        GenerateVersions::class.java
+    ) {
         versionCatalog.libraryAliases.forEach {
             val lib = versionCatalog.findLibrary(it).get().get()
             versions.put(it, lib.toString())
@@ -294,7 +305,8 @@ $constants
         return "%s:%s:%s".formatted(group, module, version);
     }
 }
-""".trimIndent())
+""".trimIndent()
+        )
     }
 
     fun toSnakeCase(input: String): String {
@@ -320,7 +332,17 @@ spotless {
         indentWithSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
-        importOrder("java", "javax", "", "groovy", "net.fabricmc", "", "${rootProject.group}", "", "\\#")
+        importOrder(
+            "java",
+            "javax",
+            "",
+            "groovy",
+            "net.fabricmc",
+            "",
+            "${rootProject.group}",
+            "",
+            "\\#"
+        )
         licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
         greclipse()
     }
@@ -375,8 +397,9 @@ publishing {
             }
 
             scm {
-                connection = "scm:git:https://github.com/aoqia194/leaf-${project.name}/.git"
-                developerConnection = "scm:git:ssh://github.com/aoqia194/leaf-${project.name}/.git"
+                connection = "scm:git:${property("url").toString()}.git"
+                developerConnection =
+                    "scm:git:${property("url").toString().replace("https", "ssh")}.git"
                 url = property("url").toString()
             }
         }
@@ -455,7 +478,7 @@ jreleaser {
         github {
             enabled = true
             repoOwner = "aoqia194"
-            name = "leaf-${project.name}"
+            name = "leaf-${rootProject.name}"
             host = "github.com"
             releaseName = "{{tagName}}"
 
