@@ -212,19 +212,25 @@ tasks.javadoc {
     }
 }
 
-generateVersionConstants(sourceSets.main.get(),
+generateVersionConstants(
+    sourceSets.main.get(),
     "runtimeLibs",
-    "${group.toString().replace(".", "/")}/${name}/util/LoomVersions")
-generateVersionConstants(sourceSets.test.get(),
+    "${group.toString().replace(".", "/")}/${project.name}/util/LoomVersions"
+)
+generateVersionConstants(
+    sourceSets.test.get(),
     "testLibs",
-    "${group.toString().replace(".", "/")}/${name}/test/LoomTestVersions")
+    "${group.toString().replace(".", "/")}/${project.name}/test/LoomTestVersions"
+)
 
 fun generateVersionConstants(sourceSet: SourceSet, catalogName: String, sourcesName: String) {
     val versionCatalog = extensions.getByType(VersionCatalogsExtension::class.java)
         .named(catalogName)
 
-    val task = tasks.register("${catalogName}GenerateConstants",
-        GenerateVersions::class.java) {
+    val task = tasks.register(
+        "${catalogName}GenerateConstants",
+        GenerateVersions::class.java
+    ) {
         versionCatalog.libraryAliases.forEach {
             val lib = versionCatalog.findLibrary(it).get().get()
             versions.put(it, lib.toString())
@@ -375,8 +381,9 @@ publishing {
             }
 
             scm {
-                connection = "scm:git:https://github.com/aoqia194/leaf-${project.name}/.git"
-                developerConnection = "scm:git:ssh://github.com/aoqia194/leaf-${project.name}/.git"
+                connection = "scm:git:${property("url").toString()}.git"
+                developerConnection =
+                    "scm:git:${property("url").toString().replace("https", "ssh")}.git"
                 url = property("url").toString()
             }
         }
@@ -455,7 +462,7 @@ jreleaser {
         github {
             enabled = true
             repoOwner = "aoqia194"
-            name = "leaf-${project.name}"
+            name = "leaf-${rootProject.name}"
             host = "github.com"
             releaseName = "{{tagName}}"
 
