@@ -48,8 +48,9 @@ plugins {
     alias(libs.plugins.retry)
 
     // Publishing to Maven Central
-    id("org.jreleaser") version "1.17.0"
+    alias(libs.plugins.jreleaser)
     id("maven-publish")
+    alias(libs.plugins.gradle.plugin.publish)
 }
 
 base {
@@ -128,7 +129,7 @@ dependencies {
         isTransitive = false
     }
 
-    implementation(libs.fabric.loom.nativelib)
+    // implementation(libs.fabric.loom.nativelib)
 
     // decompilers
     "fernflowerCompileOnly"(runtimeLibs.fernflower)

@@ -1,25 +1,26 @@
 [versions]
-kotlin = "2.0.21"
+
+access-widener = "2.1.0"
 asm = "9.7.1"
 commons-io = "2.15.1"
 gson = "2.10.1"
 guava = "33.0.0-jre"
-
+kotlin = "2.0.21"
+lorenz-tiny = "4.0.2"
+mapping-io = "0.7.1"
+mercury = "0.4.2"
 stitch = "0.6.2"
 tiny-remapper = "0.11.1"
-access-widener = "2.1.0"
-mapping-io = "0.7.1"
-lorenz-tiny = "4.0.2"
-mercury = "0.4.2"
-loom-native = "0.2.0"
 
 # Plugins
+codenarc = "3.4.0"
+gradle-plugin-publish = "1.3.1"
+jreleaser = "1.17.0"
 spotless = "6.25.0"
 test-retry = "1.5.6"
-codenarc = "3.4.0"
 
 [libraries]
-# Loom compile libraries
+
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asm-analysis = { module = "org.ow2.asm:asm-analysis", version.ref = "asm" }
 asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
@@ -36,16 +37,18 @@ fabric-access-widener = { module = "net.fabricmc:access-widener", version.ref = 
 fabric-mapping-io = { module = "net.fabricmc:mapping-io", version.ref = "mapping-io" }
 fabric-lorenz-tiny = { module = "net.fabricmc:lorenz-tiny", version.ref = "lorenz-tiny" }
 fabric-mercury = { module = "net.fabricmc:mercury", version.ref = "mercury" }
-fabric-loom-nativelib = { module = "net.fabricmc:fabric-loom-native", version.ref = "loom-native" }
 
-# Misc
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-metadata = { module = "org.jetbrains.kotlin:kotlin-metadata-jvm", version.ref = "kotlin" }
 
 [plugins]
+
+gradle-plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-plugin-publish" }
+jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 retry = { id = "org.gradle.test-retry", version.ref = "test-retry" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [bundles]
+
 asm = ["asm", "asm-analysis", "asm-commons", "asm-tree", "asm-util"]
