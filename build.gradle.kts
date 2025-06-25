@@ -48,8 +48,9 @@ plugins {
     alias(libs.plugins.retry)
 
     // Publishing to Maven Central
-    id("org.jreleaser") version "1.17.0"
+    alias(libs.plugins.jreleaser)
     id("maven-publish")
+    alias(libs.plugins.gradle.plugin.publish)
 }
 
 base {
@@ -368,41 +369,53 @@ spotless {
     }
 }
 
+gradlePlugin {
+    website = property("url").toString()
+    vcsUrl = property("url").toString()
+
+    plugins {
+        create("leafLoom") {
+            id = "${rootProject.group}.${rootProject.name}"
+            implementationClass = "${rootProject.group}.${rootProject.name}.LoomGradlePlugin"
+            displayName = rootProject.name
+            tags = listOf("projectzomboid", "zomboid", "leaf")
+        }
+    }
+}
+
 publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            pom {
-                name = rootProject.name
-                group = rootProject.group
-                description = rootProject.description
+    publications.withType<MavenPublication>().configureEach {
+        pom {
+            name = rootProject.name
+            group = rootProject.group
+            description = rootProject.description
+            url = property("url").toString()
+            inceptionYear = "2025"
+
+            developers {
+                developer {
+                    id = "aoqia"
+                    name = "aoqia"
+                }
+            }
+
+            issueManagement {
+                system = "GitHub"
+                url = "${property("url").toString()}/issues"
+            }
+
+            licenses {
+                license {
+                    name = "MIT"
+                    url = "https://spdx.org/licenses/MIT.html"
+                }
+            }
+
+            scm {
+                connection = "scm:git:${property("url").toString()}.git"
+                developerConnection =
+                    "scm:git:${property("url").toString().replace("https", "ssh")}.git"
                 url = property("url").toString()
-                inceptionYear = "2025"
-
-                developers {
-                    developer {
-                        id = "aoqia"
-                        name = "aoqia"
-                    }
-                }
-
-                issueManagement {
-                    system = "GitHub"
-                    url = "${property("url").toString()}/issues"
-                }
-
-                licenses {
-                    license {
-                        name = "MIT"
-                        url = "https://spdx.org/licenses/MIT.html"
-                    }
-                }
-
-                scm {
-                    connection = "scm:git:${property("url").toString()}.git"
-                    developerConnection =
-                        "scm:git:${property("url").toString().replace("https", "ssh")}.git"
-                    url = property("url").toString()
-                }
             }
         }
     }
