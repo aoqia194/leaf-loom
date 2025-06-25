@@ -129,7 +129,7 @@ dependencies {
         isTransitive = false
     }
 
-    // implementation(libs.fabric.loom.nativelib)
+    implementation(libs.fabric.loom.nativelib)
 
     // decompilers
     "fernflowerCompileOnly"(runtimeLibs.fernflower)
@@ -366,6 +366,20 @@ spotless {
         targetExclude("**/build.gradle.kts")
         targetExclude("src/test/resources/projects/*/**")
         ktlint()
+    }
+}
+
+gradlePlugin {
+    website = property("url").toString()
+    vcsUrl = property("url").toString()
+
+    plugins {
+        create("leafLoom") {
+            id = "${rootProject.group}.${rootProject.name}"
+            implementationClass = "${rootProject.group}.${rootProject.name}.LoomGradlePlugin"
+            displayName = rootProject.name
+            tags = listOf("projectzomboid", "zomboid", "leaf")
+        }
     }
 }
 
