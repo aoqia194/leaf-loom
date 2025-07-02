@@ -171,7 +171,7 @@ public class ModProcessor {
 
 			final Predicate<InputTag> applyPredicate = inputTag -> {
 				ModDependency mod = inputTags.getByKey(inputTag);
-				return modProcessorExtension.appliesTo(mod);
+				return mod != null && modProcessorExtension.appliesTo(mod);
 			};
 
 			builder.extension(modProcessorExtension.createExtension(context, applyPredicate));
