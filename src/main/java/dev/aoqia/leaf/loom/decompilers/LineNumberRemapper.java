@@ -111,22 +111,15 @@ public record LineNumberRemapper(ClassLineNumbers lineNumbers) {
                 super.visitMethod(access, name, descriptor, signature, exceptions)) {
                 @Override
                 public void visitLineNumber(int line, Label start) {
-                    int tLine = line;
-
-                    if (tLine <= 0) {
+                    if (line <= 0) {
                         super.visitLineNumber(line, start);
-                    } else if (tLine >= lineNumbers.maxLine()) {
+                    } else if (line >= lineNumbers.maxLine()) {
                         super.visitLineNumber(lineNumbers.maxLineDest(), start);
                     } else {
-                        Integer matchedLine = null;
-
-                        while (tLine <= lineNumbers.maxLine()
-                               && ((matchedLine = lineNumbers.lineMap().get(tLine)) == null)) {
-                            tLine++;
+                        Integer matchedLine = lineNumbers.lineMap().get(line);
+                        if (matchedLine != null) {
+                            super.visitLineNumber(matchedLine, start);
                         }
-
-                        super.visitLineNumber(
-                            matchedLine != null ? matchedLine : lineNumbers.maxLineDest(), start);
                     }
                 }
             };
