@@ -40,6 +40,20 @@ import net.fabricmc.tinyremapper.FileSystemReference;
 
 public final class FileSystemUtil {
     public record Delegate(FileSystemReference reference, URI uri) implements AutoCloseable, Supplier<FileSystem> {
+    public static boolean isFileLocked(File file) {
+        try (RandomAccessFile raf = new RandomAccessFile(file, "rw");
+             FileChannel channel = raf.getChannel()) {
+            FileLock lock = channel.tryLock();
+            if (lock != null) {
+                lock.release();
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return true;
+        }
+    }
         public Path getPath(String path, String... more) {
             return get().getPath(path, more);
         }
