@@ -45,7 +45,7 @@ public class JavaApInvoker extends AnnotationProcessorInvoker<JavaCompile> {
     private static Map<SourceSet, TaskProvider<JavaCompile>> getInvokerTasks(Project project) {
         MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
         return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.JAVA, JavaCompile.class)
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue);
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
