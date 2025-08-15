@@ -23,36 +23,38 @@
  */
 package dev.aoqia.leaf.loom.build.mixin;
 
-import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.extension.MixinExtension;
+
+import com.google.common.collect.ImmutableList;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.GroovyCompile;
 
 public class GroovyApInvoker extends AnnotationProcessorInvoker<GroovyCompile> {
     public GroovyApInvoker(Project project) {
-        super(project, ImmutableList.of(), getInvokerTasks(project), AnnotationProcessorInvoker.GROOVY);
+        super(project, ImmutableList.of(), getInvokerTasks(project),
+            AnnotationProcessorInvoker.GROOVY);
     }
 
-    private static Map<SourceSet, GroovyCompile> getInvokerTasks(Project project) {
+    private static Map<SourceSet, TaskProvider<GroovyCompile>> getInvokerTasks(Project project) {
         MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
-        return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.GROOVY)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey, entry -> Objects.requireNonNull((GroovyCompile) entry.getValue())));
-    }
-
-    @Override
-    protected void passArgument(GroovyCompile compileTask, String key, String value) {
-        compileTask.getOptions().getCompilerArgs().add("-A" + key + "=" + value);
+        return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.GROOVY, GroovyCompile.class)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
     protected File getRefmapDestinationDir(GroovyCompile task) {
         return task.getDestinationDirectory().getAsFile().get();
+    }
+
+    @Override
+    protected void passArgument(GroovyCompile compileTask, String key, String value) {
+        compileTask.getOptions().getCompilerArgs().add("-A" + key + "=" + value);
     }
 }

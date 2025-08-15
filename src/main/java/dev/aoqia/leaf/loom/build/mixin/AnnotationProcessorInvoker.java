@@ -45,6 +45,7 @@ import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
 
 /**
  * Normally javac invokes annotation processors, but when the scala or kapt plugin are installed they will want to
@@ -61,13 +62,13 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
 
     protected final Project project;
     protected final MixinExtension mixinExtension;
-    protected final Map<SourceSet, T> invokerTasks;
+    protected final Map<SourceSet, TaskProvider<T>> invokerTasks;
     private final LoomGradleExtension loomExtension;
     private final String name;
     private final Collection<Configuration> apConfigurations;
 
     protected AnnotationProcessorInvoker(
-        Project project, Collection<Configuration> apConfigurations, Map<SourceSet, T> invokerTasks, String name) {
+        Project project, Collection<Configuration> apConfigurations, Map<SourceSet, TaskProvider<T>> invokerTasks, String name) {
         this.project = project;
         this.loomExtension = LoomGradleExtension.get(project);
         this.mixinExtension = loomExtension.getMixin();
@@ -88,7 +89,7 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
 
         if (!IdeaUtils.isIdeaSync()) {
             for (Configuration processorConfig : apConfigurations) {
-                project.getLogger().info("Adding mixin to classpath of AP config: " + processorConfig.getName());
+                project.getLogger().info("Adding mixin to classpath of AP config: {}", processorConfig.getName());
                 // Pass named MC classpath to mixin AP classpath
                 processorConfig.extendsFrom(
                     configs.getByName(Constants.Configurations.LOADER_DEPENDENCIES),
@@ -102,8 +103,8 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
             }
         }
 
-        for (Map.Entry<SourceSet, T> entry : invokerTasks.entrySet()) {
-            passMixinArguments(entry.getValue(), entry.getKey());
+        for (Map.Entry<SourceSet, TaskProvider<T>> entry : invokerTasks.entrySet()) {
+            entry.getValue().configure(t -> passMixinArguments(t, entry.getKey()));
         }
     }
 

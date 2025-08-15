@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import dev.aoqia.leaf.loom.task.RemapSourcesJarTask;
 import dev.aoqia.leaf.loom.util.DeletingFileVisitor;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
@@ -35,47 +37,63 @@ import dev.aoqia.leaf.loom.util.ZipUtils;
 import dev.aoqia.leaf.loom.util.service.Service;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 import net.fabricmc.lorenztiny.TinyMappingsReader;
 import org.cadixdev.mercury.Mercury;
 import org.cadixdev.mercury.remapper.MercuryRemapper;
+import org.gradle.api.JavaVersion;
+import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
+import org.gradle.api.tasks.compile.JavaCompile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class SourceRemapperService extends Service<SourceRemapperService.Options> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourceRemapperService.class);
     public static ServiceType<Options, SourceRemapperService> TYPE =
-            new ServiceType<>(Options.class, SourceRemapperService.class);
+        new ServiceType<>(Options.class, SourceRemapperService.class);
 
-    public interface Options extends Service.Options {
-        @Nested
-        Property<MappingsService.Options> getMappings();
-
-        @Input
-        Property<Integer> getJavaCompileRelease();
-
-        @InputFiles
-        ConfigurableFileCollection getClasspath();
+    public SourceRemapperService(Options options, ServiceFactory serviceFactory) {
+        super(options, serviceFactory);
     }
 
     public static Provider<Options> createOptions(RemapSourcesJarTask task) {
         return TYPE.create(task.getProject(), o -> {
             o.getMappings()
-                    .set(MappingsService.createOptionsWithProjectMappings(
-                            task.getProject(), task.getSourceNamespace(), task.getTargetNamespace()));
-            o.getJavaCompileRelease().set(SourceRemapper.getJavaCompileRelease(task.getProject()));
+                .set(MappingsService.createOptionsWithProjectMappings(
+                    task.getProject(), task.getSourceNamespace(), task.getTargetNamespace()));
+            o.getJavaCompileRelease().set(getJavaCompileRelease(task.getProject()));
             o.getClasspath().from(task.getClasspath());
         });
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SourceRemapperService.class);
+    public static int getJavaCompileRelease(Project project) {
+        AtomicInteger release = new AtomicInteger(-1);
 
-    public SourceRemapperService(Options options, ServiceFactory serviceFactory) {
-        super(options, serviceFactory);
+        project.getTasks().withType(JavaCompile.class, javaCompile -> {
+            Property<Integer> releaseProperty = javaCompile.getOptions().getRelease();
+
+            if (!releaseProperty.isPresent()) {
+                return;
+            }
+
+            int compileRelease = releaseProperty.get();
+            release.set(Math.max(release.get(), compileRelease));
+        });
+
+        final int i = release.get();
+
+        if (i < 0) {
+            // Unable to find the release used to compile with, default to the current version
+            return Integer.parseInt(JavaVersion.current().getMajorVersion());
+        }
+
+        return i;
     }
 
     public void remapSourcesJar(Path source, Path destination) throws IOException {
@@ -100,7 +118,8 @@ public final class SourceRemapperService extends Service<SourceRemapperService.O
         Mercury mercury = createMercury();
 
         try (FileSystemUtil.Delegate dstFs =
-                Files.isDirectory(destination) ? null : FileSystemUtil.getJarFileSystem(destination, true)) {
+                 Files.isDirectory(destination) ? null
+                     : FileSystemUtil.getJarFileSystem(destination, true)) {
             Path dstPath = dstFs != null ? dstFs.get().getPath("/") : destination;
 
             try {
@@ -121,12 +140,13 @@ public final class SourceRemapperService extends Service<SourceRemapperService.O
         var mercury = new Mercury();
         mercury.setGracefulClasspathChecks(true);
         mercury.setSourceCompatibilityFromRelease(
-                getOptions().getJavaCompileRelease().get());
+            getOptions().getJavaCompileRelease().get());
 
         MappingsService mappingsService = getServiceFactory().get(getOptions().getMappings());
         var tinyMappingsReader = new TinyMappingsReader(
-                        mappingsService.getMemoryMappingTree(), mappingsService.getFrom(), mappingsService.getTo())
-                .read();
+            mappingsService.getMemoryMappingTree(), mappingsService.getFrom(),
+            mappingsService.getTo())
+            .read();
         mercury.getProcessors().add(MercuryRemapper.create(tinyMappingsReader));
 
         for (File file : getOptions().getClasspath().getFiles()) {
@@ -136,5 +156,16 @@ public final class SourceRemapperService extends Service<SourceRemapperService.O
         }
 
         return mercury;
+    }
+
+    public interface Options extends Service.Options {
+        @Nested
+        Property<MappingsService.Options> getMappings();
+
+        @Input
+        Property<Integer> getJavaCompileRelease();
+
+        @InputFiles
+        ConfigurableFileCollection getClasspath();
     }
 }
