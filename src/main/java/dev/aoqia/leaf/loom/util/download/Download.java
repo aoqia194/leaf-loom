@@ -23,8 +23,6 @@
  */
 package dev.aoqia.leaf.loom.util.download;
 
-import static com.google.common.io.Files.createParentDirs;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,26 +49,23 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.IntConsumer;
 import java.util.zip.GZIPInputStream;
 
+import dev.aoqia.leaf.loom.util.AttributeHelper;
+import dev.aoqia.leaf.loom.util.Checksum;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.aoqia.leaf.loom.util.AttributeHelper;
-import dev.aoqia.leaf.loom.util.Checksum;
+import static com.google.common.io.Files.createParentDirs;
 
 public final class Download {
     private static final String E_TAG = "ETag";
     private static final Logger LOGGER = LoggerFactory.getLogger(Download.class);
     private static final Duration TIMEOUT = Duration.ofMinutes(1);
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .followRedirects(HttpClient.Redirect.ALWAYS)
-            .proxy(ProxySelector.getDefault())
-            .connectTimeout(TIMEOUT)
-            .build();
-
-    public static DownloadBuilder create(String url) throws URISyntaxException {
-        return DownloadBuilder.create(url);
-    }
-
+        .followRedirects(HttpClient.Redirect.ALWAYS)
+        .proxy(ProxySelector.getDefault())
+        .connectTimeout(TIMEOUT)
+        .build();
     private final URI url;
     private final String expectedHash;
     private final boolean useEtag;
@@ -81,7 +76,9 @@ public final class Download {
     private final HttpClient.Version httpVersion;
     private final int downloadAttempt;
 
-    Download(URI url, String expectedHash, boolean useEtag, boolean forceDownload, boolean offline, Duration maxAge, DownloadProgressListener progressListener, HttpClient.Version httpVersion, int downloadAttempt) {
+    Download(URI url, String expectedHash, boolean useEtag, boolean forceDownload, boolean offline,
+        Duration maxAge, DownloadProgressListener progressListener, HttpClient.Version httpVersion,
+        int downloadAttempt) {
         this.url = url;
         this.expectedHash = expectedHash;
         this.useEtag = useEtag;
@@ -93,25 +90,36 @@ public final class Download {
         this.downloadAttempt = downloadAttempt;
     }
 
+    public static DownloadBuilder create(String url) throws URISyntaxException {
+        return DownloadBuilder.create(url);
+    }
+
+    // A faster exists check
+    private static boolean exists(Path path) {
+        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists()
+            : Files.exists(path);
+    }
+
     private HttpRequest.Builder requestBuilder() {
         return HttpRequest.newBuilder(url)
-                .timeout(TIMEOUT)
-                .version(httpVersion)
-                .GET();
+            .timeout(TIMEOUT)
+            .version(httpVersion)
+            .GET();
     }
 
     private HttpRequest getRequest() {
         return requestBuilder()
-                .build();
+            .build();
     }
 
     private HttpRequest getETagRequest(String etag) {
         return requestBuilder()
-                .header("If-None-Match", etag)
-                .build();
+            .header("If-None-Match", etag)
+            .build();
     }
 
-    private <T> HttpResponse<T> send(HttpRequest httpRequest, HttpResponse.BodyHandler<T> bodyHandler) throws DownloadException {
+    private <T> HttpResponse<T> send(HttpRequest httpRequest,
+        HttpResponse.BodyHandler<T> bodyHandler) throws DownloadException {
         if (offline) {
             throw error("Unable to download %s in offline mode", this.url);
         }
@@ -126,13 +134,16 @@ public final class Download {
     }
 
     String downloadString() throws DownloadException {
-        final HttpResponse<InputStream> response = send(getRequest(), HttpResponse.BodyHandlers.ofInputStream());
+        final HttpResponse<InputStream> response = send(getRequest(),
+            HttpResponse.BodyHandlers.ofInputStream());
         final int statusCode = response.statusCode();
         final boolean successful = statusCode >= 200 && statusCode < 300;
 
         if (!successful) {
             progressListener.onEnd();
-            throw statusError("HTTP request to (%s) returned unsuccessful status".formatted(url) + "(%d)", statusCode);
+            throw statusError(
+                "HTTP request to (%s) returned unsuccessful status".formatted(url) + "(%d)",
+                statusCode);
         }
 
         try (InputStream inputStream = decodeOutput(response)) {
@@ -144,13 +155,13 @@ public final class Download {
         }
     }
 
-    void downloadPath(Path output) throws DownloadException {
+    DownloadResult downloadPath(Path output) throws DownloadException {
         boolean downloadRequired = requiresDownload(output);
 
         if (!downloadRequired) {
             // Does not require download, we are done here.
             progressListener.onEnd();
-            return;
+            return new DownloadResultImpl(false);
         }
 
         try {
@@ -161,6 +172,8 @@ public final class Download {
         } finally {
             progressListener.onEnd();
         }
+
+        return new DownloadResultImpl(true);
     }
 
     private void doDownload(Path output) throws DownloadException {
@@ -177,20 +190,24 @@ public final class Download {
         }
 
         final HttpRequest httpRequest = eTag
-                .map(this::getETagRequest)
-                .orElseGet(this::getRequest);
+            .map(this::getETagRequest)
+            .orElseGet(this::getRequest);
 
-        // Create a .lock file, this allows us to re-download if the download was forcefully aborted part way through.
+        // Create a .lock file, this allows us to re-download if the download was forcefully
+        // aborted part way through.
         createLock(output);
-        HttpResponse<InputStream> response = send(httpRequest, HttpResponse.BodyHandlers.ofInputStream());
+        HttpResponse<InputStream> response = send(httpRequest,
+            HttpResponse.BodyHandlers.ofInputStream());
         getAndResetLock(output);
 
         final int statusCode = response.statusCode();
-        boolean success = statusCode == HttpURLConnection.HTTP_NOT_MODIFIED || (statusCode >= 200 && statusCode < 300);
+        boolean success = statusCode == HttpURLConnection.HTTP_NOT_MODIFIED ||
+                          (statusCode >= 200 && statusCode < 300);
 
         if (statusCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
             try {
-                // Update the last modified time so we don't retry the request until the max age has passed again.
+                // Update the last modified time so we don't retry the request until the max age
+                // has passed again.
                 Files.setLastModifiedTime(output, FileTime.from(Instant.now()));
             } catch (IOException e) {
                 throw error(e, "Failed to update last modified time");
@@ -208,7 +225,8 @@ public final class Download {
 
         if (useEtag) {
             final HttpHeaders headers = response.headers();
-            final String responseETag = headers.firstValue(E_TAG.toLowerCase(Locale.ROOT)).orElse(null);
+            final String responseETag = headers.firstValue(E_TAG.toLowerCase(Locale.ROOT))
+                .orElse(null);
 
             if (responseETag != null) {
                 writeEtag(output, responseETag);
@@ -227,15 +245,18 @@ public final class Download {
                     downloadedHash = "unknown hash";
                 }
 
-                throw error("Failed to download (%s) with expected hash: %s got %s", url, expectedHash, downloadedHash);
+                throw error("Failed to download (%s) with expected hash: %s got %s", url,
+                    expectedHash, downloadedHash);
             }
 
-            // Write the hash to the file attribute, saves a lot of time trying to re-compute the hash when re-visiting this file.
+            // Write the hash to the file attribute, saves a lot of time trying to re-compute the
+            // hash when re-visiting this file.
             writeHash(output, expectedHash);
         }
     }
 
-    private void downloadToPath(Path output, HttpResponse<InputStream> response) throws DownloadException {
+    private void downloadToPath(Path output, HttpResponse<InputStream> response) throws
+        DownloadException {
         // Download the file initially to a .part file
         final Path partFile = getPartFile(output);
 
@@ -246,10 +267,12 @@ public final class Download {
             throw error(e, "Failed to delete existing file");
         }
 
-        final long length = Long.parseLong(response.headers().firstValue("Content-Length").orElse("-1"));
+        final long length = Long.parseLong(
+            response.headers().firstValue("Content-Length").orElse("-1"));
         AtomicLong totalBytes = new AtomicLong(0);
 
-        try (OutputStream outputStream = Files.newOutputStream(partFile, StandardOpenOption.CREATE_NEW)) {
+        try (OutputStream outputStream = Files.newOutputStream(partFile,
+            StandardOpenOption.CREATE_NEW)) {
             copyWithCallback(decodeOutput(response), outputStream, value -> {
                 if (length < 0) {
                     return;
@@ -270,7 +293,8 @@ public final class Download {
                 final long actualLength = Files.size(partFile);
 
                 if (actualLength != length) {
-                    throw error("Unexpected file length of %d bytes, expected %d bytes".formatted(actualLength, length));
+                    throw error("Unexpected file length of %d bytes, expected %d bytes".formatted(
+                        actualLength, length));
                 }
             } catch (IOException e) {
                 throw error(e);
@@ -286,7 +310,8 @@ public final class Download {
         }
     }
 
-    private void copyWithCallback(InputStream is, OutputStream os, IntConsumer consumer) throws IOException {
+    private void copyWithCallback(InputStream is, OutputStream os, IntConsumer consumer) throws
+        IOException {
         byte[] buffer = new byte[1024];
         int length;
 
@@ -300,9 +325,9 @@ public final class Download {
         final String encoding = response.headers().firstValue("Content-Encoding").orElse("");
 
         return switch (encoding) {
-        case "gzip" -> new GZIPInputStream(response.body());
-        case "" -> response.body();
-        default -> throw error("Unsupported encoding: %s", encoding);
+            case "gzip" -> new GZIPInputStream(response.body());
+            case "" -> response.body();
+            default -> throw error("Unsupported encoding: %s", encoding);
         };
     }
 
@@ -315,7 +340,10 @@ public final class Download {
         }
 
         if (locked && downloadAttempt == 1) {
-            LOGGER.warn("Forcing downloading {} as existing lock file was found. This may happen if the gradle build was forcefully canceled.", output);
+            LOGGER.warn(
+                "Forcing downloading {} as existing lock file was found. This may happen if the " +
+                "gradle build was forcefully canceled.",
+                output);
             return true;
         }
 
@@ -341,7 +369,7 @@ public final class Download {
             LOGGER.info("Found existing file ({}) to download with unexpected hash.", output);
         }
 
-        //noinspection RedundantIfStatement
+        // noinspection RedundantIfStatement
         if (!maxAge.equals(Duration.ZERO) && !isOutdated(output)) {
             return false;
         }
@@ -357,8 +385,8 @@ public final class Download {
 
         try {
             String computedHash = switch (algorithm) {
-            case "sha1" -> Checksum.sha1Hex(path);
-            default -> throw error("Unsupported hash algorithm (%s)", algorithm);
+                case "sha1" -> Checksum.sha1Hex(path);
+                default -> throw error("Unsupported hash algorithm (%s)", algorithm);
             };
 
             return computedHash.equalsIgnoreCase(hash);
@@ -371,7 +399,7 @@ public final class Download {
         try {
             final FileTime lastModified = Files.getLastModifiedTime(path);
             return lastModified.toInstant()
-                    .isBefore(Instant.now().minus(maxAge));
+                .isBefore(Instant.now().minus(maxAge));
         } catch (IOException e) {
             throw error(e, "Failed to check if (%s) is outdated", path);
         }
@@ -429,11 +457,6 @@ public final class Download {
         }
     }
 
-    // A faster exists check
-    private static boolean exists(Path path) {
-        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists() : Files.exists(path);
-    }
-
     private Path getLockFile(Path output) {
         return output.resolveSibling(output.getFileName() + ".lock");
     }
@@ -468,7 +491,8 @@ public final class Download {
     }
 
     private DownloadException statusError(String message, int statusCode) {
-        return new DownloadException(String.format(Locale.ENGLISH, message, statusCode), statusCode);
+        return new DownloadException(String.format(Locale.ENGLISH, message, statusCode),
+            statusCode);
     }
 
     private DownloadException error(String message, Object... args) {
@@ -482,4 +506,6 @@ public final class Download {
     private DownloadException error(Throwable throwable, String message, Object... args) {
         return new DownloadException(message.formatted(args), throwable);
     }
+
+    private record DownloadResultImpl(boolean didDownload) implements DownloadResult {}
 }
