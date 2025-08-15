@@ -41,6 +41,7 @@ import java.util.function.IntConsumer;
 
 import dev.aoqia.leaf.loom.util.AttributeHelper;
 import dev.aoqia.leaf.loom.util.Checksum;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,8 @@ public final class CopyGameFile {
      * @return True if the file exists.
      */
     private static boolean exists(Path path) {
-        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists() : Files.exists(path);
+        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists()
+            : Files.exists(path);
     }
 
     private void copyGameFileToPath(Path output) throws IOException {
@@ -96,7 +98,8 @@ public final class CopyGameFile {
         AtomicLong totalBytes = new AtomicLong(0);
 
         try (InputStream inputStream = Files.newInputStream(this.path, StandardOpenOption.READ);
-             OutputStream outputStream = Files.newOutputStream(partFile, StandardOpenOption.CREATE_NEW)) {
+             OutputStream outputStream = Files.newOutputStream(partFile,
+                 StandardOpenOption.CREATE_NEW)) {
             copyWithCallback(inputStream, outputStream, value -> {
                 progressListener.onProgress(totalBytes.addAndGet(value), length);
             });
@@ -114,7 +117,8 @@ public final class CopyGameFile {
 
                 if (actualLength != length) {
                     throw error(
-                        "Unexpected file length of %d bytes, expected %d bytes".formatted(actualLength, length));
+                        "Unexpected file length of %d bytes, expected %d bytes".formatted(
+                            actualLength, length));
                 }
             } catch (IOException e) {
                 throw error(e);
@@ -131,7 +135,8 @@ public final class CopyGameFile {
         }
     }
 
-    private void copyWithCallback(InputStream is, OutputStream os, IntConsumer consumer) throws IOException {
+    private void copyWithCallback(InputStream is, OutputStream os, IntConsumer consumer) throws
+        IOException {
         byte[] buffer = new byte[1024];
         int length;
 
@@ -159,7 +164,8 @@ public final class CopyGameFile {
 
         if (locked && attempt == 1) {
             LOGGER.warn(
-                "Forcing copy of game file {} as existing lock file was found. This may happen if the gradle build " +
+                "Forcing copy of game file {} as existing lock file was found. This may happen if" +
+                " the gradle build " +
                 "was " +
                 "forcefully canceled.",
                 output);
@@ -183,7 +189,7 @@ public final class CopyGameFile {
             LOGGER.info("Found existing file ({}) to copy with unexpected hash.", output);
         }
 
-        //noinspection RedundantIfStatement
+        // noinspection RedundantIfStatement
         if (!maxAge.equals(Duration.ZERO) && !isOutdated(output)) {
             return false;
         }
@@ -308,14 +314,16 @@ public final class CopyGameFile {
             throw error(e, "Failed to create parent directories");
         }
 
-        // Create a .lock file, this allows us to re-download if the download was forcefully aborted part way through.
+        // Create a .lock file, this allows us to re-download if the download was forcefully
+        // aborted part way through.
         createLock(output);
         progressListener.onStart();
         getAndResetLock(output);
 
         if (exists(output) && isOutdated(output)) {
             try {
-                // Update the last modified time so we don't retry the request until the max age has passed again.
+                // Update the last modified time so we don't retry the request until the max age
+                // has passed again.
                 Files.setLastModifiedTime(output, FileTime.from(Instant.now()));
             } catch (IOException e) {
                 throw error(e, "Failed to update last modified time");
