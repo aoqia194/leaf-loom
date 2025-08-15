@@ -30,23 +30,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Stream;
+
 import dev.aoqia.leaf.loom.util.CompletableFutureCollector;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
+
 import org.gradle.api.JavaVersion;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
@@ -81,7 +71,7 @@ public final class JarWalker {
                 }
 
                 final String fileName =
-                        entry.toString().substring(fs.getRoot().toString().length());
+                    entry.toString().substring(fs.getRoot().toString().length());
 
                 if (!fileName.endsWith(".class")) {
                     continue;
@@ -93,13 +83,14 @@ public final class JarWalker {
                     outerClasses.add(fileName);
                 } else {
                     innerClasses
-                            .computeIfAbsent(outerClass + ".class", k -> new ArrayList<>())
-                            .add(fileName);
+                        .computeIfAbsent(outerClass + ".class", k -> new ArrayList<>())
+                        .add(fileName);
                 }
             }
         }
 
-        LOGGER.info("Found {} outer classes and {} inner classes", outerClasses.size(), innerClasses.size());
+        LOGGER.info("Found {} outer classes and {} inner classes", outerClasses.size(),
+            innerClasses.size());
 
         Collections.sort(outerClasses);
 
@@ -120,17 +111,19 @@ public final class JarWalker {
 
         try {
             return classEntries.stream()
-                    .collect(CompletableFutureCollector.allOf())
-                    .get(10, TimeUnit.MINUTES);
+                .collect(CompletableFutureCollector.allOf())
+                .get(10, TimeUnit.MINUTES);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new RuntimeException("Failed to get class entries", e);
         }
     }
 
     /**
-     * Check if the given class file denotes and inner class and find the corresponding outer class name.
+     * Check if the given class file denotes and inner class and find the corresponding outer class
+     * name.
      */
-    private static String findOuterClass(FileSystemUtil.Delegate fs, String classFile) throws IOException {
+    private static String findOuterClass(FileSystemUtil.Delegate fs, String classFile) throws
+        IOException {
         // this check can speed things up quite a bit, even if it does not follow the JVM spec
         if (classFile.indexOf('$') < 0) {
             return null;
@@ -150,16 +143,19 @@ public final class JarWalker {
                         return innerClass.outerName;
                     }
 
-                    // local and anonymous classes have the outer class in the enclosing method attribute
-                    // we check for both attributes because both should be present for decompilers to
+                    // local and anonymous classes have the outer class in the enclosing method
+                    // attribute
+                    // we check for both attributes because both should be present for
+                    // decompilers to
                     // recognize a class as an inner class
                     if (classNode.outerClass != null) {
                         return classNode.outerClass;
                     }
 
-                    // there are some Minecraft versions with one attribute stripped but not the other
+                    // there are some Minecraft versions with one attribute stripped but not the
+                    // other
                     LOGGER.debug("inner class attribute is present for " + classNode.name
-                            + " but no outer class could be found, weird!");
+                                 + " but no outer class could be found, weird!");
                 }
             }
         }
@@ -168,24 +164,27 @@ public final class JarWalker {
     }
 
     private static CompletableFuture<ClassEntry> getClassEntry(
-            String outerClass, List<String> innerClasses, FileSystemUtil.Delegate fs, Executor executor) {
+        String outerClass, List<String> innerClasses, FileSystemUtil.Delegate fs,
+        Executor executor) {
         List<CompletableFuture<List<String>>> parentClassesFutures = new ArrayList<>();
 
         // Get the super classes of the outer class and any inner classes
-        parentClassesFutures.add(CompletableFuture.supplyAsync(() -> getSuperClasses(outerClass, fs), executor));
+        parentClassesFutures.add(
+            CompletableFuture.supplyAsync(() -> getSuperClasses(outerClass, fs), executor));
 
         for (String innerClass : innerClasses) {
-            parentClassesFutures.add(CompletableFuture.supplyAsync(() -> getSuperClasses(innerClass, fs), executor));
+            parentClassesFutures.add(
+                CompletableFuture.supplyAsync(() -> getSuperClasses(innerClass, fs), executor));
         }
 
         return parentClassesFutures.stream()
-                .collect(CompletableFutureCollector.allOf())
-                .thenApply(lists -> lists.stream()
-                        .flatMap(List::stream)
-                        .filter(JarWalker::isNotReservedClass)
-                        .distinct()
-                        .toList())
-                .thenApply(parentClasses -> new ClassEntry(outerClass, innerClasses, parentClasses));
+            .collect(CompletableFutureCollector.allOf())
+            .thenApply(lists -> lists.stream()
+                .flatMap(List::stream)
+                .filter(JarWalker::isNotReservedClass)
+                .distinct()
+                .toList())
+            .thenApply(parentClasses -> new ClassEntry(outerClass, innerClasses, parentClasses));
     }
 
     private static List<String> getSuperClasses(String classFile, FileSystemUtil.Delegate fs) {
@@ -197,6 +196,10 @@ public final class JarWalker {
 
             if (superName != null && !superName.equals("java/lang/Object")) {
                 parentClasses.add(superName + ".class");
+            }
+
+            for (String iface : reader.getInterfaces()) {
+                parentClasses.add(iface + ".class");
             }
 
             return Collections.unmodifiableList(parentClasses);
