@@ -120,7 +120,9 @@ public abstract class GenVsCodeProjectTask extends AbstractLoomTask {
         }
 
         for (VsCodeConfiguration configuration : getLaunchConfigurations().get()) {
-            final JsonElement configurationJson = LoomGradlePlugin.GSON.toJsonTree(configuration);
+            JsonObject configurationJson = LoomGradlePlugin.GSON.toJsonTree(configuration)
+                .getAsJsonObject();
+            configurationJson.remove("runDir");
 
             final List<JsonElement> toRemove = new LinkedList<>();
 
@@ -169,23 +171,13 @@ public abstract class GenVsCodeProjectTask extends AbstractLoomTask {
             String relativeRunDir = rootPath.relativize(projectPath)
                 .resolve(runConfig.runDir)
                 .toString();
-            return new VsCodeConfiguration(
-                "java",
-                runConfig.configName,
-                "launch",
-                "${workspaceFolder}/" + relativeRunDir,
-                "integratedTerminal",
-                false,
-                runConfig.mainClass,
-                RunConfig.joinArguments(runConfig.vmArgs),
+
+            return new VsCodeConfiguration("java", runConfig.configName, "launch",
+                "${workspaceFolder}/" + relativeRunDir, "integratedTerminal", false,
+                runConfig.mainClass, RunConfig.joinArguments(runConfig.vmArgs),
                 RunConfig.joinArguments(runConfig.programArgs),
-                new HashMap<>(runConfig.environmentVariables),
-                runConfig.projectName,
-                project.getProjectDir()
-                    .toPath()
-                    .resolve(relativeRunDir)
-                    .toAbsolutePath()
-                    .toString());
+                new HashMap<>(runConfig.environmentVariables), runConfig.projectName,
+                rootPath.resolve(relativeRunDir).toAbsolutePath().toString());
         }
     }
 }
