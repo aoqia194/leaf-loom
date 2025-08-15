@@ -138,7 +138,7 @@ public class ModProcessor {
             knownIndyBsms.addAll(modDependency.getMetadata().knownIdyBsms());
         }
 
-        TinyRemapper.Builder builder = TinyRemapper.newRemapper()
+        TinyRemapper.Builder builder = TinyRemapper.newRemapper(TinyRemapperLoggerAdapter.INSTANCE)
                 .withKnownIndyBsm(knownIndyBsms)
                 .withMappings(TinyRemapperHelper.create(
                         mappingConfiguration

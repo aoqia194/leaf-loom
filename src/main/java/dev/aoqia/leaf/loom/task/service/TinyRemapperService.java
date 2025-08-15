@@ -142,7 +142,7 @@ public class TinyRemapperService extends Service<TinyRemapperService.Options> im
     }
 
     private TinyRemapper createTinyRemapper() {
-        TinyRemapper.Builder builder = TinyRemapper.newRemapper()
+        TinyRemapper.Builder builder = TinyRemapper.newRemapper(TinyRemapperLoggerAdapter.INSTANCE)
                 .withKnownIndyBsm(Set.copyOf(getOptions().getKnownIndyBsms().get()));
 
         for (MappingsService.Options options : getOptions().getMappings().get()) {

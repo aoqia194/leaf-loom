@@ -83,7 +83,7 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider
         TinyRemapper remapper = null;
 
         try {
-            remapper = TinyRemapper.newRemapper().build();
+            remapper = TinyRemapper.newRemapper(TinyRemapperLoggerAdapter.INSTANCE).build();
 
             Files.deleteIfExists(zomboidEnvOnlyJar);
 

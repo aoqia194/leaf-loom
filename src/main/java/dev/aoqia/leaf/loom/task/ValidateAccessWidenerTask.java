@@ -66,7 +66,7 @@ public abstract class ValidateAccessWidenerTask extends DefaultTask {
 
     @TaskAction
     public void run() {
-        final TinyRemapper tinyRemapper = TinyRemapper.newRemapper().build();
+        final TinyRemapper tinyRemapper = TinyRemapper.newRemapper(TinyRemapperLoggerAdapter.INSTANCE).build();
 
         for (File file : getTargetJars().getFiles()) {
             tinyRemapper.readClassPath(file.toPath());
