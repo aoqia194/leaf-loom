@@ -36,7 +36,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.scala.ScalaCompile;
 
-public class ScalaApInvoker extends AnnotationProcessorInvoker<TaskProvider<ScalaCompile>> {
+public class ScalaApInvoker extends AnnotationProcessorInvoker<ScalaCompile> {
     public ScalaApInvoker(Project project) {
         super(project,
             // Scala just uses the java AP configuration afaik. This of course assumes the java
@@ -54,12 +54,12 @@ public class ScalaApInvoker extends AnnotationProcessorInvoker<TaskProvider<Scal
     }
 
     @Override
-    protected void passArgument(ScalaCompile compileTask, String key, String value) {
-        compileTask.getOptions().getCompilerArgs().add("-A" + key + "=" + value);
+    protected File getRefmapDestinationDir(ScalaCompile task) {
+        return task.getDestinationDirectory().get().getAsFile();
     }
 
     @Override
-    protected File getRefmapDestinationDir(ScalaCompile task) {
-        return task.getDestinationDirectory().get().getAsFile();
+    protected void passArgument(ScalaCompile compileTask, String key, String value) {
+        compileTask.getOptions().getCompilerArgs().add("-A" + key + "=" + value);
     }
 }

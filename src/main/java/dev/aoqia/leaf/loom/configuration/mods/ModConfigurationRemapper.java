@@ -37,6 +37,7 @@ import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
 import dev.aoqia.leaf.loom.configuration.RemapConfigurations;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependency;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependencyFactory;
+import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependencyOptions;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.util.Checksum;
 import dev.aoqia.leaf.loom.util.Constants;
@@ -65,6 +66,8 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.jvm.JvmLibrary;
 import org.gradle.language.base.artifact.SourcesArtifact;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ModConfigurationRemapper {
@@ -72,6 +75,8 @@ public class ModConfigurationRemapper {
     // This can happen when the dependency is a FileCollectionDependency or from a flatDir
     // repository.
     public static final String MISSING_GROUP = "unspecified";
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(ModConfigurationRemapper.class);
 
     public static void supplyModConfigurations(
         Project project,
@@ -154,6 +159,15 @@ public class ModConfigurationRemapper {
             }
         }
 
+        final ModDependencyOptions modDependencyOptions = ModDependencyOptions.create(project,
+            ModDependencyOptions.class, options -> {
+                options.getMappings().set(mappingsSuffix);
+            });
+
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Mod dependency options: {}", modDependencyOptions.getJson());
+        }
+
         // Round 1: Discovery
         // Go through all the configs to find artifacts to remap and
         // the installer data. The installer data has to be added before
@@ -201,9 +215,9 @@ public class ModConfigurationRemapper {
                     continue;
                 }
 
-                final ModDependency modDependency = ModDependencyFactory.create(
-                    artifact, artifactMetadata, remappedConfig, clientRemappedConfig,
-                    mappingsSuffix, project);
+                final ModDependency modDependency = ModDependencyFactory.create(artifact,
+                    artifactMetadata, remappedConfig, clientRemappedConfig, modDependencyOptions,
+                    project);
                 scheduleSourcesRemapping(project, sourceRemapper, modDependency);
                 modDependencies.add(modDependency);
             }
@@ -383,7 +397,7 @@ public class ModConfigurationRemapper {
         }
 
         if (dependency.isCacheInvalid(project, "sources")) {
-            final Path output = dependency.getWorkingFile("sources");
+            final Path output = dependency.getWorkingFile(project, "sources");
 
             sourceRemapper.scheduleRemapSources(sourcesInput.toFile(), output.toFile(), false, true,
                 () -> {

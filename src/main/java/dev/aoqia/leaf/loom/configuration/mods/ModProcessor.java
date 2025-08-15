@@ -23,23 +23,14 @@
  */
 package dev.aoqia.leaf.loom.configuration.mods;
 
-import com.google.gson.JsonObject;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
@@ -50,6 +41,8 @@ import dev.aoqia.leaf.loom.util.*;
 import dev.aoqia.leaf.loom.util.kotlin.KotlinClasspathService;
 import dev.aoqia.leaf.loom.util.kotlin.KotlinRemapperClassloader;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+
+import com.google.gson.JsonObject;
 import net.fabricmc.tinyremapper.InputTag;
 import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
@@ -69,20 +62,27 @@ public class ModProcessor {
     private final Configuration sourceConfiguration;
     private final ServiceFactory serviceFactory;
 
-    public ModProcessor(Project project, Configuration sourceConfiguration, ServiceFactory serviceFactory) {
+    public ModProcessor(Project project, Configuration sourceConfiguration,
+        ServiceFactory serviceFactory) {
         this.project = project;
         this.sourceConfiguration = sourceConfiguration;
         this.serviceFactory = serviceFactory;
     }
 
+    private  Path getRemappedOutput(ModDependency dependency) {
+        return dependency.getWorkingFile(project, null);
+    }
+
     public void processMods(List<ModDependency> remapList) throws IOException {
         try {
             project.getLogger()
-                    .lifecycle(
-                            ":remapping {} mods from {}", remapList.size(), describeConfiguration(sourceConfiguration));
+                .lifecycle(
+                    ":remapping {} mods from {}", remapList.size(),
+                    describeConfiguration(sourceConfiguration));
             remapJars(remapList);
         } catch (Exception e) {
-            throw new RuntimeException(String.format(Locale.ENGLISH, "Failed to remap %d mods", remapList.size()), e);
+            throw new RuntimeException(
+                String.format(Locale.ENGLISH, "Failed to remap %d mods", remapList.size()), e);
         }
     }
 
@@ -114,14 +114,16 @@ public class ModProcessor {
     }
 
     private void stripNestedJars(Path path) {
-        // Strip out all contained jar info as we dont want loader to try and load the jars contained in dev.
+        // Strip out all contained jar info as we dont want loader to try and load the jars
+        // contained in dev.
         try {
             ZipUtils.transformJson(JsonObject.class, path, Map.of("leaf.mod.json", json -> {
                 json.remove("jars");
                 return json;
             }));
         } catch (IOException e) {
-            throw new UncheckedIOException("Failed to strip nested jars from %s".formatted(path), e);
+            throw new UncheckedIOException("Failed to strip nested jars from %s".formatted(path),
+                e);
         }
     }
 
@@ -136,19 +138,20 @@ public class ModProcessor {
         }
 
         TinyRemapper.Builder builder = TinyRemapper.newRemapper(TinyRemapperLoggerAdapter.INSTANCE)
-                .withKnownIndyBsm(knownIndyBsms)
-                .withMappings(TinyRemapperHelper.create(
-                        mappingConfiguration
-                                .getMappingsService(project, serviceFactory)
-                                .getMappingTree(),
-                        fromM,
-                        toM,
-                        false))
-                .renameInvalidLocals(false)
-                .extraAnalyzeVisitor(AccessWidenerAnalyzeVisitorProvider.createFromMods(fromM, remapList));
+            .withKnownIndyBsm(knownIndyBsms)
+            .withMappings(TinyRemapperHelper.create(
+                mappingConfiguration
+                    .getMappingsService(project, serviceFactory)
+                    .getMappingTree(),
+                fromM,
+                toM,
+                false))
+            .renameInvalidLocals(false)
+            .extraAnalyzeVisitor(
+                AccessWidenerAnalyzeVisitorProvider.createFromMods(fromM, remapList));
 
         final KotlinClasspathService kotlinClasspathService =
-                serviceFactory.getOrNull(KotlinClasspathService.createOptions(project));
+            serviceFactory.getOrNull(KotlinClasspathService.createOptions(project));
         KotlinRemapperClassloader kotlinRemapperClassloader = null;
 
         if (kotlinClasspathService != null) {
@@ -158,11 +161,13 @@ public class ModProcessor {
 
         final Set<InputTag> remapMixins = new HashSet<>();
         final boolean requiresStaticMixinRemap = remapList.stream()
-                .anyMatch(modDependency ->
-                        modDependency.getMetadata().mixinRemapType() == ArtifactMetadata.MixinRemapType.STATIC);
+            .anyMatch(modDependency ->
+                modDependency.getMetadata().mixinRemapType() ==
+                ArtifactMetadata.MixinRemapType.STATIC);
 
         if (requiresStaticMixinRemap) {
-            // Configure the mixin extension to remap mixins from mod jars that were remapped with the mixin extension.
+            // Configure the mixin extension to remap mixins from mod jars that were remapped
+            // with the mixin extension.
             builder.extension(new MixinExtension(remapMixins::contains));
         }
 
@@ -173,7 +178,7 @@ public class ModProcessor {
         final TinyRemapper remapper = builder.build();
 
         remapper.readClassPath(
-                extension.getZomboidJars(MappingsNamespace.OFFICIAL).toArray(Path[]::new));
+            extension.getZomboidJars(MappingsNamespace.OFFICIAL).toArray(Path[]::new));
 
         final Map<ModDependency, InputTag> tagMap = new HashMap<>();
         final Map<ModDependency, OutputConsumerPath> outputConsumerMap = new HashMap<>();
@@ -182,7 +187,7 @@ public class ModProcessor {
         for (RemapConfigurationSettings entry : extension.getRemapConfigurations()) {
             for (File inputFile : entry.getSourceConfiguration().get().getFiles()) {
                 if (remapList.stream()
-                        .noneMatch(info -> info.getInputFile().toFile().equals(inputFile))) {
+                    .noneMatch(info -> info.getInputFile().toFile().equals(inputFile))) {
                     project.getLogger().debug("Adding " + inputFile + " onto the remap classpath");
                     remapper.readClassPathAsync(inputFile.toPath());
                 }
@@ -195,11 +200,13 @@ public class ModProcessor {
             project.getLogger().debug("Adding " + info.getInputFile() + " as a remap input");
 
             // Note: this is done at a jar level, not at the level of an individual mixin config.
-            // If a mod has multiple mixin configs, it's assumed that either all or none of them have refmaps.
+            // If a mod has multiple mixin configs, it's assumed that either all or none of them
+            // have refmaps.
             if (info.getMetadata().mixinRemapType() == ArtifactMetadata.MixinRemapType.STATIC) {
                 if (!requiresStaticMixinRemap) {
                     // Should be impossible but stranger things have happened.
-                    throw new IllegalStateException("Was not configured for static remap, but a mod required it?!");
+                    throw new IllegalStateException(
+                        "Was not configured for static remap, but a mod required it?!");
                 }
 
                 project.getLogger().info("Remapping mixins in {} statically", info.getInputFile());
@@ -213,24 +220,28 @@ public class ModProcessor {
         }
 
         try {
-            // Apply this in a second loop as we need to ensure all the inputs are on the classpath before remapping.
+            // Apply this in a second loop as we need to ensure all the inputs are on the
+            // classpath before remapping.
             for (ModDependency dependency : remapList) {
                 try {
                     OutputConsumerPath outputConsumer =
-                            new OutputConsumerPath.Builder(getRemappedOutput(dependency)).build();
+                        new OutputConsumerPath.Builder(getRemappedOutput(dependency)).build();
 
-                    outputConsumer.addNonClassFiles(dependency.getInputFile(), NonClassCopyMode.FIX_META_INF, remapper);
+                    outputConsumer.addNonClassFiles(dependency.getInputFile(),
+                        NonClassCopyMode.FIX_META_INF, remapper);
                     outputConsumerMap.put(dependency, outputConsumer);
 
                     final AccessWidenerUtils.AccessWidenerData accessWidenerData =
-                            AccessWidenerUtils.readAccessWidenerData(dependency.getInputFile());
+                        AccessWidenerUtils.readAccessWidenerData(dependency.getInputFile());
 
                     if (accessWidenerData != null) {
-                        project.getLogger().debug("Remapping access widener in {}", dependency.getInputFile());
+                        project.getLogger()
+                            .debug("Remapping access widener in {}", dependency.getInputFile());
                         byte[] remappedAw = AccessWidenerUtils.remapAccessWidener(
-                                accessWidenerData.content(),
-                                remapper.getEnvironment().getRemapper());
-                        accessWidenerMap.put(dependency, new Pair<>(remappedAw, accessWidenerData.path()));
+                            accessWidenerData.content(),
+                            remapper.getEnvironment().getRemapper());
+                        accessWidenerMap.put(dependency,
+                            new Pair<>(remappedAw, accessWidenerData.path()));
                     }
 
                     remapper.apply(outputConsumer, tagMap.get(dependency));
@@ -260,10 +271,6 @@ public class ModProcessor {
             remapJarManifestEntries(output);
             dependency.copyToCache(project, output, null);
         }
-    }
-
-    private static Path getRemappedOutput(ModDependency dependency) {
-        return dependency.getWorkingFile(null);
     }
 
     private void remapJarManifestEntries(Path jar) throws IOException {
