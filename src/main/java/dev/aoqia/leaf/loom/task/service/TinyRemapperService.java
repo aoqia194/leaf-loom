@@ -39,6 +39,7 @@ import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.extension.RemapperExtensionHolder;
 import dev.aoqia.leaf.loom.task.AbstractRemapJarTask;
 import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
 import dev.aoqia.leaf.loom.util.kotlin.KotlinClasspathService;
 import dev.aoqia.leaf.loom.util.kotlin.KotlinRemapperClassloader;
 import dev.aoqia.leaf.loom.util.service.Service;
