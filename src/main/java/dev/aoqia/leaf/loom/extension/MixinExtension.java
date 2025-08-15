@@ -27,7 +27,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
 import dev.aoqia.leaf.loom.api.MixinExtensionAPI;
+
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
@@ -35,6 +37,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.util.PatternSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -47,28 +50,21 @@ import org.jetbrains.annotations.Nullable;
 public interface MixinExtension extends MixinExtensionAPI {
     String MIXIN_INFORMATION_CONTAINER = "mixin";
 
-    /**
-     * An information container stores necessary information
-     * for configuring the mixin annotation processor. It's stored
-     * in [SourceSet].ext.mixin.
-     */
-    record MixinInformationContainer(
-            SourceSet sourceSet, Provider<String> refmapNameProvider, PatternSet mixinConfigPattern) {}
-
     @Nullable
     static MixinInformationContainer getMixinInformationContainer(SourceSet sourceSet) {
         ExtraPropertiesExtension extra = sourceSet.getExtensions().getExtraProperties();
-        return extra.has(MIXIN_INFORMATION_CONTAINER)
-                ? (MixinInformationContainer) extra.get(MIXIN_INFORMATION_CONTAINER)
-                : null;
+        return extra.has(MIXIN_INFORMATION_CONTAINER) ? (MixinInformationContainer) extra.get(
+            MIXIN_INFORMATION_CONTAINER) : null;
     }
 
-    static void setMixinInformationContainer(SourceSet sourceSet, MixinInformationContainer container) {
+    static void setMixinInformationContainer(SourceSet sourceSet,
+        MixinInformationContainer container) {
         ExtraPropertiesExtension extra = sourceSet.getExtensions().getExtraProperties();
 
         if (extra.has(MIXIN_INFORMATION_CONTAINER)) {
-            throw new InvalidUserDataException("The sourceSet " + sourceSet.getName()
-                    + " has been configured for mixin annotation processor multiple times");
+            throw new InvalidUserDataException("The sourceSet " + sourceSet.getName() +
+                                               " has been configured for mixin annotation " +
+                                               "processor multiple times");
         }
 
         extra.set(MIXIN_INFORMATION_CONTAINER, container);
@@ -78,14 +74,25 @@ public interface MixinExtension extends MixinExtensionAPI {
     Stream<SourceSet> getMixinSourceSetsStream();
 
     @NotNull
-    Stream<Configuration> getApConfigurationsStream(Function<SourceSet, String> getApConfigNameFunc);
+    Stream<Configuration> getApConfigurationsStream(
+        Function<SourceSet, String> getApConfigNameFunc);
 
     @NotNull
-    Stream<Map.Entry<SourceSet, Task>> getInvokerTasksStream(String compileTaskLanguage);
+    <T extends Task> Stream<Map.Entry<SourceSet, TaskProvider<T>>> getInvokerTasksStream(
+        String compileTaskLanguage, Class<T> taskType);
 
     @NotNull
     @Input
     Collection<SourceSet> getMixinSourceSets();
 
     void init();
+
+    /**
+     * An information container stores necessary information for configuring the mixin annotation
+     * processor. It's stored in [SourceSet].ext.mixin.
+     */
+    record MixinInformationContainer(
+        SourceSet sourceSet,
+        Provider<String> refmapNameProvider,
+        PatternSet mixinConfigPattern) {}
 }

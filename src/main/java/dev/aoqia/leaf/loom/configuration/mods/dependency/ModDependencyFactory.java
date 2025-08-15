@@ -26,11 +26,13 @@ package dev.aoqia.leaf.loom.configuration.mods.dependency;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Optional;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef;
 import dev.aoqia.leaf.loom.configuration.mods.JarSplitter;
 import dev.aoqia.leaf.loom.util.AttributeHelper;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.jetbrains.annotations.Nullable;
@@ -39,14 +41,14 @@ public class ModDependencyFactory {
     private static final String TARGET_ATTRIBUTE_KEY = "loom-target";
 
     public static ModDependency create(
-            ArtifactRef artifact,
-            ArtifactMetadata metadata,
-            Configuration targetConfig,
-            @Nullable Configuration targetClientConfig,
-            String mappingsSuffix,
-            Project project) {
+        ArtifactRef artifact,
+        ArtifactMetadata metadata,
+        Configuration targetConfig,
+        @Nullable Configuration targetClientConfig,
+        ModDependencyOptions options,
+        Project project) {
         if (targetClientConfig != null
-                && LoomGradleExtension.get(project).getSplitModDependencies().get()) {
+            && LoomGradleExtension.get(project).getSplitModDependencies().get()) {
             final Optional<JarSplitter.Target> cachedTarget = readTarget(artifact);
             JarSplitter.Target target;
 
@@ -58,24 +60,24 @@ public class ModDependencyFactory {
             }
 
             if (target != null) {
-                return new SplitModDependency(
-                        artifact, metadata, mappingsSuffix, targetConfig, targetClientConfig, target, project);
+                return new SplitModDependency(artifact, metadata, options, targetConfig,
+                    targetClientConfig, target, project);
             }
         }
 
-        return new SimpleModDependency(artifact, metadata, mappingsSuffix, targetConfig, project);
+        return new SimpleModDependency(artifact, metadata, options, targetConfig, project);
     }
 
     private static Optional<JarSplitter.Target> readTarget(ArtifactRef artifact) {
         try {
             return AttributeHelper.readAttribute(artifact.path(), TARGET_ATTRIBUTE_KEY)
-                    .map(s -> {
-                        if ("null".equals(s)) {
-                            return null;
-                        }
+                .map(s -> {
+                    if ("null".equals(s)) {
+                        return null;
+                    }
 
-                        return JarSplitter.Target.valueOf(s);
-                    });
+                    return JarSplitter.Target.valueOf(s);
+                });
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to read artifact target attribute", e);
         }

@@ -23,10 +23,6 @@
  */
 package dev.aoqia.leaf.loom.build.nesting;
 
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,9 +30,15 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import dev.aoqia.leaf.loom.util.Pair;
 import dev.aoqia.leaf.loom.util.ZipUtils;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.gradle.api.UncheckedIOException;
 import org.slf4j.Logger;
 
@@ -48,61 +50,68 @@ public class JarNester {
         }
 
         Preconditions.checkArgument(
-                LeafModJsonFactory.isModJar(modJar), "Cannot nest jars into none mod jar " + modJar.getName());
+            LeafModJsonFactory.isModJar(modJar),
+            "Cannot nest jars into none mod jar " + modJar.getName());
 
         // Ensure deterministic ordering of entries in fabric.mod.json
-        Collection<File> sortedJars = jars.stream().sorted(Comparator.comparing(File::getName)).toList();try {
+        Collection<File> sortedJars = jars.stream()
+            .sorted(Comparator.comparing(File::getName))
+            .toList();
+        try {
             ZipUtils.add(
-                    modJar.toPath(),
-                    sortedJars.stream()
-                            .map(file -> {
-                                try {
-                                    return new Pair<>(
-                                            "META-INF/jars/" + file.getName(), Files.readAllBytes(file.toPath()));
-                                } catch (IOException e) {
-                                    throw new UncheckedIOException(e);
-                                }
-                            })
-                            .collect(Collectors.toList()));
+                modJar.toPath(),
+                sortedJars.stream()
+                    .map(file -> {
+                        try {
+                            return new Pair<>(
+                                "META-INF/jars/" + file.getName(),
+                                Files.readAllBytes(file.toPath()));
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    })
+                    .collect(Collectors.toList()));
 
             int count = ZipUtils.transformJson(
-                    JsonObject.class, modJar.toPath(), Stream.of(new Pair<>("leaf.mod.json", json -> {
-                        JsonArray nestedJars = json.getAsJsonArray("jars");
+                JsonObject.class, modJar.toPath(), Stream.of(new Pair<>("leaf.mod.json", json -> {
+                    JsonArray nestedJars = json.getAsJsonArray("jars");
 
-                        if (nestedJars == null || !json.has("jars")) {
-                            nestedJars = new JsonArray();
-                        }
+                    if (nestedJars == null || !json.has("jars")) {
+                        nestedJars = new JsonArray();
+                    }
 
-                        for (File file : sortedJars) {
-                            String nestedJarPath = "META-INF/jars/" + file.getName();
-                            Preconditions.checkArgument(
-                                    LeafModJsonFactory.isModJar(file), "Cannot nest none mod jar: " + file.getName());
+                    for (File file : sortedJars) {
+                        String nestedJarPath = "META-INF/jars/" + file.getName();
+                        Preconditions.checkArgument(
+                            LeafModJsonFactory.isModJar(file),
+                            "Cannot nest none mod jar: " + file.getName());
 
-                            for (JsonElement nestedJar : nestedJars) {
-                                JsonObject jsonObject = nestedJar.getAsJsonObject();
+                        for (JsonElement nestedJar : nestedJars) {
+                            JsonObject jsonObject = nestedJar.getAsJsonObject();
 
-                                if (jsonObject.has("file")
-                                        && jsonObject.get("file").getAsString().equals(nestedJarPath)) {
-                                    throw new IllegalStateException(
-                                            "Cannot nest 2 jars at the same path: " + nestedJarPath);
-                                }
+                            if (jsonObject.has("file")
+                                && jsonObject.get("file").getAsString().equals(nestedJarPath)) {
+                                throw new IllegalStateException(
+                                    "Cannot nest 2 jars at the same path: " + nestedJarPath);
                             }
-
-                            JsonObject jsonObject = new JsonObject();
-                            jsonObject.addProperty("file", nestedJarPath);
-                            nestedJars.add(jsonObject);
-
-                            logger.debug("Nested " + nestedJarPath + " into " + modJar.getName());
                         }
 
-                        json.add("jars", nestedJars);
+                        JsonObject jsonObject = new JsonObject();
+                        jsonObject.addProperty("file", nestedJarPath);
+                        nestedJars.add(jsonObject);
 
-                        return json;
-                    })));
+                        logger.debug("Nested " + nestedJarPath + " into " + modJar.getName());
+                    }
+
+                    json.add("jars", nestedJars);
+
+                    return json;
+                })));
 
             Preconditions.checkState(count > 0, "Failed to transform leaf.mod.json");
         } catch (IOException e) {
-            throw new java.io.UncheckedIOException("Failed to nest jars into " + modJar.getName(), e);
+            throw new java.io.UncheckedIOException("Failed to nest jars into " + modJar.getName(),
+                e);
         }
     }
 }

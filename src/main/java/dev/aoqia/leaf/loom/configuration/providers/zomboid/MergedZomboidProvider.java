@@ -32,6 +32,7 @@ import java.util.Objects;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.ConfigContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,14 +46,27 @@ public final class MergedZomboidProvider extends ZomboidProvider {
         super(clientMetadataProvider, serverMetadataProvider, configContext);
     }
 
+    public static void mergeJars(File clientJar, File serverJar, File mergedJar) throws
+        IOException {
+        LOGGER.info(":merging jars");
+
+        Objects.requireNonNull(clientJar, "Cannot merge null client jar?");
+        Objects.requireNonNull(serverJar, "Cannot merge null server jar?");
+
+        try (var jarMerger = new ZomboidJarMerger(clientJar, serverJar, mergedJar)) {
+            jarMerger.enableSyntheticParamsOffset();
+            jarMerger.merge();
+        }
+    }
+
     @Override
     public void provide() throws Exception {
         super.provide();
 
         if (!provideServer() || !provideClient()) {
             throw new UnsupportedOperationException(
-                "This version does not provide both the client and server jars - please select the client-only or"
-                + " server-only jar configuration!");
+                "This version does not provide both the client and server jars - please select " +
+                "the client-only or server-only jar configuration!");
         }
 
         if (!Files.exists(mergedJar) || getExtension().refreshDeps()) {
@@ -66,7 +80,8 @@ public final class MergedZomboidProvider extends ZomboidProvider {
                 getProject()
                     .getLogger()
                     .error(
-                        "Could not merge JARs! Deleting source JARs - please re-run the command and move on.",
+                        "Could not merge JARs! Deleting source JARs - please re-run the command " +
+                        "and move on.",
                         e);
                 throw e;
             }
@@ -94,18 +109,6 @@ public final class MergedZomboidProvider extends ZomboidProvider {
         File minecraftServerJar = getZomboidServerJar();
 
         mergeJars(minecraftClientJar, minecraftServerJar, mergedJar.toFile());
-    }
-
-    public static void mergeJars(File clientJar, File serverJar, File mergedJar) throws IOException {
-        LOGGER.info(":merging jars");
-
-        Objects.requireNonNull(clientJar, "Cannot merge null client jar?");
-        Objects.requireNonNull(serverJar, "Cannot merge null server jar?");
-
-        try (var jarMerger = new ZomboidJarMerger(clientJar, serverJar, mergedJar)) {
-            jarMerger.enableSyntheticParamsOffset();
-            jarMerger.merge();
-        }
     }
 
     public Path getMergedJar() {

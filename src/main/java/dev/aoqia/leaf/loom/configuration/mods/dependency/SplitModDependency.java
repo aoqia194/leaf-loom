@@ -26,11 +26,13 @@ package dev.aoqia.leaf.loom.configuration.mods.dependency;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.ModSettings;
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef;
 import dev.aoqia.leaf.loom.configuration.mods.JarSplitter;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.jetbrains.annotations.Nullable;
@@ -48,37 +50,39 @@ public final class SplitModDependency extends ModDependency {
     private final LocalMavenHelper clientMaven;
 
     public SplitModDependency(
-            ArtifactRef artifact,
-            ArtifactMetadata metadata,
-            String mappingsSuffix,
-            Configuration targetCommonConfig,
-            Configuration targetClientConfig,
-            JarSplitter.Target target,
-            Project project) {
-        super(artifact, metadata, mappingsSuffix, project);
+        ArtifactRef artifact,
+        ArtifactMetadata metadata,
+        ModDependencyOptions options,
+        Configuration targetCommonConfig,
+        Configuration targetClientConfig,
+        JarSplitter.Target target,
+        Project project) {
+        super(artifact, metadata, options);
         this.targetCommonConfig = Objects.requireNonNull(targetCommonConfig);
         this.targetClientConfig = Objects.requireNonNull(targetClientConfig);
         this.target = Objects.requireNonNull(target);
-        this.commonMaven = target.common() ? createMaven(name + "-common") : null;
-        this.clientMaven = target.client() ? createMaven(name + "-client") : null;
+        this.commonMaven = target.common() ? createMavenHelper(project, "common") : null;
+        this.clientMaven = target.client() ? createMavenHelper(project, "client") : null;
     }
 
     @Override
     public boolean isCacheInvalid(Project project, @Nullable String variant) {
         boolean exists =
-                switch (target) {
-                    case COMMON_ONLY -> getCommonMaven().exists(variant);
-                    case CLIENT_ONLY -> getClientMaven().exists(variant);
-                    case SPLIT -> getCommonMaven().exists(variant)
-                            && getClientMaven().exists(variant);
-                };
+            switch (target) {
+                case COMMON_ONLY -> getCommonMaven().exists(variant);
+                case CLIENT_ONLY -> getClientMaven().exists(variant);
+                case SPLIT -> getCommonMaven().exists(variant)
+                              && getClientMaven().exists(variant);
+            };
 
         return !exists;
     }
 
     @Override
-    public void copyToCache(Project project, Path path, @Nullable String variant) throws IOException {
-        // Split dependencies build with loom 0.12 do not contain the required data to split the sources
+    public void copyToCache(Project project, Path path, @Nullable String variant) throws
+        IOException {
+        // Split dependencies build with loom 0.12 do not contain the required data to split the
+        // sources
         if (target == JarSplitter.Target.SPLIT && variant != null) {
             final JarSplitter.Target artifactTarget = new JarSplitter(path).analyseTarget();
 
@@ -91,11 +95,11 @@ public final class SplitModDependency extends ModDependency {
         }
 
         switch (target) {
-                // Split the jar into 2
+            // Split the jar into 2
             case SPLIT -> {
                 final String suffix = variant == null ? "" : "-" + variant;
-                final Path commonTempJar = getWorkingFile("common" + suffix);
-                final Path clientTempJar = getWorkingFile("client" + suffix);
+                final Path commonTempJar = getWorkingFile(project, "common" + suffix);
+                final Path clientTempJar = getWorkingFile(project, "client" + suffix);
 
                 final JarSplitter splitter = new JarSplitter(path);
                 splitter.split(commonTempJar, clientTempJar);
@@ -104,7 +108,7 @@ public final class SplitModDependency extends ModDependency {
                 getClientMaven().copyToMaven(clientTempJar, variant);
             }
 
-                // No splitting to be done, just copy the input jar to the respective location.
+            // No splitting to be done, just copy the input jar to the respective location.
             case CLIENT_ONLY -> getClientMaven().copyToMaven(path, variant);
             case COMMON_ONLY -> getCommonMaven().copyToMaven(path, variant);
         }
@@ -114,24 +118,25 @@ public final class SplitModDependency extends ModDependency {
     public void applyToProject(Project project) {
         if (target.common()) {
             project.getDependencies()
-                    .add(targetCommonConfig.getName(), getCommonMaven().getNotation());
+                .add(targetCommonConfig.getName(), getCommonMaven().getNotation());
         }
 
         if (target.client()) {
             project.getDependencies()
-                    .add(targetClientConfig.getName(), getClientMaven().getNotation());
+                .add(targetClientConfig.getName(), getClientMaven().getNotation());
         }
 
         if (target == JarSplitter.Target.SPLIT) {
-            createModGroup(
-                    getCommonMaven().getOutputFile(null), getClientMaven().getOutputFile(null));
+            createModGroup(project, getCommonMaven().getOutputFile(null),
+                getClientMaven().getOutputFile(null));
         }
     }
 
-    private void createModGroup(Path commonJar, Path clientJar) {
+    private void createModGroup(Project project, Path commonJar, Path clientJar) {
         LoomGradleExtension extension = LoomGradleExtension.get(project);
         final ModSettings modSettings =
-                extension.getMods().maybeCreate(String.format("%s-%s-%s", getRemappedGroup(), name, version));
+            extension.getMods()
+                .maybeCreate(String.format("%s-%s-%s", getGroup(), getName(), getVersion()));
         modSettings.getModFiles().from(commonJar.toFile(), clientJar.toFile());
     }
 

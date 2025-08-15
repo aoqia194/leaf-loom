@@ -85,7 +85,7 @@ public final class TinyRemapperHelper {
 
         int officialNsId = mappingTree.getNamespaceId(MappingsNamespace.OFFICIAL.toString());
 
-        TinyRemapper.Builder builder = TinyRemapper.newRemapper()
+        TinyRemapper.Builder builder = TinyRemapper.newRemapper(TinyRemapperLoggerAdapter.INSTANCE)
             .withMappings(create(mappingTree, fromM, toM, true))
             .withMappings(out -> JSR_TO_JETBRAINS.forEach(out::acceptClass))
             .renameInvalidLocals(true)

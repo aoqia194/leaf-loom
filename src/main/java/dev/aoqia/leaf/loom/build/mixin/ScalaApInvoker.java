@@ -23,42 +23,43 @@
  */
 package dev.aoqia.leaf.loom.build.mixin;
 
-import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.extension.MixinExtension;
+
+import com.google.common.collect.ImmutableList;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.scala.ScalaCompile;
 
 public class ScalaApInvoker extends AnnotationProcessorInvoker<ScalaCompile> {
     public ScalaApInvoker(Project project) {
-        super(
-                project,
-                // Scala just uses the java AP configuration afaik. This of course assumes the java AP also gets
-                // configured.
-                ImmutableList.of(),
-                getInvokerTasks(project),
-                AnnotationProcessorInvoker.SCALA);
+        super(project,
+            // Scala just uses the java AP configuration afaik. This of course assumes the java
+            // AP also gets
+            // configured.
+            ImmutableList.of(),
+            getInvokerTasks(project),
+            AnnotationProcessorInvoker.SCALA);
     }
 
-    private static Map<SourceSet, ScalaCompile> getInvokerTasks(Project project) {
+    private static Map<SourceSet, TaskProvider<ScalaCompile>> getInvokerTasks(Project project) {
         MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
-        return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.SCALA)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey, entry -> Objects.requireNonNull((ScalaCompile) entry.getValue())));
-    }
-
-    @Override
-    protected void passArgument(ScalaCompile compileTask, String key, String value) {
-        compileTask.getOptions().getCompilerArgs().add("-A" + key + "=" + value);
+        return mixin.getInvokerTasksStream(AnnotationProcessorInvoker.SCALA, ScalaCompile.class)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
     protected File getRefmapDestinationDir(ScalaCompile task) {
         return task.getDestinationDirectory().get().getAsFile();
+    }
+
+    @Override
+    protected void passArgument(ScalaCompile compileTask, String key, String value) {
+        compileTask.getOptions().getCompilerArgs().add("-A" + key + "=" + value);
     }
 }

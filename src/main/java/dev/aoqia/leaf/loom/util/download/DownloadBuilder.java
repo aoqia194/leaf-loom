@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("UnusedReturnValue")
 public class DownloadBuilder {
@@ -54,6 +55,16 @@ public class DownloadBuilder {
 
     static DownloadBuilder create(String url) throws URISyntaxException {
         return new DownloadBuilder(new URI(url));
+    }
+
+    // See comment on org.gradle.util.internal.GUtil.isSecureUrl
+    private static boolean isSecureUrl(URI url) {
+        if ("127.0.0.1".equals(url.getHost())) {
+            return true;
+        }
+
+        final String scheme = url.getScheme();
+        return !"http".equalsIgnoreCase(scheme);
     }
 
     public DownloadBuilder sha1(String sha1) {
@@ -101,15 +112,13 @@ public class DownloadBuilder {
         return this;
     }
 
-    public void downloadPathAsync(Path path, DownloadExecutor executor) {
-        executor.runAsync(() -> downloadPath(path));
+    public CompletableFuture<DownloadResult> downloadPathAsync(Path path,
+        DownloadExecutor executor) {
+        return executor.runAsync(() -> downloadPath(path));
     }
 
-    public void downloadPath(Path path) throws DownloadException {
-        withRetries((download) -> {
-            download.downloadPath(path);
-            return null;
-        });
+    public DownloadResult downloadPath(Path path) throws DownloadException {
+        return withRetries(download -> download.downloadPath(path));
     }
 
     private <T> T withRetries(DownloadFunction<T> supplier) throws DownloadException {
@@ -145,8 +154,9 @@ public class DownloadBuilder {
 
     private Download build(int downloadAttempt) {
         if (!allowInsecureProtocol && !isSecureUrl(url)) {
-            throw new IllegalArgumentException("Cannot create download for url (%s) with insecure protocol".formatted(
-                url.toString()));
+            throw new IllegalArgumentException(
+                "Cannot create download for url (%s) with insecure protocol".formatted(
+                    url.toString()));
         }
 
         return new Download(this.url,
@@ -158,16 +168,6 @@ public class DownloadBuilder {
             progressListener,
             httpVersion,
             downloadAttempt);
-    }
-
-    // See comment on org.gradle.util.internal.GUtil.isSecureUrl
-    private static boolean isSecureUrl(URI url) {
-        if ("127.0.0.1".equals(url.getHost())) {
-            return true;
-        }
-
-        final String scheme = url.getScheme();
-        return !"http".equalsIgnoreCase(scheme);
     }
 
     public String downloadString() throws DownloadException {

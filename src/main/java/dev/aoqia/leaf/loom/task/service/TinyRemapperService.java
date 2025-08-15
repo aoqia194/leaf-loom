@@ -39,6 +39,7 @@ import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.extension.RemapperExtensionHolder;
 import dev.aoqia.leaf.loom.task.AbstractRemapJarTask;
 import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
 import dev.aoqia.leaf.loom.util.kotlin.KotlinClasspathService;
 import dev.aoqia.leaf.loom.util.kotlin.KotlinRemapperClassloader;
 import dev.aoqia.leaf.loom.util.service.Service;
@@ -142,7 +143,7 @@ public class TinyRemapperService extends Service<TinyRemapperService.Options> im
     }
 
     private TinyRemapper createTinyRemapper() {
-        TinyRemapper.Builder builder = TinyRemapper.newRemapper()
+        TinyRemapper.Builder builder = TinyRemapper.newRemapper(TinyRemapperLoggerAdapter.INSTANCE)
                 .withKnownIndyBsm(Set.copyOf(getOptions().getKnownIndyBsms().get()));
 
         for (MappingsService.Options options : getOptions().getMappings().get()) {

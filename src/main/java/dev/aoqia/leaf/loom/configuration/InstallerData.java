@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.LoomRepositoryPlugin;
@@ -117,35 +116,43 @@ public record InstallerData(String version, JsonObject installerJson) {
                                 file));
                     }
 
-                    final String walkPath = "/META-INF/jars";
-                    try (var fs = FileSystemUtil.getJarFileSystem(loaderJar, false);
-                         var walk = Files.walk(fs.getPath(walkPath), 1)) {
-                        for (var iterator = walk.iterator(); iterator.hasNext(); ) {
-                            Path entry = iterator.next();
+                    if (!FileSystemUtil.isFileLocked(loaderJar)) {
+                        final String walkPath = "/META-INF/jars";
+                        try (var fs = FileSystemUtil.getJarFileSystem(loaderJar, false);
+                             var walk = Files.walk(fs.getPath(walkPath), 1)) {
+                            for (var iterator = walk.iterator(); iterator.hasNext(); ) {
+                                Path entry = iterator.next();
 
-                            // Files.walk includes the start path too, so skip it. :c
-                            if (entry.toString().equals(walkPath)) {
-                                continue;
+                                // Files.walk includes the start path too, so skip it. :c
+                                if (entry.toString().equals(walkPath)) {
+                                    continue;
+                                }
+
+                                Path src = fs.getPath("/").resolve(entry);
+                                // Is jars, not the jar itself
+                                Path srcFile = src.getFileName();
+                                Path dest = extension.getFiles()
+                                    .getProjectBuildCache()
+                                    .toPath()
+                                    .resolve(FileSystem.getCurrent()
+                                        .normalizeSeparators(srcFile.toString()));
+
+                                if (!dest.toFile().exists()) {
+                                    Files.copy(src, dest);
+
+                                    Dependency modDep = project.getDependencies()
+                                        .create(project.files(dest));
+                                    addDependency(modDep, extension, annotationProcessor,
+                                        loaderDepsConfig);
+                                }
                             }
-
-                            Path src = fs.getPath("/").resolve(entry);
-                            Path srcFile = src.getFileName(); // is jars, not the jar itself
-                            Path dest = extension.getFiles()
-                                .getProjectBuildCache()
-                                .toPath()
-                                .resolve(FileSystem.getCurrent()
-                                    .normalizeSeparators(srcFile.toString()));
-
-                            // TODO: Maybe make this not replace existing if it takes too long.
-                            Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
-
-                            Dependency modDep = project.getDependencies()
-                                .create(project.files(dest));
-                            addDependency(modDep, extension, annotationProcessor,
-                                loaderDepsConfig);
+                        } catch (IOException e) {
+                            throw new RuntimeException("Failed to extract loader JiJ jars", e);
                         }
-                    } catch (IOException e) {
-                        throw new RuntimeException("Failed to extract loader JiJ jars", e);
+                    } else {
+                        LOGGER.warn(
+                            "Failed to extract loader JiJ jars because the jar is locked." +
+                            "If you are hotswapping classes, ignore me.");
                     }
 
                     appliedJijJars = true;

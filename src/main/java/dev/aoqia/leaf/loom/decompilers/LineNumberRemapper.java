@@ -30,13 +30,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.Set;
+
 import dev.aoqia.leaf.loom.util.AsyncZipProcessor;
 import dev.aoqia.leaf.loom.util.Constants;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
+
+import org.objectweb.asm.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +62,9 @@ public record LineNumberRemapper(ClassLineNumbers lineNumbers) {
                     String idx = fileName.substring(1, fileName.length() - 6);
 
                     int dollarPos =
-                            idx.indexOf('$'); // This makes the assumption that only Java classes are to be remapped.
+                        idx.indexOf(
+                            '$'); // This makes the assumption that only Java classes are to be
+                    // remapped.
 
                     if (dollarPos >= 0) {
                         idx = idx.substring(0, dollarPos);
@@ -78,11 +78,11 @@ public record LineNumberRemapper(ClassLineNumbers lineNumbers) {
                             ClassWriter writer = new ClassWriter(0);
 
                             reader.accept(
-                                    new LineNumberVisitor(
-                                            Constants.ASM_VERSION,
-                                            writer,
-                                            lineNumbers.lineMap().get(idx)),
-                                    0);
+                                new LineNumberVisitor(
+                                    Constants.ASM_VERSION,
+                                    writer,
+                                    lineNumbers.lineMap().get(idx)),
+                                0);
                             Files.write(dst, writer.toByteArray());
                             return;
                         }
@@ -106,25 +106,20 @@ public record LineNumberRemapper(ClassLineNumbers lineNumbers) {
 
         @Override
         public MethodVisitor visitMethod(
-                int access, String name, String descriptor, String signature, String[] exceptions) {
-            return new MethodVisitor(api, super.visitMethod(access, name, descriptor, signature, exceptions)) {
+            int access, String name, String descriptor, String signature, String[] exceptions) {
+            return new MethodVisitor(api,
+                super.visitMethod(access, name, descriptor, signature, exceptions)) {
                 @Override
                 public void visitLineNumber(int line, Label start) {
-                    int tLine = line;
-
-                    if (tLine <= 0) {
+                    if (line <= 0) {
                         super.visitLineNumber(line, start);
-                    } else if (tLine >= lineNumbers.maxLine()) {
+                    } else if (line >= lineNumbers.maxLine()) {
                         super.visitLineNumber(lineNumbers.maxLineDest(), start);
                     } else {
-                        Integer matchedLine = null;
-
-                        while (tLine <= lineNumbers.maxLine()
-                                && ((matchedLine = lineNumbers.lineMap().get(tLine)) == null)) {
-                            tLine++;
+                        Integer matchedLine = lineNumbers.lineMap().get(line);
+                        if (matchedLine != null) {
+                            super.visitLineNumber(matchedLine, start);
                         }
-
-                        super.visitLineNumber(matchedLine != null ? matchedLine : lineNumbers.maxLineDest(), start);
                     }
                 }
             };

@@ -64,7 +64,6 @@ import org.gradle.api.tasks.options.Option;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecResult;
-import org.gradle.work.DisableCachingByDefault;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
 import org.gradle.workers.WorkQueue;
@@ -73,7 +72,7 @@ import org.gradle.workers.internal.WorkerDaemonClientsManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-@DisableCachingByDefault
+@UntrackedTask(because = "Manually invoked, has internal caching")
 public abstract class GenerateSourcesTask extends AbstractLoomTask {
     private static final String CACHE_VERSION = "v1";
     private final DecompilerOptions decompilerOptions;
@@ -115,7 +114,6 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
                 "Input zomboid jar not found: " + getInputJarName().get());
         }));
 
-        getOutputs().upToDateWhen((o) -> false);
         getClasspath().from(decompilerOptions.getClasspath()).finalizeValueOnRead();
         dependsOn(decompilerOptions.getClasspath().getBuiltBy());
 

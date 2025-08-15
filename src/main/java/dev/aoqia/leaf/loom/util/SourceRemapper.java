@@ -30,7 +30,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
@@ -39,14 +38,12 @@ import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
 import dev.aoqia.leaf.loom.task.service.LorenzMappingService;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+
 import org.cadixdev.lorenz.MappingSet;
 import org.cadixdev.mercury.Mercury;
 import org.cadixdev.mercury.remapper.MercuryRemapper;
-import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.internal.project.ProjectInternal;
-import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.internal.logging.progress.ProgressLogger;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.slf4j.Logger;
@@ -65,6 +62,63 @@ public class SourceRemapper {
         this.toNamed = toNamed;
     }
 
+    public static Mercury createMercuryWithClassPath(Project project, boolean toNamed) {
+        Mercury m = new Mercury();
+        m.setGracefulClasspathChecks(true);
+
+        final List<Path> classPath = new ArrayList<>();
+
+        for (File file : project.getConfigurations()
+            .getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES)
+            .getFiles()) {
+            classPath.add(file.toPath());
+        }
+
+        if (!toNamed) {
+            for (File file :
+                project.getConfigurations().getByName("compileClasspath").getFiles()) {
+                classPath.add(file.toPath());
+            }
+        } else {
+            final LoomGradleExtension extension = LoomGradleExtension.get(project);
+
+            for (RemapConfigurationSettings entry : extension.getRemapConfigurations()) {
+                for (File inputFile : entry.getSourceConfiguration().get().getFiles()) {
+                    classPath.add(inputFile.toPath());
+                }
+            }
+        }
+
+        for (Path path : classPath) {
+            if (Files.exists(path)) {
+                m.getClassPath().add(path);
+            }
+        }
+
+        return m;
+    }
+
+    public static void copyNonJavaFiles(Path from, Path to, Logger logger, Path source) throws
+        IOException {
+        Files.walk(from).forEach(path -> {
+            Path targetPath = to.resolve(from.relativize(path).toString());
+
+            if (!isJavaFile(path) && !Files.exists(targetPath)) {
+                try {
+                    Files.copy(path, targetPath);
+                } catch (IOException e) {
+                    logger.warn("Could not copy non-java sources '" + source + "' fully!", e);
+                }
+            }
+        });
+    }
+
+    private static boolean isJavaFile(Path path) {
+        String name = path.getFileName().toString();
+        // ".java" is not a valid java file
+        return name.endsWith(".java") && name.length() != 5;
+    }
+
     public void scheduleRemapSources(
         File source,
         File destination,
@@ -75,9 +129,11 @@ public class SourceRemapper {
             try {
                 logger.progress("remapping sources - " + source.getName());
                 remapSourcesInner(source, destination);
-                ZipReprocessorUtil.reprocessZip(destination.toPath(), reproducibleFileOrder, preserveFileTimestamps);
+                ZipReprocessorUtil.reprocessZip(destination.toPath(), reproducibleFileOrder,
+                    preserveFileTimestamps);
 
-                // Set the remapped sources creation date to match the sources if we're likely succeeded in making it
+                // Set the remapped sources creation date to match the sources if we're likely
+                // succeeded in making it
                 destination.setLastModified(source.lastModified());
                 completionCallback.run();
             } catch (Exception e) {
@@ -99,7 +155,8 @@ public class SourceRemapper {
 
             source = new File(destination
                                   .getAbsolutePath()
-                                  .substring(0, destination.getAbsolutePath().lastIndexOf('.')) + "-dev.jar");
+                                  .substring(0, destination.getAbsolutePath().lastIndexOf('.')) +
+                              "-dev.jar");
 
             try {
                 com.google.common.io.Files.move(destination, source);
@@ -153,15 +210,16 @@ public class SourceRemapper {
         LoomGradleExtension extension = LoomGradleExtension.get(project);
         MappingConfiguration mappingConfiguration = extension.getMappingConfiguration();
 
-        LorenzMappingService lorenzMappingService = serviceFactory.get(LorenzMappingService.createOptions(
-            project,
-            mappingConfiguration,
-            toNamed ? MappingsNamespace.OFFICIAL : MappingsNamespace.NAMED,
-            toNamed ? MappingsNamespace.NAMED : MappingsNamespace.OFFICIAL));
+        LorenzMappingService lorenzMappingService = serviceFactory.get(
+            LorenzMappingService.createOptions(
+                project,
+                mappingConfiguration,
+                toNamed ? MappingsNamespace.OFFICIAL : MappingsNamespace.NAMED,
+                toNamed ? MappingsNamespace.NAMED : MappingsNamespace.OFFICIAL));
         MappingSet mappings = lorenzMappingService.getMappings();
 
         Mercury mercury = createMercuryWithClassPath(project, toNamed);
-        mercury.setSourceCompatibilityFromRelease(getJavaCompileRelease(project));
+        mercury.setSourceCompatibilityFromRelease(Integer.MAX_VALUE);
 
         for (File file : extension.getUnmappedModCollection()) {
             Path path = file.toPath();
@@ -181,7 +239,8 @@ public class SourceRemapper {
 
         Set<File> files = project.getConfigurations()
             .detachedConfiguration(
-                project.getDependencies().create(LoomVersions.JETBRAINS_ANNOTATIONS.mavenNotation()))
+                project.getDependencies()
+                    .create(LoomVersions.JETBRAINS_ANNOTATIONS.mavenNotation()))
             .resolve();
 
         for (File file : files) {
@@ -194,86 +253,6 @@ public class SourceRemapper {
         return this.mercury;
     }
 
-    public static int getJavaCompileRelease(Project project) {
-        AtomicInteger release = new AtomicInteger(-1);
-
-        project.getTasks().withType(JavaCompile.class, javaCompile -> {
-            Property<Integer> releaseProperty = javaCompile.getOptions().getRelease();
-
-            if (!releaseProperty.isPresent()) {
-                return;
-            }
-
-            int compileRelease = releaseProperty.get();
-            release.set(Math.max(release.get(), compileRelease));
-        });
-
-        final int i = release.get();
-
-        if (i < 0) {
-            // Unable to find the release used to compile with, default to the current version
-            return Integer.parseInt(JavaVersion.current().getMajorVersion());
-        }
-
-        return i;
-    }
-
-    public static Mercury createMercuryWithClassPath(Project project, boolean toNamed) {
-        Mercury m = new Mercury();
-        m.setGracefulClasspathChecks(true);
-
-        final List<Path> classPath = new ArrayList<>();
-
-        for (File file : project.getConfigurations()
-            .getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES)
-            .getFiles()) {
-            classPath.add(file.toPath());
-        }
-
-        if (!toNamed) {
-            for (File file :
-                project.getConfigurations().getByName("compileClasspath").getFiles()) {
-                classPath.add(file.toPath());
-            }
-        } else {
-            final LoomGradleExtension extension = LoomGradleExtension.get(project);
-
-            for (RemapConfigurationSettings entry : extension.getRemapConfigurations()) {
-                for (File inputFile : entry.getSourceConfiguration().get().getFiles()) {
-                    classPath.add(inputFile.toPath());
-                }
-            }
-        }
-
-        for (Path path : classPath) {
-            if (Files.exists(path)) {
-                m.getClassPath().add(path);
-            }
-        }
-
-        return m;
-    }
-
-    public static void copyNonJavaFiles(Path from, Path to, Logger logger, Path source) throws IOException {
-        Files.walk(from).forEach(path -> {
-            Path targetPath = to.resolve(from.relativize(path).toString());
-
-            if (!isJavaFile(path) && !Files.exists(targetPath)) {
-                try {
-                    Files.copy(path, targetPath);
-                } catch (IOException e) {
-                    logger.warn("Could not copy non-java sources '" + source + "' fully!", e);
-                }
-            }
-        });
-    }
-
-    private static boolean isJavaFile(Path path) {
-        String name = path.getFileName().toString();
-        // ".java" is not a valid java file
-        return name.endsWith(".java") && name.length() != 5;
-    }
-
     public void remapAll() {
         if (remapTasks.isEmpty()) {
             return;
@@ -283,7 +262,8 @@ public class SourceRemapper {
 
         ProgressLoggerFactory progressLoggerFactory =
             ((ProjectInternal) project).getServices().get(ProgressLoggerFactory.class);
-        ProgressLogger progressLogger = progressLoggerFactory.newOperation(SourceRemapper.class.getName());
+        ProgressLogger progressLogger = progressLoggerFactory.newOperation(
+            SourceRemapper.class.getName());
         progressLogger.start("Remapping dependency sources", "sources");
 
         remapTasks.forEach(consumer -> consumer.accept(progressLogger));

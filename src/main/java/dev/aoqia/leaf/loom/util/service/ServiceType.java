@@ -23,19 +23,23 @@
  */
 package dev.aoqia.leaf.loom.util.service;
 
+import java.lang.reflect.Method;
+
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.provider.Provider;
 
 /**
  * A record to hold the options and service class for a service.
+ *
  * @param optionsClass The options class for the service.
  * @param serviceClass The service class.
  */
 public record ServiceType<O extends Service.Options, S extends Service<O>>(
-        Class<O> optionsClass, Class<S> serviceClass) {
+    Class<O> optionsClass, Class<S> serviceClass) {
     /**
      * Create an instance of the options class for the given service class.
+     *
      * @param project The {@link Project} to create the options for.
      * @param action An action to configure the options.
      * @return The created options instance.
@@ -43,6 +47,13 @@ public record ServiceType<O extends Service.Options, S extends Service<O>>(
     public Provider<O> create(Project project, Action<O> action) {
         return project.provider(() -> {
             O options = project.getObjects().newInstance(optionsClass);
+
+            for (Method method : optionsClass.getDeclaredMethods()) {
+                // Gradle property values are lazily initialized, ensure that all of the values
+                // are not null before we try to serialize the options as json
+                method.invoke(options);
+            }
+
             options.getServiceClass().set(serviceClass.getName());
             options.getServiceClass().finalizeValue();
             action.execute(options);

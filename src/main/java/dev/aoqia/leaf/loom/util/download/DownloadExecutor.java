@@ -23,36 +23,35 @@
  */
 package dev.aoqia.leaf.loom.util.download;
 
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class DownloadExecutor implements AutoCloseable {
     private final ExecutorService executorService;
-    private final List<DownloadException> downloadExceptions = Collections.synchronizedList(new ArrayList<>());
+    private final List<DownloadException> downloadExceptions = Collections.synchronizedList(
+        new ArrayList<>());
 
     public DownloadExecutor(int threads) {
         executorService = Executors.newFixedThreadPool(threads);
     }
 
-    void runAsync(DownloadRunner downloadRunner) {
+    CompletableFuture<DownloadResult> runAsync(DownloadRunner downloadRunner) {
         if (!downloadExceptions.isEmpty()) {
-            return;
+            return CompletableFuture.failedFuture(
+                new DownloadException("Download blocked due to previous errors"));
         }
 
-        executorService.execute(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             try {
-                downloadRunner.run();
+                return downloadRunner.run();
             } catch (DownloadException e) {
                 executorService.shutdownNow();
                 downloadExceptions.add(e);
-                throw new UncheckedIOException(e);
+                throw new CompletionException(e);
             }
-        });
+        }, executorService);
     }
 
     @Override
@@ -78,6 +77,6 @@ public class DownloadExecutor implements AutoCloseable {
 
     @FunctionalInterface
     public interface DownloadRunner {
-        void run() throws DownloadException;
+        DownloadResult run() throws DownloadException;
     }
 }

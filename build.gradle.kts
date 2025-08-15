@@ -33,8 +33,8 @@ repositories {
         name = "Fabric"
         url = uri("https://maven.fabricmc.net/")
     }
-    gradlePluginPortal()
     mavenCentral()
+    gradlePluginPortal()
 }
 
 plugins {
@@ -49,7 +49,8 @@ plugins {
 
     // Publishing to Maven Central
     alias(libs.plugins.jreleaser)
-    id("maven-publish")
+    `maven-publish`
+    // For generating the gradle plugin marker pom
     alias(libs.plugins.gradle.plugin.publish)
 }
 
