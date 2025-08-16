@@ -67,7 +67,7 @@ public class CopyGameFileExecutor implements AutoCloseable {
         }
 
         if (!copyExceptions.isEmpty()) {
-            IOException copyException = new IOException("Failed to copy");
+            IOException copyException = new IOException("Failed to copy game files to cache");
 
             for (IOException suppressed : copyExceptions) {
                 copyException.addSuppressed(suppressed);

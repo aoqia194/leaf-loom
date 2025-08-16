@@ -51,6 +51,7 @@ public final class CopyGameFile {
     private final String expectedHash;
     private final Duration maxAge;
     private final boolean forced;
+    private final boolean fallback;
     private final int attempt;
     private final CopyGameFileProgressListener progressListener;
 
@@ -58,12 +59,14 @@ public final class CopyGameFile {
         String expectedHash,
         Duration maxAge,
         boolean forced,
+        boolean fallback,
         int attempt,
         CopyGameFileProgressListener progressListener) {
         this.path = path;
         this.expectedHash = expectedHash;
         this.maxAge = maxAge;
         this.forced = forced;
+        this.fallback = fallback;
         this.attempt = attempt;
         this.progressListener = progressListener;
     }
@@ -233,7 +236,7 @@ public final class CopyGameFile {
 
     private void writeHash(Path output, String value) throws IOException {
         try {
-            AttributeHelper.writeAttribute(output, "LoomHash", value);
+            AttributeHelper.writeAttribute(output, "LoomHash", value, this.fallback);
         } catch (IOException e) {
             throw error(e, "Failed to write hash to (%s)", output);
         }

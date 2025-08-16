@@ -33,7 +33,13 @@ import java.nio.file.Path;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.Optional;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class AttributeHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AttributeHelper.class);
+
     private AttributeHelper() {}
 
     public static Optional<String> readAttribute(Path path, String key) throws IOException {
@@ -72,10 +78,15 @@ public final class AttributeHelper {
         }
     }
 
-    public static void writeAttribute(Path path, String key, String value) throws IOException {
+    public static void writeAttribute(Path path, String key, String value,
+        boolean forceFallback) throws IOException {
         final Path attributesFile = getFallbackPath(path, key);
 
         try {
+            if (forceFallback) {
+                throw new FileSystemException("leaf.loom.forceAttributeFallback was provided");
+            }
+
             final UserDefinedFileAttributeView attributeView;
 
             // Try-catch required due to getFileAttributeView going crazy when writing to zip/jar.
@@ -98,8 +109,9 @@ public final class AttributeHelper {
             if (exists(attributesFile)) {
                 Files.delete(attributesFile);
             }
-        } catch (FileSystemException ignored) {
+        } catch (FileSystemException e) {
             // Fallback to a separate file when using a file system that does not attributes.
+            LOGGER.debug("Falling back to attribute file because: {}", e.getMessage());
             Files.writeString(attributesFile, value, StandardCharsets.UTF_8);
         }
     }

@@ -32,6 +32,8 @@ import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef;
 import dev.aoqia.leaf.loom.configuration.mods.JarSplitter;
 import dev.aoqia.leaf.loom.util.AttributeHelper;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -56,7 +58,7 @@ public class ModDependencyFactory {
                 target = cachedTarget.get();
             } else {
                 target = new JarSplitter(artifact.path()).analyseTarget();
-                writeTarget(artifact, target);
+                writeTarget(project, artifact, target);
             }
 
             if (target != null) {
@@ -83,11 +85,13 @@ public class ModDependencyFactory {
         }
     }
 
-    private static void writeTarget(ArtifactRef artifact, JarSplitter.Target target) {
+    private static void writeTarget(Project project, ArtifactRef artifact, JarSplitter.Target target) {
         final String value = target != null ? target.name() : "null";
 
         try {
-            AttributeHelper.writeAttribute(artifact.path(), TARGET_ATTRIBUTE_KEY, value);
+            final boolean fallback = GradleUtils.getBooleanProperty(project,
+                Constants.Properties.FORCE_ATTRIBUTE_FALLBACK);
+            AttributeHelper.writeAttribute(artifact.path(), TARGET_ATTRIBUTE_KEY, value, fallback);
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to write artifact target attribute", e);
         }
