@@ -217,7 +217,9 @@ public abstract class ZomboidProvider {
                     }
                 }
 
+                final boolean fallback = GradleUtils.getBooleanProperty(project, Constants.Properties.FORCE_ATTRIBUTE_FALLBACK);
                 getExtension().copyGameFile(srcPath.toString())
+                    .fallback(fallback)
                     .sha1(hash)
                     .progress(new GradleCopyGameFileProgressListener(object.path(),
                         progressGroup::createProgressLogger))

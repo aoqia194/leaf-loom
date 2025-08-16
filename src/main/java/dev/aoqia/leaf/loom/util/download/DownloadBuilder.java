@@ -42,6 +42,7 @@ public class DownloadBuilder {
     private String expectedHash = null;
     private boolean useEtag = true;
     private boolean forceDownload = false;
+    private boolean fallback = false;
     private boolean offline = false;
     private Duration maxAge = Duration.ZERO;
     private DownloadProgressListener progressListener = DownloadProgressListener.NONE;
@@ -95,6 +96,11 @@ public class DownloadBuilder {
     public DownloadBuilder defaultCache() {
         etag(true);
         return maxAge(ONE_DAY);
+    }
+
+    public DownloadBuilder fallback(boolean force) {
+        this.fallback = force;
+        return this;
     }
 
     public DownloadBuilder etag(boolean useEtag) {
@@ -163,6 +169,7 @@ public class DownloadBuilder {
             this.expectedHash,
             this.useEtag,
             this.forceDownload,
+            this.fallback,
             this.offline,
             maxAge,
             progressListener,

@@ -35,6 +35,7 @@ public class CopyGameFileBuilder {
     private final Path path;
     private String expectedHash = null;
     private boolean forced = false;
+    private boolean fallback = false;
     private Duration maxAge = Duration.ZERO;
     private CopyGameFileProgressListener progressListener = CopyGameFileProgressListener.NONE;
     private int maxRetries = 3;
@@ -54,6 +55,11 @@ public class CopyGameFileBuilder {
 
     public CopyGameFileBuilder forced() {
         forced = true;
+        return this;
+    }
+
+    public CopyGameFileBuilder fallback(boolean force) {
+        this.fallback = force;
         return this;
     }
 
@@ -109,6 +115,7 @@ public class CopyGameFileBuilder {
             this.expectedHash,
             this.maxAge,
             this.forced,
+            this.fallback,
             attempt,
             this.progressListener);
     }

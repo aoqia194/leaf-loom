@@ -70,6 +70,7 @@ public final class Download {
     private final String expectedHash;
     private final boolean useEtag;
     private final boolean forceDownload;
+    private final boolean fallback;
     private final boolean offline;
     private final Duration maxAge;
     private final DownloadProgressListener progressListener;
@@ -77,12 +78,13 @@ public final class Download {
     private final int downloadAttempt;
 
     Download(URI url, String expectedHash, boolean useEtag, boolean forceDownload, boolean offline,
-        Duration maxAge, DownloadProgressListener progressListener, HttpClient.Version httpVersion,
-        int downloadAttempt) {
+        boolean fallback, Duration maxAge, DownloadProgressListener progressListener,
+        HttpClient.Version httpVersion, int downloadAttempt) {
         this.url = url;
         this.expectedHash = expectedHash;
         this.useEtag = useEtag;
         this.forceDownload = forceDownload;
+        this.fallback = fallback;
         this.offline = offline;
         this.maxAge = maxAge;
         this.progressListener = progressListener;
@@ -415,7 +417,7 @@ public final class Download {
 
     private void writeEtag(Path output, String eTag) throws DownloadException {
         try {
-            AttributeHelper.writeAttribute(output, E_TAG, eTag);
+            AttributeHelper.writeAttribute(output, E_TAG, eTag, false);
         } catch (IOException e) {
             throw error(e, "Failed to write etag to (%s)", output);
         }
@@ -431,7 +433,7 @@ public final class Download {
 
     private void writeHash(Path output, String value) throws DownloadException {
         try {
-            AttributeHelper.writeAttribute(output, "LoomHash", value);
+            AttributeHelper.writeAttribute(output, "LoomHash", value, fallback);
         } catch (IOException e) {
             throw error(e, "Failed to write hash to (%s)", output);
         }

@@ -149,6 +149,7 @@ public class Constants {
     }
 
     public static final class Properties {
+        public static final String FORCE_ATTRIBUTE_FALLBACK = "leaf.loom.forceAttributeFallback";
         public static final String ONLY_PROVIDE_JARS = "leaf.loom.onlyProvideJars";
         public static final String IGNORE_MISSING_FILES = "leaf.loom.ignoreMissingFiles";
         public static final String DONT_REMAP = "leaf.loom.dontRemap";
