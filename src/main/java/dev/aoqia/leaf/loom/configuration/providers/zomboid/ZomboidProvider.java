@@ -114,8 +114,7 @@ public abstract class ZomboidProvider {
         final String envStr = !isServer ? "Client" : "Server";
 
         final String version = !isServer ? clientZomboidVersion() : serverZomboidVersion();
-        final ZomboidVersionMeta versionInfo = !isServer ? getClientVersionInfo()
-            : getServerVersionInfo();
+        final ZomboidVersionMeta versionInfo = !isServer ? getClientVersionInfo() : getServerVersionInfo();
 
         final JavaVersion requiredJavaVersion = JavaVersion.toVersion(versionInfo.javaVersion());
         if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
