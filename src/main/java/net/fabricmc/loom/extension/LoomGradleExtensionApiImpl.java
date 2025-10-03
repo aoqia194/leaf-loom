@@ -25,8 +25,8 @@
 package net.fabricmc.loom.extension;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,7 +34,6 @@ import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.NamedDomainObjectList;
 import org.gradle.api.Project;
-import org.gradle.api.UncheckedIOException;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
@@ -74,7 +73,7 @@ import net.fabricmc.loom.task.GenerateSourcesTask;
 import net.fabricmc.loom.util.DeprecationHelper;
 import net.fabricmc.loom.util.MirrorUtil;
 import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
+import net.fabricmc.loom.util.fmj.FabricModJsonHelpers;
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
 
 /**
@@ -86,6 +85,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	protected final ListProperty<JarProcessor> jarProcessors;
 	protected final ConfigurableFileCollection log4jConfigs;
 	protected final RegularFileProperty accessWidener;
+	protected final RegularFileProperty fabricModJsonPath;
 	protected final ManifestLocations versionsManifests;
 	protected final Property<String> customMetadata;
 	protected final SetProperty<String> knownIndyBsms;
@@ -118,6 +118,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 				.empty();
 		this.log4jConfigs = project.files(directories.getDefaultLog4jConfigFile());
 		this.accessWidener = project.getObjects().fileProperty();
+		this.fabricModJsonPath = project.getObjects().fileProperty();
 		this.versionsManifests = new ManifestLocations();
 		this.versionsManifests.add("mojang", MirrorUtil.getVersionManifests(project), -2);
 		this.versionsManifests.add("fabric_experimental", MirrorUtil.getExperimentalVersions(project), -1);
@@ -203,6 +204,11 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	@Override
 	public RegularFileProperty getAccessWidenerPath() {
 		return accessWidener;
+	}
+
+	@Override
+	public RegularFileProperty getFabricModJsonPath() {
+		return fabricModJsonPath;
 	}
 
 	@Override
@@ -293,17 +299,13 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 	@Override
 	public String getModVersion() {
-		try {
-			final FabricModJson fabricModJson = FabricModJsonFactory.createFromSourceSetsNullable(getProject(), SourceSetHelper.getMainSourceSet(getProject()));
+		List<FabricModJson> fabricModJsons = FabricModJsonHelpers.getModsInProject(getProject());
 
-			if (fabricModJson == null) {
-				throw new RuntimeException("Could not find a fabric.mod.json file in the main sourceset");
-			}
-
-			return fabricModJson.getModVersion();
-		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to read mod version from main sourceset.", e);
+		if (fabricModJsons.isEmpty()) {
+			throw new RuntimeException("Could not find a fabric.mod.json file in the main sourceset");
 		}
+
+		return fabricModJsons.getFirst().getModVersion();
 	}
 
 	@Override
