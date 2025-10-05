@@ -70,11 +70,11 @@ import net.fabricmc.loom.configuration.mods.dependency.ModDependency;
 import net.fabricmc.loom.configuration.mods.dependency.ModDependencyFactory;
 import net.fabricmc.loom.configuration.mods.dependency.ModDependencyOptions;
 import net.fabricmc.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import net.fabricmc.loom.util.AsyncCache;
 import net.fabricmc.loom.util.Checksum;
 import net.fabricmc.loom.util.Constants;
 import net.fabricmc.loom.util.ExceptionUtil;
 import net.fabricmc.loom.util.SourceRemapper;
-import net.fabricmc.loom.util.AsyncCache;
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
 import net.fabricmc.loom.util.service.ServiceFactory;
 
@@ -361,7 +361,9 @@ public class ModConfigurationRemapper {
 			return;
 		}
 
-		if (dependency.isCacheInvalid(project, "sources")) {
+		LoomGradleExtension extension = LoomGradleExtension.get(project);
+
+		if (dependency.isCacheInvalid(project, "sources") || extension.refreshDeps()) {
 			final Path output = dependency.getWorkingFile(project, "sources");
 
 			sourceRemapper.scheduleRemapSources(sourcesInput.toFile(), output.toFile(), false, true, () -> {
