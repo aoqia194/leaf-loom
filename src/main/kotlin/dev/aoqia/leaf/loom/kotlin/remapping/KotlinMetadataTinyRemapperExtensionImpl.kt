@@ -32,7 +32,7 @@ import org.objectweb.asm.ClassVisitor
 object KotlinMetadataTinyRemapperExtensionImpl : KotlinMetadataTinyRemapperExtension {
     override fun insertApplyVisitor(
         cls: TrClass,
-        next: ClassVisitor?
+        next: ClassVisitor?,
     ): ClassVisitor {
         return KotlinMetadataRemappingClassVisitor(cls.environment.remapper, next)
     }

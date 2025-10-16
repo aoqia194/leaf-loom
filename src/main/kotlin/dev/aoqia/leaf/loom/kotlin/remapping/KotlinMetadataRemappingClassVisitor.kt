@@ -33,7 +33,7 @@ import org.objectweb.asm.commons.Remapper
 
 class KotlinMetadataRemappingClassVisitor(private val remapper: Remapper, next: ClassVisitor?) : ClassVisitor(
     Opcodes.ASM9,
-    next
+    next,
 ) {
     companion object {
         val ANNOTATION_DESCRIPTOR: String = Type.getDescriptor(Metadata::class.java)
@@ -47,7 +47,7 @@ class KotlinMetadataRemappingClassVisitor(private val remapper: Remapper, next: 
         name: String?,
         signature: String?,
         superName: String?,
-        interfaces: Array<out String>?
+        interfaces: Array<out String>?,
     ) {
         this.className = name
         super.visit(version, access, name, signature, superName, interfaces)
@@ -55,7 +55,7 @@ class KotlinMetadataRemappingClassVisitor(private val remapper: Remapper, next: 
 
     override fun visitAnnotation(
         descriptor: String,
-        visible: Boolean
+        visible: Boolean,
     ): AnnotationVisitor? {
         var result: AnnotationVisitor? = super.visitAnnotation(descriptor, visible)
 

@@ -35,14 +35,14 @@ import kotlin.metadata.jvm.Metadata
 class KotlinClassMetadataRemappingAnnotationVisitor(
     private val remapper: Remapper,
     val next: AnnotationVisitor,
-    val className: String?
+    val className: String?,
 ) :
     AnnotationNode(Opcodes.ASM9, KotlinMetadataRemappingClassVisitor.ANNOTATION_DESCRIPTOR) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun visit(
         name: String?,
-        value: Any?
+        value: Any?,
     ) {
         super.visit(name, value)
     }
@@ -59,7 +59,7 @@ class KotlinClassMetadataRemappingAnnotationVisitor(
             logger.info(
                 "Kotlin metadata for class ($className) as it was built using a different major Kotlin " +
                     "version (${header.metadataVersion[0]}.${header.metadataVersion[1]}.x) while the remapper " +
-                    "is using (${KotlinVersion.CURRENT})."
+                    "is using (${KotlinVersion.CURRENT}).",
             )
         }
         val metadata = KotlinClassMetadata.readLenient(header)
@@ -107,7 +107,7 @@ class KotlinClassMetadataRemappingAnnotationVisitor(
                         kpackage,
                         metadata.facadeClassName,
                         metadata.version,
-                        metadata.flags
+                        metadata.flags,
                     ).write()
                 writeClassHeader(remapped)
                 validateKotlinClassHeader(remapped, header)
@@ -172,14 +172,14 @@ class KotlinClassMetadataRemappingAnnotationVisitor(
 
     private fun validateKotlinClassHeader(
         remapped: Metadata,
-        original: Metadata
+        original: Metadata,
     ) {
         // This can happen when the remapper is ran on a kotlin version
         // that does not match the version the class was compiled with.
         if (remapped.data2.size != original.data2.size) {
             logger.info(
                 "Kotlin class metadata size mismatch: data2 size does not match original in class $className. " +
-                    "New: ${remapped.data2.size} Old: ${original.data2.size}"
+                    "New: ${remapped.data2.size} Old: ${original.data2.size}",
             )
         }
     }
