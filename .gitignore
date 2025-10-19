@@ -1,16 +1,16 @@
 # Ignore everything
 /*
 
-# Folders
+!/.github
 !/gradle
 !/src
-!/.github
 
-# Files
 !/.gitattributes
 !/.gitignore
-!/.editorconfig
 !/build.gradle.kts
+!/checkstyle.xml
+!/codenarc.groovy
+!/eclipse-formatter.xml
 !/gradle.properties
 !/gradlew
 !/gradlew.bat
@@ -18,9 +18,5 @@
 !/LICENSE
 !/README.md
 !/settings.gradle.kts
-!/Jenkinsfile
-!/checkstyle.xml
-!/codenarc.groovy
-!/bootstrap
 
 /src/**/generated
