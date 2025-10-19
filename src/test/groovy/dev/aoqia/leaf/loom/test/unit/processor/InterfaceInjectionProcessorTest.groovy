@@ -28,15 +28,9 @@ import java.util.function.Consumer
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import spock.lang.Specification
-import spock.lang.TempDir
-
 import net.fabricmc.mappingio.MappingReader
 import net.fabricmc.mappingio.tree.MemoryMappingTree
 import net.fabricmc.tinyremapper.TinyRemapper
-
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import spock.lang.Specification
 import spock.lang.TempDir
 
@@ -63,11 +57,6 @@ import dev.aoqia.leaf.loom.util.LazyCloseable
 import dev.aoqia.leaf.loom.util.Pair
 import dev.aoqia.leaf.loom.util.TinyRemapperHelper
 import dev.aoqia.leaf.loom.util.ZipUtils
-
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import spock.lang.Specification
-import spock.lang.TempDir
 
 class InterfaceInjectionProcessorTest extends Specification {
 	@TempDir

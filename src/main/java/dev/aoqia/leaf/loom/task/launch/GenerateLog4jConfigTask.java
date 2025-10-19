@@ -28,10 +28,12 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.task.AbstractLoomTask;
+
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
+
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 
 public abstract class GenerateLog4jConfigTask extends AbstractLoomTask {
     @OutputFile

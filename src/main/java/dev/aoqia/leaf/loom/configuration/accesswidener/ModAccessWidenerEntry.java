@@ -28,27 +28,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerRemapper;
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
 import net.fabricmc.accesswidener.TransitiveOnlyFilter;
+import net.fabricmc.tinyremapper.TinyRemapper;
+import org.jetbrains.annotations.Nullable;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
-import net.fabricmc.tinyremapper.TinyRemapper;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * {@link AccessWidenerEntry} implementation for a {@link LeafModJson}.
  */
 public record ModAccessWidenerEntry(LeafModJson mod, String path, ModEnvironment environment, boolean transitiveOnly)
-        implements AccessWidenerEntry {
+    implements AccessWidenerEntry {
     public static List<ModAccessWidenerEntry> readAll(LeafModJson modJson, boolean transitiveOnly) {
         var entries = new ArrayList<ModAccessWidenerEntry>();
 
-        for (Map.Entry<String, ModEnvironment> entry :
-                modJson.getClassTweakers().entrySet()) {
+        for (Map.Entry<String, ModEnvironment> entry : modJson.getClassTweakers().entrySet()) {
             entries.add(new ModAccessWidenerEntry(modJson, entry.getKey(), entry.getValue(), transitiveOnly));
         }
 
@@ -86,10 +87,9 @@ public record ModAccessWidenerEntry(LeafModJson mod, String path, ModEnvironment
 
     private static AccessWidenerRemapper getRemapper(AccessWidenerVisitor visitor, TinyRemapper tinyRemapper) {
         return new AccessWidenerRemapper(
-                visitor,
-                tinyRemapper.getEnvironment().getRemapper(),
-                MappingsNamespace.OFFICIAL.toString(),
-                MappingsNamespace.NAMED.toString());
+            visitor, tinyRemapper.getEnvironment().getRemapper(), MappingsNamespace.OFFICIAL.toString(),
+            MappingsNamespace.NAMED.toString()
+        );
     }
 
     private byte[] readRaw() throws IOException {

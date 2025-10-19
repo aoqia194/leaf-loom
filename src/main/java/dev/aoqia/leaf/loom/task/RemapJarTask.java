@@ -29,23 +29,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.stream.Stream;
-
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.build.nesting.JarNester;
-import dev.aoqia.leaf.loom.build.nesting.NestableJarGenerationTask;
-import dev.aoqia.leaf.loom.configuration.accesswidener.AccessWidenerFile;
-import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
-import dev.aoqia.leaf.loom.task.service.ClientEntriesService;
-import dev.aoqia.leaf.loom.task.service.MixinRefmapService;
-import dev.aoqia.leaf.loom.task.service.TinyRemapperService;
-import dev.aoqia.leaf.loom.util.*;
-import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
-import dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils;
-import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import javax.inject.Inject;
 
 import com.google.gson.JsonObject;
-import javax.inject.Inject;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerRemapper;
 import net.fabricmc.accesswidener.AccessWidenerWriter;
@@ -58,26 +44,47 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Nested;
+import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.TaskProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.build.nesting.JarNester;
+import dev.aoqia.leaf.loom.build.nesting.NestableJarGenerationTask;
+import dev.aoqia.leaf.loom.configuration.accesswidener.AccessWidenerFile;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
+import dev.aoqia.leaf.loom.task.service.ClientEntriesService;
+import dev.aoqia.leaf.loom.task.service.MixinRefmapService;
+import dev.aoqia.leaf.loom.task.service.TinyRemapperService;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.ExceptionUtil;
+import dev.aoqia.leaf.loom.util.Pair;
+import dev.aoqia.leaf.loom.util.SidedClassVisitor;
+import dev.aoqia.leaf.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 
 public abstract class RemapJarTask extends AbstractRemapJarTask {
     @Inject
     public RemapJarTask() {
         super();
         final ConfigurationContainer configurations = getProject().getConfigurations();
-        getClasspath().from(
-            configurations.getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME));
+        getClasspath().from(configurations.getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME));
         getAddNestedDependencies().convention(true).finalizeValueOnRead();
         getOptimizeLeafModJson().convention(false).finalizeValueOnRead();
 
         TaskProvider<NestableJarGenerationTask> processIncludeJars = getProject().getTasks()
             .named(Constants.Task.PROCESS_INCLUDE_JARS, NestableJarGenerationTask.class);
-        getNestedJars().from(
-            processIncludeJars.map(task -> getProject().fileTree(task.getOutputDirectory())));
+        getNestedJars().from(processIncludeJars.map(task -> getProject().fileTree(task.getOutputDirectory())));
         getNestedJars().builtBy(processIncludeJars);
 
         getUseMixinAP().set(LoomGradleExtension.get(getProject()).getMixin().getUseLegacyMixinAp());
@@ -100,8 +107,8 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
 
     /**
      * Whether to optimize the leaf.mod.json file, by default this is false.
-     *
-     * <p>The schemaVersion entry will be placed first in the json file
+     * <p>
+     * The schemaVersion entry will be placed first in the json file
      */
     @Input
     public abstract Property<Boolean> getOptimizeLeafModJson();
@@ -133,7 +140,8 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
                 params.getUseMixinExtension().set(!mixinAp);
 
                 // Add the mixin refmap remap type to the manifest
-                // This is used by the mod dependency remapper to determine if it should remap
+                // This is used by the mod dependency remapper to determine if
+                // it should remap
                 // the refmap
                 // or if the refmap should be remapped by mixin at runtime.
                 final var refmapRemapType = mixinAp ? ArtifactMetadata.MixinRemapType.MIXIN
@@ -148,7 +156,8 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
 
     @Override
     protected Provider<? extends ClientEntriesService.Options> getClientOnlyEntriesOptionsProvider(
-        SourceSet clientSourceSet) {
+        SourceSet clientSourceSet
+    ) {
         return ClientEntriesService.Classes.createOptions(getProject(), clientSourceSet);
     }
 
@@ -179,10 +188,9 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
             try (var serviceFactory = new ScopedServiceFactory()) {
                 LOGGER.info("Remapping {} to {}", inputFile, outputFile);
 
-                this.tinyRemapperService =
-                    getParameters().getTinyRemapperServiceOptions().isPresent()
-                        ? serviceFactory.get(getParameters().getTinyRemapperServiceOptions().get())
-                        : null;
+                this.tinyRemapperService = getParameters().getTinyRemapperServiceOptions().isPresent()
+                    ? serviceFactory.get(getParameters().getTinyRemapperServiceOptions().get())
+                    : null;
 
                 prepare();
 
@@ -220,8 +228,7 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
                     LOGGER.error("Failed to delete output file", ex);
                 }
 
-                throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new,
-                    "Failed to remap", e);
+                throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to remap", e);
             }
         }
 
@@ -238,24 +245,25 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
             Objects.requireNonNull(tinyRemapperService, "tinyRemapperService");
             Objects.requireNonNull(tinyRemapper, "tinyRemapper");
 
-            // Delete the old file to prevent deleted contents from sticking around in the jar.
+            // Delete the old file to prevent deleted contents from sticking
+            // around in the jar.
             Files.deleteIfExists(outputFile);
 
-            try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(
-                outputFile).build()) {
+            try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(outputFile).build()) {
                 outputConsumer.addNonClassFiles(inputFile);
                 tinyRemapper.apply(outputConsumer, tinyRemapperService.getOrCreateTag(inputFile));
             }
         }
 
         private void markClientOnlyClasses() throws IOException {
-            final Stream<Pair<String, ZipUtils.UnsafeUnaryOperator<byte[]>>> tranformers =
-                getParameters().getClientOnlyEntries()
-                    .get()
-                    .stream()
-                    .map(s -> new Pair<>(s,
-                        (ZipUtils.AsmClassOperator) classVisitor -> SidedClassVisitor.CLIENT.insertApplyVisitor(
-                            null, classVisitor)));
+            final Stream<Pair<String, ZipUtils.UnsafeUnaryOperator<byte[]>>> tranformers = getParameters()
+                .getClientOnlyEntries().get().stream().map(
+                    s -> new Pair<>(
+                        s,
+                        (ZipUtils.AsmClassOperator) classVisitor -> SidedClassVisitor.CLIENT
+                            .insertApplyVisitor(null, classVisitor)
+                    )
+                );
 
             ZipUtils.transform(outputFile, tranformers);
         }
@@ -283,10 +291,10 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
             int version = AccessWidenerReader.readVersion(input);
 
             AccessWidenerWriter writer = new AccessWidenerWriter(version);
-            AccessWidenerRemapper remapper = new AccessWidenerRemapper(writer,
-                tinyRemapper.getEnvironment().getRemapper(),
-                getParameters().getSourceNamespace().get(),
-                getParameters().getTargetNamespace().get());
+            AccessWidenerRemapper remapper = new AccessWidenerRemapper(
+                writer, tinyRemapper.getEnvironment().getRemapper(), getParameters().getSourceNamespace().get(),
+                getParameters().getTargetNamespace().get()
+            );
             AccessWidenerReader reader = new AccessWidenerReader(remapper);
             reader.read(input);
 
@@ -309,8 +317,7 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
                 return;
             }
 
-            for (MixinRefmapService.Options options : getParameters().getMixinRefmapServiceOptions()
-                .get()) {
+            for (MixinRefmapService.Options options : getParameters().getMixinRefmapServiceOptions().get()) {
                 MixinRefmapService mixinRefmapService = serviceFactory.get(options);
                 mixinRefmapService.applyToJar(outputFile);
             }
@@ -321,8 +328,9 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
                 return;
             }
 
-            ZipUtils.transformJson(JsonObject.class, outputFile, LeafModJsonFactory.LEAF_MOD_JSON,
-                LeafModJsonUtils::optimizeFmj);
+            ZipUtils.transformJson(
+                JsonObject.class, outputFile, LeafModJsonFactory.LEAF_MOD_JSON, LeafModJsonUtils::optimizeFmj
+            );
         }
     }
 }

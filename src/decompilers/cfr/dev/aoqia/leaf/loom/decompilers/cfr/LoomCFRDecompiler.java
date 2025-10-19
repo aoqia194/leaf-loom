@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import dev.aoqia.leaf.loom.decompilers.LoomInternalDecompiler;
+
 import org.benf.cfr.reader.Driver;
 import org.benf.cfr.reader.state.ClassFileSourceImpl;
 import org.benf.cfr.reader.state.DCCommonState;
@@ -44,11 +44,11 @@ import org.benf.cfr.reader.util.getopt.Options;
 import org.benf.cfr.reader.util.getopt.OptionsImpl;
 import org.benf.cfr.reader.util.output.SinkDumperFactory;
 
+import dev.aoqia.leaf.loom.decompilers.LoomInternalDecompiler;
+
 public final class LoomCFRDecompiler implements LoomInternalDecompiler {
-    private static final Map<String, String> DECOMPILE_OPTIONS = Map.of(
-            "renameillegalidents", "true",
-            "trackbytecodeloc", "true",
-            "comments", "false");
+    private static final Map<String, String> DECOMPILE_OPTIONS = Map
+        .of("renameillegalidents", "true", "trackbytecodeloc", "true", "comments", "false");
 
     @Override
     public void decompile(LoomInternalDecompiler.Context context) {
@@ -79,8 +79,11 @@ public final class LoomCFRDecompiler implements LoomInternalDecompiler {
 
         Map<String, Map<Integer, Integer>> lineMap;
 
-        try (JarOutputStream outputStream =
-                new JarOutputStream(Files.newOutputStream(context.sourcesDestination()), manifest)) {
+        try (
+            JarOutputStream outputStream = new JarOutputStream(
+                Files.newOutputStream(context.sourcesDestination()), manifest
+            )
+        ) {
             CFRSinkFactory cfrSinkFactory = new CFRSinkFactory(outputStream, context.logger());
             SinkDumperFactory dumperFactory = new SinkDumperFactory(cfrSinkFactory, options);
 

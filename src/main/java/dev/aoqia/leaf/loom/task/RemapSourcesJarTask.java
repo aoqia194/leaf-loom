@@ -27,9 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.task.service.ClientEntriesService;
-import dev.aoqia.leaf.loom.task.service.SourceRemapperService;
-import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
+
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
@@ -39,6 +37,10 @@ import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.aoqia.leaf.loom.task.service.ClientEntriesService;
+import dev.aoqia.leaf.loom.task.service.SourceRemapperService;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
+
 public abstract class RemapSourcesJarTask extends AbstractRemapJarTask {
     @Nested
     abstract Property<SourceRemapperService.Options> getSourcesRemapperServiceOptions();
@@ -47,7 +49,7 @@ public abstract class RemapSourcesJarTask extends AbstractRemapJarTask {
     public RemapSourcesJarTask() {
         super();
         getClasspath()
-                .from(getProject().getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME));
+            .from(getProject().getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME));
         getJarType().set("sources");
 
         getSourcesRemapperServiceOptions().set(SourceRemapperService.createOptions(this));
@@ -64,7 +66,8 @@ public abstract class RemapSourcesJarTask extends AbstractRemapJarTask {
 
     @Override
     protected Provider<? extends ClientEntriesService.Options> getClientOnlyEntriesOptionsProvider(
-            SourceSet clientSourceSet) {
+        SourceSet clientSourceSet
+    ) {
         return ClientEntriesService.Source.createOptions(getProject(), clientSourceSet);
     }
 
@@ -84,8 +87,8 @@ public abstract class RemapSourcesJarTask extends AbstractRemapJarTask {
             try {
                 if (!getParameters().namespacesMatch()) {
                     try (var serviceFactory = new ScopedServiceFactory()) {
-                        SourceRemapperService sourceRemapperService =
-                                serviceFactory.get(getParameters().getSourcesRemapperServiceOptions());
+                        SourceRemapperService sourceRemapperService = serviceFactory
+                            .get(getParameters().getSourcesRemapperServiceOptions());
                         sourceRemapperService.remapSourcesJar(inputFile, outputFile);
                     }
                 } else {

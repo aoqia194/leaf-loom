@@ -28,6 +28,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
+import org.jetbrains.annotations.VisibleForTesting;
+
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.ArmNativesLibraryProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LWJGL3UpgradeLibraryProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LegacyASMLibraryProcessor;
@@ -36,18 +40,13 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.Ob
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.RiscVNativesLibraryProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor;
 import dev.aoqia.leaf.loom.util.Platform;
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
-import org.jetbrains.annotations.VisibleForTesting;
 
 public class LibraryProcessorManager {
     public static final List<LibraryProcessorFactory> DEFAULT_LIBRARY_PROCESSORS = List.of(
-            ArmNativesLibraryProcessor::new,
-            RiscVNativesLibraryProcessor::new,
-            LegacyASMLibraryProcessor::new,
-            LoomNativeSupportLibraryProcessor::new,
-            LWJGL3UpgradeLibraryProcessor::new,
-            ObjcBridgeUpgradeLibraryProcessor::new,
-            RuntimeLog4jLibraryProcessor::new);
+        ArmNativesLibraryProcessor::new, RiscVNativesLibraryProcessor::new, LegacyASMLibraryProcessor::new,
+        LoomNativeSupportLibraryProcessor::new, LWJGL3UpgradeLibraryProcessor::new,
+        ObjcBridgeUpgradeLibraryProcessor::new, RuntimeLog4jLibraryProcessor::new
+    );
 
     private final Platform platform;
     private final RepositoryHandler repositories;
@@ -55,10 +54,9 @@ public class LibraryProcessorManager {
     private final List<String> enabledProcessors;
 
     public LibraryProcessorManager(
-            Platform platform,
-            RepositoryHandler repositories,
-            List<LibraryProcessorFactory> libraryProcessorFactories,
-            List<String> enabledProcessors) {
+        Platform platform, RepositoryHandler repositories, List<LibraryProcessorFactory> libraryProcessorFactories,
+        List<String> enabledProcessors
+    ) {
         this.platform = platform;
         this.repositories = repositories;
         this.libraryProcessorFactories = libraryProcessorFactories;
@@ -78,15 +76,15 @@ public class LibraryProcessorManager {
             final LibraryProcessor.ApplicationResult applicationResult = processor.getApplicationResult();
 
             switch (applicationResult) {
-                case MUST_APPLY -> {
+            case MUST_APPLY -> {
+                processors.add(processor);
+            }
+            case CAN_APPLY -> {
+                if (enabledProcessors.contains(processor.getClass().getSimpleName())) {
                     processors.add(processor);
                 }
-                case CAN_APPLY -> {
-                    if (enabledProcessors.contains(processor.getClass().getSimpleName())) {
-                        processors.add(processor);
-                    }
-                }
-                case DONT_APPLY -> {}
+            }
+            case DONT_APPLY -> {}
             }
         }
 

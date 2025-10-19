@@ -33,8 +33,7 @@ public class GradleDownloadProgressListener implements DownloadProgressListener 
     private final String name;
     private final Function<String, ProgressLogger> progressLoggerFactory;
 
-    @Nullable
-    private ProgressLogger progressLogger;
+    @Nullable private ProgressLogger progressLogger;
 
     public GradleDownloadProgressListener(String name, Function<String, ProgressLogger> progressLoggerFactory) {
         this.name = name;
@@ -49,7 +48,9 @@ public class GradleDownloadProgressListener implements DownloadProgressListener 
     @Override
     public void onProgress(long bytesTransferred, long contentLength) {
         Objects.requireNonNull(progressLogger);
-        progressLogger.progress("Downloading %s - %s / %s".formatted(name, humanBytes(bytesTransferred), humanBytes(contentLength)));
+        progressLogger.progress(
+            "Downloading %s - %s / %s".formatted(name, humanBytes(bytesTransferred), humanBytes(contentLength))
+        );
     }
 
     @Override

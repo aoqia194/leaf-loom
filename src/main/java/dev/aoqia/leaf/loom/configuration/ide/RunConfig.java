@@ -29,15 +29,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.InstallerData;
-import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaSyncTask;
-import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
-import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
@@ -54,6 +54,13 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.InstallerData;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaSyncTask;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
 
 public class RunConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(RunConfig.class);
@@ -79,8 +86,7 @@ public class RunConfig {
             return "";
         }
 
-        return name.substring(0, 1).toUpperCase() +
-               name.substring(1).replaceAll("([^A-Z])([A-Z])", "$1 $2");
+        return name.substring(0, 1).toUpperCase() + name.substring(1).replaceAll("([^A-Z])([A-Z])", "$1 $2");
     }
 
     public static RunConfig runConfig(Project project, RunConfigSettings settings) {
@@ -92,7 +98,8 @@ public class RunConfig {
         SourceSet sourceSet = settings.getSource(project);
 
         LibraryContext context = new LibraryContext(
-            extension.getZomboidProvider().getClientVersionInfo(), JavaVersion.current());
+            extension.getZomboidProvider().getClientVersionInfo(), JavaVersion.current()
+        );
         if (environment.equals("client") && context.usesLWJGL3()) {
             settings.startFirstThread();
         }
@@ -100,17 +107,15 @@ public class RunConfig {
         String mainClass = settings.getMainClass().getOrNull();
 
         if (mainClass == null) {
-            throw new IllegalArgumentException(
-                "Run configuration '" + name + "' must specify 'mainClass'");
+            throw new IllegalArgumentException("Run configuration '" + name + "' must specify 'mainClass'");
         }
 
         if (configName == null) {
             configName = "";
             String srcName = sourceSet.getName();
 
-            final boolean isSplitClientSourceSet = extension.areEnvironmentSourceSetsSplit()
-                                                   && srcName.equals("client")
-                                                   && environment.equals("client");
+            final boolean isSplitClientSourceSet = extension.areEnvironmentSourceSetsSplit() && srcName.equals("client")
+                && environment.equals("client");
 
             if (!srcName.equals(SourceSet.MAIN_SOURCE_SET_NAME) && !isSplitClientSourceSet) {
                 configName += capitalizeCamelCaseName(srcName) + " ";
@@ -140,24 +145,22 @@ public class RunConfig {
         }
 
         runConfig.mainClass = settings.devLaunchMainClass().get();
-        runConfig.vmArgs.add("-Dfabric.dli.config=" + encodeEscaped(
-            extension.getFiles().getDevLauncherConfig().getAbsolutePath()));
+        runConfig.vmArgs
+            .add("-Dfabric.dli.config=" + encodeEscaped(extension.getFiles().getDevLauncherConfig().getAbsolutePath()));
         runConfig.vmArgs.add("-Dfabric.dli.env=" + environment.toLowerCase());
 
         // Need this here so the loader can find the project's rundir.
         runConfig.vmArgs.add("-Dleaf.runDir=" + runDir);
         // To prevent the log file from creating in workingdir.
         runConfig.vmArgs.add("-Dleaf.log.file=" + Path.of(runDir).resolve("leafloader.log"));
-        // Tells the game where to look for natives and libs. Since loom flattens the libs into
-        // one folder, we don't have to provide version-specific libs folder like vanilla game does.
+        // Tells the game where to look for natives and libs. Since loom
+        // flattens the libs into
+        // one folder, we don't have to provide version-specific libs folder
+        // like vanilla game does.
         runConfig.vmArgs.add("-Djava.library.path=" + workingDir);
 
-        runConfig.eclipseProjectName = project.getExtensions()
-            .getByType(EclipseModel.class)
-            .getProject()
-            .getName();
-        runConfig.ideaModuleName = IdeaUtils.getIdeaModuleName(
-            new SourceSetReference(sourceSet, project));
+        runConfig.eclipseProjectName = project.getExtensions().getByType(EclipseModel.class).getProject().getName();
+        runConfig.ideaModuleName = IdeaUtils.getIdeaModuleName(new SourceSetReference(sourceSet, project));
         runConfig.runDirIdeaUrl = "file://" + workingDir;
         runConfig.workingDir = workingDir;
         runConfig.runDir = runDir;
@@ -196,8 +199,7 @@ public class RunConfig {
         return sb.toString();
     }
 
-    static String getMainClass(String side, LoomGradleExtension extension,
-        String defaultMainClass) {
+    static String getMainClass(String side, LoomGradleExtension extension, String defaultMainClass) {
         InstallerData installerData = extension.getInstallerData();
 
         if (installerData == null) {
@@ -229,18 +231,14 @@ public class RunConfig {
 
     private static Set<ResolvedArtifact> getArtifacts(Project project, String configuration) {
         return project.getConfigurations().getByName(configuration).getHierarchy().stream()
-            .map(c -> c.getResolvedConfiguration().getResolvedArtifacts())
-            .flatMap(Collection::stream)
+            .map(c -> c.getResolvedConfiguration().getResolvedArtifacts()).flatMap(Collection::stream)
             .collect(Collectors.toSet());
     }
 
-    private static boolean containsLibrary(Set<ResolvedArtifact> artifacts,
-        ModuleVersionIdentifier identifier) {
-        return artifacts.stream()
-            .map(ResolvedArtifact::getModuleVersion)
-            .map(ResolvedModuleVersion::getId)
-            .anyMatch(test -> test.getGroup().equals(identifier.getGroup())
-                              && test.getName().equals(identifier.getName()));
+    private static boolean containsLibrary(Set<ResolvedArtifact> artifacts, ModuleVersionIdentifier identifier) {
+        return artifacts.stream().map(ResolvedArtifact::getModuleVersion).map(ResolvedModuleVersion::getId).anyMatch(
+            test -> test.getGroup().equals(identifier.getGroup()) && test.getName().equals(identifier.getName())
+        );
     }
 
     private static String encodeEscaped(String s) {
@@ -260,29 +258,24 @@ public class RunConfig {
     }
 
     public Element genRuns(Element doc) {
-        Element root = this.addXml(doc, "component",
-            ImmutableMap.of("name", "ProjectRunConfigurationManager"));
+        Element root = this.addXml(doc, "component", ImmutableMap.of("name", "ProjectRunConfigurationManager"));
         root = addXml(
-            root,
-            "configuration",
-            ImmutableMap.of(
-                "default", "false", "name", configName, "type", "Application", "factoryName",
-                "Application"));
+            root, "configuration",
+            ImmutableMap.of("default", "false", "name", configName, "type", "Application", "factoryName", "Application")
+        );
 
         this.addXml(root, "module", ImmutableMap.of("name", ideaModuleName));
         this.addXml(root, "option", ImmutableMap.of("name", "MAIN_CLASS_NAME", "value", mainClass));
-        this.addXml(root, "option",
-            ImmutableMap.of("name", "WORKING_DIRECTORY", "value", runDirIdeaUrl));
+        this.addXml(root, "option", ImmutableMap.of("name", "WORKING_DIRECTORY", "value", runDirIdeaUrl));
 
         if (!vmArgs.isEmpty()) {
-            this.addXml(root, "option",
-                ImmutableMap.of("name", "VM_PARAMETERS", "value", joinArguments(vmArgs)));
+            this.addXml(root, "option", ImmutableMap.of("name", "VM_PARAMETERS", "value", joinArguments(vmArgs)));
         }
 
         if (!programArgs.isEmpty()) {
             this.addXml(
-                root, "option",
-                ImmutableMap.of("name", "PROGRAM_PARAMETERS", "value", joinArguments(programArgs)));
+                root, "option", ImmutableMap.of("name", "PROGRAM_PARAMETERS", "value", joinArguments(programArgs))
+            );
         }
 
         return root;
@@ -309,6 +302,7 @@ public class RunConfig {
         String dummyConfig;
 
         try (InputStream input = IdeaSyncTask.class.getClassLoader().getResourceAsStream(dummy)) {
+            assert input != null;
             dummyConfig = new String(input.readAllBytes(), StandardCharsets.UTF_8);
         }
 
@@ -327,21 +321,16 @@ public class RunConfig {
         dummyConfig = dummyConfig.replace("%ECLIPSE_PROJECT%", eclipseProjectName);
         dummyConfig = dummyConfig.replace("%IDEA_MODULE%", ideaModuleName);
         dummyConfig = dummyConfig.replace("%RUN_DIRECTORY%", runDir);
-        dummyConfig = dummyConfig.replace("%PROGRAM_ARGS%",
-            joinArguments(programArgs).replaceAll("\"", "&quot;"));
-        dummyConfig = dummyConfig.replace("%VM_ARGS%",
-            joinArguments(vmArgs).replaceAll("\"", "&quot;"));
-        dummyConfig = dummyConfig.replace("%IDEA_ENV_VARS%",
-            getEnvVars("<env name=\"%s\" value=\"%s\"/>"));
-        dummyConfig = dummyConfig.replace("%ECLIPSE_ENV_VARS%",
-            getEnvVars("<mapEntry key=\"%s\" value=\"%s\"/>"));
+        dummyConfig = dummyConfig.replace("%PROGRAM_ARGS%", joinArguments(programArgs).replaceAll("\"", "&quot;"));
+        dummyConfig = dummyConfig.replace("%VM_ARGS%", joinArguments(vmArgs).replaceAll("\"", "&quot;"));
+        dummyConfig = dummyConfig.replace("%IDEA_ENV_VARS%", getEnvVars("<env name=\"%s\" value=\"%s\"/>"));
+        dummyConfig = dummyConfig.replace("%ECLIPSE_ENV_VARS%", getEnvVars("<mapEntry key=\"%s\" value=\"%s\"/>"));
 
         return dummyConfig;
     }
 
     private String getEnvVars(String pattern) {
         return environmentVariables.entrySet().stream()
-            .map(entry -> pattern.formatted(entry.getKey(), entry.getValue().toString()))
-            .collect(Collectors.joining());
+            .map(entry -> pattern.formatted(entry.getKey(), entry.getValue().toString())).collect(Collectors.joining());
     }
 }

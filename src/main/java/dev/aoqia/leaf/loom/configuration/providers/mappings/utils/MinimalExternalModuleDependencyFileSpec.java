@@ -25,9 +25,11 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings.utils;
 
 import java.nio.file.Path;
 import java.util.Objects;
+
+import org.gradle.api.artifacts.MinimalExternalModuleDependency;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
-import org.gradle.api.artifacts.MinimalExternalModuleDependency;
 
 public record MinimalExternalModuleDependencyFileSpec(MinimalExternalModuleDependency dependency) implements FileSpec {
     @Override
@@ -38,7 +40,8 @@ public record MinimalExternalModuleDependencyFileSpec(MinimalExternalModuleDepen
     @Override
     public int hashCode() {
         return Objects.hash(
-                dependency.getModule().getGroup(), dependency.getModule().getName(), dependency.getVersionConstraint());
+            dependency.getModule().getGroup(), dependency.getModule().getName(), dependency.getVersionConstraint()
+        );
     }
 
     @Override

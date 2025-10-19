@@ -30,13 +30,10 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import javax.inject.Inject;
+
 import net.fabricmc.accesswidener.AccessWidenerFormatException;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
-
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.api.TrEnvironment;
 import org.gradle.api.DefaultTask;
@@ -46,6 +43,10 @@ import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
 
 public abstract class ValidateAccessWidenerTask extends DefaultTask {
     @SkipWhenEmpty
@@ -62,7 +63,8 @@ public abstract class ValidateAccessWidenerTask extends DefaultTask {
         getAccessWidener().convention(extension.getAccessWidenerPath()).finalizeValueOnRead();
         getTargetJars().from(extension.getZomboidJarsCollection(MappingsNamespace.NAMED));
 
-        // Ignore outputs for up-to-date checks as there aren't any (so only inputs are checked)
+        // Ignore outputs for up-to-date checks as there aren't any (so only
+        // inputs are checked)
         getOutputs().upToDateWhen(task -> true);
     }
 
@@ -77,17 +79,16 @@ public abstract class ValidateAccessWidenerTask extends DefaultTask {
         final AccessWidenerValidator validator = new AccessWidenerValidator(tinyRemapper.getEnvironment());
         final AccessWidenerReader accessWidenerReader = new AccessWidenerReader(validator);
 
-        try (BufferedReader reader =
-                Files.newBufferedReader(getAccessWidener().get().getAsFile().toPath(), StandardCharsets.UTF_8)) {
+        try (
+            BufferedReader reader = Files
+                .newBufferedReader(getAccessWidener().get().getAsFile().toPath(), StandardCharsets.UTF_8)
+        ) {
             accessWidenerReader.read(reader, "named");
         } catch (AccessWidenerFormatException e) {
-            getProject()
-                    .getLogger()
-                    .error(
-                            "Failed to validate access-widener file {} on line {}: {}",
-                            getAccessWidener().get().getAsFile().getName(),
-                            e.getLineNumber(),
-                            e.getMessage());
+            getProject().getLogger().error(
+                "Failed to validate access-widener file {} on line {}: {}",
+                getAccessWidener().get().getAsFile().getName(), e.getLineNumber(), e.getMessage()
+            );
             throw e;
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to read access widener", e);
@@ -97,7 +98,8 @@ public abstract class ValidateAccessWidenerTask extends DefaultTask {
     }
 
     /**
-     * Validates that all entries in an access-widner file relate to a class/method/field in the mc jar.
+     * Validates that all entries in an access-widner file relate to a
+     * class/method/field in the mc jar.
      */
     private record AccessWidenerValidator(TrEnvironment environment) implements AccessWidenerVisitor {
         @Override
@@ -109,27 +111,23 @@ public abstract class ValidateAccessWidenerTask extends DefaultTask {
 
         @Override
         public void visitMethod(
-                String owner,
-                String name,
-                String descriptor,
-                AccessWidenerReader.AccessType access,
-                boolean transitive) {
+            String owner, String name, String descriptor, AccessWidenerReader.AccessType access, boolean transitive
+        ) {
             if (environment().getMethod(owner, name, descriptor) == null) {
                 throw new RuntimeException(
-                        "Could not find method (%s%s) in class (%s)".formatted(name, descriptor, owner));
+                    "Could not find method (%s%s) in class (%s)".formatted(name, descriptor, owner)
+                );
             }
         }
 
         @Override
         public void visitField(
-                String owner,
-                String name,
-                String descriptor,
-                AccessWidenerReader.AccessType access,
-                boolean transitive) {
+            String owner, String name, String descriptor, AccessWidenerReader.AccessType access, boolean transitive
+        ) {
             if (environment().getField(owner, name, descriptor) == null) {
                 throw new RuntimeException(
-                        "Could not find field (%s%s) in class (%s)".formatted(name, descriptor, owner));
+                    "Could not find field (%s%s) in class (%s)".formatted(name, descriptor, owner)
+                );
             }
         }
     }

@@ -26,31 +26,32 @@ package dev.aoqia.leaf.loom.configuration.accesswidener;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
+
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
-import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
-import dev.aoqia.leaf.loom.util.LazyCloseable;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.leaf.loom.util.LazyCloseable;
+
 public final class TransitiveAccessWidenerMappingsProcessor
-        implements ZomboidJarProcessor.MappingsProcessor<AccessWidenerJarProcessor.Spec> {
-    public static final TransitiveAccessWidenerMappingsProcessor INSTANCE =
-            new TransitiveAccessWidenerMappingsProcessor();
+    implements ZomboidJarProcessor.MappingsProcessor<AccessWidenerJarProcessor.Spec> {
+    public static final TransitiveAccessWidenerMappingsProcessor INSTANCE = new TransitiveAccessWidenerMappingsProcessor();
 
     private TransitiveAccessWidenerMappingsProcessor() {}
 
     @Override
     public boolean transform(
-            MemoryMappingTree mappings, AccessWidenerJarProcessor.Spec spec, MappingProcessorContext context) {
+        MemoryMappingTree mappings, AccessWidenerJarProcessor.Spec spec, MappingProcessorContext context
+    ) {
         final List<AccessWidenerEntry> accessWideners = spec.accessWideners().stream()
-                .filter(entry -> entry.mappingId() != null)
-                .toList();
+            .filter(entry -> entry.mappingId() != null).toList();
 
         if (accessWideners.isEmpty()) {
             return false;
@@ -58,11 +59,14 @@ public final class TransitiveAccessWidenerMappingsProcessor
 
         if (!MappingsNamespace.OFFICIAL.toString().equals(mappings.getSrcNamespace())) {
             throw new IllegalStateException(
-                    "Mapping tree must have official src mappings not " + mappings.getSrcNamespace());
+                "Mapping tree must have official src mappings not " + mappings.getSrcNamespace()
+            );
         }
 
-        try (LazyCloseable<TinyRemapper> remapper =
-                context.createRemapper(MappingsNamespace.OFFICIAL, MappingsNamespace.NAMED)) {
+        try (
+            LazyCloseable<TinyRemapper> remapper = context
+                .createRemapper(MappingsNamespace.OFFICIAL, MappingsNamespace.NAMED)
+        ) {
             for (AccessWidenerEntry accessWidener : accessWideners) {
                 var visitor = new MappingCommentVisitor(accessWidener.mappingId(), mappings);
                 accessWidener.read(visitor, remapper);
@@ -91,12 +95,10 @@ public final class TransitiveAccessWidenerMappingsProcessor
 
         @Override
         public void visitMethod(
-                String owner,
-                String name,
-                String descriptor,
-                AccessWidenerReader.AccessType access,
-                boolean transitive) {
-            // Access is also applied to the class, so also add the comment to the class
+            String owner, String name, String descriptor, AccessWidenerReader.AccessType access, boolean transitive
+        ) {
+            // Access is also applied to the class, so also add the comment to
+            // the class
             visitClass(owner, access, transitive);
 
             MappingTree.ClassMapping classMapping = mappingTree.getClass(owner);
@@ -110,7 +112,8 @@ public final class TransitiveAccessWidenerMappingsProcessor
 
             if (methodMapping == null) {
                 LOGGER.info(
-                        "Failed to find method ({}) in ({}) to mark access widened by mod ({})", name, owner, modId());
+                    "Failed to find method ({}) in ({}) to mark access widened by mod ({})", name, owner, modId()
+                );
                 return;
             }
 
@@ -119,12 +122,10 @@ public final class TransitiveAccessWidenerMappingsProcessor
 
         @Override
         public void visitField(
-                String owner,
-                String name,
-                String descriptor,
-                AccessWidenerReader.AccessType access,
-                boolean transitive) {
-            // Access is also applied to the class, so also add the comment to the class
+            String owner, String name, String descriptor, AccessWidenerReader.AccessType access, boolean transitive
+        ) {
+            // Access is also applied to the class, so also add the comment to
+            // the class
             visitClass(owner, access, transitive);
 
             MappingTree.ClassMapping classMapping = mappingTree.getClass(owner);
@@ -137,8 +138,8 @@ public final class TransitiveAccessWidenerMappingsProcessor
             MappingTree.FieldMapping fieldMapping = classMapping.getField(name, descriptor);
 
             if (fieldMapping == null) {
-                LOGGER.info(
-                        "Failed to find field ({}) in ({}) to mark access widened by mod ({})", name, owner, modId());
+                LOGGER
+                    .info("Failed to find field ({}) in ({}) to mark access widened by mod ({})", name, owner, modId());
                 return;
             }
 
@@ -155,7 +156,8 @@ public final class TransitiveAccessWidenerMappingsProcessor
             String awComment = "Access widened by %s to %s".formatted(modId(), access);
 
             if (!comment.contains(awComment)) {
-                // Ensure we don't comment the same thing twice. A bit of a cheap way to do this, but should work ok.
+                // Ensure we don't comment the same thing twice. A bit of a
+                // cheap way to do this, but should work ok.
                 comment += awComment;
             }
 

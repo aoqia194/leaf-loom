@@ -23,10 +23,20 @@
  */
 package dev.aoqia.leaf.loom.extension;
 
-import javax.inject.Inject;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import javax.inject.Inject;
+
+import org.gradle.api.Project;
+import org.gradle.api.configuration.BuildFeatures;
+import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.provider.ListProperty;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
@@ -43,11 +53,6 @@ import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFile;
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
 import dev.aoqia.leaf.loom.util.download.Download;
 import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
-import org.gradle.api.Project;
-import org.gradle.api.configuration.BuildFeatures;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.FileCollection;
-import org.gradle.api.provider.ListProperty;
 
 public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl implements LoomGradleExtension {
     private final Project project;
@@ -78,30 +83,32 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
         this.unmappedMods = project.files();
 
         // Setup the default intermediate mappings provider.
-        //        setIntermediateMappingsProvider(IntermediaryMappingsProvider.class, provider -> {
-        //            provider.getIntermediaryUrl().convention(getIntermediaryUrl()).finalizeValueOnRead();
+        // setIntermediateMappingsProvider(IntermediaryMappingsProvider.class,
+        // provider -> {
+        // provider.getIntermediaryUrl().convention(getIntermediaryUrl()).finalizeValueOnRead();
         //
-        //            provider.getRefreshDeps()
-        //                .set(project.provider(() -> LoomGradleExtension.get(project).refreshDeps()));
-        //        });
+        // provider.getRefreshDeps()
+        // .set(project.provider(() ->
+        // LoomGradleExtension.get(project).refreshDeps()));
+        // });
 
         refreshDeps = manualRefreshDeps();
-        libraryProcessorFactories =
-            project.getObjects().listProperty(LibraryProcessorManager.LibraryProcessorFactory.class);
+        libraryProcessorFactories = project.getObjects()
+            .listProperty(LibraryProcessorManager.LibraryProcessorFactory.class);
         libraryProcessorFactories.addAll(LibraryProcessorManager.DEFAULT_LIBRARY_PROCESSORS);
         libraryProcessorFactories.finalizeValueOnRead();
 
-        configurationCacheActive =
-            getBuildFeatures().getConfigurationCache().getActive().get();
-        isolatedProjectsActive =
-            getBuildFeatures().getIsolatedProjects().getActive().get();
+        configurationCacheActive = getBuildFeatures().getConfigurationCache().getActive().get();
+        isolatedProjectsActive = getBuildFeatures().getIsolatedProjects().getActive().get();
 
         if (refreshDeps) {
             project.getLogger().lifecycle("Refresh dependencies is in use, loom will be significantly slower.");
         }
 
         if (isolatedProjectsActive) {
-            project.getLogger().lifecycle("Isolated projects is enabled, Loom support is highly experimental, not all features will be enabled.");
+            project.getLogger().lifecycle(
+                "Isolated projects is enabled, Loom support is highly experimental, not all features will be enabled."
+            );
         }
     }
 
@@ -139,7 +146,8 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
     @Override
     public ZomboidMetadataProvider getClientMetadataProvider() {
         return Objects.requireNonNull(
-            clientMetadataProvider, "Cannot get client ZomboidMetadataProvider before it has been setup");
+            clientMetadataProvider, "Cannot get client ZomboidMetadataProvider before it has been setup"
+        );
     }
 
     @Override
@@ -150,7 +158,8 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
     @Override
     public ZomboidMetadataProvider getServerMetadataProvider() {
         return Objects.requireNonNull(
-            serverMetadataProvider, "Cannot get server ZomboidMetadataProvider before it has been setup");
+            serverMetadataProvider, "Cannot get server ZomboidMetadataProvider before it has been setup"
+        );
     }
 
     @Override
@@ -180,8 +189,8 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 
     @Override
     public NamedZomboidProvider<?> getNamedZomboidProvider() {
-        return Objects.requireNonNull(
-            namedZomboidProvider, "Cannot get NamedMinecraftProvider before it has been setup");
+        return Objects
+            .requireNonNull(namedZomboidProvider, "Cannot get NamedMinecraftProvider before it has been setup");
     }
 
     @Override
@@ -191,10 +200,11 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 
     @Override
     public FileCollection getZomboidJarsCollection(MappingsNamespace mappingsNamespace) {
-        return getProject().files(getProject().provider(() -> getProject()
-            .files(getZomboidJars(mappingsNamespace).stream()
-                .map(Path::toFile)
-                .toList())));
+        return getProject().files(
+            getProject().provider(
+                () -> getProject().files(getZomboidJars(mappingsNamespace).stream().map(Path::toFile).toList())
+            )
+        );
     }
 
     @Override

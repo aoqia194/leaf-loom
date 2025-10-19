@@ -24,10 +24,17 @@
 package dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped;
 
 import java.util.List;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.*;
+
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.gradle.api.Project;
+
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarEnvType;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 
 public abstract class NamedZomboidProvider<M extends ZomboidProvider> extends AbstractMappedZomboidProvider<M> {
     public NamedZomboidProvider(Project project, M minecraftProvider) {
@@ -51,8 +58,9 @@ public abstract class NamedZomboidProvider<M extends ZomboidProvider> extends Ab
 
         @Override
         public List<RemappedJars> getRemappedJars() {
-            return List.of(new RemappedJars(
-                    zomboidProvider.getMergedJar(), getMergedJar(), zomboidProvider.getOfficialNamespace()));
+            return List.of(
+                new RemappedJars(zomboidProvider.getMergedJar(), getMergedJar(), zomboidProvider.getOfficialNamespace())
+            );
         }
 
         @Override
@@ -69,13 +77,14 @@ public abstract class NamedZomboidProvider<M extends ZomboidProvider> extends Ab
         @Override
         public List<RemappedJars> getRemappedJars() {
             return List.of(
-                    new RemappedJars(
-                            zomboidProvider.getCommonJar(), getCommonJar(), zomboidProvider.getOfficialNamespace()),
-                    new RemappedJars(
-                            zomboidProvider.getClientOnlyJar(),
-                            getClientOnlyJar(),
-                            zomboidProvider.getOfficialNamespace(),
-                            zomboidProvider.getCommonJar()));
+                new RemappedJars(
+                    zomboidProvider.getCommonJar(), getCommonJar(), zomboidProvider.getOfficialNamespace()
+                ),
+                new RemappedJars(
+                    zomboidProvider.getClientOnlyJar(), getClientOnlyJar(), zomboidProvider.getOfficialNamespace(),
+                    zomboidProvider.getCommonJar()
+                )
+            );
         }
 
         @Override
@@ -90,7 +99,7 @@ public abstract class NamedZomboidProvider<M extends ZomboidProvider> extends Ab
     }
 
     public static final class SingleJarImpl extends NamedZomboidProvider<SingleJarZomboidProvider>
-            implements SingleJar {
+        implements SingleJar {
         private final SingleJarEnvType env;
 
         private SingleJarImpl(Project project, SingleJarZomboidProvider minecraftProvider, SingleJarEnvType env) {
@@ -108,8 +117,11 @@ public abstract class NamedZomboidProvider<M extends ZomboidProvider> extends Ab
 
         @Override
         public List<RemappedJars> getRemappedJars() {
-            return List.of(new RemappedJars(
-                    zomboidProvider.getZomboidEnvOnlyJar(), getEnvOnlyJar(), zomboidProvider.getOfficialNamespace()));
+            return List.of(
+                new RemappedJars(
+                    zomboidProvider.getZomboidEnvOnlyJar(), getEnvOnlyJar(), zomboidProvider.getOfficialNamespace()
+                )
+            );
         }
 
         @Override

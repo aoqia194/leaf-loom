@@ -27,7 +27,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.tree.MappingTree;
@@ -90,8 +95,8 @@ public class CFRObfuscationMapping extends NullMapping {
                         continue;
                     }
 
-                    MappingTree.FieldMapping fieldMapping = mapping.getField(
-                            field.getFieldName(), field.getField().getDescriptor());
+                    MappingTree.FieldMapping fieldMapping = mapping
+                        .getField(field.getFieldName(), field.getField().getDescriptor());
 
                     if (fieldMapping == null) {
                         continue;
@@ -143,8 +148,8 @@ public class CFRObfuscationMapping extends NullMapping {
             }
 
             List<String> lines = new ArrayList<>();
-            MappingTree.MethodMapping mapping =
-                    classMapping.getMethod(method.getName(), method.getOriginalDescriptor());
+            MappingTree.MethodMapping mapping = classMapping
+                .getMethod(method.getName(), method.getOriginalDescriptor());
 
             if (mapping != null) {
                 String comment = mapping.getComment();
@@ -233,11 +238,7 @@ public class CFRObfuscationMapping extends NullMapping {
         private boolean isRecord(JavaTypeInstance javaTypeInstance) {
             if (javaTypeInstance instanceof JavaRefTypeInstance) {
                 ClassFile classFile = ((JavaRefTypeInstance) javaTypeInstance).getClassFile();
-                return classFile
-                        .getClassSignature()
-                        .getSuperClass()
-                        .getRawName()
-                        .equals("java.lang.Record");
+                return classFile.getClassSignature().getSuperClass().getRawName().equals("java.lang.Record");
             }
 
             return false;

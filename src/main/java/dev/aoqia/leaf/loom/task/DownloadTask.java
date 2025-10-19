@@ -25,13 +25,8 @@ package dev.aoqia.leaf.loom.task;
 
 import java.net.URISyntaxException;
 import java.time.Duration;
-
-import dev.aoqia.leaf.loom.util.ExceptionUtil;
-import dev.aoqia.leaf.loom.util.download.Download;
-import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
-import dev.aoqia.leaf.loom.util.download.DownloadException;
-
 import javax.inject.Inject;
+
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
@@ -45,9 +40,14 @@ import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 import org.jetbrains.annotations.ApiStatus;
 
+import dev.aoqia.leaf.loom.util.ExceptionUtil;
+import dev.aoqia.leaf.loom.util.download.Download;
+import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
+import dev.aoqia.leaf.loom.util.download.DownloadException;
+
 /**
- * A general purpose task for downloading files from a URL, using the loom {@link Download}
- * utility.
+ * A general purpose task for downloading files from a URL, using the loom
+ * {@link Download} utility.
  */
 public abstract class DownloadTask extends DefaultTask {
     @Inject
@@ -69,8 +69,8 @@ public abstract class DownloadTask extends DefaultTask {
     public abstract Property<String> getSha1();
 
     /**
-     * The maximum age of the downloaded file in days. When not provided the downloaded file will
-     * never be considered stale.
+     * The maximum age of the downloaded file in days. When not provided the
+     * downloaded file will never be considered stale.
      */
     @Optional
     @Input
@@ -124,8 +124,7 @@ public abstract class DownloadTask extends DefaultTask {
             try {
                 builder = Download.create(getParameters().getUrl().get()).defaultCache();
             } catch (URISyntaxException e) {
-                throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Invalid URL",
-                    e);
+                throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Invalid URL", e);
             }
 
             if (getParameters().getMaxAge().isPresent()) {
@@ -143,8 +142,7 @@ public abstract class DownloadTask extends DefaultTask {
             try {
                 builder.downloadPath(getParameters().getOutputFile().get().getAsFile().toPath());
             } catch (DownloadException e) {
-                throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new,
-                    "Failed to download file", e);
+                throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to download file", e);
             }
         }
     }

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.Properties;
+
 import org.gradle.api.Project;
 
 public class KotlinPluginUtils {
@@ -37,8 +38,7 @@ public class KotlinPluginUtils {
     }
 
     public static String getKotlinPluginVersion(Project project) {
-        final Class<?> kotlinPluginClass =
-                project.getPlugins().getPlugin(KOTLIN_PLUGIN_ID).getClass();
+        final Class<?> kotlinPluginClass = project.getPlugins().getPlugin(KOTLIN_PLUGIN_ID).getClass();
         // See KotlinPluginWrapper.loadKotlinPluginVersionFromResourcesOf
         return loadPropertyFromResources(kotlinPluginClass, "project.properties", "project.version");
     }

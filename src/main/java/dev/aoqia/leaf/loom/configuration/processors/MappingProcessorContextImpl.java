@@ -23,11 +23,12 @@
  */
 package dev.aoqia.leaf.loom.configuration.processors;
 
+import net.fabricmc.tinyremapper.TinyRemapper;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
 import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
-import net.fabricmc.tinyremapper.TinyRemapper;
 
 public record MappingProcessorContextImpl(ConfigContext configContext) implements MappingProcessorContext {
     @Override

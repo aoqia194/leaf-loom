@@ -26,10 +26,12 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings.extras.signatures;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
-import dev.aoqia.leaf.loom.util.ZipUtils;
+
 import net.fabricmc.mappingio.MappingVisitor;
 import org.jetbrains.annotations.ApiStatus;
+
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 
 @ApiStatus.Experimental
 public record SignatureFixesLayerImpl(Path mappingsFile) implements MappingLayer, SignatureFixesLayer {
@@ -43,7 +45,7 @@ public record SignatureFixesLayerImpl(Path mappingsFile) implements MappingLayer
     @Override
     public Map<String, String> getSignatureFixes() {
         try {
-            //noinspection unchecked
+            // noinspection unchecked
             return ZipUtils.unpackJson(mappingsFile(), SIGNATURE_FIXES_PATH, Map.class);
         } catch (IOException e) {
             throw new RuntimeException("Failed to extract signature fixes", e);

@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2022-2023 FabricMC
+ * Copyright (c) 2022-2023 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package dev.aoqia.leaf.loom.kotlin.remapping
 
 import org.objectweb.asm.AnnotationVisitor
@@ -36,8 +35,7 @@ class KotlinClassMetadataRemappingAnnotationVisitor(
     private val remapper: Remapper,
     val next: AnnotationVisitor,
     val className: String?,
-) :
-    AnnotationNode(Opcodes.ASM9, KotlinMetadataRemappingClassVisitor.ANNOTATION_DESCRIPTOR) {
+) : AnnotationNode(Opcodes.ASM9, KotlinMetadataRemappingClassVisitor.ANNOTATION_DESCRIPTOR) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun visit(
@@ -103,12 +101,13 @@ class KotlinClassMetadataRemappingAnnotationVisitor(
                 var kpackage = metadata.kmPackage
                 kpackage = KotlinClassRemapper(remapper).remap(kpackage)
                 val remapped =
-                    KotlinClassMetadata.MultiFileClassPart(
-                        kpackage,
-                        metadata.facadeClassName,
-                        metadata.version,
-                        metadata.flags,
-                    ).write()
+                    KotlinClassMetadata
+                        .MultiFileClassPart(
+                            kpackage,
+                            metadata.facadeClassName,
+                            metadata.version,
+                            metadata.flags,
+                        ).write()
                 writeClassHeader(remapped)
                 validateKotlinClassHeader(remapped, header)
             }

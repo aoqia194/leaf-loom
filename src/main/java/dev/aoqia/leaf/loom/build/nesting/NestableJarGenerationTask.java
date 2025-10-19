@@ -23,8 +23,6 @@
  */
 package dev.aoqia.leaf.loom.build.nesting;
 
-import com.google.common.hash.Hashing;
-import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -37,10 +35,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import dev.aoqia.leaf.loom.LoomGradlePlugin;
-import dev.aoqia.leaf.loom.task.AbstractLoomTask;
-import dev.aoqia.leaf.loom.util.ZipReprocessorUtil;
-import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
+
+import com.google.common.hash.Hashing;
+import com.google.gson.JsonObject;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.artifacts.ArtifactView;
 import org.gradle.api.artifacts.Configuration;
@@ -61,10 +58,14 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.util.ZipReprocessorUtil;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
+
 public abstract class NestableJarGenerationTask extends AbstractLoomTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(NestableJarGenerationTask.class);
-    private static final String SEMVER_REGEX =
-            "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
+    private static final String SEMVER_REGEX = "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
     private static final Pattern SEMVER_PATTERN = Pattern.compile(SEMVER_REGEX);
 
     @InputFiles
@@ -96,16 +97,18 @@ public abstract class NestableJarGenerationTask extends AbstractLoomTask {
             File targetFile = getOutputDirectory().file(file.getName()).get().getAsFile();
             targetFile.delete();
             String fabricModJson = Objects.requireNonNull(
-                    fabricModJsons.get(file.getName()),
-                    "Could not generate leaf.mod.json for included dependency " + file.getName());
+                fabricModJsons.get(file.getName()),
+                "Could not generate leaf.mod.json for included dependency " + file.getName()
+            );
             makeNestableJar(file, targetFile, fabricModJson);
         });
     }
 
     public void from(Configuration configuration) {
         ArtifactView artifacts = configuration.getIncoming().artifactView(config -> {
-            config.attributes(attr ->
-                    attr.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE));
+            config.attributes(
+                attr -> attr.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+            );
         });
         getJars().from(artifacts.getFiles());
         dependsOn(configuration);
@@ -119,25 +122,28 @@ public abstract class NestableJarGenerationTask extends AbstractLoomTask {
 
                 if (id instanceof ModuleComponentIdentifier moduleIdentifier) {
                     moduleLocation = new Metadata(
-                            moduleIdentifier.getGroup(),
-                            moduleIdentifier.getModule(),
-                            moduleIdentifier.getVersion(),
-                            null);
+                        moduleIdentifier.getGroup(), moduleIdentifier.getModule(), moduleIdentifier.getVersion(), null
+                    );
                 }
 
                 List<Metadata> capabilityLocations = variant.getCapabilities().stream()
-                        .map(capability -> new Metadata(
-                                capability.getGroup(), capability.getName(), capability.getVersion(), null))
-                        .toList();
+                    .map(
+                        capability -> new Metadata(
+                            capability.getGroup(), capability.getName(), capability.getVersion(), null
+                        )
+                    ).toList();
 
-                if (!capabilityLocations.isEmpty()
-                        && (moduleLocation == null || !capabilityLocations.contains(moduleLocation))) {
+                if (
+                    !capabilityLocations.isEmpty()
+                        && (moduleLocation == null || !capabilityLocations.contains(moduleLocation))
+                ) {
                     moduleLocation = capabilityLocations.get(0);
                 }
 
                 if (moduleLocation == null) {
-                    throw new RuntimeException("Attempted to nest artifact " + id
-                            + " which is not a module component and has no capabilities.");
+                    throw new RuntimeException(
+                        "Attempted to nest artifact " + id + " which is not a module component and has no capabilities."
+                    );
                 } else if (moduleLocation.version == null) {
                     throw new RuntimeException("Attempted to nest artifact " + id + " which has no version");
                 }
@@ -165,14 +171,12 @@ public abstract class NestableJarGenerationTask extends AbstractLoomTask {
 
     // Generates a barebones mod for a dependency
     private static String generateModForDependency(Metadata metadata) {
-        String modId = (metadata.group() + "_" + metadata.name() + metadata.classifier())
-                .replaceAll("\\.", "_")
-                .toLowerCase(Locale.ENGLISH);
+        String modId = (metadata.group() + "_" + metadata.name() + metadata.classifier()).replaceAll("\\.", "_")
+            .toLowerCase(Locale.ENGLISH);
 
         // Fabric Loader can't handle modIds longer than 64 characters
         if (modId.length() > 64) {
-            String hash =
-                    Hashing.sha256().hashString(modId, StandardCharsets.UTF_8).toString();
+            String hash = Hashing.sha256().hashString(modId, StandardCharsets.UTF_8).toString();
             modId = modId.substring(0, 50) + hash.substring(0, 14);
         }
 
@@ -228,15 +232,14 @@ public abstract class NestableJarGenerationTask extends AbstractLoomTask {
         }
 
         try {
-            ZipReprocessorUtil.appendZipEntry(
-                    output.toPath(), "leaf.mod.json", modJsonFile.getBytes(StandardCharsets.UTF_8));
+            ZipReprocessorUtil
+                .appendZipEntry(output.toPath(), "leaf.mod.json", modJsonFile.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to add dummy mod while including %s".formatted(input), e);
         }
     }
 
-    public record Metadata(String group, String name, String version, @Nullable String classifier)
-            implements Serializable {
+    public record Metadata(String group, String name, String version, @Nullable String classifier) implements Serializable {
         @Override
         public String classifier() {
             if (classifier == null) {

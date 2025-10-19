@@ -26,11 +26,7 @@ package dev.aoqia.leaf.loom.configuration.sandbox;
 import java.nio.file.Path;
 import java.util.Objects;
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.Platform;
-import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ExternalModuleDependency;
@@ -39,10 +35,17 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+
 /**
- * Allows the user to specify a sandbox maven artifact as a gradle property.
- * The sandbox jar is read to figure out if it's supported on the current platform.
- * If it is, its added to the runtime classpath and a new client run config is created
+ * Allows the user to specify a sandbox maven artifact as a gradle property. The
+ * sandbox jar is read to figure out if it's supported on the current platform.
+ * If it is, its added to the runtime classpath and a new client run config is
+ * created
  */
 public abstract class SandboxConfiguration implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(SandboxConfiguration.class);
@@ -71,8 +74,8 @@ public abstract class SandboxConfiguration implements Runnable {
     }
 
     private void evaluate() {
-        final String sandboxNotation =
-                (String) Objects.requireNonNull(getProject().findProperty(Constants.Properties.SANDBOX));
+        final String sandboxNotation = (String) Objects
+            .requireNonNull(getProject().findProperty(Constants.Properties.SANDBOX));
         final LoomGradleExtension extension = LoomGradleExtension.get(getProject());
         final ExternalModuleDependency dependency = getDependencyFactory().create(sandboxNotation);
         final Configuration configuration = getProject().getConfigurations().detachedConfiguration(dependency);
@@ -96,8 +99,7 @@ public abstract class SandboxConfiguration implements Runnable {
             // The sandbox also acts as DLI
             // Set the sandbox as the true main class
             settings.devLaunchMainClass().set(metadata.mainClass());
-            settings.property(
-                    "leaf.sandbox.realMain", clientRun.getMainClass().get());
+            settings.property("leaf.sandbox.realMain", clientRun.getMainClass().get());
         });
     }
 }

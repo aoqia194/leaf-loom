@@ -26,15 +26,11 @@ package dev.aoqia.leaf.loom.test.unit.layeredmappings
 
 import spock.lang.Specification
 
-import spock.lang.Specification
-
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpec
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl
 import dev.aoqia.leaf.loom.configuration.providers.mappings.file.FileMappingsSpec
 import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.MavenFileSpec
 import dev.aoqia.leaf.loom.util.ClosureAction
-
-import spock.lang.Specification
 
 class LayeredMappingSpecBuilderTest extends Specification {
 	def "simple mojmap" () {

@@ -27,9 +27,7 @@ public interface Platform {
     Platform CURRENT = CurrentPlatform.INSTANCE;
 
     enum OperatingSystem {
-        WINDOWS,
-        MAC_OS,
-        LINUX; // Or Unknown
+        WINDOWS, MAC_OS, LINUX; // Or Unknown
 
         public boolean isWindows() {
             return this == WINDOWS;

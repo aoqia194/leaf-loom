@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.inject.Inject;
+
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.UnknownTaskException;
@@ -54,8 +54,7 @@ public class MixinExtensionImpl extends MixinExtensionApiImpl implements MixinEx
     public MixinExtensionImpl(Project project) {
         super(project);
         this.isDefault = true;
-        this.defaultRefmapName = project.getObjects()
-            .property(String.class)
+        this.defaultRefmapName = project.getObjects().property(String.class)
             .convention(project.provider(this::getDefaultMixinRefmapName));
         this.defaultRefmapName.finalizeValueOnRead();
     }
@@ -64,19 +63,17 @@ public class MixinExtensionImpl extends MixinExtensionApiImpl implements MixinEx
     public Property<String> getDefaultRefmapName() {
         if (!super.getUseLegacyMixinAp().get()) {
             throw new IllegalStateException(
-                "You need to set useLegacyMixinAp = true to configure Mixin annotation processor.");
+                "You need to set useLegacyMixinAp = true to configure Mixin annotation processor."
+            );
         }
 
         return defaultRefmapName;
     }
 
     private String getDefaultMixinRefmapName() {
-        String defaultRefmapName =
-            project.getExtensions().getByType(BasePluginExtension.class).getArchivesName().get() +
-            "-refmap.json";
-        project.getLogger()
-            .info("Could not find refmap definition, will be using default name: {}",
-                defaultRefmapName);
+        String defaultRefmapName = project.getExtensions().getByType(BasePluginExtension.class).getArchivesName().get()
+            + "-refmap.json";
+        project.getLogger().info("Could not find refmap definition, will be using default name: {}", defaultRefmapName);
         return defaultRefmapName;
     }
 
@@ -84,39 +81,35 @@ public class MixinExtensionImpl extends MixinExtensionApiImpl implements MixinEx
     protected PatternSet add0(SourceSet sourceSet, Provider<String> refmapName) {
         if (!super.getUseLegacyMixinAp().get()) {
             throw new IllegalStateException(
-                "You need to set useLegacyMixinAp = true to configure Mixin annotation processor.");
+                "You need to set useLegacyMixinAp = true to configure Mixin annotation processor."
+            );
         }
 
         PatternSet pattern = new PatternSet().setIncludes(Collections.singletonList("**/*.json"));
-        MixinExtension.setMixinInformationContainer(sourceSet,
-            new MixinExtension.MixinInformationContainer(sourceSet, refmapName, pattern));
+        MixinExtension.setMixinInformationContainer(
+            sourceSet, new MixinExtension.MixinInformationContainer(sourceSet, refmapName, pattern)
+        );
 
         isDefault = false;
         return pattern;
     }
 
     @Override
-    @NotNull
-    public Stream<SourceSet> getMixinSourceSetsStream() {
-        return project.getExtensions()
-            .getByType(JavaPluginExtension.class)
-            .getSourceSets()
-            .stream()
+    @NotNull public Stream<SourceSet> getMixinSourceSetsStream() {
+        return project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().stream()
             .filter(sourceSet -> MixinExtension.getMixinInformationContainer(sourceSet) != null);
     }
 
     @Override
-    @NotNull
-    public Stream<Configuration> getApConfigurationsStream(
-        Function<SourceSet, String> getApConfigNameFunc) {
-        return getMixinSourceSetsStream().map(sourceSet -> project.getConfigurations()
-            .getByName(getApConfigNameFunc.apply(sourceSet)));
+    @NotNull public Stream<Configuration> getApConfigurationsStream(Function<SourceSet, String> getApConfigNameFunc) {
+        return getMixinSourceSetsStream()
+            .map(sourceSet -> project.getConfigurations().getByName(getApConfigNameFunc.apply(sourceSet)));
     }
 
     @Override
-    @NotNull
-    public <T extends Task> Stream<Map.Entry<SourceSet, TaskProvider<T>>> getInvokerTasksStream(
-        String compileTaskLanguage, Class<T> taskType) {
+    @NotNull public <T extends Task> Stream<Map.Entry<SourceSet, TaskProvider<T>>> getInvokerTasksStream(
+        String compileTaskLanguage, Class<T> taskType
+    ) {
         return getMixinSourceSetsStream().flatMap(sourceSet -> {
             try {
                 TaskProvider<T> task = project.getTasks()
@@ -129,8 +122,7 @@ public class MixinExtensionImpl extends MixinExtensionApiImpl implements MixinEx
     }
 
     @Override
-    @NotNull
-    @Input
+    @NotNull @Input
     public Collection<SourceSet> getMixinSourceSets() {
         return getMixinSourceSetsStream().collect(Collectors.toList());
     }
@@ -145,17 +137,17 @@ public class MixinExtensionImpl extends MixinExtensionApiImpl implements MixinEx
     }
 
     private void initDefault() {
-        project.getExtensions()
-            .getByType(JavaPluginExtension.class)
-            .getSourceSets()
-            .forEach(sourceSet -> {
-                if (sourceSet.getName().equals("main")) {
-                    add(sourceSet);
-                } else {
-                    add(sourceSet, getDefaultRefmapName().map(
-                        defaultRefmapName -> "%s-%s".formatted(sourceSet.getName(),
-                            defaultRefmapName)), x -> {});
-                }
-            });
+        project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().forEach(sourceSet -> {
+            if (sourceSet.getName().equals("main")) {
+                add(sourceSet);
+            } else {
+                add(
+                    sourceSet,
+                    getDefaultRefmapName()
+                        .map(defaultRefmapName -> "%s-%s".formatted(sourceSet.getName(), defaultRefmapName)),
+                    x -> {}
+                );
+            }
+        });
     }
 }

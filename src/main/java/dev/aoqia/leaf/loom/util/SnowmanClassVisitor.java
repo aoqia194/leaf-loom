@@ -44,12 +44,9 @@ public class SnowmanClassVisitor extends ClassVisitor {
 
         @Override
         public void visitLocalVariable(
-                final String name,
-                final String descriptor,
-                final String signature,
-                final Label start,
-                final Label end,
-                final int index) {
+            final String name, final String descriptor, final String signature, final Label start, final Label end,
+            final int index
+        ) {
             String newName = name;
 
             if (name != null && name.startsWith("\u2603")) {
@@ -72,11 +69,8 @@ public class SnowmanClassVisitor extends ClassVisitor {
 
     @Override
     public MethodVisitor visitMethod(
-            final int access,
-            final String name,
-            final String descriptor,
-            final String signature,
-            final String[] exceptions) {
+        final int access, final String name, final String descriptor, final String signature, final String[] exceptions
+    ) {
         return new SnowmanMethodVisitor(api, super.visitMethod(access, name, descriptor, signature, exceptions));
     }
 }

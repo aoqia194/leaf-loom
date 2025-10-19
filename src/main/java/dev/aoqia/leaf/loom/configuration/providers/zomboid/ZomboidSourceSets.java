@@ -27,24 +27,24 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import com.google.common.base.Preconditions;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.RemapConfigurations;
-import dev.aoqia.leaf.loom.task.AbstractRemapJarTask;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.jvm.tasks.Jar;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.RemapConfigurations;
+import dev.aoqia.leaf.loom.task.AbstractRemapJarTask;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+
 public abstract sealed class ZomboidSourceSets permits ZomboidSourceSets.Single, ZomboidSourceSets.Split {
     public static ZomboidSourceSets get(Project project) {
         return LoomGradleExtension.get(project).areEnvironmentSourceSetsSplit() ? Split.INSTANCE : Single.INSTANCE;
     }
 
-    public abstract void applyDependencies(
-        BiConsumer<String, ZomboidJar.Type> consumer, List<ZomboidJar.Type> targets);
+    public abstract void applyDependencies(BiConsumer<String, ZomboidJar.Type> consumer, List<ZomboidJar.Type> targets);
 
     public abstract String getSourceSetForEnv(String env);
 
@@ -65,8 +65,8 @@ public abstract sealed class ZomboidSourceSets permits ZomboidSourceSets.Single,
                 configuration.setTransitive(false);
                 configuration.extendsFrom(configurations.getByName(configurationName.zomboidLibsRuntimeName()));
                 configuration.extendsFrom(configurations.getByName(Constants.Configurations.LOADER_DEPENDENCIES));
-                configuration.extendsFrom(
-                    configurations.getByName(Constants.Configurations.LOOM_DEVELOPMENT_DEPENDENCIES));
+                configuration
+                    .extendsFrom(configurations.getByName(Constants.Configurations.LOOM_DEVELOPMENT_DEPENDENCIES));
             });
 
             configurations.register(configurationName.compile(), configuration -> {
@@ -92,9 +92,9 @@ public abstract sealed class ZomboidSourceSets permits ZomboidSourceSets.Single,
      */
     public static final class Single extends ZomboidSourceSets {
         private static final ConfigurationName ZOMBOID_NAMED = new ConfigurationName(
-            "zomboidNamed",
-            Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES,
-            Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES);
+            "zomboidNamed", Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES,
+            Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES
+        );
 
         private static final Single INSTANCE = new Single();
 
@@ -113,7 +113,8 @@ public abstract sealed class ZomboidSourceSets permits ZomboidSourceSets.Single,
 
         @Override
         public void afterEvaluate(Project project) {
-            // This is done in afterEvaluate as we need to be sure that split source sets was not enabled.
+            // This is done in afterEvaluate as we need to be sure that split
+            // source sets was not enabled.
             createConfigurations(project);
 
             extendsFrom(project, JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME, ZOMBOID_NAMED.compile());
@@ -134,14 +135,14 @@ public abstract sealed class ZomboidSourceSets permits ZomboidSourceSets.Single,
     public static final class Split extends ZomboidSourceSets {
         public static final String CLIENT_ONLY_SOURCE_SET_NAME = "client";
         private static final ConfigurationName ZOMBOID_COMMON_NAMED = new ConfigurationName(
-            "zomboidCommonNamed",
-            Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES,
-            Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES);
+            "zomboidCommonNamed", Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES,
+            Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES
+        );
         // Depends on the Zomboid client libraries.
         private static final ConfigurationName ZOMBOID_CLIENT_ONLY_NAMED = new ConfigurationName(
-            "zomboidClientOnlyNamed",
-            Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES,
-            Constants.Configurations.ZOMBOID_CLIENT_RUNTIME_LIBRARIES);
+            "zomboidClientOnlyNamed", Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES,
+            Constants.Configurations.ZOMBOID_CLIENT_RUNTIME_LIBRARIES
+        );
         private static final Split INSTANCE = new Split();
 
         @Override
@@ -162,8 +163,7 @@ public abstract sealed class ZomboidSourceSets permits ZomboidSourceSets.Single,
         }
 
         @Override
-        public void afterEvaluate(Project project) {
-        }
+        public void afterEvaluate(Project project) {}
 
         @Override
         protected List<ConfigurationName> getConfigurations() {
@@ -176,53 +176,57 @@ public abstract sealed class ZomboidSourceSets permits ZomboidSourceSets.Single,
             final ConfigurationContainer configurations = project.getConfigurations();
             final LoomGradleExtension extension = LoomGradleExtension.get(project);
 
-            // Register our new client only source set, main becomes common only, with their respective jars.
+            // Register our new client only source set, main becomes common
+            // only, with their respective jars.
             final SourceSet mainSourceSet = SourceSetHelper.getMainSourceSet(project);
             final SourceSet clientOnlySourceSet = SourceSetHelper.createSourceSet(CLIENT_ONLY_SOURCE_SET_NAME, project);
 
             // Add Zomboid to the main and client source sets.
             extendsFrom(project, mainSourceSet.getCompileClasspathConfigurationName(), ZOMBOID_COMMON_NAMED.compile());
             extendsFrom(project, mainSourceSet.getRuntimeClasspathConfigurationName(), ZOMBOID_COMMON_NAMED.runtime());
-            extendsFrom(project, clientOnlySourceSet.getCompileClasspathConfigurationName(),
-                ZOMBOID_CLIENT_ONLY_NAMED.compile());
-            extendsFrom(project, clientOnlySourceSet.getRuntimeClasspathConfigurationName(),
-                ZOMBOID_CLIENT_ONLY_NAMED.runtime());
+            extendsFrom(
+                project, clientOnlySourceSet.getCompileClasspathConfigurationName(), ZOMBOID_CLIENT_ONLY_NAMED.compile()
+            );
+            extendsFrom(
+                project, clientOnlySourceSet.getRuntimeClasspathConfigurationName(), ZOMBOID_CLIENT_ONLY_NAMED.runtime()
+            );
 
             // Client source set depends on common.
             extendsFrom(project, ZOMBOID_CLIENT_ONLY_NAMED.runtime(), ZOMBOID_COMMON_NAMED.runtime());
             extendsFrom(project, ZOMBOID_CLIENT_ONLY_NAMED.compile(), ZOMBOID_COMMON_NAMED.compile());
 
-            // Client annotation processor configuration extendsFrom "annotationProcessor"
+            // Client annotation processor configuration extendsFrom
+            // "annotationProcessor"
             extendsFrom(
-                project,
-                clientOnlySourceSet.getAnnotationProcessorConfigurationName(),
-                JavaPlugin.ANNOTATION_PROCESSOR_CONFIGURATION_NAME);
+                project, clientOnlySourceSet.getAnnotationProcessorConfigurationName(),
+                JavaPlugin.ANNOTATION_PROCESSOR_CONFIGURATION_NAME
+            );
 
             // Client source set classpaths
-            clientOnlySourceSet.setCompileClasspath(clientOnlySourceSet
-                .getCompileClasspath().plus(mainSourceSet.getOutput()));
-            clientOnlySourceSet.setRuntimeClasspath(clientOnlySourceSet
-                .getRuntimeClasspath().plus(mainSourceSet.getOutput()));
+            clientOnlySourceSet
+                .setCompileClasspath(clientOnlySourceSet.getCompileClasspath().plus(mainSourceSet.getOutput()));
+            clientOnlySourceSet
+                .setRuntimeClasspath(clientOnlySourceSet.getRuntimeClasspath().plus(mainSourceSet.getOutput()));
 
             extendsFrom(
-                project,
-                clientOnlySourceSet.getCompileClasspathConfigurationName(),
-                mainSourceSet.getCompileClasspathConfigurationName());
+                project, clientOnlySourceSet.getCompileClasspathConfigurationName(),
+                mainSourceSet.getCompileClasspathConfigurationName()
+            );
             extendsFrom(
-                project,
-                clientOnlySourceSet.getRuntimeClasspathConfigurationName(),
-                mainSourceSet.getRuntimeClasspathConfigurationName());
+                project, clientOnlySourceSet.getRuntimeClasspathConfigurationName(),
+                mainSourceSet.getRuntimeClasspathConfigurationName()
+            );
 
             // Test source set depends on client
             final SourceSet testSourceSet = SourceSetHelper.getSourceSetByName(SourceSet.TEST_SOURCE_SET_NAME, project);
             extendsFrom(
-                project,
-                testSourceSet.getCompileClasspathConfigurationName(),
-                clientOnlySourceSet.getCompileClasspathConfigurationName());
+                project, testSourceSet.getCompileClasspathConfigurationName(),
+                clientOnlySourceSet.getCompileClasspathConfigurationName()
+            );
             extendsFrom(
-                project,
-                testSourceSet.getRuntimeClasspathConfigurationName(),
-                clientOnlySourceSet.getRuntimeClasspathConfigurationName());
+                project, testSourceSet.getRuntimeClasspathConfigurationName(),
+                clientOnlySourceSet.getRuntimeClasspathConfigurationName()
+            );
             project.getDependencies()
                 .add(testSourceSet.getImplementationConfigurationName(), clientOnlySourceSet.getOutput());
 
@@ -238,10 +242,9 @@ public abstract sealed class ZomboidSourceSets permits ZomboidSourceSets.Single,
 
             // Remap with the client compile classpath.
             project.getTasks().withType(AbstractRemapJarTask.class).configureEach(remapJarTask -> {
-                remapJarTask
-                    .getClasspath()
-                    .from(project.getConfigurations()
-                        .getByName(clientOnlySourceSet.getCompileClasspathConfigurationName()));
+                remapJarTask.getClasspath().from(
+                    project.getConfigurations().getByName(clientOnlySourceSet.getCompileClasspathConfigurationName())
+                );
             });
 
             // The sources task can be registered at a later time.

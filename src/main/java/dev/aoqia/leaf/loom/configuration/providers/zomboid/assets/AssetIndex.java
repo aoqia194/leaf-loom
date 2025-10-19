@@ -30,8 +30,8 @@ import java.util.Map;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
-public record AssetIndex(Map<String, Entry> objects, boolean virtual,
-                         @SerializedName("map_to_resources") boolean mapToResources) {
+public record AssetIndex(Map<String, Entry> objects, boolean virtual, @SerializedName("map_to_resources")
+boolean mapToResources) {
     public AssetIndex() {
         this(new LinkedHashMap<>(), false, false);
     }
@@ -48,7 +48,7 @@ public record AssetIndex(Map<String, Entry> objects, boolean virtual,
         }
 
         public String name() {
-            int end = path().lastIndexOf("/") + 1;
+            int end = path().lastIndexOf('/') + 1;
 
             if (end > 0) {
                 return path().substring(end);

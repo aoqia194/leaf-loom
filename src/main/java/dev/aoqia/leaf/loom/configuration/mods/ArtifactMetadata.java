@@ -23,7 +23,6 @@
  */
 package dev.aoqia.leaf.loom.configuration.mods;
 
-import com.google.gson.JsonObject;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -36,19 +35,18 @@ import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
+
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.configuration.InstallerData;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
-import org.jetbrains.annotations.Nullable;
 
-public record ArtifactMetadata(
-        boolean isLeafMod,
-        RemapRequirements remapRequirements,
-        @Nullable InstallerData installerData,
-        MixinRemapType mixinRemapType,
-        List<String> knownIdyBsms) {
+public record ArtifactMetadata(boolean isLeafMod, RemapRequirements remapRequirements, @Nullable InstallerData installerData, MixinRemapType mixinRemapType, List<String> knownIdyBsms) {
+
     private static final String INSTALLER_PATH = "leaf-installer.json";
 
     public static ArtifactMetadata create(ArtifactRef artifact, String currentLoomVersion) throws IOException {
@@ -71,9 +69,10 @@ public record ArtifactMetadata(
                 final String knownIndyBsmsValue = mainAttributes.getValue(Constants.Manifest.KNOWN_IDY_BSMS);
 
                 if (remapValue != null) {
-                    // Support opting into and out of remapping with "Leaf-Loom-Remap" manifest entry
-                    remapRequirements =
-                            Boolean.parseBoolean(remapValue) ? RemapRequirements.OPT_IN : RemapRequirements.OPT_OUT;
+                    // Support opting into and out of remapping with
+                    // "Leaf-Loom-Remap" manifest entry
+                    remapRequirements = Boolean.parseBoolean(remapValue) ? RemapRequirements.OPT_IN
+                        : RemapRequirements.OPT_OUT;
                 }
 
                 if (mixinRemapType != null) {
@@ -95,25 +94,24 @@ public record ArtifactMetadata(
 
             final Path installerPath = fs.getPath(INSTALLER_PATH);
             if (isFabricMod && Files.exists(installerPath)) {
-                final JsonObject jsonObject = LoomGradlePlugin.GSON.fromJson(
-                        Files.readString(installerPath, StandardCharsets.UTF_8), JsonObject.class);
+                final JsonObject jsonObject = LoomGradlePlugin.GSON
+                    .fromJson(Files.readString(installerPath, StandardCharsets.UTF_8), JsonObject.class);
                 installerData = new InstallerData(artifact.version(), jsonObject);
             }
         }
 
         return new ArtifactMetadata(
-                isFabricMod,
-                remapRequirements,
-                installerData,
-                refmapRemapType,
-                Collections.unmodifiableList(knownIndyBsms));
+            isFabricMod, remapRequirements, installerData, refmapRemapType, Collections.unmodifiableList(knownIndyBsms)
+        );
     }
 
-    // Validates that the version matches or is less than the current loom version
+    // Validates that the version matches or is less than the current loom
+    // version
     // This is only done for jars with tiny-remapper remapped mixins.
     private static void validateLoomVersion(String version, String currentLoomVersion) {
         if ("0.0.0+unknown".equals(currentLoomVersion)) {
-            // Unknown version, skip validation. This is the case when running from source (tests)
+            // Unknown version, skip validation. This is the case when running
+            // from source (tests)
             return;
         }
 
@@ -127,8 +125,9 @@ public record ArtifactMetadata(
 
             if (versionPart > currentVersionPart) {
                 throw new IllegalStateException(
-                        "Mod was built with a newer version of Loom (%s), you are using Loom (%s)"
-                                .formatted(version, currentLoomVersion));
+                    "Mod was built with a newer version of Loom (%s), you are using Loom (%s)"
+                        .formatted(version, currentLoomVersion)
+                );
             } else if (versionPart < currentVersionPart) {
                 // Older version, no need to check further
                 break;
@@ -141,9 +140,7 @@ public record ArtifactMetadata(
     }
 
     public enum RemapRequirements {
-        DEFAULT(ArtifactMetadata::isLeafMod),
-        OPT_IN(true),
-        OPT_OUT(false);
+        DEFAULT(ArtifactMetadata::isLeafMod), OPT_IN(true), OPT_OUT(false);
 
         private final Predicate<ArtifactMetadata> shouldRemap;
 

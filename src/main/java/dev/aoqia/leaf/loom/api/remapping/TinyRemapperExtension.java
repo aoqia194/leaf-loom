@@ -29,38 +29,35 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A remapper extension, that has direct access to the TinyRemapper APIs.
- *
- * <p>This API is not stable and may change without notice.
+ * <p>
+ * This API is not stable and may change without notice.
  */
 @ApiStatus.Experimental
 public interface TinyRemapperExtension {
     /**
-     * See: {@link TinyRemapper.Builder#extraAnalyzeVisitor(TinyRemapper.AnalyzeVisitorProvider)}.
-     *
+     * See:
+     * {@link TinyRemapper.Builder#extraAnalyzeVisitor(TinyRemapper.AnalyzeVisitorProvider)}.
      * @return A {@link TinyRemapper.AnalyzeVisitorProvider} or {@code null}.
      */
-    @Nullable
-    default TinyRemapper.AnalyzeVisitorProvider getAnalyzeVisitorProvider(Context context) {
+    @Nullable default TinyRemapper.AnalyzeVisitorProvider getAnalyzeVisitorProvider(Context context) {
         return getAnalyzeVisitorProvider();
     }
 
     /**
-     * See: {@link TinyRemapper.Builder#extraPreApplyVisitor(TinyRemapper.ApplyVisitorProvider)}.
-     *
+     * See:
+     * {@link TinyRemapper.Builder#extraPreApplyVisitor(TinyRemapper.ApplyVisitorProvider)}.
      * @return A {@link TinyRemapper.ApplyVisitorProvider} or {@code null}.
      */
-    @Nullable
-    default TinyRemapper.ApplyVisitorProvider getPreApplyVisitor(Context context) {
+    @Nullable default TinyRemapper.ApplyVisitorProvider getPreApplyVisitor(Context context) {
         return getPreApplyVisitor();
     }
 
     /**
-     * See: {@link TinyRemapper.Builder#extraPostApplyVisitor(TinyRemapper.ApplyVisitorProvider)}.
-     *
+     * See:
+     * {@link TinyRemapper.Builder#extraPostApplyVisitor(TinyRemapper.ApplyVisitorProvider)}.
      * @return A {@link TinyRemapper.ApplyVisitorProvider} or {@code null}.
      */
-    @Nullable
-    default TinyRemapper.ApplyVisitorProvider getPostApplyVisitor(Context context) {
+    @Nullable default TinyRemapper.ApplyVisitorProvider getPostApplyVisitor(Context context) {
         return getPostApplyVisitor();
     }
 
@@ -82,8 +79,7 @@ public interface TinyRemapperExtension {
      * @deprecated Use {@link #getAnalyzeVisitorProvider(Context)} instead.
      */
     @Deprecated(forRemoval = true)
-    @Nullable
-    default TinyRemapper.AnalyzeVisitorProvider getAnalyzeVisitorProvider() {
+    @Nullable default TinyRemapper.AnalyzeVisitorProvider getAnalyzeVisitorProvider() {
         return null;
     }
 
@@ -91,8 +87,7 @@ public interface TinyRemapperExtension {
      * @deprecated Use {@link #getPreApplyVisitor(Context)} instead.
      */
     @Deprecated(forRemoval = true)
-    @Nullable
-    default TinyRemapper.ApplyVisitorProvider getPreApplyVisitor() {
+    @Nullable default TinyRemapper.ApplyVisitorProvider getPreApplyVisitor() {
         return null;
     }
 
@@ -100,8 +95,7 @@ public interface TinyRemapperExtension {
      * @deprecated Use {@link #getPostApplyVisitor(Context)} instead.
      */
     @Deprecated(forRemoval = true)
-    @Nullable
-    default TinyRemapper.ApplyVisitorProvider getPostApplyVisitor() {
+    @Nullable default TinyRemapper.ApplyVisitorProvider getPostApplyVisitor() {
         return null;
     }
 }

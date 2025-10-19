@@ -28,14 +28,15 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import dev.aoqia.leaf.loom.LoomGradlePlugin;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+
 @ApiStatus.Experimental
 public interface UnpickLayer {
-    @Nullable
-    UnpickData getUnpickData() throws IOException;
+    @Nullable UnpickData getUnpickData() throws IOException;
 
     record UnpickData(Metadata metadata, byte[] definitions) {
         public static UnpickData read(Path metadataPath, Path definitionPath) throws IOException {

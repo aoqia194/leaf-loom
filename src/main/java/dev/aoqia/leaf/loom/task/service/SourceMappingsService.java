@@ -31,16 +31,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.ConfigContextImpl;
-import dev.aoqia.leaf.loom.configuration.processors.MappingProcessorContextImpl;
-import dev.aoqia.leaf.loom.configuration.processors.ZomboidJarProcessorManager;
-import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
-import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
-import dev.aoqia.leaf.loom.util.service.Service;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-import dev.aoqia.leaf.loom.util.service.ServiceType;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
@@ -52,9 +42,21 @@ import org.gradle.api.tasks.InputFiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.ConfigContextImpl;
+import dev.aoqia.leaf.loom.configuration.processors.MappingProcessorContextImpl;
+import dev.aoqia.leaf.loom.configuration.processors.ZomboidJarProcessorManager;
+import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 public class SourceMappingsService extends Service<SourceMappingsService.Options> {
     public static final ServiceType<Options, SourceMappingsService> TYPE = new ServiceType<>(
-        Options.class, SourceMappingsService.class);
+        Options.class, SourceMappingsService.class
+    );
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceMappingsService.class);
 
     public SourceMappingsService(Options options, ServiceFactory serviceFactory) {
@@ -98,9 +100,8 @@ public class SourceMappingsService extends Service<SourceMappingsService.Options
         return path;
     }
 
-    private static void createMappings(Project project,
-        ZomboidJarProcessorManager jarProcessor,
-        Path outputMappings) throws IOException {
+    private static void createMappings(Project project, ZomboidJarProcessorManager jarProcessor, Path outputMappings)
+        throws IOException {
         LoomGradleExtension extension = LoomGradleExtension.get(project);
         Path inputMappings = extension.getMappingConfiguration().tinyMappings;
         MemoryMappingTree mappingTree = new MemoryMappingTree();

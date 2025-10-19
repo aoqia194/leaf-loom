@@ -25,13 +25,8 @@ package dev.aoqia.leaf.loom.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.LoomVersions;
-import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
-
 import javax.inject.Inject;
+
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -39,9 +34,18 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.ModuleDependency;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
-import org.gradle.api.attributes.*;
+import org.gradle.api.attributes.Bundling;
+import org.gradle.api.attributes.Category;
+import org.gradle.api.attributes.HasConfigurableAttributes;
+import org.gradle.api.attributes.LibraryElements;
+import org.gradle.api.attributes.Usage;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Provider;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.LoomVersions;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 public abstract class LoomConfigurations implements Runnable {
     @Override
@@ -49,27 +53,30 @@ public abstract class LoomConfigurations implements Runnable {
         final LoomGradleExtension extension = LoomGradleExtension.get(getProject());
 
         register(Constants.Configurations.MOD_COMPILE_CLASSPATH, Role.RESOLVABLE);
-        registerNonTransitive(Constants.Configurations.MOD_COMPILE_CLASSPATH_MAPPED,
-            Role.RESOLVABLE);
+        registerNonTransitive(Constants.Configurations.MOD_COMPILE_CLASSPATH_MAPPED, Role.RESOLVABLE);
 
         // Set up the Zomboid compile configurations.
         var zomboidClientCompile = registerNonTransitive(
-            Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES, Role.RESOLVABLE);
+            Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES, Role.RESOLVABLE
+        );
         var zomboidServerCompile = registerNonTransitive(
-            Constants.Configurations.ZOMBOID_SERVER_COMPILE_LIBRARIES, Role.RESOLVABLE);
-        var zomboidCompile = registerNonTransitive(
-            Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES, Role.RESOLVABLE);
+            Constants.Configurations.ZOMBOID_SERVER_COMPILE_LIBRARIES, Role.RESOLVABLE
+        );
+        var zomboidCompile = registerNonTransitive(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES, Role.RESOLVABLE);
 
         zomboidCompile.configure(configuration -> {
             configuration.extendsFrom(zomboidClientCompile.get());
             configuration.extendsFrom(zomboidServerCompile.get());
         });
 
-        // Set up the zomboid runtime configurations, this extends from the compile configurations.
+        // Set up the zomboid runtime configurations, this extends from the
+        // compile configurations.
         var zomboidClientRuntime = registerNonTransitive(
-            Constants.Configurations.ZOMBOID_CLIENT_RUNTIME_LIBRARIES, Role.RESOLVABLE);
+            Constants.Configurations.ZOMBOID_CLIENT_RUNTIME_LIBRARIES, Role.RESOLVABLE
+        );
         var zomboidServerRuntime = registerNonTransitive(
-            Constants.Configurations.ZOMBOID_SERVER_RUNTIME_LIBRARIES, Role.RESOLVABLE);
+            Constants.Configurations.ZOMBOID_SERVER_RUNTIME_LIBRARIES, Role.RESOLVABLE
+        );
 
         // Runtime extends from compile
         zomboidClientRuntime.configure(configuration -> {
@@ -79,101 +86,100 @@ public abstract class LoomConfigurations implements Runnable {
             configuration.extendsFrom(zomboidServerCompile.get());
         });
 
-        registerNonTransitive(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES,
-            Role.RESOLVABLE).configure(runtime -> {
-            runtime.extendsFrom(zomboidClientRuntime.get());
-            runtime.extendsFrom(zomboidServerRuntime.get());
-        });
+        registerNonTransitive(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES, Role.RESOLVABLE)
+            .configure(runtime -> {
+                runtime.extendsFrom(zomboidClientRuntime.get());
+                runtime.extendsFrom(zomboidServerRuntime.get());
+            });
 
         registerNonTransitive(Constants.Configurations.ZOMBOID_NATIVES, Role.RESOLVABLE);
-        registerNonTransitive(Constants.Configurations.ZOMBOID_EXTRACTED_LIBRARIES,
-            Role.RESOLVABLE);
+        registerNonTransitive(Constants.Configurations.ZOMBOID_EXTRACTED_LIBRARIES, Role.RESOLVABLE);
 
         registerNonTransitive(Constants.Configurations.LOADER_DEPENDENCIES, Role.RESOLVABLE);
 
         registerNonTransitive(Constants.Configurations.ZOMBOID, Role.NONE);
 
         Provider<Configuration> include = register(Constants.Configurations.INCLUDE, Role.NONE);
-        register(Constants.Configurations.INCLUDE_INTERNAL, Role.RESOLVABLE).configure(
-            configuration -> {
-                configuration.getDependencies().addAllLater(getProject().provider(() -> {
-                    List<Dependency> dependencies = new ArrayList<>();
+        register(Constants.Configurations.INCLUDE_INTERNAL, Role.RESOLVABLE).configure(configuration -> {
+            configuration.getDependencies().addAllLater(getProject().provider(() -> {
+                List<Dependency> dependencies = new ArrayList<>();
 
-                    for (Dependency dependency : include.get().getIncoming().getDependencies()) {
-                        if (dependency instanceof HasConfigurableAttributes<?> hasAttributes) {
-                            Category category = hasAttributes.getAttributes()
-                                .getAttribute(Category.CATEGORY_ATTRIBUTE);
+                for (Dependency dependency : include.get().getIncoming().getDependencies()) {
+                    if (dependency instanceof HasConfigurableAttributes<?> hasAttributes) {
+                        Category category = hasAttributes.getAttributes().getAttribute(Category.CATEGORY_ATTRIBUTE);
 
-                            if (category != null &&
-                                (category.getName().equals(Category.ENFORCED_PLATFORM) ||
-                                 category.getName().equals(Category.REGULAR_PLATFORM))) {
-                                dependencies.add(dependency);
-                                continue;
-                            } else if (dependency instanceof ModuleDependency moduleDependency) {
-                                ModuleDependency copy = moduleDependency.copy();
-                                copy.setTransitive(false);
-                                dependencies.add(copy);
-                                continue;
-                            }
+                        if (
+                            category != null && (category.getName().equals(Category.ENFORCED_PLATFORM)
+                                || category.getName().equals(Category.REGULAR_PLATFORM))
+                        ) {
+                            dependencies.add(dependency);
+                            continue;
+                        } else if (dependency instanceof ModuleDependency moduleDependency) {
+                            ModuleDependency copy = moduleDependency.copy();
+                            copy.setTransitive(false);
+                            dependencies.add(copy);
+                            continue;
                         }
-
-                        dependencies.add(dependency);
                     }
 
-                    return dependencies;
-                }));
+                    dependencies.add(dependency);
+                }
 
-                configuration.attributes(attributes -> {
-                    attributes.attribute(Usage.USAGE_ATTRIBUTE,
-                        getProject().getObjects().named(Usage.class, Usage.JAVA_RUNTIME));
-                    attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
-                        getProject().getObjects()
-                            .named(LibraryElements.class, LibraryElements.JAR));
-                    attributes.attribute(Category.CATEGORY_ATTRIBUTE,
-                        getProject().getObjects().named(Category.class, Category.LIBRARY));
-                    attributes.attribute(Bundling.BUNDLING_ATTRIBUTE,
-                        getProject().getObjects().named(Bundling.class, Bundling.EXTERNAL));
-                });
+                return dependencies;
+            }));
+
+            configuration.attributes(attributes -> {
+                attributes
+                    .attribute(Usage.USAGE_ATTRIBUTE, getProject().getObjects().named(Usage.class, Usage.JAVA_RUNTIME));
+                attributes.attribute(
+                    LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+                    getProject().getObjects().named(LibraryElements.class, LibraryElements.JAR)
+                );
+                attributes.attribute(
+                    Category.CATEGORY_ATTRIBUTE, getProject().getObjects().named(Category.class, Category.LIBRARY)
+                );
+                attributes.attribute(
+                    Bundling.BUNDLING_ATTRIBUTE, getProject().getObjects().named(Bundling.class, Bundling.EXTERNAL)
+                );
             });
+        });
 
         registerNonTransitive(Constants.Configurations.MAPPING_CONSTANTS, Role.RESOLVABLE);
 
-        register(Constants.Configurations.NAMED_ELEMENTS, Role.CONSUMABLE).configure(
-            configuration -> {
-                configuration.extendsFrom(
-                    getConfigurations().getByName(JavaPlugin.API_CONFIGURATION_NAME));
-            });
+        register(Constants.Configurations.NAMED_ELEMENTS, Role.CONSUMABLE).configure(configuration -> {
+            configuration.extendsFrom(getConfigurations().getByName(JavaPlugin.API_CONFIGURATION_NAME));
+        });
 
-        extendsFrom(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
-            Constants.Configurations.MAPPING_CONSTANTS);
+        extendsFrom(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, Constants.Configurations.MAPPING_CONSTANTS);
 
         register(Constants.Configurations.MAPPINGS, Role.RESOLVABLE);
         register(Constants.Configurations.MAPPINGS_FINAL, Role.RESOLVABLE);
         register(Constants.Configurations.LOOM_DEVELOPMENT_DEPENDENCIES, Role.RESOLVABLE);
         register(Constants.Configurations.UNPICK_CLASSPATH, Role.RESOLVABLE);
         register(Constants.Configurations.LOCAL_RUNTIME, Role.RESOLVABLE);
-        extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME,
-            Constants.Configurations.LOCAL_RUNTIME);
+        extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.LOCAL_RUNTIME);
 
         extension.createRemapConfigurations(SourceSetHelper.getMainSourceSet(getProject()));
 
-        extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME,
-            Constants.Configurations.MAPPINGS_FINAL);
-        extendsFrom(JavaPlugin.TEST_RUNTIME_CLASSPATH_CONFIGURATION_NAME,
-            Constants.Configurations.MAPPINGS_FINAL);
+        extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.MAPPINGS_FINAL);
+        extendsFrom(JavaPlugin.TEST_RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.MAPPINGS_FINAL);
 
-        extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME,
-            Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES);
+        extendsFrom(
+            JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES
+        );
 
         // Add the dev time dependencies
-        getDependencies().add(Constants.Configurations.LOOM_DEVELOPMENT_DEPENDENCIES,
-            LoomVersions.DEV_LAUNCH_INJECTOR.mavenNotation());
-        getDependencies().add(Constants.Configurations.LOOM_DEVELOPMENT_DEPENDENCIES,
-            LoomVersions.TERMINAL_CONSOLE_APPENDER.mavenNotation());
-        getDependencies().add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
-            LoomVersions.JETBRAINS_ANNOTATIONS.mavenNotation());
-        getDependencies().add(JavaPlugin.TEST_COMPILE_ONLY_CONFIGURATION_NAME,
-            LoomVersions.JETBRAINS_ANNOTATIONS.mavenNotation());
+        getDependencies().add(
+            Constants.Configurations.LOOM_DEVELOPMENT_DEPENDENCIES, LoomVersions.DEV_LAUNCH_INJECTOR.mavenNotation()
+        );
+        getDependencies().add(
+            Constants.Configurations.LOOM_DEVELOPMENT_DEPENDENCIES,
+            LoomVersions.TERMINAL_CONSOLE_APPENDER.mavenNotation()
+        );
+        getDependencies()
+            .add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, LoomVersions.JETBRAINS_ANNOTATIONS.mavenNotation());
+        getDependencies()
+            .add(JavaPlugin.TEST_COMPILE_ONLY_CONFIGURATION_NAME, LoomVersions.JETBRAINS_ANNOTATIONS.mavenNotation());
     }
 
     @Inject
@@ -202,9 +208,7 @@ public abstract class LoomConfigurations implements Runnable {
     protected abstract DependencyHandler getDependencies();
 
     enum Role {
-        NONE(false, false),
-        CONSUMABLE(true, false),
-        RESOLVABLE(false, true);
+        NONE(false, false), CONSUMABLE(true, false), RESOLVABLE(false, true);
 
         private final boolean canBeConsumed;
         private final boolean canBeResolved;

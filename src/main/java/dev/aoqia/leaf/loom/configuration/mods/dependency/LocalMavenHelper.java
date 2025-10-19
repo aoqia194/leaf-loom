@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+
 import org.jetbrains.annotations.Nullable;
 
 public record LocalMavenHelper(String group, String name, String version, @Nullable String baseClassifier, Path root) {
@@ -59,15 +60,13 @@ public record LocalMavenHelper(String group, String name, String version, @Nulla
         try {
             String pomTemplate;
 
-            try (InputStream input =
-                    ModDependency.class.getClassLoader().getResourceAsStream("mod_compile_template.pom")) {
+            try (
+                InputStream input = ModDependency.class.getClassLoader().getResourceAsStream("mod_compile_template.pom")
+            ) {
                 pomTemplate = new String(input.readAllBytes(), StandardCharsets.UTF_8);
             }
 
-            pomTemplate = pomTemplate
-                    .replace("%GROUP%", group)
-                    .replace("%NAME%", name)
-                    .replace("%VERSION%", version);
+            pomTemplate = pomTemplate.replace("%GROUP%", group).replace("%NAME%", name).replace("%VERSION%", version);
 
             Files.writeString(getPomPath(), pomTemplate, StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -88,9 +87,8 @@ public record LocalMavenHelper(String group, String name, String version, @Nulla
             classifier = baseClassifier;
         }
 
-        final String fileName = classifier == null
-                ? String.format("%s-%s.jar", name, version)
-                : String.format("%s-%s-%s.jar", name, version, classifier);
+        final String fileName = classifier == null ? String.format("%s-%s.jar", name, version)
+            : String.format("%s-%s-%s.jar", name, version, classifier);
         return getDirectory().resolve(fileName);
     }
 

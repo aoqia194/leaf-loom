@@ -23,11 +23,12 @@
  */
 package dev.aoqia.leaf.loom.util;
 
-import groovy.util.Node;
-import groovy.xml.QName;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import groovy.util.Node;
+import groovy.xml.QName;
 
 public final class GroovyXmlUtil {
     private GroovyXmlUtil() {}
@@ -67,12 +68,12 @@ public final class GroovyXmlUtil {
         }
 
         throw new UnsupportedOperationException(
-                "Cannot determine if " + nodeName.getClass() + " is the same as a String");
+            "Cannot determine if " + nodeName.getClass() + " is the same as a String"
+        );
     }
 
     public static Stream<Node> childrenNodesStream(Node node) {
-        //noinspection unchecked
-        return (Stream<Node>)
-                (Stream) (((List<Object>) node.children()).stream().filter((i) -> i instanceof Node));
+        // noinspection unchecked
+        return (Stream<Node>) (Stream) (((List<Object>) node.children()).stream().filter((i) -> i instanceof Node));
     }
 }

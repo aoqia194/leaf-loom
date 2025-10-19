@@ -32,26 +32,27 @@ import org.jetbrains.annotations.Nullable;
  */
 public enum MappingsNamespace {
     /**
-     * Official mappings are the names that are used in the vanilla Zomboid game jars, not obfuscated.
+     * Official mappings are the names that are used in the vanilla Zomboid game
+     * jars, not obfuscated.
      */
     OFFICIAL,
 
     /**
-     * Named mappings are the developer friendly names used to develop mods against.
+     * Named mappings are the developer friendly names used to develop mods
+     * against.
      */
     NAMED;
 
     /**
      * Gets a {@code MappingsNamespace} from a namespace string.
-     *
      * @param namespace the name of the namespace as a lowercase string
      * @return the {@code MappingsNamespace}, or null if not found
      */
     public static @Nullable MappingsNamespace of(String namespace) {
         return switch (namespace) {
-            case "official" -> OFFICIAL;
-            case "named" -> NAMED;
-            default -> null;
+        case "official" -> OFFICIAL;
+        case "named" -> NAMED;
+        default -> null;
         };
     }
 

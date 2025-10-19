@@ -27,19 +27,18 @@ import java.io.File;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.extension.MixinExtension;
-
 import com.google.common.collect.ImmutableList;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.GroovyCompile;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.extension.MixinExtension;
+
 public class GroovyApInvoker extends AnnotationProcessorInvoker<GroovyCompile> {
     public GroovyApInvoker(Project project) {
-        super(project, ImmutableList.of(), getInvokerTasks(project),
-            AnnotationProcessorInvoker.GROOVY);
+        super(project, ImmutableList.of(), getInvokerTasks(project), AnnotationProcessorInvoker.GROOVY);
     }
 
     private static Map<SourceSet, TaskProvider<GroovyCompile>> getInvokerTasks(Project project) {

@@ -32,17 +32,19 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import javax.inject.Inject;
+
 import net.fabricmc.accesswidener.AccessWidener;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
-import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
-import dev.aoqia.leaf.loom.api.processor.SpecContext;
-import dev.aoqia.leaf.loom.util.LazyCloseable;
-import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
-import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.gradle.api.file.RegularFileProperty;
 import org.jetbrains.annotations.Nullable;
+
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
+import dev.aoqia.leaf.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.leaf.loom.util.LazyCloseable;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
 
 public class AccessWidenerJarProcessor implements ZomboidJarProcessor<AccessWidenerJarProcessor.Spec> {
     private final String name;
@@ -51,7 +53,8 @@ public class AccessWidenerJarProcessor implements ZomboidJarProcessor<AccessWide
 
     @Inject
     public AccessWidenerJarProcessor(
-            String name, boolean includeTransitive, RegularFileProperty localAccessWidenerProperty) {
+        String name, boolean includeTransitive, RegularFileProperty localAccessWidenerProperty
+    ) {
         this.name = name;
         this.includeTransitive = includeTransitive;
         this.localAccessWidenerProperty = localAccessWidenerProperty;
@@ -66,19 +69,19 @@ public class AccessWidenerJarProcessor implements ZomboidJarProcessor<AccessWide
 
             if (Files.notExists(path)) {
                 throw new UncheckedIOException(
-                        new FileNotFoundException("Could not find access widener file at {%s}".formatted(path)));
+                    new FileNotFoundException("Could not find access widener file at {%s}".formatted(path))
+                );
             }
 
             // Add the access widener specified in the extension
             accessWideners.add(LocalAccessWidenerEntry.create(path));
         }
 
-        /* Uncomment to read all access wideners from local mods.
-
-        for (LeafModJson fabricModJson : context.localMods()) {
-            accessWideners.addAll(ModAccessWidenerEntry.readAll(fabricModJson, false));
-        }
-
+        /*
+         * Uncomment to read all access wideners from local mods. for
+         * (LeafModJson fabricModJson : context.localMods()) {
+         * accessWideners.addAll(ModAccessWidenerEntry.readAll(fabricModJson,
+         * false)); }
          */
 
         if (includeTransitive) {
@@ -91,9 +94,7 @@ public class AccessWidenerJarProcessor implements ZomboidJarProcessor<AccessWide
             return null;
         }
 
-        return new Spec(accessWideners.stream()
-                .sorted(Comparator.comparing(AccessWidenerEntry::getSortKey))
-                .toList());
+        return new Spec(accessWideners.stream().sorted(Comparator.comparing(AccessWidenerEntry::getSortKey)).toList());
     }
 
     @Override
@@ -103,9 +104,7 @@ public class AccessWidenerJarProcessor implements ZomboidJarProcessor<AccessWide
 
     public record Spec(List<AccessWidenerEntry> accessWideners) implements ZomboidJarProcessor.Spec {
         List<AccessWidenerEntry> accessWidenersForContext(ProcessorContext context) {
-            return accessWideners.stream()
-                    .filter(entry -> isSupported(entry.environment(), context))
-                    .toList();
+            return accessWideners.stream().filter(entry -> isSupported(entry.environment(), context)).toList();
         }
 
         private static boolean isSupported(ModEnvironment modEnvironment, ProcessorContext context) {
@@ -133,8 +132,10 @@ public class AccessWidenerJarProcessor implements ZomboidJarProcessor<AccessWide
 
         final var accessWidener = new AccessWidener();
 
-        try (LazyCloseable<TinyRemapper> remapper =
-                context.createRemapper(MappingsNamespace.OFFICIAL, MappingsNamespace.NAMED)) {
+        try (
+            LazyCloseable<TinyRemapper> remapper = context
+                .createRemapper(MappingsNamespace.OFFICIAL, MappingsNamespace.NAMED)
+        ) {
             for (AccessWidenerEntry widener : accessWideners) {
                 widener.read(accessWidener, remapper);
             }

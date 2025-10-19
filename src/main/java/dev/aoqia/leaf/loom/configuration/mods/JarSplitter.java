@@ -39,14 +39,17 @@ import java.util.Objects;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Stream;
+
+import org.jetbrains.annotations.Nullable;
+
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
-import org.jetbrains.annotations.Nullable;
 
 public class JarSplitter {
     private static final Attributes.Name MANIFEST_SPLIT_ENV_NAME = new Attributes.Name(Constants.Manifest.SPLIT_ENV);
-    private static final Attributes.Name MANIFEST_CLIENT_ENTRIES_NAME =
-            new Attributes.Name(Constants.Manifest.CLIENT_ENTRIES);
+    private static final Attributes.Name MANIFEST_CLIENT_ENTRIES_NAME = new Attributes.Name(
+        Constants.Manifest.CLIENT_ENTRIES
+    );
 
     final Path inputJar;
 
@@ -54,8 +57,7 @@ public class JarSplitter {
         this.inputJar = inputJar;
     }
 
-    @Nullable
-    public Target analyseTarget() {
+    @Nullable public Target analyseTarget() {
         try (FileSystemUtil.Delegate input = FileSystemUtil.getJarFileSystem(inputJar)) {
             final Manifest manifest = input.fromInputStream(Manifest::new, Constants.Manifest.PATH);
 
@@ -73,7 +75,8 @@ public class JarSplitter {
 
             final List<String> entries = new LinkedList<>();
 
-            // Must collect all the input entries to see if this might be a client only jar.
+            // Must collect all the input entries to see if this might be a
+            // client only jar.
             try (Stream<Path> walk = Files.walk(input.get().getPath("/"))) {
                 final Iterator<Path> iterator = walk.iterator();
 
@@ -133,9 +136,11 @@ public class JarSplitter {
                 throw new IllegalStateException("Expected to split jar with no client entries");
             }
 
-            try (FileSystemUtil.Delegate commonOutput = FileSystemUtil.getJarFileSystem(commonOutputJar, true);
-                    FileSystemUtil.Delegate clientOutput = FileSystemUtil.getJarFileSystem(clientOutputJar, true);
-                    Stream<Path> walk = Files.walk(input.get().getPath("/"))) {
+            try (
+                FileSystemUtil.Delegate commonOutput = FileSystemUtil.getJarFileSystem(commonOutputJar, true);
+                FileSystemUtil.Delegate clientOutput = FileSystemUtil.getJarFileSystem(clientOutputJar, true);
+                Stream<Path> walk = Files.walk(input.get().getPath("/"))
+            ) {
                 final Iterator<Path> iterator = walk.iterator();
 
                 while (iterator.hasNext()) {
@@ -160,8 +165,8 @@ public class JarSplitter {
                         continue;
                     }
 
-                    final FileSystemUtil.Delegate target =
-                            clientEntries.contains(entryPath) ? clientOutput : commonOutput;
+                    final FileSystemUtil.Delegate target = clientEntries.contains(entryPath) ? clientOutput
+                        : commonOutput;
                     final Path outputEntry = target.getPath(entryPath);
                     final Path outputParent = outputEntry.getParent();
 
@@ -173,10 +178,8 @@ public class JarSplitter {
                 }
 
                 /*
-                Write the manifest to both jars
-                - Remove signature data
-                - Remove split data as its already been split.
-                - Add env name.
+                 * Write the manifest to both jars - Remove signature data -
+                 * Remove split data as its already been split. - Add env name.
                  */
                 final Manifest outManifest = new Manifest(manifest);
                 final Attributes attributes = outManifest.getMainAttributes();
@@ -217,18 +220,16 @@ public class JarSplitter {
 
     private boolean isSignatureData(Path path) {
         final String fileName = path.getFileName().toString();
-        return fileName.endsWith(".SF")
-                || fileName.endsWith(".DSA")
-                || fileName.endsWith(".RSA")
-                || fileName.startsWith("SIG-");
+        return fileName.endsWith(".SF") || fileName.endsWith(".DSA") || fileName.endsWith(".RSA")
+            || fileName.startsWith("SIG-");
     }
 
     // Based off tiny-remapper's MetaInfFixer
     private static void stripSignatureData(Manifest manifest) {
-        for (Iterator<Attributes> it = manifest.getEntries().values().iterator(); it.hasNext(); ) {
+        for (Iterator<Attributes> it = manifest.getEntries().values().iterator(); it.hasNext();) {
             Attributes attrs = it.next();
 
-            for (Iterator<Object> it2 = attrs.keySet().iterator(); it2.hasNext(); ) {
+            for (Iterator<Object> it2 = attrs.keySet().iterator(); it2.hasNext();) {
                 Attributes.Name attrName = (Attributes.Name) it2.next();
                 String name = attrName.toString();
 
@@ -252,9 +253,8 @@ public class JarSplitter {
     }
 
     public enum Target {
-        COMMON_ONLY(true, false),
-        CLIENT_ONLY(false, true),
-        SPLIT(true, true);
+        COMMON_ONLY(true, false), CLIENT_ONLY(false, true), SPLIT(true, true);
+
         final boolean common, client;
 
         Target(boolean common, boolean client) {

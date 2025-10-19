@@ -25,11 +25,11 @@ package dev.aoqia.leaf.loom.decompilers.cache;
 
 import java.io.IOException;
 import java.nio.file.Path;
+
 import org.jetbrains.annotations.Nullable;
 
 public interface CachedFileStore<T> {
-    @Nullable
-    T getEntry(String key) throws IOException;
+    @Nullable T getEntry(String key) throws IOException;
 
     void putEntry(String key, T entry) throws IOException;
 

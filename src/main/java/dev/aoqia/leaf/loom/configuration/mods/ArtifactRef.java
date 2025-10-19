@@ -23,11 +23,8 @@
  */
 package dev.aoqia.leaf.loom.configuration.mods;
 
-import static dev.aoqia.leaf.loom.configuration.mods.ModConfigurationRemapper.MISSING_GROUP;
-import static dev.aoqia.leaf.loom.configuration.mods.ModConfigurationRemapper.replaceIfNullOrEmpty;
-
 import java.nio.file.Path;
-import dev.aoqia.leaf.loom.util.Checksum;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
@@ -36,11 +33,15 @@ import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.jetbrains.annotations.Nullable;
 
+import dev.aoqia.leaf.loom.util.Checksum;
+
+import static dev.aoqia.leaf.loom.configuration.mods.ModConfigurationRemapper.MISSING_GROUP;
+import static dev.aoqia.leaf.loom.configuration.mods.ModConfigurationRemapper.replaceIfNullOrEmpty;
+
 public interface ArtifactRef {
     Path path();
 
-    @Nullable
-    Path sources();
+    @Nullable Path sources();
 
     String name();
 
@@ -48,8 +49,7 @@ public interface ArtifactRef {
 
     String version();
 
-    @Nullable
-    String classifier();
+    @Nullable String classifier();
 
     void applyToConfiguration(Project project, Configuration configuration);
 
@@ -69,8 +69,8 @@ public interface ArtifactRef {
 
         public String version() {
             return replaceIfNullOrEmpty(
-                    artifact.getModuleVersion().getId().getVersion(),
-                    () -> Checksum.truncatedSha256(artifact.getFile()));
+                artifact.getModuleVersion().getId().getVersion(), () -> Checksum.truncatedSha256(artifact.getFile())
+            );
         }
 
         public String classifier() {
@@ -81,10 +81,9 @@ public interface ArtifactRef {
         public void applyToConfiguration(Project project, Configuration configuration) {
             final DependencyHandler dependencies = project.getDependencies();
 
-            Dependency dep = dependencies.create(artifact.getModuleVersion()
-                    + (artifact.getClassifier() == null
-                            ? ""
-                            : ':' + artifact.getClassifier())); // the owning module of the artifact
+            Dependency dep = dependencies.create(
+                artifact.getModuleVersion() + (artifact.getClassifier() == null ? "" : ':' + artifact.getClassifier())
+            ); // the owning module of the artifact
 
             if (dep instanceof ModuleDependency moduleDependency) {
                 moduleDependency.setTransitive(false);

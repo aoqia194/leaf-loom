@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2022 FabricMC
+ * Copyright (c) 2022 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package dev.aoqia.leaf.loom.kotlin.remapping
 
 import org.jetbrains.annotations.VisibleForTesting
@@ -31,10 +30,13 @@ import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
 import org.objectweb.asm.commons.Remapper
 
-class KotlinMetadataRemappingClassVisitor(private val remapper: Remapper, next: ClassVisitor?) : ClassVisitor(
-    Opcodes.ASM9,
-    next,
-) {
+class KotlinMetadataRemappingClassVisitor(
+    private val remapper: Remapper,
+    next: ClassVisitor?,
+) : ClassVisitor(
+        Opcodes.ASM9,
+        next,
+    ) {
     companion object {
         val ANNOTATION_DESCRIPTOR: String = Type.getDescriptor(Metadata::class.java)
     }
@@ -71,7 +73,5 @@ class KotlinMetadataRemappingClassVisitor(private val remapper: Remapper, next: 
     }
 
     @VisibleForTesting
-    fun getRuntimeKotlinVersion(): String {
-        return KotlinVersion.CURRENT.toString()
-    }
+    fun getRuntimeKotlinVersion(): String = KotlinVersion.CURRENT.toString()
 }

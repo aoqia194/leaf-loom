@@ -99,9 +99,9 @@ public class CopyGameFileBuilder {
                 return supplier.get(build(i));
             } catch (IOException e) {
                 if (i == maxRetries) {
-                    throw new IOException(String.format(Locale.ENGLISH,
-                        "Failed copy after %d attempts",
-                        maxRetries), e);
+                    throw new IOException(
+                        String.format(Locale.ENGLISH, "Failed copy after %d attempts", maxRetries), e
+                    );
                 }
             }
         }
@@ -111,13 +111,8 @@ public class CopyGameFileBuilder {
 
     private CopyGameFile build(int attempt) {
         return new CopyGameFile(
-            this.path,
-            this.expectedHash,
-            this.maxAge,
-            this.forced,
-            this.fallback,
-            attempt,
-            this.progressListener);
+            this.path, this.expectedHash, this.maxAge, this.forced, this.fallback, attempt, this.progressListener
+        );
     }
 
     @FunctionalInterface

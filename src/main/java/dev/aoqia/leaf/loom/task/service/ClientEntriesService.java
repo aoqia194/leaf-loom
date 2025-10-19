@@ -27,14 +27,16 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import dev.aoqia.leaf.loom.util.service.Service;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.SourceSet;
+
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
 
 public abstract class ClientEntriesService<O extends ClientEntriesService.Options> extends Service<O> {
     public interface Options extends Service.Options {}
@@ -46,8 +48,9 @@ public abstract class ClientEntriesService<O extends ClientEntriesService.Option
     public abstract List<String> getClientOnlyEntries();
 
     public static class Source extends ClientEntriesService<Source.Options> {
-        public static final ServiceType<Source.Options, Source> TYPE =
-                new ServiceType<>(Source.Options.class, Source.class);
+        public static final ServiceType<Source.Options, Source> TYPE = new ServiceType<>(
+            Source.Options.class, Source.class
+        );
 
         public interface Options extends ClientEntriesService.Options {
             @InputFiles
@@ -71,15 +74,14 @@ public abstract class ClientEntriesService<O extends ClientEntriesService.Option
         @Override
         public List<String> getClientOnlyEntries() {
             return getOptions().getAllSourceFiles().getFiles().stream()
-                    .map(relativePath(
-                            getRootPaths(getOptions().getSourceDirectories().getFiles())))
-                    .toList();
+                .map(relativePath(getRootPaths(getOptions().getSourceDirectories().getFiles()))).toList();
         }
     }
 
     public static class Classes extends ClientEntriesService<Classes.Options> {
-        public static final ServiceType<Classes.Options, Classes> TYPE =
-                new ServiceType<>(Classes.Options.class, Classes.class);
+        public static final ServiceType<Classes.Options, Classes> TYPE = new ServiceType<>(
+            Classes.Options.class, Classes.class
+        );
 
         public interface Options extends ClientEntriesService.Options {
             @InputFiles
@@ -99,26 +101,22 @@ public abstract class ClientEntriesService<O extends ClientEntriesService.Option
 
         @Override
         public List<String> getClientOnlyEntries() {
-            final Set<File> outputFiles =
-                    getOptions().getAllOutputDirs().getAsFileTree().getFiles();
-            final List<String> rootPaths =
-                    getRootPaths(getOptions().getAllOutputDirs().getFiles());
+            final Set<File> outputFiles = getOptions().getAllOutputDirs().getAsFileTree().getFiles();
+            final List<String> rootPaths = getRootPaths(getOptions().getAllOutputDirs().getFiles());
             return outputFiles.stream().map(relativePath(rootPaths)).toList();
         }
     }
 
     static List<String> getRootPaths(Set<File> files) {
-        return files.stream()
-                .map(root -> {
-                    String rootPath = root.getAbsolutePath().replace("\\", "/");
+        return files.stream().map(root -> {
+            String rootPath = root.getAbsolutePath().replace("\\", "/");
 
-                    if (rootPath.charAt(rootPath.length() - 1) != '/') {
-                        rootPath += '/';
-                    }
+            if (rootPath.charAt(rootPath.length() - 1) != '/') {
+                rootPath += '/';
+            }
 
-                    return rootPath;
-                })
-                .toList();
+            return rootPath;
+        }).toList();
     }
 
     static Function<File, String> relativePath(List<String> rootPaths) {

@@ -34,9 +34,10 @@ public final class SplitZomboidProvider extends ZomboidProvider {
     private Path clientOnlyJar;
     private Path commonJar;
 
-    public SplitZomboidProvider(ZomboidMetadataProvider clientMetadataProvider,
-        ZomboidMetadataProvider serverMetadataProvider,
-        ConfigContext configContext) {
+    public SplitZomboidProvider(
+        ZomboidMetadataProvider clientMetadataProvider, ZomboidMetadataProvider serverMetadataProvider,
+        ConfigContext configContext
+    ) {
         super(clientMetadataProvider, serverMetadataProvider, configContext);
     }
 
@@ -44,9 +45,8 @@ public final class SplitZomboidProvider extends ZomboidProvider {
     public void provide() throws Exception {
         super.provide();
 
-        boolean requiresRefresh = getExtension().refreshDeps() ||
-                                  Files.notExists(clientOnlyJar) ||
-                                  Files.notExists(commonJar);
+        boolean requiresRefresh = getExtension().refreshDeps() || Files.notExists(clientOnlyJar)
+            || Files.notExists(commonJar);
         if (!requiresRefresh) {
             return;
         }

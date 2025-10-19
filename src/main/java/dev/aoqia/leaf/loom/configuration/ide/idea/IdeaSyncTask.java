@@ -32,13 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
-import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
-import dev.aoqia.leaf.loom.task.AbstractLoomTask;
-import dev.aoqia.leaf.loom.util.Constants;
-
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,6 +40,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.gradle.api.Project;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
@@ -63,6 +57,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.util.Constants;
+
 public abstract class IdeaSyncTask extends AbstractLoomTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(IdeaSyncTask.class);
 
@@ -72,8 +72,7 @@ public abstract class IdeaSyncTask extends AbstractLoomTask {
         getIdeaRunConfigs().set(getProject().provider(this::getRunConfigs));
     }
 
-    private static void setClasspathModifications(Path runConfig, List<String> exclusions) throws
-        IOException {
+    private static void setClasspathModifications(Path runConfig, List<String> exclusions) throws IOException {
         final String inputXml = Files.readString(runConfig, StandardCharsets.UTF_8);
         final String outputXml;
 
@@ -91,8 +90,7 @@ public abstract class IdeaSyncTask extends AbstractLoomTask {
     }
 
     @VisibleForTesting
-    public static String setClasspathModificationsInXml(String input,
-        List<String> exclusions) throws Exception {
+    public static String setClasspathModificationsInXml(String input, List<String> exclusions) throws Exception {
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         final Document document = documentBuilder.parse(new InputSource(new StringReader(input)));
@@ -102,8 +100,7 @@ public abstract class IdeaSyncTask extends AbstractLoomTask {
         assert nodeList.getLength() == 1;
 
         final Element configuration = (Element) nodeList.item(0);
-        final NodeList classpathModificationsList = configuration.getElementsByTagName(
-            "classpathModifications");
+        final NodeList classpathModificationsList = configuration.getElementsByTagName("classpathModifications");
 
         // Remove all the existing exclusions
         for (int i = 0; i < classpathModificationsList.getLength(); i++) {
@@ -138,13 +135,14 @@ public abstract class IdeaSyncTask extends AbstractLoomTask {
     @Nested
     protected abstract ListProperty<IntelijRunConfig> getIdeaRunConfigs();
 
-    // See: https://github.com/FabricMC/fabric-loom/pull/206#issuecomment-986054254 for
+    // See:
+    // https://github.com/FabricMC/fabric-loom/pull/206#issuecomment-986054254
+    // for
     // the reason why XML's are still used to provide the run configs
     private List<IntelijRunConfig> getRunConfigs() throws IOException {
         Project rootProject = getProject().getRootProject();
         LoomGradleExtension extension = LoomGradleExtension.get(getProject());
-        String projectPath = (getProject() == rootProject) ? ""
-            : getProject().getPath().replace(':', '_');
+        String projectPath = (getProject() == rootProject) ? "" : getProject().getPath().replace(':', '_');
         File runConfigsDir = new File(rootProject.file(".idea"), "runConfigurations");
 
         List<IntelijRunConfig> configs = new ArrayList<>();
@@ -158,9 +156,9 @@ public abstract class IdeaSyncTask extends AbstractLoomTask {
             String name = config.configName.replaceAll("[^a-zA-Z0-9$_]", "_");
 
             File runConfigFile = new File(runConfigsDir, name + projectPath + ".xml");
-            // Set relativeDir to false because we don't use projectPath for workingDir anymore.
-            String runConfigXml = config.fromDummy("idea_run_config_template.xml", false,
-                getProject());
+            // Set relativeDir to false because we don't use projectPath for
+            // workingDir anymore.
+            String runConfigXml = config.fromDummy("idea_run_config_template.xml", false, getProject());
 
             IntelijRunConfig irc = getProject().getObjects().newInstance(IntelijRunConfig.class);
             irc.getRunConfigXml().set(runConfigXml);

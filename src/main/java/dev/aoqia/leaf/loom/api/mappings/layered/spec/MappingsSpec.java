@@ -23,16 +23,18 @@
  */
 package dev.aoqia.leaf.loom.api.mappings.layered.spec;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * A MappingsSpec is an immutable set of data used to create the MappingLayer.
- *
- * <p>The hashCode is used to generate a hash of the full layered mapping spec, used to cache.
- *
- * <p>Commonly implemented as a record
+ * <p>
+ * The hashCode is used to generate a hash of the full layered mapping spec,
+ * used to cache.
+ * <p>
+ * Commonly implemented as a record
  */
 @ApiStatus.Experimental
 public interface MappingsSpec<L extends MappingLayer> {

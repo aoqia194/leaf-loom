@@ -23,13 +23,6 @@
  */
 package dev.aoqia.leaf.loom.configuration.sandbox;
 
-import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.ParseException;
-import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.getJsonObject;
-import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.readInt;
-import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.readString;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -38,8 +31,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import dev.aoqia.leaf.loom.util.Platform;
 import dev.aoqia.leaf.loom.util.ZipUtils;
+
+import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.ParseException;
+import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.getJsonObject;
+import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.readInt;
+import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.readString;
 
 public sealed interface SandboxMetadata permits SandboxMetadata.V1 {
     String SANDBOX_METADATA_FILENAME = "fabric-sandbox.json";
@@ -49,8 +51,8 @@ public sealed interface SandboxMetadata permits SandboxMetadata.V1 {
             JsonObject jsonObject = ZipUtils.unpackGson(path, SANDBOX_METADATA_FILENAME, JsonObject.class);
             int version = readInt(jsonObject, "version");
             return switch (version) {
-                case 1 -> SandboxMetadata.V1.parseV1(jsonObject);
-                default -> throw new UnsupportedOperationException("Unsupported sandbox metadata version: " + version);
+            case 1 -> SandboxMetadata.V1.parseV1(jsonObject);
+            default -> throw new UnsupportedOperationException("Unsupported sandbox metadata version: " + version);
             };
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to read: " + SANDBOX_METADATA_FILENAME, e);
@@ -69,7 +71,7 @@ public sealed interface SandboxMetadata permits SandboxMetadata.V1 {
     boolean supportsPlatform(Platform platform);
 
     record V1(String mainClass, Map<OperatingSystem, List<Architecture>> supportedPlatforms)
-            implements SandboxMetadata {
+        implements SandboxMetadata {
         static V1 parseV1(JsonObject jsonObject) {
             String mainClass = readString(jsonObject, "mainClass");
             JsonObject platforms = getJsonObject(jsonObject, "platforms");
@@ -84,16 +86,15 @@ public sealed interface SandboxMetadata permits SandboxMetadata.V1 {
                 List<Architecture> architectures = new ArrayList<>();
 
                 for (JsonElement element : entry.getValue().getAsJsonArray()) {
-                    if (!(element.isJsonPrimitive()
-                            && element.getAsJsonPrimitive().isString())) {
+                    if (!(element.isJsonPrimitive() && element.getAsJsonPrimitive().isString())) {
                         throw new ParseException("Unexpected json primitive type for key (%s)", entry.getKey());
                     }
 
                     architectures.add(parseArchitecture(element.getAsString()));
                 }
 
-                supportedPlatforms.put(
-                        parseOperatingSystem(entry.getKey()), Collections.unmodifiableList(architectures));
+                supportedPlatforms
+                    .put(parseOperatingSystem(entry.getKey()), Collections.unmodifiableList(architectures));
             }
 
             return new V1(mainClass, Collections.unmodifiableMap(supportedPlatforms));
@@ -118,24 +119,21 @@ public sealed interface SandboxMetadata permits SandboxMetadata.V1 {
     }
 
     enum OperatingSystem {
-        WINDOWS,
-        MAC_OS,
-        LINUX;
+        WINDOWS, MAC_OS, LINUX;
 
         public boolean compatibleWith(Platform platform) {
             final Platform.OperatingSystem operatingSystem = platform.getOperatingSystem();
 
             return switch (this) {
-                case WINDOWS -> operatingSystem.isWindows();
-                case MAC_OS -> operatingSystem.isMacOS();
-                case LINUX -> operatingSystem.isLinux();
+            case WINDOWS -> operatingSystem.isWindows();
+            case MAC_OS -> operatingSystem.isMacOS();
+            case LINUX -> operatingSystem.isLinux();
             };
         }
     }
 
     enum Architecture {
-        X86_64,
-        ARM64;
+        X86_64, ARM64;
 
         public boolean compatibleWith(Platform platform) {
             final Platform.Architecture architecture = platform.getArchitecture();
@@ -145,26 +143,26 @@ public sealed interface SandboxMetadata permits SandboxMetadata.V1 {
             }
 
             return switch (this) {
-                case X86_64 -> !architecture.isArm();
-                case ARM64 -> architecture.isArm();
+            case X86_64 -> !architecture.isArm();
+            case ARM64 -> architecture.isArm();
             };
         }
     }
 
     private static OperatingSystem parseOperatingSystem(String os) {
         return switch (os) {
-            case "windows" -> OperatingSystem.WINDOWS;
-            case "macos" -> OperatingSystem.MAC_OS;
-            case "linux" -> OperatingSystem.LINUX;
-            default -> throw new ParseException("Unsupported sandbox operating system: %s", os);
+        case "windows" -> OperatingSystem.WINDOWS;
+        case "macos" -> OperatingSystem.MAC_OS;
+        case "linux" -> OperatingSystem.LINUX;
+        default -> throw new ParseException("Unsupported sandbox operating system: %s", os);
         };
     }
 
     private static Architecture parseArchitecture(String arch) {
         return switch (arch) {
-            case "x86_64" -> Architecture.X86_64;
-            case "arm64" -> Architecture.ARM64;
-            default -> throw new ParseException("Unsupported sandbox architecture: %s", arch);
+        case "x86_64" -> Architecture.X86_64;
+        case "arm64" -> Architecture.ARM64;
+        default -> throw new ParseException("Unsupported sandbox architecture: %s", arch);
         };
     }
 }

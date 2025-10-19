@@ -121,8 +121,7 @@ public record ProcessUtil(ArgumentVisibility argumentVisibility) {
     }
 
     public enum ArgumentVisibility {
-        HIDE,
-        SHOW_SENSITIVE;
+        HIDE, SHOW_SENSITIVE;
 
         static ArgumentVisibility get(Project project) {
             final LogLevel logLevel = project.getGradle().getStartParameter().getLogLevel();

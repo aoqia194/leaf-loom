@@ -24,20 +24,23 @@
 package dev.aoqia.leaf.loom.configuration.accesswidener;
 
 import java.io.IOException;
+
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
-import dev.aoqia.leaf.loom.util.LazyCloseable;
-import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.jetbrains.annotations.Nullable;
+
+import dev.aoqia.leaf.loom.util.LazyCloseable;
+import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
 
 public interface AccessWidenerEntry {
     ModEnvironment environment();
 
     /**
-     * @return The mod id to be used in {@link TransitiveAccessWidenerMappingsProcessor} or null when this entry does not contain transitive entries.
+     * @return The mod id to be used in
+     * {@link TransitiveAccessWidenerMappingsProcessor} or null when this entry
+     * does not contain transitive entries.
      */
-    @Nullable
-    String mappingId();
+    @Nullable String mappingId();
 
     String getSortKey();
 

@@ -23,12 +23,13 @@
  */
 package dev.aoqia.leaf.loom.util.fmj;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 public final class LeafModJsonUtils {
     private LeafModJsonUtils() {}

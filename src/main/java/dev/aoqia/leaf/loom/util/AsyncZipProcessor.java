@@ -38,32 +38,30 @@ import java.util.concurrent.Executors;
 
 public interface AsyncZipProcessor {
     static void processEntries(Path inputZip, Path outputZip, AsyncZipProcessor processor) throws IOException {
-        try (FileSystemUtil.Delegate inFs = FileSystemUtil.getJarFileSystem(inputZip, false);
-                FileSystemUtil.Delegate outFs = FileSystemUtil.getJarFileSystem(outputZip, true)) {
+        try (
+            FileSystemUtil.Delegate inFs = FileSystemUtil.getJarFileSystem(inputZip, false);
+            FileSystemUtil.Delegate outFs = FileSystemUtil.getJarFileSystem(outputZip, true)
+        ) {
             final Path inRoot = inFs.get().getPath("/");
             final Path outRoot = outFs.get().getPath("/");
 
             List<CompletableFuture<Void>> futures = new ArrayList<>();
-            final ExecutorService executor =
-                    Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
             Files.walkFileTree(inRoot, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult visitFile(Path inputFile, BasicFileAttributes attrs) throws IOException {
-                    final CompletableFuture<Void> future = CompletableFuture.supplyAsync(
-                            () -> {
-                                try {
-                                    final String rel =
-                                            inRoot.relativize(inputFile).toString();
-                                    final Path outputFile = outRoot.resolve(rel);
-                                    processor.processEntryAsync(inputFile, outputFile);
-                                } catch (IOException e) {
-                                    throw new CompletionException(e);
-                                }
+                    final CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
+                        try {
+                            final String rel = inRoot.relativize(inputFile).toString();
+                            final Path outputFile = outRoot.resolve(rel);
+                            processor.processEntryAsync(inputFile, outputFile);
+                        } catch (IOException e) {
+                            throw new CompletionException(e);
+                        }
 
-                                return null;
-                            },
-                            executor);
+                        return null;
+                    }, executor);
 
                     futures.add(future);
                     return FileVisitResult.CONTINUE;

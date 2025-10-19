@@ -36,9 +36,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
-import dev.aoqia.leaf.loom.decompilers.LoomInternalDecompiler;
+
 import org.benf.cfr.reader.api.OutputSinkFactory;
 import org.benf.cfr.reader.api.SinkReturns;
+
+import dev.aoqia.leaf.loom.decompilers.LoomInternalDecompiler;
 
 public class CFRSinkFactory implements OutputSinkFactory {
     private final JarOutputStream outputStream;
@@ -54,19 +56,19 @@ public class CFRSinkFactory implements OutputSinkFactory {
     @Override
     public List<SinkClass> getSupportedSinks(SinkType sinkType, Collection<SinkClass> available) {
         return switch (sinkType) {
-            case JAVA -> Collections.singletonList(SinkClass.DECOMPILED);
-            case LINENUMBER -> Collections.singletonList(SinkClass.LINE_NUMBER_MAPPING);
-            default -> Collections.emptyList();
+        case JAVA -> Collections.singletonList(SinkClass.DECOMPILED);
+        case LINENUMBER -> Collections.singletonList(SinkClass.LINE_NUMBER_MAPPING);
+        default -> Collections.emptyList();
         };
     }
 
     @Override
     public <T> Sink<T> getSink(SinkType sinkType, SinkClass sinkClass) {
         return switch (sinkType) {
-            case JAVA -> (Sink<T>) decompiledSink();
-            case LINENUMBER -> (Sink<T>) lineNumberMappingSink();
-            case EXCEPTION -> (e) -> logger.error((String) e);
-            default -> null;
+        case JAVA -> (Sink<T>) decompiledSink();
+        case LINENUMBER -> (Sink<T>) lineNumberMappingSink();
+        case EXCEPTION -> (e) -> logger.error((String) e);
+        default -> null;
         };
     }
 

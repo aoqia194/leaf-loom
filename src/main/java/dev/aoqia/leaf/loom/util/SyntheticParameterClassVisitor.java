@@ -29,12 +29,13 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 /**
- * ProGuard has a bug where parameter annotations are applied incorrectly in the presence of
- * synthetic arguments. This causes javac to balk when trying to load affected classes.
- *
- * <p>We use several heuristics to guess what the synthetic arguments may be for a particular
- * constructor. We then check if the constructor matches our guess, and if so, offset all
- * parameter annotations.
+ * ProGuard has a bug where parameter annotations are applied incorrectly in the
+ * presence of synthetic arguments. This causes javac to balk when trying to
+ * load affected classes.
+ * <p>
+ * We use several heuristics to guess what the synthetic arguments may be for a
+ * particular constructor. We then check if the constructor matches our guess,
+ * and if so, offset all parameter annotations.
  */
 public class SyntheticParameterClassVisitor extends ClassVisitor {
     private static class SyntheticMethodVisitor extends MethodVisitor {
@@ -87,14 +88,15 @@ public class SyntheticParameterClassVisitor extends ClassVisitor {
     public void visitInnerClass(String name, String outerName, String innerName, int access) {
         super.visitInnerClass(name, outerName, innerName, access);
 
-        // If we're a non-static, non-anonymous inner class then we can assume the first argument
+        // If we're a non-static, non-anonymous inner class then we can assume
+        // the first argument
         // is the parent class.
-        // See https://docs.oracle.com/javase/specs/jls/se11/html/jls-8.html#jls-8.8.1
-        if (synthetic == 0
-                && name.equals(this.className)
-                && innerName != null
-                && outerName != null
-                && (access & Opcodes.ACC_STATIC) == 0) {
+        // See
+        // https://docs.oracle.com/javase/specs/jls/se11/html/jls-8.html#jls-8.8.1
+        if (
+            synthetic == 0 && name.equals(this.className) && innerName != null && outerName != null
+                && (access & Opcodes.ACC_STATIC) == 0
+        ) {
             this.synthetic = 1;
             this.syntheticArgs = "(L" + outerName + ";";
         }
@@ -102,15 +104,12 @@ public class SyntheticParameterClassVisitor extends ClassVisitor {
 
     @Override
     public MethodVisitor visitMethod(
-            final int access,
-            final String name,
-            final String descriptor,
-            final String signature,
-            final String[] exceptions) {
+        final int access, final String name, final String descriptor, final String signature, final String[] exceptions
+    ) {
         MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
 
         return mv != null && synthetic != 0 && name.equals("<init>") && descriptor.startsWith(syntheticArgs) && !backoff
-                ? new SyntheticMethodVisitor(api, synthetic, mv)
-                : mv;
+            ? new SyntheticMethodVisitor(api, synthetic, mv)
+            : mv;
     }
 }

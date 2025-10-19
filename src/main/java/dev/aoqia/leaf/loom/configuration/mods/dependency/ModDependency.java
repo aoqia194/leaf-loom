@@ -26,25 +26,23 @@ package dev.aoqia.leaf.loom.configuration.mods.dependency;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.gradle.api.Project;
+import org.jetbrains.annotations.Nullable;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef;
-
-import org.gradle.api.Project;
-import org.jetbrains.annotations.Nullable;
 
 public abstract sealed class ModDependency permits SplitModDependency, SimpleModDependency {
     private final String group;
     private final String name;
     private final String version;
-    @Nullable
-    private final String classifier;
+    @Nullable private final String classifier;
     private final ModDependencyOptions options;
     private final ArtifactRef artifact;
     private final ArtifactMetadata metadata;
 
-    public ModDependency(ArtifactRef artifact, ArtifactMetadata metadata,
-        ModDependencyOptions options) {
+    public ModDependency(ArtifactRef artifact, ArtifactMetadata metadata, ModDependencyOptions options) {
         this.artifact = artifact;
         this.metadata = metadata;
         this.group = artifact.group();
@@ -62,8 +60,7 @@ public abstract sealed class ModDependency permits SplitModDependency, SimpleMod
     /**
      * Write an artifact to the local cache.
      */
-    public abstract void copyToCache(Project project, Path path, @Nullable String variant) throws
-        IOException;
+    public abstract void copyToCache(Project project, Path path, @Nullable String variant) throws IOException;
 
     /**
      * Apply the dependency to the project.
@@ -103,22 +100,15 @@ public abstract sealed class ModDependency permits SplitModDependency, SimpleMod
 
     public Path getWorkingFile(Project project, @Nullable String classifier) {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);
-        final String fileName = classifier == null
-            ? String.format("%s-%s-%s.jar", getGroup(), getName(), version)
+        final String fileName = classifier == null ? String.format("%s-%s-%s.jar", getGroup(), getName(), version)
             : String.format("%s-%s-%s-%s.jar", getGroup(), getName(), version, classifier);
 
-        return extension
-            .getFiles()
-            .getProjectBuildCache()
-            .toPath()
-            .resolve("remapped_working")
-            .resolve(fileName);
+        return extension.getFiles().getProjectBuildCache().toPath().resolve("remapped_working").resolve(fileName);
     }
 
     @Override
     public String toString() {
-        return "ModDependency{" + "group='" + group + '\'' + ", name='" + name + '\'' +
-               ", version='" + version + '\''
-               + ", classifier='" + classifier + '\'' + '}';
+        return "ModDependency{" + "group='" + group + '\'' + ", name='" + name + '\'' + ", version='" + version + '\''
+            + ", classifier='" + classifier + '\'' + '}';
     }
 }

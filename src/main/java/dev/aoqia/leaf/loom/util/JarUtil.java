@@ -41,18 +41,15 @@ import org.jetbrains.annotations.Nullable;
 public class JarUtil {
     /**
      * Collects all the entries in a JAR.
-     *
      * @param jar Path to the JAR file.
      * @return A set of JAR entries.
-     *
      * @throws IOException
      */
     public static Set<String> getJarEntries(Path jar) throws IOException {
         Set<String> entries = Sets.newHashSet();
 
-        try (var fs = FileSystemUtil.getJarFileSystem(jar);
-             var walk = Files.walk(fs.get().getPath("/"))) {
-            for (var iterator = walk.iterator(); iterator.hasNext(); ) {
+        try (var fs = FileSystemUtil.getJarFileSystem(jar); var walk = Files.walk(fs.get().getPath("/"))) {
+            for (var iterator = walk.iterator(); iterator.hasNext();) {
                 final Path entry = iterator.next();
                 if (!Files.isRegularFile(entry)) {
                     continue;
@@ -68,16 +65,14 @@ public class JarUtil {
 
     /**
      * Collects all the entries in a JAR and their hashes.
-     *
      * @param jar Path to the JAR file.
      * @return A map of JAR entries with hashes.
      */
     public static Map<String, String> getJarEntriesWithHashes(Path jar) throws IOException {
         Map<String, String> entries = new HashMap<>();
 
-        try (var fs = FileSystemUtil.getJarFileSystem(jar);
-             var walk = Files.walk(fs.get().getPath("/"))) {
-            for (var iterator = walk.iterator(); iterator.hasNext(); ) {
+        try (var fs = FileSystemUtil.getJarFileSystem(jar); var walk = Files.walk(fs.get().getPath("/"))) {
+            for (var iterator = walk.iterator(); iterator.hasNext();) {
                 final Path entry = iterator.next();
                 if (!Files.isRegularFile(entry)) {
                     continue;
@@ -99,19 +94,19 @@ public class JarUtil {
 
     /**
      * Copies entries from one JAR file to another.
-     *
      * @param entries Entries to copy.
      * @param inputJar The input JAR file path.
      * @param outputJar The output JAR file path.
      * @param env The environment that the output JAR belongs to.
      * @throws IOException
      */
-    public static void copyEntriesToJar(Set<String> entries, Path inputJar, Path outputJar,
-        @Nullable String env) throws IOException {
+    public static void copyEntriesToJar(Set<String> entries, Path inputJar, Path outputJar, @Nullable String env) throws IOException {
         Files.deleteIfExists(outputJar);
 
-        try (var inputFs = FileSystemUtil.getJarFileSystem(inputJar);
-             var outputFs = FileSystemUtil.getJarFileSystem(outputJar, true)) {
+        try (
+            var inputFs = FileSystemUtil.getJarFileSystem(inputJar);
+            var outputFs = FileSystemUtil.getJarFileSystem(outputJar, true)
+        ) {
             for (String entry : entries) {
                 final Path inputPath = inputFs.get().getPath(entry);
                 final Path outputPath = outputFs.get().getPath(entry);
@@ -133,26 +128,22 @@ public class JarUtil {
 
     /**
      * Copies entries from one JAR file to another.
-     *
      * @param entries Entries to copy.
      * @param inputJar The input JAR file path.
      * @param outputJar The output JAR file path.
      * @throws IOException
      */
-    public static void copyEntriesToJar(Set<String> entries, Path inputJar, Path outputJar) throws
-        IOException {
+    public static void copyEntriesToJar(Set<String> entries, Path inputJar, Path outputJar) throws IOException {
         copyEntriesToJar(entries, inputJar, outputJar, null);
     }
 
     /**
      * A simple utility function to create a manifest for a JAR file.
-     *
      * @param outputFs The JAR file system to write to.
      * @param env The environment that the JAR belongs in.
      * @throws IOException
      */
-    public static void createManifest(FileSystemUtil.Delegate outputFs, String env) throws
-        IOException {
+    public static void createManifest(FileSystemUtil.Delegate outputFs, String env) throws IOException {
         final Manifest manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
 
@@ -169,7 +160,6 @@ public class JarUtil {
 
     /**
      * A simple utility function to create a manifest for a JAR file.
-     *
      * @param outputFs The JAR file system to write to.
      * @throws IOException
      */

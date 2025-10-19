@@ -31,22 +31,6 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import spock.util.environment.RestoreSystemProperties
 
-import com.google.common.hash.HashCode
-import com.google.common.hash.Hashing
-import com.google.common.io.Files
-import dev.aoqia.loom.test.util.GradleProjectTestTrait
-import spock.lang.Specification
-import spock.lang.Unroll
-import spock.util.environment.RestoreSystemProperties
-
-import com.google.common.hash.HashCode
-import com.google.common.hash.Hashing
-import com.google.common.io.Files
-import dev.aoqia.loom.test.util.GradleProjectTestTrait
-import spock.lang.Specification
-import spock.lang.Unroll
-import spock.util.environment.RestoreSystemProperties
-
 import static dev.aoqia.loom.test.LoomTestConstants.*
 import static java.lang.System.setProperty
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

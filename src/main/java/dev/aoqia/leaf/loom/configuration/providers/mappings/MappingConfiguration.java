@@ -23,12 +23,32 @@
  */
 package dev.aoqia.leaf.loom.configuration.providers.mappings;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.Objects;
+
+import com.google.gson.JsonObject;
+import net.fabricmc.mappingio.MappingReader;
+import net.fabricmc.mappingio.format.MappingFormat;
+import net.fabricmc.stitch.Command;
+import net.fabricmc.stitch.commands.CommandProposeFieldNames;
+import org.apache.tools.ant.util.StringUtils;
+import org.gradle.api.Project;
+import org.gradle.api.UncheckedIOException;
+import org.gradle.api.provider.Provider;
+import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.configuration.DependencyInfo;
@@ -39,19 +59,6 @@ import dev.aoqia.leaf.loom.util.DeletingFileVisitor;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import dev.aoqia.leaf.loom.util.ZipUtils;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-
-import com.google.gson.JsonObject;
-import net.fabricmc.mappingio.MappingReader;
-import net.fabricmc.mappingio.format.MappingFormat;
-import net.fabricmc.stitch.Command;
-import net.fabricmc.stitch.commands.CommandProposeFieldNames;
-import org.apache.tools.ant.util.StringUtils;
-import org.gradle.api.Project;
-import org.gradle.api.provider.Provider;
-import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.Opcodes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MappingConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(MappingConfiguration.class);
@@ -78,34 +85,29 @@ public class MappingConfiguration {
     }
 
     public static MappingConfiguration create(
-        Project project,
-        ServiceFactory serviceFactory,
-        DependencyInfo dependency,
-        ZomboidProvider zomboidProvider) {
+        Project project, ServiceFactory serviceFactory, DependencyInfo dependency, ZomboidProvider zomboidProvider
+    ) {
         final String version = dependency.getResolvedVersion();
-        final Path inputJar = dependency
-            .resolveFile()
-            .orElseThrow(() -> new RuntimeException("Could not resolve mappings: " + dependency))
-            .toPath();
+        final Path inputJar = dependency.resolveFile()
+            .orElseThrow(() -> new RuntimeException("Could not resolve mappings: " + dependency)).toPath();
         final String mappingsName = StringUtils.removeSuffix(
-            dependency.getDependency().getGroup() + "." + dependency.getDependency().getName(),
-            "-unmerged");
+            dependency.getDependency().getGroup() + "." + dependency.getDependency().getName(), "-unmerged"
+        );
 
         final TinyJarInfo jarInfo = TinyJarInfo.get(inputJar);
         jarInfo.zomboidVersionId().ifPresent(id -> {
             if (!zomboidProvider.clientZomboidVersion().equals(id)) {
                 LOGGER.warn(
-                    "The mappings (%s) were not built for Zomboid version %s, proceed with caution."
-                        .formatted(dependency.getDepString(),
-                            zomboidProvider.clientZomboidVersion()));
+                    "The mappings were not built for the Zomboid version used by this project.\nMappings: {}\nGame version: {}",
+                    dependency.getDepString(), zomboidProvider.clientZomboidVersion()
+                );
             }
         });
 
         final String mappingsIdentifier = createMappingsIdentifier(
-            mappingsName,
-            version,
-            getMappingsClassifier(dependency, jarInfo.v2()),
-            zomboidProvider.clientZomboidVersion());
+            mappingsName, version, getMappingsClassifier(dependency, jarInfo.v2()),
+            zomboidProvider.clientZomboidVersion()
+        );
         final Path workingDir = zomboidProvider.dir(mappingsIdentifier).toPath();
 
         var mappingProvider = new MappingConfiguration(mappingsIdentifier, workingDir);
@@ -114,8 +116,7 @@ public class MappingConfiguration {
             mappingProvider.setup(project, serviceFactory, zomboidProvider, inputJar);
         } catch (IOException e) {
             cleanWorkingDirectory(workingDir);
-            throw new UncheckedIOException("Failed to setup mappings: " + dependency.getDepString(),
-                e);
+            throw new UncheckedIOException("Failed to setup mappings: " + dependency.getDepString(), e);
         }
 
         return mappingProvider;
@@ -144,8 +145,7 @@ public class MappingConfiguration {
     }
 
     public static void extractMappings(FileSystem jar, Path extractTo) throws IOException {
-        Files.copy(jar.getPath("mappings/mappings.tiny"), extractTo,
-            StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(jar.getPath("mappings/mappings.tiny"), extractTo, StandardCopyOption.REPLACE_EXISTING);
     }
 
     private static void cleanWorkingDirectory(Path mappingsWorkingDir) {
@@ -161,12 +161,12 @@ public class MappingConfiguration {
     }
 
     private static String createMappingsIdentifier(
-        String mappingsName, String version, String classifier, String minecraftVersion) {
-        //          mappingsName      . mcVersion . version        classifier
-        // Example: net.fabricmc.yarn . 1_16_5    . 1.16.5+build.5 -v2
-        return mappingsName + "."
-               + minecraftVersion.replace(' ', '_').replace('.', '_').replace('-', '_') + "." +
-               version + classifier;
+        String mappingsName, String version, String classifier, String minecraftVersion
+    ) {
+        // mappingsName . mcVersion . version classifier
+        // Example: net.fabricmc.yarn . 1_16_5 . 1.16.5+build.5 -v2
+        return mappingsName + "." + minecraftVersion.replace(' ', '_').replace('.', '_').replace('-', '_') + "."
+            + version + classifier;
     }
 
     public TinyMappingsService getMappingsService(Project project, ServiceFactory serviceFactory) {
@@ -177,8 +177,7 @@ public class MappingConfiguration {
         return TinyMappingsService.createOptions(project, Objects.requireNonNull(tinyMappings));
     }
 
-    private void setup(Project project, ServiceFactory serviceFactory,
-        ZomboidProvider zomboidProvider, Path inputJar)
+    private void setup(Project project, ServiceFactory serviceFactory, ZomboidProvider zomboidProvider, Path inputJar)
         throws IOException {
         if (zomboidProvider.refreshDeps()) {
             cleanWorkingDirectory(mappingsWorkingDir);
@@ -194,25 +193,22 @@ public class MappingConfiguration {
 
         if (Files.notExists(tinyMappingsJar) || zomboidProvider.refreshDeps()) {
             Files.deleteIfExists(tinyMappingsJar);
-            ZipUtils.add(tinyMappingsJar, "mappings/mappings.tiny",
-                Files.readAllBytes(tinyMappings));
+            ZipUtils.add(tinyMappingsJar, "mappings/mappings.tiny", Files.readAllBytes(tinyMappings));
         }
     }
 
     public void applyToProject(Project project, DependencyInfo dependency) {
         if (hasUnpickDefinitions()) {
             String notation = String.format(
-                "%s:%s:%s:constants",
-                dependency.getDependency().getGroup(),
-                dependency.getDependency().getName(),
-                dependency.getDependency().getVersion());
+                "%s:%s:%s:constants", dependency.getDependency().getGroup(), dependency.getDependency().getName(),
+                dependency.getDependency().getVersion()
+            );
 
             project.getDependencies().add(Constants.Configurations.MAPPING_CONSTANTS, notation);
             populateUnpickClasspath(project);
         }
 
-        project.getDependencies()
-            .add(Constants.Configurations.MAPPINGS_FINAL, project.files(tinyMappingsJar.toFile()));
+        project.getDependencies().add(Constants.Configurations.MAPPINGS_FINAL, project.files(tinyMappingsJar.toFile()));
     }
 
     public boolean hasUnpickDefinitions() {
@@ -221,61 +217,57 @@ public class MappingConfiguration {
 
     private void populateUnpickClasspath(Project project) {
         String unpickCliName = "unpick-cli";
-        project.getDependencies()
-            .add(
-                Constants.Configurations.UNPICK_CLASSPATH,
-                String.format(
-                    "%s:%s:%s", unpickMetadata.unpickGroup, unpickCliName,
-                    unpickMetadata.unpickVersion));
+        project.getDependencies().add(
+            Constants.Configurations.UNPICK_CLASSPATH,
+            String.format("%s:%s:%s", unpickMetadata.unpickGroup, unpickCliName, unpickMetadata.unpickVersion)
+        );
 
-        // Unpick ships with a slightly older version of asm, ensure it runs with at least the
+        // Unpick ships with a slightly older version of asm, ensure it runs
+        // with at least the
         // same version as loom.
         String[] asmDeps = new String[] {
-            "org.ow2.asm:asm:%s",
-            "org.ow2.asm:asm-tree:%s",
-            "org.ow2.asm:asm-commons:%s",
-            "org.ow2.asm:asm-util:%s"
+            "org.ow2.asm:asm:%s", "org.ow2.asm:asm-tree:%s", "org.ow2.asm:asm-commons:%s", "org.ow2.asm:asm-util:%s"
         };
 
         for (String asm : asmDeps) {
-            project.getDependencies()
-                .add(
-                    Constants.Configurations.UNPICK_CLASSPATH,
-                    asm.formatted(Opcodes.class.getPackage().getImplementationVersion()));
+            project.getDependencies().add(
+                Constants.Configurations.UNPICK_CLASSPATH,
+                asm.formatted(Opcodes.class.getPackage().getImplementationVersion())
+            );
         }
     }
 
     private void storeMappings(
-        Project project, ServiceFactory serviceFactory, ZomboidProvider zomboidProvider,
-        Path inputJar)
-        throws IOException {
-        LOGGER.info(":extracting " + inputJar.getFileName());
+        Project project, ServiceFactory serviceFactory, ZomboidProvider zomboidProvider, Path inputJar
+    ) throws IOException {
+        LOGGER.info(":extracting {}", inputJar.getFileName());
 
         try (FileSystemUtil.Delegate delegate = FileSystemUtil.getJarFileSystem(inputJar)) {
             extractMappings(delegate.fs(), tinyMappings);
             extractExtras(delegate.fs());
         }
 
-        // Don't really need to support V1 for the time being (or foreseeable future).
+        // Don't really need to support V1 for the time being (or foreseeable
+        // future).
         if (!areMappingsV2(tinyMappings)) {
-            throw new UnsupportedOperationException(
-                "Mappings are using V1 which is unsupported currently.");
+            throw new UnsupportedOperationException("Mappings are using V1 which is unsupported currently.");
         }
 
         // V1 mappings
-        //        if (!areMappingsV2(tinyMappings)) {
-        //            final List<Path> zomboidJars = zomboidProvider.getZomboidJars();
+        // if (!areMappingsV2(tinyMappings)) {
+        // final List<Path> zomboidJars = zomboidProvider.getZomboidJars();
         //
-        //            if (zomboidJars.size() != 1) {
-        //                throw new UnsupportedOperationException("V1 mappings only support
-        //                single jar providers");
-        //            }
+        // if (zomboidJars.size() != 1) {
+        // throw new UnsupportedOperationException("V1 mappings only support
+        // single jar providers");
+        // }
         //
-        //            // These are merged v1 mappings
-        //            Files.deleteIfExists(tinyMappings);
-        //            LOGGER.info(":populating field names");
-        //            suggestFieldNames(zomboidJars.get(0), baseTinyMappings, tinyMappings);
-        //        }
+        // // These are merged v1 mappings
+        // Files.deleteIfExists(tinyMappings);
+        // LOGGER.info(":populating field names");
+        // suggestFieldNames(zomboidJars.get(0), baseTinyMappings,
+        // tinyMappings);
+        // }
     }
 
     private void extractExtras(FileSystem jar) throws IOException {
@@ -304,34 +296,31 @@ public class MappingConfiguration {
             return;
         }
 
-        try (Reader reader = Files.newBufferedReader(recordSignaturesJsonPath,
-            StandardCharsets.UTF_8)) {
+        try (Reader reader = Files.newBufferedReader(recordSignaturesJsonPath, StandardCharsets.UTF_8)) {
             // noinspection unchecked
             signatureFixes = LoomGradlePlugin.GSON.fromJson(reader, Map.class);
         }
     }
 
     private UnpickMetadata parseUnpickMetadata(Path input) throws IOException {
-        JsonObject jsonObject =
-            LoomGradlePlugin.GSON.fromJson(Files.readString(input, StandardCharsets.UTF_8),
-                JsonObject.class);
+        JsonObject jsonObject = LoomGradlePlugin.GSON
+            .fromJson(Files.readString(input, StandardCharsets.UTF_8), JsonObject.class);
 
         if (!jsonObject.has("version") || jsonObject.get("version").getAsInt() != 1) {
             throw new UnsupportedOperationException("Unsupported unpick version");
         }
 
         return new UnpickMetadata(
-            jsonObject.get("unpickGroup").getAsString(),
-            jsonObject.get("unpickVersion").getAsString());
+            jsonObject.get("unpickGroup").getAsString(), jsonObject.get("unpickVersion").getAsString()
+        );
     }
 
     private void suggestFieldNames(Path inputJar, Path oldMappings, Path newMappings) {
         Command command = new CommandProposeFieldNames();
         runCommand(
-            command,
-            inputJar.toFile().getAbsolutePath(),
-            oldMappings.toAbsolutePath().toString(),
-            newMappings.toAbsolutePath().toString());
+            command, inputJar.toFile().getAbsolutePath(), oldMappings.toAbsolutePath().toString(),
+            newMappings.toAbsolutePath().toString()
+        );
     }
 
     private void runCommand(Command command, String... args) {
@@ -350,8 +339,7 @@ public class MappingConfiguration {
         return unpickDefinitions.toFile();
     }
 
-    @Nullable
-    public Map<String, String> getSignatureFixes() {
+    @Nullable public Map<String, String> getSignatureFixes() {
         return signatureFixes;
     }
 
@@ -363,6 +351,5 @@ public class MappingConfiguration {
         return mappingsIdentifier;
     }
 
-    public record UnpickMetadata(String unpickGroup, String unpickVersion) {
-    }
+    public record UnpickMetadata(String unpickGroup, String unpickVersion) {}
 }

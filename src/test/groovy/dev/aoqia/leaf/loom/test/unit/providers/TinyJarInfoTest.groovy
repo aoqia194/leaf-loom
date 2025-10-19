@@ -30,14 +30,8 @@ import java.util.jar.Manifest
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import spock.lang.Specification
-import spock.lang.TempDir
-
 import dev.aoqia.leaf.loom.configuration.providers.mappings.tiny.TinyJarInfo
 import dev.aoqia.leaf.loom.util.ZipUtils
-
-import spock.lang.Specification
-import spock.lang.TempDir
 
 class TinyJarInfoTest extends Specification {
 	@TempDir

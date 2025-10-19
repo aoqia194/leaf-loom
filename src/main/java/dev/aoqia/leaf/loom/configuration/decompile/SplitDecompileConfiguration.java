@@ -25,16 +25,17 @@ package dev.aoqia.leaf.loom.configuration.decompile;
 
 import java.io.File;
 
+import org.gradle.api.Action;
+import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.api.tasks.TaskProvider;
+
 import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Strings;
-import org.gradle.api.Action;
-import org.gradle.api.Project;
-import org.gradle.api.Task;
-import org.gradle.api.tasks.TaskProvider;
 
 public final class SplitDecompileConfiguration extends DecompileConfiguration<MappedZomboidProvider.Split> {
     public SplitDecompileConfiguration(Project project, MappedZomboidProvider.Split zomboidProvider) {
@@ -58,8 +59,8 @@ public final class SplitDecompileConfiguration extends DecompileConfiguration<Ma
 
             if (mappingConfiguration.hasUnpickDefinitions()) {
                 File unpickJar = new File(
-                    extension.getMappingConfiguration().mappingsWorkingDir().toFile(),
-                    "zomboid-common-unpicked.jar");
+                    extension.getMappingConfiguration().mappingsWorkingDir().toFile(), "zomboid-common-unpicked.jar"
+                );
                 configureUnpick(task, unpickJar);
             }
         });
@@ -71,8 +72,8 @@ public final class SplitDecompileConfiguration extends DecompileConfiguration<Ma
 
             if (mappingConfiguration.hasUnpickDefinitions()) {
                 File unpickJar = new File(
-                    extension.getMappingConfiguration().mappingsWorkingDir().toFile(),
-                    "zomboid-clientonly-unpicked.jar");
+                    extension.getMappingConfiguration().mappingsWorkingDir().toFile(), "zomboid-clientonly-unpicked.jar"
+                );
                 configureUnpick(task, unpickJar);
             }
 
@@ -113,22 +114,22 @@ public final class SplitDecompileConfiguration extends DecompileConfiguration<Ma
             final String decompilerName = options.getFormattedName();
             final String taskName = "gen%sSourcesWith%s".formatted(name, decompilerName);
 
-            project.getTasks()
-                .register(taskName, GenerateSourcesTask.class, options)
-                .configure(task -> {
-                    configureAction.execute(task);
-                    task.dependsOn(project.getTasks().named("validateAccessWidener"));
-                    task.setDescription("Decompile Zomboid using %s.".formatted(decompilerName));
-                    task.setGroup(Constants.TaskGroup.LEAF);
-                });
+            project.getTasks().register(taskName, GenerateSourcesTask.class, options).configure(task -> {
+                configureAction.execute(task);
+                task.dependsOn(project.getTasks().named("validateAccessWidener"));
+                task.setDescription("Decompile Zomboid using %s.".formatted(decompilerName));
+                task.setGroup(Constants.TaskGroup.LEAF);
+            });
         });
 
         return project.getTasks().register("gen%sSources".formatted(name), task -> {
             task.setDescription("Decompile zomboid (%s) using the default decompiler.".formatted(name));
             task.setGroup(Constants.TaskGroup.LEAF);
 
-            task.dependsOn(project.getTasks()
-                .named("gen%sSourcesWith%s".formatted(name, DecompileConfiguration.DEFAULT_DECOMPILER)));
+            task.dependsOn(
+                project.getTasks()
+                    .named("gen%sSourcesWith%s".formatted(name, DecompileConfiguration.DEFAULT_DECOMPILER))
+            );
         });
     }
 }

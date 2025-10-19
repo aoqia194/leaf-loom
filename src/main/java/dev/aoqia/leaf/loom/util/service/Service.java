@@ -28,8 +28,8 @@ import org.gradle.api.tasks.Input;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * A service is used to manage a set of data or a task that may be reused multiple times.
- *
+ * A service is used to manage a set of data or a task that may be reused
+ * multiple times.
  * @param <O> The options type.
  */
 public abstract class Service<O extends Service.Options> {
@@ -43,7 +43,6 @@ public abstract class Service<O extends Service.Options> {
 
     /**
      * Gets the options for this service.
-     *
      * @return The options.
      */
     protected final O getOptions() {
@@ -51,8 +50,8 @@ public abstract class Service<O extends Service.Options> {
     }
 
     /**
-     * Return the factory that created this service, this can be used to get nested services.
-     *
+     * Return the factory that created this service, this can be used to get
+     * nested services.
      * @return The {@link ServiceFactory} instance.
      */
     protected ServiceFactory getServiceFactory() {

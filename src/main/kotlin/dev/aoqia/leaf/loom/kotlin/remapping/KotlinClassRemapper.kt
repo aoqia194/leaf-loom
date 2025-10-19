@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2023 FabricMC
+ * Copyright (c) 2023 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package dev.aoqia.leaf.loom.kotlin.remapping
 
 import org.objectweb.asm.commons.Remapper
@@ -55,7 +54,9 @@ import kotlin.metadata.jvm.syntheticMethodForDelegate
 import kotlin.metadata.jvm.toJvmInternalName
 
 @OptIn(ExperimentalContextReceivers::class)
-class KotlinClassRemapper(private val remapper: Remapper) {
+class KotlinClassRemapper(
+    private val remapper: Remapper,
+) {
     fun remap(clazz: KmClass): KmClass {
         clazz.name = remap(clazz.name)
         clazz.typeParameters.replaceAll(this::remap)
@@ -154,13 +155,16 @@ class KotlinClassRemapper(private val remapper: Remapper) {
         return typeParameter
     }
 
-    private fun remap(typeProjection: KmTypeProjection): KmTypeProjection {
-        return KmTypeProjection(typeProjection.variance, typeProjection.type?.let { remap(it) })
-    }
+    private fun remap(typeProjection: KmTypeProjection): KmTypeProjection =
+        KmTypeProjection(
+            typeProjection.variance,
+            typeProjection.type?.let {
+                remap(it)
+            },
+        )
 
-    private fun remap(flexibleTypeUpperBound: KmFlexibleTypeUpperBound): KmFlexibleTypeUpperBound {
-        return KmFlexibleTypeUpperBound(remap(flexibleTypeUpperBound.type), flexibleTypeUpperBound.typeFlexibilityId)
-    }
+    private fun remap(flexibleTypeUpperBound: KmFlexibleTypeUpperBound): KmFlexibleTypeUpperBound =
+        KmFlexibleTypeUpperBound(remap(flexibleTypeUpperBound.type), flexibleTypeUpperBound.typeFlexibilityId)
 
     private fun remap(valueParameter: KmValueParameter): KmValueParameter {
         valueParameter.type = remap(valueParameter.type)
@@ -168,15 +172,11 @@ class KotlinClassRemapper(private val remapper: Remapper) {
         return valueParameter
     }
 
-    private fun remap(annotation: KmAnnotation): KmAnnotation {
-        return KmAnnotation(remap(annotation.className), annotation.arguments)
-    }
+    private fun remap(annotation: KmAnnotation): KmAnnotation = KmAnnotation(remap(annotation.className), annotation.arguments)
 
-    private fun remap(signature: JvmMethodSignature): JvmMethodSignature {
-        return JvmMethodSignature(signature.name, remapper.mapMethodDesc(signature.descriptor))
-    }
+    private fun remap(signature: JvmMethodSignature): JvmMethodSignature =
+        JvmMethodSignature(signature.name, remapper.mapMethodDesc(signature.descriptor))
 
-    private fun remap(signature: JvmFieldSignature): JvmFieldSignature {
-        return JvmFieldSignature(signature.name, remapper.mapDesc(signature.descriptor))
-    }
+    private fun remap(signature: JvmFieldSignature): JvmFieldSignature =
+        JvmFieldSignature(signature.name, remapper.mapDesc(signature.descriptor))
 }

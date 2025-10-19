@@ -25,6 +25,7 @@ package dev.aoqia.leaf.loom.api;
 
 import java.util.Set;
 import javax.inject.Inject;
+
 import org.gradle.api.Named;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
@@ -38,7 +39,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A {@link Named} object for configuring "proxy" configurations that remap artifacts.
+ * A {@link Named} object for configuring "proxy" configurations that remap
+ * artifacts.
  */
 public abstract class RemapConfigurationSettings implements Named {
     private final String name;
@@ -72,20 +74,21 @@ public abstract class RemapConfigurationSettings implements Named {
     public abstract Property<String> getTargetConfigurationName();
 
     /**
-     * Optional, only used when split sourcesets are enabled.
-     * When not present client only entries should go onto the target configuration.
-     *
+     * Optional, only used when split sourcesets are enabled. When not present
+     * client only entries should go onto the target configuration.
      * @return The client source configuration name
      */
     public abstract Property<String> getClientSourceConfigurationName();
 
     /**
-     * @return True if this configuration's artifacts should be exposed for compile operations.
+     * @return True if this configuration's artifacts should be exposed for
+     * compile operations.
      */
     public abstract Property<Boolean> getOnCompileClasspath();
 
     /**
-     * @return True if this configuration's artifacts should be exposed to runtime operations.
+     * @return True if this configuration's artifacts should be exposed to
+     * runtime operations.
      */
     public abstract Property<Boolean> getOnRuntimeClasspath();
 
@@ -95,13 +98,13 @@ public abstract class RemapConfigurationSettings implements Named {
     public abstract Property<PublishingMode> getPublishingMode();
 
     /**
-     * @return true when dependencies should be evaluated for zomboid jar transforms such as transitive Access Wideners or Injected interfaces.
+     * @return true when dependencies should be evaluated for zomboid jar
+     * transforms such as transitive Access Wideners or Injected interfaces.
      */
     public abstract Property<Boolean> getApplyDependencyTransforms();
 
     public enum PublishingMode {
-        NONE,
-        COMPILE_ONLY(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME),
+        NONE, COMPILE_ONLY(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME),
         RUNTIME_ONLY(JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME),
         COMPILE_AND_RUNTIME(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME, JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME);
 
@@ -137,9 +140,10 @@ public abstract class RemapConfigurationSettings implements Named {
     }
 
     private Provider<Boolean> defaultDependencyTransforms() {
-        return getSourceSet()
-                .map(sourceSet -> sourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)
-                        || sourceSet.getName().equals("client"));
+        return getSourceSet().map(
+            sourceSet -> sourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)
+                || sourceSet.getName().equals("client")
+        );
     }
 
     @Override

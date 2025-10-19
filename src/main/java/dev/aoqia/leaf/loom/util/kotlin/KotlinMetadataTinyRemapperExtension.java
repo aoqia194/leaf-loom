@@ -26,4 +26,4 @@ package dev.aoqia.leaf.loom.util.kotlin;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public interface KotlinMetadataTinyRemapperExtension
-        extends TinyRemapper.ApplyVisitorProvider, TinyRemapper.Extension {}
+    extends TinyRemapper.ApplyVisitorProvider, TinyRemapper.Extension {}

@@ -25,6 +25,7 @@ package dev.aoqia.leaf.loom.api.processor;
 
 import java.util.List;
 import java.util.stream.Stream;
+
 import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 
 public interface SpecContext {

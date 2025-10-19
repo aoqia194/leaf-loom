@@ -25,12 +25,12 @@ package dev.aoqia.leaf.loom.extension;
 
 import java.io.File;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
 import org.gradle.api.Project;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+
 public abstract class LoomFilesBaseImpl implements LoomFiles {
-    public LoomFilesBaseImpl() {
-    }
+    public LoomFilesBaseImpl() {}
 
     protected abstract File getGradleUserHomeDir();
 
@@ -39,7 +39,6 @@ public abstract class LoomFilesBaseImpl implements LoomFiles {
     protected abstract File getProjectDir();
 
     protected abstract File getBuildDir();
-
 
     private static File createFile(File parent, String child) {
         File file = new File(parent, child);
@@ -76,8 +75,8 @@ public abstract class LoomFilesBaseImpl implements LoomFiles {
     public File getNativesDirectory(Project project) {
         return createFile(
             getRootProjectPersistentCache(),
-            "natives/"
-            + LoomGradleExtension.get(project).getZomboidProvider().clientZomboidVersion());
+            "natives/" + LoomGradleExtension.get(project).getZomboidProvider().clientZomboidVersion()
+        );
     }
 
     @Override

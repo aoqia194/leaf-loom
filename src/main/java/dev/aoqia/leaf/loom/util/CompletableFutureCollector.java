@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 
 public final class CompletableFutureCollector<X, T extends CompletableFuture<X>>
-        implements Collector<T, List<T>, CompletableFuture<List<X>>> {
+    implements Collector<T, List<T>, CompletableFuture<List<X>>> {
     private CompletableFutureCollector() {}
 
     public static <X, T extends CompletableFuture<X>> Collector<T, List<T>, CompletableFuture<List<X>>> allOf() {
@@ -63,7 +63,7 @@ public final class CompletableFutureCollector<X, T extends CompletableFuture<X>>
     @Override
     public Function<List<T>, CompletableFuture<List<X>>> finisher() {
         return ls -> CompletableFuture.allOf(ls.toArray(CompletableFuture[]::new))
-                .thenApply(v -> ls.stream().map(CompletableFuture::join).toList());
+            .thenApply(v -> ls.stream().map(CompletableFuture::join).toList());
     }
 
     @Override

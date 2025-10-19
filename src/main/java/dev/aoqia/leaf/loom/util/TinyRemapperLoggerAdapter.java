@@ -37,18 +37,18 @@ public final class TinyRemapperLoggerAdapter implements TrLogger {
     @Override
     public void log(Level level, String message) {
         switch (level) {
-            case ERROR:
-                LOGGER.error(message);
-                break;
-            case WARN:
-                LOGGER.warn(message);
-                break;
-            case INFO:
-                LOGGER.info(message);
-                break;
-            case DEBUG:
-                LOGGER.debug(message);
-                break;
+        case ERROR:
+            LOGGER.error(message);
+            break;
+        case WARN:
+            LOGGER.warn(message);
+            break;
+        case INFO:
+            LOGGER.info(message);
+            break;
+        case DEBUG:
+            LOGGER.debug(message);
+            break;
         }
     }
 }

@@ -97,7 +97,8 @@ final class CurrentPlatform implements Platform {
     }
 
     /**
-     * Returns true if the current system is a Raspberry Pi running Debian 12 (Bookworm).
+     * Returns true if the current system is a Raspberry Pi running Debian 12
+     * (Bookworm).
      */
     private static boolean getIsRaspberryPi(OperatingSystem operatingSystem, Architecture architecture) {
         if (operatingSystem != OperatingSystem.LINUX || !architecture.isArm()) {

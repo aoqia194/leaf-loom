@@ -27,24 +27,25 @@ import java.io.File;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.extension.MixinExtension;
-
 import com.google.common.collect.ImmutableList;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.scala.ScalaCompile;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.extension.MixinExtension;
+
 public class ScalaApInvoker extends AnnotationProcessorInvoker<ScalaCompile> {
     public ScalaApInvoker(Project project) {
-        super(project,
-            // Scala just uses the java AP configuration afaik. This of course assumes the java
+        super(
+            project,
+            // Scala just uses the java AP configuration afaik. This of course
+            // assumes the java
             // AP also gets
             // configured.
-            ImmutableList.of(),
-            getInvokerTasks(project),
-            AnnotationProcessorInvoker.SCALA);
+            ImmutableList.of(), getInvokerTasks(project), AnnotationProcessorInvoker.SCALA
+        );
     }
 
     private static Map<SourceSet, TaskProvider<ScalaCompile>> getInvokerTasks(Project project) {

@@ -23,17 +23,15 @@
  */
 package dev.aoqia.leaf.loom.configuration;
 
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.util.download.DownloadException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
@@ -42,24 +40,24 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.download.DownloadException;
+
 public abstract class LeafApiExtension {
     private static final HashMap<String, Map<String, String>> moduleVersionCache = new HashMap<>();
     private static final HashMap<String, Map<String, String>> deprecatedModuleVersionCache = new HashMap<>();
 
     public Dependency module(String moduleName, String fabricApiVersion) {
-        return getProject().getDependencies()
-            .create(getDependencyNotation(moduleName, fabricApiVersion));
+        return getProject().getDependencies().create(getDependencyNotation(moduleName, fabricApiVersion));
     }
 
     public String moduleVersion(String moduleName, String fabricApiVersion) {
-        String moduleVersion = moduleVersionCache
-            .computeIfAbsent(fabricApiVersion, this::getApiModuleVersions)
+        String moduleVersion = moduleVersionCache.computeIfAbsent(fabricApiVersion, this::getApiModuleVersions)
             .get(moduleName);
 
         if (moduleVersion == null) {
             moduleVersion = deprecatedModuleVersionCache
-                .computeIfAbsent(fabricApiVersion, this::getDeprecatedApiModuleVersions)
-                .get(moduleName);
+                .computeIfAbsent(fabricApiVersion, this::getDeprecatedApiModuleVersions).get(moduleName);
         }
 
         if (moduleVersion == null) {
@@ -85,7 +83,8 @@ public abstract class LeafApiExtension {
         try {
             return populateModuleVersionMap(getDeprecatedApiMavenPom(leafApiVersion));
         } catch (PomNotFoundException e) {
-            // Not all fabric-api versions have deprecated modules, return an empty map to cache this fact.
+            // Not all fabric-api versions have deprecated modules, return an
+            // empty map to cache this fact.
             return Collections.emptyMap();
         }
     }
@@ -98,8 +97,8 @@ public abstract class LeafApiExtension {
 
             Map<String, String> versionMap = new HashMap<>();
 
-            NodeList dependencies = ((Element) pom.getElementsByTagName("dependencies").item(0)).getElementsByTagName(
-                "dependency");
+            NodeList dependencies = ((Element) pom.getElementsByTagName("dependencies").item(0))
+                .getElementsByTagName("dependency");
 
             for (int i = 0; i < dependencies.getLength(); i++) {
                 Element dep = (Element) dependencies.item(i);
@@ -129,16 +128,16 @@ public abstract class LeafApiExtension {
 
     private File getPom(String name, String version) throws PomNotFoundException {
         final LoomGradleExtension extension = LoomGradleExtension.get(getProject());
-        final var mavenPom = new File(extension.getFiles().getUserCache(),
-            "leaf-api/%s-%s.pom".formatted(name, version));
+        final var mavenPom = new File(
+            extension.getFiles().getUserCache(), "leaf-api/%s-%s.pom".formatted(name, version)
+        );
 
         try {
-            // TODO: Update to maven central URL because I don't host my own maven.
-            extension.download(String.format("https://maven.aoqia.net/dev/aoqia/leaf-api/%2$s/%1$s/%2$s-%1$s.pom",
-                    version,
-                    name))
-                .defaultCache()
-                .downloadPath(mavenPom.toPath());
+            // TODO: Update to maven central URL because I don't host my own
+            // maven.
+            extension.download(
+                String.format("https://maven.aoqia.net/dev/aoqia/leaf-api/%2$s/%1$s/%2$s-%1$s.pom", version, name)
+            ).defaultCache().downloadPath(mavenPom.toPath());
         } catch (DownloadException e) {
             if (e.getStatusCode() == 404) {
                 throw new PomNotFoundException(e);
@@ -151,22 +150,16 @@ public abstract class LeafApiExtension {
     }
 
     private void dependsOn(SourceSet sourceSet, SourceSet other) {
-        sourceSet.setCompileClasspath(
-            sourceSet.getCompileClasspath()
-                .plus(other.getOutput())
-        );
+        sourceSet.setCompileClasspath(sourceSet.getCompileClasspath().plus(other.getOutput()));
 
-        sourceSet.setRuntimeClasspath(
-            sourceSet.getRuntimeClasspath()
-                .plus(other.getOutput())
-        );
+        sourceSet.setRuntimeClasspath(sourceSet.getRuntimeClasspath().plus(other.getOutput()));
 
-        extendsFrom(getProject(),
-            sourceSet.getCompileClasspathConfigurationName(),
-            other.getCompileClasspathConfigurationName());
-        extendsFrom(getProject(),
-            sourceSet.getRuntimeClasspathConfigurationName(),
-            other.getRuntimeClasspathConfigurationName());
+        extendsFrom(
+            getProject(), sourceSet.getCompileClasspathConfigurationName(), other.getCompileClasspathConfigurationName()
+        );
+        extendsFrom(
+            getProject(), sourceSet.getRuntimeClasspathConfigurationName(), other.getRuntimeClasspathConfigurationName()
+        );
     }
 
     private static void extendsFrom(Project project, String name, String extendsFrom) {

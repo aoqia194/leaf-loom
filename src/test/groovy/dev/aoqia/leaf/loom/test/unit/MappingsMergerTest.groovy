@@ -26,17 +26,12 @@ package dev.aoqia.leaf.loom.test.unit
 import java.nio.file.Files
 import java.nio.file.Path
 
-import spock.lang.TempDir
-
 import net.fabricmc.mappingio.MappingReader
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch
 import net.fabricmc.mappingio.tree.MemoryMappingTree
-
 import spock.lang.TempDir
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace
-
-import spock.lang.TempDir
 
 class MappingsMergerTest {
 	@TempDir

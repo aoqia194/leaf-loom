@@ -25,21 +25,25 @@ package dev.aoqia.leaf.loom.task;
 
 import java.io.File;
 import javax.inject.Inject;
+
+import org.gradle.api.tasks.Sync;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.util.Constants;
-import org.gradle.api.tasks.Sync;
 
 public abstract class ExtractNativesTask extends Sync {
     @Inject
     public ExtractNativesTask() {
-        // Is there a lazy way to do this for many files? - Doesnt seem there is...
-        for (File nativeFile : getProject()
-                .getConfigurations()
-                .getByName(Constants.Configurations.ZOMBOID_NATIVES)
-                .getFiles()) {
+        // Is there a lazy way to do this for many files? - Doesnt seem there
+        // is...
+        for (
+            File nativeFile : getProject().getConfigurations().getByName(Constants.Configurations.ZOMBOID_NATIVES)
+                .getFiles()
+        ) {
             from(getProject().zipTree(nativeFile), copySpec -> {
                 copySpec.exclude("META-INF/**");
-                // Fix pre LWJGL 3 versions on Macos. See: https://github.com/FabricMC/fabric-loom/issues/955
+                // Fix pre LWJGL 3 versions on Macos. See:
+                // https://github.com/FabricMC/fabric-loom/issues/955
                 copySpec.rename(s -> s.replace(".jnilib", ".dylib"));
             });
         }

@@ -28,11 +28,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public abstract sealed class ZomboidJar
-    permits ZomboidJar.Client,
-    ZomboidJar.ClientOnly,
-    ZomboidJar.Common,
-    ZomboidJar.Merged,
-    ZomboidJar.Server {
+    permits ZomboidJar.Client, ZomboidJar.ClientOnly, ZomboidJar.Common, ZomboidJar.Merged, ZomboidJar.Server {
     private final Path path;
     private final boolean merged, client, server;
     private final Type type;
@@ -80,12 +76,10 @@ public abstract sealed class ZomboidJar
         MERGED("merged"),
 
         // Regular jars, not merged or split
-        SERVER("server"),
-        CLIENT("client"),
+        SERVER("server"), CLIENT("client"),
 
         // Split jars
-        COMMON("common"),
-        CLIENT_ONLY("clientOnly");
+        COMMON("common"), CLIENT_ONLY("clientOnly");
 
         private final String name;
 

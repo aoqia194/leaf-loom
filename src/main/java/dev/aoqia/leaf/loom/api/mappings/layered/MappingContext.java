@@ -25,15 +25,19 @@ package dev.aoqia.leaf.loom.api.mappings.layered;
 
 import java.nio.file.Path;
 
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
-import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
-import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.MinimalExternalModuleDependency;
 import org.gradle.api.logging.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Experimental /* Very Experimental and not cleanly separated from the impl atm */
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
+import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
+import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
+
+@ApiStatus.Experimental /*
+                         * Very Experimental and not cleanly separated from the
+                         * impl atm
+                         */
 public interface MappingContext {
     Path resolveDependency(Dependency dependency);
 

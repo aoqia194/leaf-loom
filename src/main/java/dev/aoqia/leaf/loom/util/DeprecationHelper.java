@@ -24,6 +24,7 @@
 package dev.aoqia.leaf.loom.util;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.gradle.api.Project;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.configuration.WarningMode;
@@ -39,13 +40,16 @@ public interface DeprecationHelper {
 
     default void toBeRemovedIn(String currentName, String newName, String removalVersion) {
         warn(
-                "The '%s' property has been deprecated, and has been replaced with '%s'. This is scheduled to be removed in %s."
-                        .formatted(currentName, newName, removalVersion));
+            "The '%s' property has been deprecated, and has been replaced with '%s'. This is scheduled to be removed in %s."
+                .formatted(currentName, newName, removalVersion)
+        );
     }
 
     default void toBeRemovedIn(String currentName, String removalVersion) {
-        warn("The '%s' property has been deprecated, and can be removed. This is scheduled to be removed in %s."
-                .formatted(currentName, removalVersion));
+        warn(
+            "The '%s' property has been deprecated, and can be removed. This is scheduled to be removed in %s."
+                .formatted(currentName, removalVersion)
+        );
     }
 
     Project getProject();
@@ -67,8 +71,7 @@ public interface DeprecationHelper {
 
         @Override
         public void warn(String warning) {
-            WarningMode warningMode =
-                    getProject().getGradle().getStartParameter().getWarningMode();
+            WarningMode warningMode = getProject().getGradle().getStartParameter().getWarningMode();
             getProject().getLogger().log(warningMode == WarningMode.None ? LogLevel.INFO : LogLevel.WARN, warning);
 
             if (warningMode == WarningMode.Fail) {

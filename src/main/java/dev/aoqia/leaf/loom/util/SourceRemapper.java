@@ -32,13 +32,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
-import dev.aoqia.leaf.loom.task.service.LorenzMappingService;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-
 import org.cadixdev.lorenz.MappingSet;
 import org.cadixdev.mercury.Mercury;
 import org.cadixdev.mercury.remapper.MercuryRemapper;
@@ -47,6 +40,13 @@ import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.internal.logging.progress.ProgressLogger;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.slf4j.Logger;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.leaf.loom.task.service.LorenzMappingService;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 
 public class SourceRemapper {
     private final Project project;
@@ -68,15 +68,15 @@ public class SourceRemapper {
 
         final List<Path> classPath = new ArrayList<>();
 
-        for (File file : project.getConfigurations()
-            .getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES)
-            .getFiles()) {
+        for (
+            File file : project.getConfigurations().getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES)
+                .getFiles()
+        ) {
             classPath.add(file.toPath());
         }
 
         if (!toNamed) {
-            for (File file :
-                project.getConfigurations().getByName("compileClasspath").getFiles()) {
+            for (File file : project.getConfigurations().getByName("compileClasspath").getFiles()) {
                 classPath.add(file.toPath());
             }
         } else {
@@ -98,8 +98,7 @@ public class SourceRemapper {
         return m;
     }
 
-    public static void copyNonJavaFiles(Path from, Path to, Logger logger, Path source) throws
-        IOException {
+    public static void copyNonJavaFiles(Path from, Path to, Logger logger, Path source) throws IOException {
         Files.walk(from).forEach(path -> {
             Path targetPath = to.resolve(from.relativize(path).toString());
 
@@ -120,24 +119,23 @@ public class SourceRemapper {
     }
 
     public void scheduleRemapSources(
-        File source,
-        File destination,
-        boolean reproducibleFileOrder,
-        boolean preserveFileTimestamps,
-        Runnable completionCallback) {
+        File source, File destination, boolean reproducibleFileOrder, boolean preserveFileTimestamps,
+        Runnable completionCallback
+    ) {
         remapTasks.add((logger) -> {
             try {
                 logger.progress("remapping sources - " + source.getName());
                 remapSourcesInner(source, destination);
-                ZipReprocessorUtil.reprocessZip(destination.toPath(), reproducibleFileOrder,
-                    preserveFileTimestamps);
+                ZipReprocessorUtil.reprocessZip(destination.toPath(), reproducibleFileOrder, preserveFileTimestamps);
 
-                // Set the remapped sources creation date to match the sources if we're likely
+                // Set the remapped sources creation date to match the sources
+                // if we're likely
                 // succeeded in making it
                 destination.setLastModified(source.lastModified());
                 completionCallback.run();
             } catch (Exception e) {
-                // Failed to remap, lets clean up to ensure we try again next time
+                // Failed to remap, lets clean up to ensure we try again next
+                // time
                 destination.delete();
                 throw new RuntimeException("Failed to remap sources for " + source, e);
             }
@@ -153,10 +151,9 @@ public class SourceRemapper {
                 throw new RuntimeException("Directories must differ!");
             }
 
-            source = new File(destination
-                                  .getAbsolutePath()
-                                  .substring(0, destination.getAbsolutePath().lastIndexOf('.')) +
-                              "-dev.jar");
+            source = new File(
+                destination.getAbsolutePath().substring(0, destination.getAbsolutePath().lastIndexOf('.')) + "-dev.jar"
+            );
 
             try {
                 com.google.common.io.Files.move(destination, source);
@@ -181,8 +178,8 @@ public class SourceRemapper {
             }
         }
 
-        FileSystemUtil.Delegate dstFs =
-            destination.isDirectory() ? null : FileSystemUtil.getJarFileSystem(destination, true);
+        FileSystemUtil.Delegate dstFs = destination.isDirectory() ? null
+            : FileSystemUtil.getJarFileSystem(destination, true);
         Path dstPath = dstFs != null ? dstFs.get().getPath("/") : destination.toPath();
 
         try {
@@ -212,10 +209,10 @@ public class SourceRemapper {
 
         LorenzMappingService lorenzMappingService = serviceFactory.get(
             LorenzMappingService.createOptions(
-                project,
-                mappingConfiguration,
-                toNamed ? MappingsNamespace.OFFICIAL : MappingsNamespace.NAMED,
-                toNamed ? MappingsNamespace.NAMED : MappingsNamespace.OFFICIAL));
+                project, mappingConfiguration, toNamed ? MappingsNamespace.OFFICIAL : MappingsNamespace.NAMED,
+                toNamed ? MappingsNamespace.NAMED : MappingsNamespace.OFFICIAL
+            )
+        );
         MappingSet mappings = lorenzMappingService.getMappings();
 
         Mercury mercury = createMercuryWithClassPath(project, toNamed);
@@ -238,9 +235,7 @@ public class SourceRemapper {
         }
 
         Set<File> files = project.getConfigurations()
-            .detachedConfiguration(
-                project.getDependencies()
-                    .create(LoomVersions.JETBRAINS_ANNOTATIONS.mavenNotation()))
+            .detachedConfiguration(project.getDependencies().create(LoomVersions.JETBRAINS_ANNOTATIONS.mavenNotation()))
             .resolve();
 
         for (File file : files) {
@@ -260,17 +255,17 @@ public class SourceRemapper {
 
         project.getLogger().lifecycle(":remapping sources");
 
-        ProgressLoggerFactory progressLoggerFactory =
-            ((ProjectInternal) project).getServices().get(ProgressLoggerFactory.class);
-        ProgressLogger progressLogger = progressLoggerFactory.newOperation(
-            SourceRemapper.class.getName());
+        ProgressLoggerFactory progressLoggerFactory = ((ProjectInternal) project).getServices()
+            .get(ProgressLoggerFactory.class);
+        ProgressLogger progressLogger = progressLoggerFactory.newOperation(SourceRemapper.class.getName());
         progressLogger.start("Remapping dependency sources", "sources");
 
         remapTasks.forEach(consumer -> consumer.accept(progressLogger));
 
         progressLogger.completed();
 
-        // TODO: FIXME - WORKAROUND https://github.com/FabricMC/fabric-loom/issues/45
+        // TODO: FIXME - WORKAROUND
+        // https://github.com/FabricMC/fabric-loom/issues/45
         System.gc();
     }
 }

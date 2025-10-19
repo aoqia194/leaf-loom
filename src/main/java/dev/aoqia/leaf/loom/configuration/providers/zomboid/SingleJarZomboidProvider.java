@@ -27,13 +27,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.ConfigContext;
-import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
-
 import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
+
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
 
 public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider
     permits SingleJarZomboidProvider.Server, SingleJarZomboidProvider.Client {
@@ -41,36 +41,33 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider
     private Path zomboidEnvOnlyJar;
 
     private SingleJarZomboidProvider(
-        ZomboidMetadataProvider clientMetadataProvider,
-        ZomboidMetadataProvider serverMetadataProvider,
-        ConfigContext configContext,
-        MappingsNamespace officialNamespace) {
+        ZomboidMetadataProvider clientMetadataProvider, ZomboidMetadataProvider serverMetadataProvider,
+        ConfigContext configContext, MappingsNamespace officialNamespace
+    ) {
         super(clientMetadataProvider, serverMetadataProvider, configContext);
         this.officialNamespace = officialNamespace;
     }
 
     public static SingleJarZomboidProvider.Server server(
-        ZomboidMetadataProvider clientMetadataProvider,
-        ZomboidMetadataProvider serverMetadataProvider,
-        ConfigContext configContext) {
-        return new SingleJarZomboidProvider.Server(
-            clientMetadataProvider,
-            serverMetadataProvider,
-            configContext);
+        ZomboidMetadataProvider clientMetadataProvider, ZomboidMetadataProvider serverMetadataProvider,
+        ConfigContext configContext
+    ) {
+        return new SingleJarZomboidProvider.Server(clientMetadataProvider, serverMetadataProvider, configContext);
     }
 
     public static SingleJarZomboidProvider.Client client(
-        ZomboidMetadataProvider clientMetadataProvider,
-        ZomboidMetadataProvider serverMetadataProvider, ConfigContext configContext) {
-        return new SingleJarZomboidProvider.Client(
-            clientMetadataProvider, serverMetadataProvider, configContext);
+        ZomboidMetadataProvider clientMetadataProvider, ZomboidMetadataProvider serverMetadataProvider,
+        ConfigContext configContext
+    ) {
+        return new SingleJarZomboidProvider.Client(clientMetadataProvider, serverMetadataProvider, configContext);
     }
 
     @Override
     public void provide() throws Exception {
         super.provide();
 
-        // Unlike Minecraft, PZ is the opposite. Server JARs are basically useless for ANY version >=41.78.16.
+        // Unlike Minecraft, PZ is the opposite. Server JARs are basically
+        // useless for ANY version >=41.78.16.
         if (provideServer()) {
             getProject().getLogger().warn("Using `serverOnlyZomboidJar()` is not recommended for Zomboid.");
         }
@@ -132,9 +129,9 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider
 
     public static final class Server extends SingleJarZomboidProvider {
         private Server(
-            ZomboidMetadataProvider clientMetadataProvider,
-            ZomboidMetadataProvider serverMetadataProvider,
-            ConfigContext configContext) {
+            ZomboidMetadataProvider clientMetadataProvider, ZomboidMetadataProvider serverMetadataProvider,
+            ConfigContext configContext
+        ) {
             super(clientMetadataProvider, serverMetadataProvider, configContext, MappingsNamespace.OFFICIAL);
         }
 
@@ -161,9 +158,9 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider
 
     public static final class Client extends SingleJarZomboidProvider {
         private Client(
-            ZomboidMetadataProvider clientMetadataProvider,
-            ZomboidMetadataProvider serverMetadataProvider,
-            ConfigContext configContext) {
+            ZomboidMetadataProvider clientMetadataProvider, ZomboidMetadataProvider serverMetadataProvider,
+            ConfigContext configContext
+        ) {
             super(clientMetadataProvider, serverMetadataProvider, configContext, MappingsNamespace.OFFICIAL);
         }
 

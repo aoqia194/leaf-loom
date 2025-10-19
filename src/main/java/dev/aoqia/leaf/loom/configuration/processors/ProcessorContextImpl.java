@@ -23,6 +23,9 @@
  */
 package dev.aoqia.leaf.loom.configuration.processors;
 
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import net.fabricmc.tinyremapper.TinyRemapper;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
@@ -30,8 +33,6 @@ import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
-import net.fabricmc.tinyremapper.TinyRemapper;
 
 public record ProcessorContextImpl(ConfigContext configContext, ZomboidJar zomboidJar) implements ProcessorContext {
     @Override
@@ -62,9 +63,7 @@ public record ProcessorContextImpl(ConfigContext configContext, ZomboidJar zombo
     @Override
     public MemoryMappingTree getMappings() {
         LoomGradleExtension extension = LoomGradleExtension.get(configContext().project());
-        return extension
-                .getMappingConfiguration()
-                .getMappingsService(configContext().project(), configContext().serviceFactory())
-                .getMappingTree();
+        return extension.getMappingConfiguration()
+            .getMappingsService(configContext().project(), configContext().serviceFactory()).getMappingTree();
     }
 }

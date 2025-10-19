@@ -32,16 +32,10 @@ import java.time.Instant
 import io.javalin.http.HttpStatus
 import spock.lang.IgnoreIf
 
-import io.javalin.http.HttpStatus
-import spock.lang.IgnoreIf
-
 import dev.aoqia.leaf.loom.util.download.Download
 import dev.aoqia.leaf.loom.util.download.DownloadException
 import dev.aoqia.leaf.loom.util.download.DownloadExecutor
 import dev.aoqia.leaf.loom.util.download.DownloadProgressListener
-
-import io.javalin.http.HttpStatus
-import spock.lang.IgnoreIf
 
 class DownloadFileTest extends DownloadTest {
 	@IgnoreIf({

@@ -25,6 +25,7 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessor;
@@ -43,9 +44,10 @@ public class LoomNativeSupportLibraryProcessor extends LibraryProcessor {
             return ApplicationResult.DONT_APPLY;
         }
 
-        if (platform.getOperatingSystem().isMacOS()
-                && platform.getArchitecture().isArm()
-                && !context.supportsArm64(Platform.OperatingSystem.MAC_OS)) {
+        if (
+            platform.getOperatingSystem().isMacOS() && platform.getArchitecture().isArm()
+                && !context.supportsArm64(Platform.OperatingSystem.MAC_OS)
+        ) {
             // Add the loom native support mod when adding ARM64 macOS support
             return ApplicationResult.MUST_APPLY;
         }
@@ -56,8 +58,8 @@ public class LoomNativeSupportLibraryProcessor extends LibraryProcessor {
 
     @Override
     public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
-        dependencyConsumer.accept(
-                Library.fromMaven(LoomVersions.NATIVE_SUPPORT.mavenNotation(), Library.Target.LOCAL_MOD));
+        dependencyConsumer
+            .accept(Library.fromMaven(LoomVersions.NATIVE_SUPPORT.mavenNotation(), Library.Target.LOCAL_MOD));
         return ALLOW_ALL;
     }
 }

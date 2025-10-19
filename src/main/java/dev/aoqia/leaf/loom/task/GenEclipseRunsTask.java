@@ -32,10 +32,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
-import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
-import dev.aoqia.leaf.loom.util.Constants;
+
 import org.gradle.api.Project;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
@@ -45,6 +42,11 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public abstract class GenEclipseRunsTask extends AbstractLoomTask {
     @Nested
@@ -75,8 +77,9 @@ public abstract class GenEclipseRunsTask extends AbstractLoomTask {
             }
 
             final String name = settings.getName();
-            final File configs =
-                    new File(project.getProjectDir(), eclipseModel.getProject().getName() + "_" + name + ".launch");
+            final File configs = new File(
+                project.getProjectDir(), eclipseModel.getProject().getName() + "_" + name + ".launch"
+            );
             final RunConfig configInst = RunConfig.runConfig(project, settings);
             final String config;
 

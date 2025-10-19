@@ -28,11 +28,12 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
 import dev.aoqia.leaf.loom.util.download.DownloadException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public record URLFileSpec(String url) implements FileSpec {
     private static final Logger LOGGER = LoggerFactory.getLogger(URLFileSpec.class);
@@ -52,6 +53,6 @@ public record URLFileSpec(String url) implements FileSpec {
     @Override
     public int hashCode() {
         // URL performs DNS requests if you .hashCode it (:
-        return Objects.hash(url.toString());
+        return Objects.hash(url);
     }
 }

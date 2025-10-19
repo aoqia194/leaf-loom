@@ -31,9 +31,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.jar.Manifest;
-import dev.aoqia.leaf.loom.util.FileSystemUtil;
+
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.format.MappingFormat;
+
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
 
 public record TinyJarInfo(boolean v2, Optional<String> zomboidVersionId) {
     private static final String MANIFEST_PATH = "META-INF/MANIFEST.MF";

@@ -25,6 +25,7 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid;
 
 import java.util.List;
 import java.util.Map;
+
 import org.jetbrains.annotations.Nullable;
 
 public record VersionsManifest(List<Version> versions, Map<String, String> latest) {
@@ -32,11 +33,7 @@ public record VersionsManifest(List<Version> versions, Map<String, String> lates
         public String id, url, sha1, time, release_time;
     }
 
-    @Nullable
-    public Version getVersion(String id) {
-        return versions.stream()
-                .filter(versions -> versions.id.equalsIgnoreCase(id))
-                .findFirst()
-                .orElse(null);
+    @Nullable public Version getVersion(String id) {
+        return versions.stream().filter(versions -> versions.id.equalsIgnoreCase(id)).findFirst().orElse(null);
     }
 }

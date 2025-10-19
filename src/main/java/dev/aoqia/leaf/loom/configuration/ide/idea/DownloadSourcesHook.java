@@ -30,15 +30,17 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
+
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
 
 // See:
 // https://github.com/JetBrains/intellij-community/blob/a09b1b84ab64a699794c860bc96774766dd38958/plugins/gradle/java/src/util/GradleAttachSourcesProvider.java
@@ -80,9 +82,9 @@ record DownloadSourcesHook(Project project, Task task) {
 
                 if (jarType == null) {
                     LOGGER.debug(
-                            "init script is trying to download sources for another Minecraft jar ({}) not used by this project ({})",
-                            notation,
-                            project.getPath());
+                        "init script is trying to download sources for another Minecraft jar ({}) not used by this project ({})",
+                        notation, project.getPath()
+                    );
                     continue;
                 }
 
@@ -90,10 +92,8 @@ record DownloadSourcesHook(Project project, Task task) {
                 task.dependsOn(project.getTasks().named(sourcesTaskName));
 
                 LOGGER.info(
-                        "Running genSources task: {} in project: {} for {}",
-                        sourcesTaskName,
-                        project.getPath(),
-                        notation);
+                    "Running genSources task: {} in project: {} for {}", sourcesTaskName, project.getPath(), notation
+                );
                 break;
             } catch (IOException e) {
                 // Ignore
@@ -101,8 +101,7 @@ record DownloadSourcesHook(Project project, Task task) {
         }
     }
 
-    @Nullable
-    private String parseInitScript(String script) {
+    @Nullable private String parseInitScript(String script) {
         if (!script.contains("IjDownloadTask")) {
             // Failed some basic sanity checks.
             return null;
@@ -120,16 +119,11 @@ record DownloadSourcesHook(Project project, Task task) {
 
     private String getGenSourcesTaskName(ZomboidJar.Type jarType) {
         LoomGradleExtension extension = LoomGradleExtension.get(project);
-        return extension
-                .getZomboidJarConfiguration()
-                .get()
-                .createDecompileConfiguration(project)
-                .getTaskName(jarType);
+        return extension.getZomboidJarConfiguration().get().createDecompileConfiguration(project).getTaskName(jarType);
     }
 
     // Return the jar type, or null when this jar isnt used by the project
-    @Nullable
-    private ZomboidJar.Type getJarType(String name) {
+    @Nullable private ZomboidJar.Type getJarType(String name) {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);
         final NamedZomboidProvider<?> minecraftProvider = extension.getNamedZomboidProvider();
         final List<ZomboidJar.Type> dependencyTypes = minecraftProvider.getDependencyTypes();
@@ -139,8 +133,7 @@ record DownloadSourcesHook(Project project, Task task) {
         }
 
         for (ZomboidJar.Type type : dependencyTypes) {
-            final LocalMavenHelper mavenHelper =
-                    minecraftProvider.getMavenHelper(type).withClassifier("sources");
+            final LocalMavenHelper mavenHelper = minecraftProvider.getMavenHelper(type).withClassifier("sources");
 
             if (mavenHelper.getNotation().equals(name)) {
                 return type;

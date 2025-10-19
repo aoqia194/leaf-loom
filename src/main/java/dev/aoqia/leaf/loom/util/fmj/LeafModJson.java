@@ -34,8 +34,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 
 import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.readString;
 
-public abstract sealed class LeafModJson
-    permits LeafModJsonV0, LeafModJsonV1, LeafModJsonV2, LeafModJson.Mockable {
+public abstract sealed class LeafModJson permits LeafModJsonV0, LeafModJsonV1, LeafModJsonV2, LeafModJson.Mockable {
     protected final JsonObject jsonObject;
     private final LeafModJsonSource source;
 
@@ -48,8 +47,7 @@ public abstract sealed class LeafModJson
         return readString(jsonObject, "version");
     }
 
-    @Nullable
-    public abstract JsonElement getCustom(String key);
+    @Nullable public abstract JsonElement getCustom(String key);
 
     public abstract List<String> getMixinConfigurations();
 
@@ -65,7 +63,7 @@ public abstract sealed class LeafModJson
     @Override
     public final String toString() {
         return getClass().getName()
-               + "[id=%s, version=%s, classTweakers=%s]".formatted(getId(), getVersion(), getClassTweakers());
+            + "[id=%s, version=%s, classTweakers=%s]".formatted(getId(), getVersion(), getClassTweakers());
     }
 
     public abstract Map<String, ModEnvironment> getClassTweakers();

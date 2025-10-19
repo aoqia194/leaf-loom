@@ -30,15 +30,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.jetbrains.annotations.Nullable;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.signatures.SignatureFixesLayer;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
-import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
-import org.jetbrains.annotations.Nullable;
 
 public class LayeredMappingsProcessor {
     private final LayeredMappingSpec layeredMappingSpec;
@@ -57,7 +59,8 @@ public class LayeredMappingsProcessor {
             for (Class<? extends MappingLayer> dependentLayer : layer.dependsOn()) {
                 if (!visitedLayers.contains(dependentLayer)) {
                     throw new RuntimeException(
-                            "Layer %s depends on %s".formatted(layer.getClass().getName(), dependentLayer.getName()));
+                        "Layer %s depends on %s".formatted(layer.getClass().getName(), dependentLayer.getName())
+                    );
                 }
             }
 
@@ -72,7 +75,8 @@ public class LayeredMappingsProcessor {
         MemoryMappingTree mappingTree = new MemoryMappingTree();
 
         for (MappingLayer layer : layers) {
-            // We have to rebuild a new tree to work on when a layer doesnt merge into layered
+            // We have to rebuild a new tree to work on when a layer doesnt
+            // merge into layered
             boolean rebuild = layer.getSourceNamespace() != MappingsNamespace.NAMED;
             MemoryMappingTree workingTree;
 
@@ -81,8 +85,7 @@ public class LayeredMappingsProcessor {
 
                 // This can be null on the first layer
                 if (mappingTree.getSrcNamespace() != null) {
-                    var sourceNsSwitch = new MappingSourceNsSwitch(
-                            tempTree, layer.getSourceNamespace().toString());
+                    var sourceNsSwitch = new MappingSourceNsSwitch(tempTree, layer.getSourceNamespace().toString());
                     mappingTree.accept(sourceNsSwitch);
                 }
 
@@ -104,18 +107,19 @@ public class LayeredMappingsProcessor {
         }
 
         // NOTE: I don't think this is needed.
-//        if (noIntermediateMappings) {
-//            // HACK: Populate intermediary with named when there are no intermediary mappings being used.
-//            MemoryMappingTree completedTree = new MemoryMappingTree();
-//            mappingTree.accept(new MappingNsCompleter(completedTree, Map.of("intermediary", "named")));
-//            return completedTree;
-//        }
+        // if (noIntermediateMappings) {
+        // // HACK: Populate intermediary with named when there are no
+        // intermediary mappings being used.
+        // MemoryMappingTree completedTree = new MemoryMappingTree();
+        // mappingTree.accept(new MappingNsCompleter(completedTree,
+        // Map.of("intermediary", "named")));
+        // return completedTree;
+        // }
 
         return mappingTree;
     }
 
-    @Nullable
-    public Map<String, String> getSignatureFixes(List<MappingLayer> layers) {
+    @Nullable public Map<String, String> getSignatureFixes(List<MappingLayer> layers) {
         Map<String, String> signatureFixes = new HashMap<>();
 
         for (MappingLayer layer : layers) {
@@ -131,8 +135,7 @@ public class LayeredMappingsProcessor {
         return Collections.unmodifiableMap(signatureFixes);
     }
 
-    @Nullable
-    public UnpickLayer.UnpickData getUnpickData(List<MappingLayer> layers) throws IOException {
+    @Nullable public UnpickLayer.UnpickData getUnpickData(List<MappingLayer> layers) throws IOException {
         List<UnpickLayer.UnpickData> unpickDataList = new ArrayList<>();
 
         for (MappingLayer layer : layers) {

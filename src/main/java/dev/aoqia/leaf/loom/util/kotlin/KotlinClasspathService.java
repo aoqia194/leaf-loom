@@ -29,9 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
 import java.util.stream.Collectors;
-import dev.aoqia.leaf.loom.util.service.Service;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -40,9 +38,14 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 public final class KotlinClasspathService extends Service<KotlinClasspathService.Options> implements KotlinClasspath {
-    public static ServiceType<Options, KotlinClasspathService> TYPE =
-            new ServiceType<>(Options.class, KotlinClasspathService.class);
+    public static ServiceType<Options, KotlinClasspathService> TYPE = new ServiceType<>(
+        Options.class, KotlinClasspathService.class
+    );
 
     public interface Options extends Service.Options {
         @InputFiles
@@ -58,22 +61,18 @@ public final class KotlinClasspathService extends Service<KotlinClasspathService
             return project.getObjects().property(Options.class);
         }
 
-        return createOptions(
-                project,
-                KotlinPluginUtils.getKotlinPluginVersion(project)
-                );
+        return createOptions(project, KotlinPluginUtils.getKotlinPluginVersion(project));
     }
 
-    private static Provider<Options> createOptions(
-            Project project, String kotlinVersion) {
-        // Create a detached config to resolve the kotlin std lib for the provided version.
-        Configuration detachedConfiguration = project.getConfigurations()
-                .detachedConfiguration(
-                        project.getDependencies().create("org.jetbrains.kotlin:kotlin-stdlib:" + kotlinVersion),
-                        // Load kotlinx-metadata-jvm like this to work around:
-                        // https://github.com/gradle/gradle/issues/14727
-                        project.getDependencies()
-                                .create("org.jetbrains.kotlin:kotlin-metadata-jvm:" + kotlinVersion));
+    private static Provider<Options> createOptions(Project project, String kotlinVersion) {
+        // Create a detached config to resolve the kotlin std lib for the
+        // provided version.
+        Configuration detachedConfiguration = project.getConfigurations().detachedConfiguration(
+            project.getDependencies().create("org.jetbrains.kotlin:kotlin-stdlib:" + kotlinVersion),
+            // Load kotlinx-metadata-jvm like this to work around:
+            // https://github.com/gradle/gradle/issues/14727
+            project.getDependencies().create("org.jetbrains.kotlin:kotlin-metadata-jvm:" + kotlinVersion)
+        );
 
         return TYPE.create(project, options -> {
             options.getClasspath().from(detachedConfiguration);
@@ -92,9 +91,8 @@ public final class KotlinClasspathService extends Service<KotlinClasspathService
 
     @Override
     public Set<URL> classpath() {
-        return getOptions().getClasspath().getFiles().stream()
-                .map(KotlinClasspathService::fileToUrl)
-                .collect(Collectors.toSet());
+        return getOptions().getClasspath().getFiles().stream().map(KotlinClasspathService::fileToUrl)
+            .collect(Collectors.toSet());
     }
 
     private static URL fileToUrl(File file) {

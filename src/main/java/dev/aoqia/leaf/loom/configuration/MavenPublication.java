@@ -23,8 +23,6 @@
  */
 package dev.aoqia.leaf.loom.configuration;
 
-import com.google.common.collect.ImmutableMap;
-import groovy.util.Node;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,10 +32,9 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.util.DeprecationHelper;
-import dev.aoqia.leaf.loom.util.GroovyXmlUtil;
-import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+
+import com.google.common.collect.ImmutableMap;
+import groovy.util.Node;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
@@ -47,12 +44,18 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.publish.Publication;
 import org.gradle.api.publish.PublishingExtension;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.DeprecationHelper;
+import dev.aoqia.leaf.loom.util.GroovyXmlUtil;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+
 public abstract class MavenPublication implements Runnable {
     // ImmutableMap is needed since it guarantees ordering
-    // (compile must go before runtime, or otherwise dependencies might get the "weaker" runtime scope).
+    // (compile must go before runtime, or otherwise dependencies might get the
+    // "weaker" runtime scope).
     private static final Map<String, String> CONFIGURATION_TO_SCOPE = ImmutableMap.of(
-            JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME, "compile",
-            JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME, "runtime");
+        JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME, "compile", JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME, "runtime"
+    );
     private static final Set<Publication> EXCLUDED_PUBLICATIONS = Collections.newSetFromMap(new WeakHashMap<>());
 
     @Inject
@@ -87,7 +90,8 @@ public abstract class MavenPublication implements Runnable {
     }
 
     private void processEntry(
-            String scope, Configuration config, PublishingExtension mavenPublish, AtomicBoolean reportedDeprecation) {
+        String scope, Configuration config, PublishingExtension mavenPublish, AtomicBoolean reportedDeprecation
+    ) {
         mavenPublish.publications((publications) -> {
             for (Publication publication : publications) {
                 if (!(publication instanceof org.gradle.api.publish.maven.MavenPublication mavenPublication)) {
@@ -97,10 +101,10 @@ public abstract class MavenPublication implements Runnable {
                 if (hasSoftwareComponent(publication) || EXCLUDED_PUBLICATIONS.contains(publication)) {
                     continue;
                 } else if (!reportedDeprecation.get()) {
-                    DeprecationHelper deprecationHelper =
-                            LoomGradleExtension.get(getProject()).getDeprecationHelper();
+                    DeprecationHelper deprecationHelper = LoomGradleExtension.get(getProject()).getDeprecationHelper();
                     deprecationHelper.warn(
-                            "Loom is applying dependency data manually to publications instead of using a software component (from(components[\"java\"])). This is deprecated.");
+                        "Loom is applying dependency data manually to publications instead of using a software component (from(components[\"java\"])). This is deprecated."
+                    );
                     reportedDeprecation.set(true);
                 }
 
@@ -108,17 +112,15 @@ public abstract class MavenPublication implements Runnable {
                     Node dependencies = GroovyXmlUtil.getOrCreateNode(xml.asNode(), "dependencies");
                     Set<String> foundArtifacts = new HashSet<>();
 
-                    GroovyXmlUtil.childrenNodesStream(dependencies)
-                            .filter((n) -> "dependency".equals(n.name()))
-                            .forEach((n) -> {
-                                Optional<Node> groupId = GroovyXmlUtil.getNode(n, "groupId");
-                                Optional<Node> artifactId = GroovyXmlUtil.getNode(n, "artifactId");
+                    GroovyXmlUtil.childrenNodesStream(dependencies).filter((n) -> "dependency".equals(n.name()))
+                        .forEach((n) -> {
+                            Optional<Node> groupId = GroovyXmlUtil.getNode(n, "groupId");
+                            Optional<Node> artifactId = GroovyXmlUtil.getNode(n, "artifactId");
 
-                                if (groupId.isPresent() && artifactId.isPresent()) {
-                                    foundArtifacts.add(groupId.get().text() + ":"
-                                            + artifactId.get().text());
-                                }
-                            });
+                            if (groupId.isPresent() && artifactId.isPresent()) {
+                                foundArtifacts.add(groupId.get().text() + ":" + artifactId.get().text());
+                            }
+                        });
 
                     for (Dependency dependency : config.getAllDependencies()) {
                         if (foundArtifacts.contains(dependency.getGroup() + ":" + dependency.getName())) {

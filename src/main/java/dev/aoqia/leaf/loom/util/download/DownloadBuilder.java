@@ -118,8 +118,7 @@ public class DownloadBuilder {
         return this;
     }
 
-    public CompletableFuture<DownloadResult> downloadPathAsync(Path path,
-        DownloadExecutor executor) {
+    public CompletableFuture<DownloadResult> downloadPathAsync(Path path, DownloadExecutor executor) {
         return executor.runAsync(() -> downloadPath(path));
     }
 
@@ -143,9 +142,9 @@ public class DownloadBuilder {
                 }
 
                 if (i == maxRetries) {
-                    throw new DownloadException(String.format(Locale.ENGLISH,
-                        "Failed download after %d attempts",
-                        maxRetries), e);
+                    throw new DownloadException(
+                        String.format(Locale.ENGLISH, "Failed download after %d attempts", maxRetries), e
+                    );
                 }
             }
         }
@@ -161,20 +160,14 @@ public class DownloadBuilder {
     private Download build(int downloadAttempt) {
         if (!allowInsecureProtocol && !isSecureUrl(url)) {
             throw new IllegalArgumentException(
-                "Cannot create download for url (%s) with insecure protocol".formatted(
-                    url.toString()));
+                "Cannot create download for url (%s) with insecure protocol".formatted(url.toString())
+            );
         }
 
-        return new Download(this.url,
-            this.expectedHash,
-            this.useEtag,
-            this.forceDownload,
-            this.fallback,
-            this.offline,
-            maxAge,
-            progressListener,
-            httpVersion,
-            downloadAttempt);
+        return new Download(
+            this.url, this.expectedHash, this.useEtag, this.forceDownload, this.fallback, this.offline, maxAge,
+            progressListener, httpVersion, downloadAttempt
+        );
     }
 
     public String downloadString() throws DownloadException {

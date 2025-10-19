@@ -23,12 +23,13 @@
  */
 package dev.aoqia.leaf.loom.configuration.mods.dependency;
 
-import dev.aoqia.leaf.loom.util.CacheKey;
-
 import org.gradle.api.provider.Property;
 
+import dev.aoqia.leaf.loom.util.CacheKey;
+
 /**
- * Inputs used to process a mod dependency. The output jar is cached based on these properties.
+ * Inputs used to process a mod dependency. The output jar is cached based on
+ * these properties.
  */
 public abstract class ModDependencyOptions extends CacheKey {
     public abstract Property<String> getMappings();

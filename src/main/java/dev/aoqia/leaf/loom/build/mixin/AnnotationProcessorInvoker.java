@@ -34,12 +34,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
-import dev.aoqia.leaf.loom.extension.MixinExtension;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.LoomVersions;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
@@ -47,10 +41,18 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
+import dev.aoqia.leaf.loom.extension.MixinExtension;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.LoomVersions;
+
 /**
- * Normally javac invokes annotation processors, but when the scala or kapt plugin are installed they will want to
- * invoke the annotation processor themselves. See Java and Kapt implementations for a more deep understanding of the
- * things passed by the children.
+ * Normally javac invokes annotation processors, but when the scala or kapt
+ * plugin are installed they will want to invoke the annotation processor
+ * themselves. See Java and Kapt implementations for a more deep understanding
+ * of the things passed by the children.
  */
 public abstract class AnnotationProcessorInvoker<T extends Task> {
     public static final String JAVA = "java";
@@ -68,7 +70,9 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
     private final Collection<Configuration> apConfigurations;
 
     protected AnnotationProcessorInvoker(
-        Project project, Collection<Configuration> apConfigurations, Map<SourceSet, TaskProvider<T>> invokerTasks, String name) {
+        Project project, Collection<Configuration> apConfigurations, Map<SourceSet, TaskProvider<T>> invokerTasks,
+        String name
+    ) {
         this.project = project;
         this.loomExtension = LoomGradleExtension.get(project);
         this.mixinExtension = loomExtension.getMixin();
@@ -78,12 +82,13 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
     }
 
     protected static Collection<Configuration> getApConfigurations(
-        Project project, Function<SourceSet, String> getApConfigNameFunc) {
+        Project project, Function<SourceSet, String> getApConfigNameFunc
+    ) {
         MixinExtension mixin = LoomGradleExtension.get(project).getMixin();
         return mixin.getApConfigurationsStream(getApConfigNameFunc).collect(Collectors.toList());
     }
 
-    public void  configureMixin() {
+    public void configureMixin() {
         ConfigurationContainer configs = project.getConfigurations();
         ZomboidSourceSets zomboidSourceSets = ZomboidSourceSets.get(project);
 
@@ -93,13 +98,16 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
                 // Pass named MC classpath to mixin AP classpath
                 processorConfig.extendsFrom(
                     configs.getByName(Constants.Configurations.LOADER_DEPENDENCIES),
-                    configs.getByName(Constants.Configurations.MAPPINGS_FINAL));
+                    configs.getByName(Constants.Configurations.MAPPINGS_FINAL)
+                );
 
-                // Add Mixin and mixin extensions (fabric-mixin-compile-extensions pulls mixin itself too)
+                // Add Mixin and mixin extensions
+                // (fabric-mixin-compile-extensions pulls mixin itself too)
                 project.getDependencies().add(processorConfig.getName(), LoomVersions.SPONGE_MIXIN.mavenNotation());
-                //                project.getDependencies()
-                //                        .add(processorConfig.getName(), LoomVersions.MIXIN_COMPILE_EXTENSIONS
-                //                        .mavenNotation());
+                // project.getDependencies()
+                // .add(processorConfig.getName(),
+                // LoomVersions.MIXIN_COMPILE_EXTENSIONS
+                // .mavenNotation());
             }
         }
 
@@ -112,27 +120,25 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
         try {
             LoomGradleExtension loom = LoomGradleExtension.get(project);
             String refmapName = Objects.requireNonNull(MixinExtension.getMixinInformationContainer(sourceSet))
-                .refmapNameProvider()
-                .get();
+                .refmapNameProvider().get();
 
             final File mixinMappings = getMixinMappingsForSourceSet(project, sourceSet);
 
-            task.getOutputs()
-                .file(mixinMappings)
-                .withPropertyName("mixin-ap-" + sourceSet.getName() + "-" + name)
+            task.getOutputs().file(mixinMappings).withPropertyName("mixin-ap-" + sourceSet.getName() + "-" + name)
                 .optional();
 
             Map<String, String> args = new HashMap<>() {
                 {
                     put(
                         Constants.MixinArguments.IN_MAP_FILE_NAMED_INTERMEDIARY,
-                        loom.getMappingConfiguration().tinyMappings.toFile().getCanonicalPath());
+                        loom.getMappingConfiguration().tinyMappings.toFile().getCanonicalPath()
+                    );
                     put(Constants.MixinArguments.OUT_MAP_FILE_NAMED_INTERMEDIARY, mixinMappings.getCanonicalPath());
                     put(Constants.MixinArguments.OUT_REFMAP_FILE, getRefmapDestination(task, refmapName));
                     put(
                         Constants.MixinArguments.DEFAULT_OBFUSCATION_ENV,
-                        "named:"
-                        + loom.getMixin().getRefmapTargetNamespace().get());
+                        "named:" + loom.getMixin().getRefmapTargetNamespace().get()
+                    );
                     put(Constants.MixinArguments.QUIET, "true");
                 }
             };
@@ -161,7 +167,8 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
         return new File(
             extension.getFiles().getProjectBuildCache(),
             "mixin-map-" + extension.getMappingConfiguration().mappingsIdentifier() + "." + sourceSet.getName()
-            + ".tiny");
+                + ".tiny"
+        );
     }
 
     protected final String getRefmapDestination(T task, String refmapName) throws IOException {
@@ -173,7 +180,8 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
 
         if (!matcher.find()) {
             throw new IllegalArgumentException(
-                "Mixin argument (%s) does not match pattern (%s)".formatted(input, pattern.toString()));
+                "Mixin argument (%s) does not match pattern (%s)".formatted(input, pattern.toString())
+            );
         }
     }
 

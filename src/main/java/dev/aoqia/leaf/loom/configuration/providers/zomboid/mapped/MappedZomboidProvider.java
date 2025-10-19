@@ -25,8 +25,9 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped;
 
 import java.nio.file.Path;
 import java.util.List;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarEnvType;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
 
 public interface MappedZomboidProvider {
     default List<Path> getZomboidJarPaths() {

@@ -28,7 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import dev.aoqia.leaf.loom.util.Constants;
+
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -38,6 +38,8 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InnerClassNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import dev.aoqia.leaf.loom.util.Constants;
 
 public class ZomboidClassMerger {
     private static final String SIDE_DESCRIPTOR = "Lnet/fabricmc/api/EnvType;";

@@ -27,25 +27,28 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.TinyRemapperHelper;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.api.TrClass;
 import org.gradle.api.Project;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.commons.Remapper;
 
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.TinyRemapperHelper;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+
 public record SignatureFixerApplyVisitor(Map<String, String> signatureFixes)
-        implements TinyRemapper.ApplyVisitorProvider {
+    implements TinyRemapper.ApplyVisitorProvider {
     @Override
     public ClassVisitor insertApplyVisitor(TrClass cls, ClassVisitor next) {
         return new ClassVisitor(Constants.ASM_VERSION, next) {
             @Override
             public void visit(
-                    int version, int access, String name, String signature, String superName, String[] interfaces) {
+                int version, int access, String name, String signature, String superName, String[] interfaces
+            ) {
                 if (signature == null) {
                     signature = signatureFixes.getOrDefault(name, null);
                 }
@@ -56,12 +59,9 @@ public record SignatureFixerApplyVisitor(Map<String, String> signatureFixes)
     }
 
     public static Map<String, String> getRemappedSignatures(
-            boolean toIntermediary,
-            MappingConfiguration mappingConfiguration,
-            Project project,
-            ServiceFactory serviceFactory,
-            String targetNamespace)
-            throws IOException {
+        boolean toIntermediary, MappingConfiguration mappingConfiguration, Project project,
+        ServiceFactory serviceFactory, String targetNamespace
+    ) throws IOException {
         if (mappingConfiguration.getSignatureFixes() == null) {
             // No fixes
             return Collections.emptyMap();
@@ -74,13 +74,13 @@ public record SignatureFixerApplyVisitor(Map<String, String> signatureFixes)
 
         // Remap the sig fixes from intermediary to the target namespace
         final Map<String, String> remapped = new HashMap<>();
-        final TinyRemapper sigTinyRemapper = TinyRemapperHelper.getTinyRemapper(
-                project, serviceFactory, MappingsNamespace.OFFICIAL.toString(), targetNamespace);
+        final TinyRemapper sigTinyRemapper = TinyRemapperHelper
+            .getTinyRemapper(project, serviceFactory, MappingsNamespace.OFFICIAL.toString(), targetNamespace);
         final Remapper sigAsmRemapper = sigTinyRemapper.getEnvironment().getRemapper();
 
-        // Remap the class names and the signatures using a new tiny remapper instance.
-        for (Map.Entry<String, String> entry :
-                mappingConfiguration.getSignatureFixes().entrySet()) {
+        // Remap the class names and the signatures using a new tiny remapper
+        // instance.
+        for (Map.Entry<String, String> entry : mappingConfiguration.getSignatureFixes().entrySet()) {
             remapped.put(sigAsmRemapper.map(entry.getKey()), sigAsmRemapper.mapSignature(entry.getValue(), false));
         }
 

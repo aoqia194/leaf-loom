@@ -26,24 +26,28 @@ package dev.aoqia.leaf.loom.configuration.mods;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerRemapper;
 import net.fabricmc.accesswidener.AccessWidenerWriter;
+import org.objectweb.asm.commons.Remapper;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
-import org.objectweb.asm.commons.Remapper;
 
 public class AccessWidenerUtils {
     /**
-     * Remap a mods access widener from intermediary to named, so that loader can apply it in our dev-env.
+     * Remap a mods access widener from intermediary to named, so that loader
+     * can apply it in our dev-env.
      */
     public static byte[] remapAccessWidener(byte[] input, Remapper remapper) {
         int version = AccessWidenerReader.readVersion(input);
 
         AccessWidenerWriter writer = new AccessWidenerWriter(version);
         AccessWidenerRemapper awRemapper = new AccessWidenerRemapper(
-                writer, remapper, MappingsNamespace.OFFICIAL.toString(), MappingsNamespace.NAMED.toString());
+            writer, remapper, MappingsNamespace.OFFICIAL.toString(), MappingsNamespace.NAMED.toString()
+        );
         AccessWidenerReader reader = new AccessWidenerReader(awRemapper);
         reader.read(input);
         return writer.write();
@@ -55,8 +59,7 @@ public class AccessWidenerUtils {
         }
 
         final LeafModJson leafModJson = LeafModJsonFactory.createFromZip(inputJar);
-        final List<String> classTweakers =
-                List.copyOf(leafModJson.getClassTweakers().keySet());
+        final List<String> classTweakers = List.copyOf(leafModJson.getClassTweakers().keySet());
 
         if (classTweakers.isEmpty()) {
             return null;

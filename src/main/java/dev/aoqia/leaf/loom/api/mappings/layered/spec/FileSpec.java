@@ -28,12 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Objects;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.DependencyFileSpec;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.LocalFileSpec;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.MavenFileSpec;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.MinimalExternalModuleDependencyFileSpec;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.URLFileSpec;
+
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.MinimalExternalModuleDependency;
 import org.gradle.api.file.FileSystemLocation;
@@ -41,24 +36,35 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Provider;
 import org.jetbrains.annotations.ApiStatus;
 
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.DependencyFileSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.LocalFileSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.MavenFileSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.MinimalExternalModuleDependencyFileSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.URLFileSpec;
+
 /**
- * FileSpec should be used in MappingsSpec's that take an input file. The input file can either be a local file or a gradle dep.
+ * FileSpec should be used in MappingsSpec's that take an input file. The input
+ * file can either be a local file or a gradle dep.
  */
 @ApiStatus.Experimental
 public interface FileSpec {
     /**
      * Creates a file spec.
-     *
-     * <p>The parameter will be evaluated like this:
+     * <p>
+     * The parameter will be evaluated like this:
      * <ul>
-     * <li>{@link File}, {@link Path} and {@link FileSystemLocation} will be resolved as local files</li>
-     * <li>{@link Provider} (including {@link org.gradle.api.provider.Property}) will recursively be resolved as its current value</li>
-     * <li>{@link CharSequence} (including {@link String} and {@link groovy.lang.GString}) will be resolved as Maven dependencies</li>
+     * <li>{@link File}, {@link Path} and {@link FileSystemLocation} will be
+     * resolved as local files</li>
+     * <li>{@link Provider} (including {@link org.gradle.api.provider.Property})
+     * will recursively be resolved as its current value</li>
+     * <li>{@link CharSequence} (including {@link String} and
+     * {@link groovy.lang.GString}) will be resolved as Maven dependencies</li>
      * <li>{@link Dependency} will be resolved as any dependency</li>
-     * <li>{@link MinimalExternalModuleDependency} will be resolved as any dependency</li>
+     * <li>{@link MinimalExternalModuleDependency} will be resolved as any
+     * dependency</li>
      * <li>{@code FileSpec} will just return the spec itself</li>
      * </ul>
-     *
      * @param o the file notation
      * @return the created file spec
      */
@@ -94,7 +100,8 @@ public interface FileSpec {
         }
 
         throw new UnsupportedOperationException(
-                "Cannot create FileSpec from object of type:" + o.getClass().getCanonicalName());
+            "Cannot create FileSpec from object of type:" + o.getClass().getCanonicalName()
+        );
     }
 
     static FileSpec createFromMavenDependency(String dependencyNotation) {
@@ -127,7 +134,8 @@ public interface FileSpec {
     }
 
     static FileSpec createFromMinimalExternalModuleDependency(
-            MinimalExternalModuleDependency externalModuleDependency) {
+        MinimalExternalModuleDependency externalModuleDependency
+    ) {
         return new MinimalExternalModuleDependencyFileSpec(externalModuleDependency);
     }
 

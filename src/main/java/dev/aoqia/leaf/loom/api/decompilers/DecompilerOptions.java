@@ -23,9 +23,10 @@
  */
 package dev.aoqia.leaf.loom.api.decompilers;
 
-import com.google.common.base.Preconditions;
 import java.io.Serializable;
 import java.util.Map;
+
+import com.google.common.base.Preconditions;
 import org.gradle.api.Named;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.MapProperty;
@@ -69,15 +70,14 @@ public abstract class DecompilerOptions implements Named {
         return getName().substring(0, 1).toUpperCase() + getName().substring(1);
     }
 
-    // Done to work around weird issues with the workers, possibly https://github.com/gradle/gradle/issues/13422
+    // Done to work around weird issues with the workers, possibly
+    // https://github.com/gradle/gradle/issues/13422
     public record Dto(String className, Map<String, String> options, int maxThreads) implements Serializable {}
 
     public Dto toDto() {
         Preconditions.checkArgument(
-                getDecompilerClassName().isPresent(), "No decompiler classname specified for decompiler: " + getName());
-        return new Dto(
-                getDecompilerClassName().get(),
-                getOptions().get(),
-                getMaxThreads().get());
+            getDecompilerClassName().isPresent(), "No decompiler classname specified for decompiler: " + getName()
+        );
+        return new Dto(getDecompilerClassName().get(), getOptions().get(), getMaxThreads().get());
     }
 }

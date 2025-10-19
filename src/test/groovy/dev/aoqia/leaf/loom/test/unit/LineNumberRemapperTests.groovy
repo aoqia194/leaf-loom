@@ -31,23 +31,11 @@ import org.objectweb.asm.Label
 import org.objectweb.asm.MethodVisitor
 import spock.lang.Specification
 
-import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.Label
-import org.objectweb.asm.MethodVisitor
-import spock.lang.Specification
-
 import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers
 import dev.aoqia.leaf.loom.decompilers.LineNumberRemapper
 import dev.aoqia.leaf.loom.test.util.ZipTestUtils
 import dev.aoqia.leaf.loom.util.Constants
 import dev.aoqia.leaf.loom.util.ZipUtils
-
-import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.Label
-import org.objectweb.asm.MethodVisitor
-import spock.lang.Specification
 
 class LineNumberRemapperTests extends Specification {
 	def "remapLinenumbers"() {

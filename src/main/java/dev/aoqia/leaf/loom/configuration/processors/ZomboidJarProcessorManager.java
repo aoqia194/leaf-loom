@@ -27,8 +27,19 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
+
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.gradle.api.Project;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
@@ -36,11 +47,6 @@ import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
 import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.util.Checksum;
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
-import org.gradle.api.Project;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class ZomboidJarProcessorManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZomboidJarProcessorManager.class);
@@ -51,23 +57,18 @@ public final class ZomboidJarProcessorManager {
         this.jarProcessors = Collections.unmodifiableList(jarProcessors);
     }
 
-    @Nullable
-    public static ZomboidJarProcessorManager create(Project project) {
+    @Nullable public static ZomboidJarProcessorManager create(Project project) {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);
-        List<ZomboidJarProcessor<?>> processors = new ArrayList<>(
-            extension.getZomboidJarProcessors().get());
+        List<ZomboidJarProcessor<?>> processors = new ArrayList<>(extension.getZomboidJarProcessors().get());
 
         for (JarProcessor legacyProcessor : extension.getGameJarProcessors().get()) {
-            processors.add(
-                project.getObjects().newInstance(LegacyJarProcessorWrapper.class, legacyProcessor));
+            processors.add(project.getObjects().newInstance(LegacyJarProcessorWrapper.class, legacyProcessor));
         }
 
         return ZomboidJarProcessorManager.create(processors, SpecContextImpl.create(project));
     }
 
-    @Nullable
-    public static ZomboidJarProcessorManager create(List<ZomboidJarProcessor<?>> processors,
-        SpecContext context) {
+    @Nullable public static ZomboidJarProcessorManager create(List<ZomboidJarProcessor<?>> processors, SpecContext context) {
         List<ProcessorEntry<?>> entries = new ArrayList<>();
 
         for (ZomboidJarProcessor<?> processor : processors) {
@@ -93,9 +94,7 @@ public final class ZomboidJarProcessorManager {
     }
 
     private String getCacheValue() {
-        return jarProcessors.stream()
-            .sorted(Comparator.comparing(ProcessorEntry::name))
-            .map(ProcessorEntry::cacheValue)
+        return jarProcessors.stream().sorted(Comparator.comparing(ProcessorEntry::name)).map(ProcessorEntry::cacheValue)
             .collect(Collectors.joining("::"));
     }
 
@@ -113,8 +112,7 @@ public final class ZomboidJarProcessorManager {
 
     public String getJarHash() {
         // fabric-loom:mod-javadoc:-1289977000
-        return Checksum.sha1Hex(getCacheValue().getBytes(StandardCharsets.UTF_8))
-            .substring(0, 10);
+        return Checksum.sha1Hex(getCacheValue().getBytes(StandardCharsets.UTF_8)).substring(0, 10);
     }
 
     public boolean requiresProcessingJar(Path jar) {
@@ -134,8 +132,8 @@ public final class ZomboidJarProcessorManager {
                 entry.processJar(jar, context);
             } catch (IOException e) {
                 throw new IOException(
-                    "Failed to process jar when running jar processor: %s".formatted(entry.name()),
-                    e);
+                    "Failed to process jar when running jar processor: %s".formatted(entry.name()), e
+                );
             }
         }
     }
@@ -152,24 +150,20 @@ public final class ZomboidJarProcessorManager {
         return transformed;
     }
 
-    record ProcessorEntry<S extends ZomboidJarProcessor.Spec>(
-        S spec,
-        ZomboidJarProcessor<S> processor,
-        @Nullable ZomboidJarProcessor.MappingsProcessor<S> mappingsProcessor) {
+    record ProcessorEntry<S extends ZomboidJarProcessor.Spec>(S spec, ZomboidJarProcessor<S> processor, @Nullable ZomboidJarProcessor.MappingsProcessor<S> mappingsProcessor) {
         @SuppressWarnings("unchecked")
         ProcessorEntry(ZomboidJarProcessor<?> processor, ZomboidJarProcessor.Spec spec) {
             this(
-                (S) Objects.requireNonNull(spec),
-                (ZomboidJarProcessor<S>) processor,
-                (ZomboidJarProcessor.MappingsProcessor<S>) processor.processMappings());
+                (S) Objects.requireNonNull(spec), (ZomboidJarProcessor<S>) processor,
+                (ZomboidJarProcessor.MappingsProcessor<S>) processor.processMappings()
+            );
         }
 
         private void processJar(Path jar, ProcessorContext context) throws IOException {
             processor().processJar(jar, spec, context);
         }
 
-        private boolean processMappings(MemoryMappingTree mappings,
-            MappingProcessorContext context) {
+        private boolean processMappings(MemoryMappingTree mappings, MappingProcessorContext context) {
             if (mappingsProcessor() == null) {
                 return false;
             }

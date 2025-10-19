@@ -23,17 +23,19 @@
  */
 package dev.aoqia.leaf.loom.util.fmj;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import dev.aoqia.leaf.loom.util.Pair;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+
+import dev.aoqia.leaf.loom.util.Pair;
 
 @ApiStatus.Experimental
 public final class LeafModJsonV2 extends LeafModJson {
@@ -47,8 +49,7 @@ public final class LeafModJsonV2 extends LeafModJson {
     }
 
     @Override
-    @Nullable
-    public JsonElement getCustom(String key) {
+    @Nullable public JsonElement getCustom(String key) {
         return LeafModJsonV1.getCustom(jsonObject, key);
     }
 
@@ -94,8 +95,7 @@ public final class LeafModJsonV2 extends LeafModJson {
         return values;
     }
 
-    @Nullable
-    private Pair<String, ModEnvironment> readConditionalConfig(JsonElement jsonElement) {
+    @Nullable private Pair<String, ModEnvironment> readConditionalConfig(JsonElement jsonElement) {
         if (jsonElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
             return new Pair<>(jsonElement.getAsString(), ModEnvironment.UNIVERSAL);
         } else if (jsonElement instanceof JsonObject jsonObject) {
@@ -119,10 +119,10 @@ public final class LeafModJsonV2 extends LeafModJson {
         final String environment = jsonPrimitive.getAsString();
 
         return switch (environment) {
-            case "*" -> ModEnvironment.UNIVERSAL;
-            case "client" -> ModEnvironment.CLIENT;
-            case "server" -> ModEnvironment.SERVER;
-            default -> throw new LeafModJsonUtils.ParseException("Invalid environment type: " + environment);
+        case "*" -> ModEnvironment.UNIVERSAL;
+        case "client" -> ModEnvironment.CLIENT;
+        case "server" -> ModEnvironment.SERVER;
+        default -> throw new LeafModJsonUtils.ParseException("Invalid environment type: " + environment);
         };
     }
 }

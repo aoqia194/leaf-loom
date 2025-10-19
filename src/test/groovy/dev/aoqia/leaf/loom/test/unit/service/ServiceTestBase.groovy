@@ -28,17 +28,9 @@ import dev.aoqia.loom.test.util.GradleTestUtil
 import org.gradle.api.provider.Property
 import spock.lang.Specification
 
-import dev.aoqia.loom.test.util.GradleTestUtil
-import org.gradle.api.provider.Property
-import spock.lang.Specification
-
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory
 import dev.aoqia.leaf.loom.util.service.Service
 import dev.aoqia.leaf.loom.util.service.ServiceType
-
-import dev.aoqia.loom.test.util.GradleTestUtil
-import org.gradle.api.provider.Property
-import spock.lang.Specification
 
 abstract class ServiceTestBase extends Specification {
 	ScopedServiceFactory factory

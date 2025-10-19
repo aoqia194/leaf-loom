@@ -24,8 +24,7 @@
 package dev.aoqia.leaf.loom.api;
 
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
-import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
+
 import org.gradle.api.Named;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -35,12 +34,17 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
 
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
+
 /**
- * A {@link Named} object for setting mod-related values. The {@linkplain Named#getName() name} should match the mod id.
+ * A {@link Named} object for setting mod-related values. The
+ * {@linkplain Named#getName() name} should match the mod id.
  */
 public abstract class ModSettings implements Named {
     /**
-     * List of classpath directories, or jar files used to populate the `fabric.classPathGroups` Fabric Loader system property.
+     * List of classpath directories, or jar files used to populate the
+     * `fabric.classPathGroups` Fabric Loader system property.
      */
     public abstract ConfigurableFileCollection getModFiles();
 
@@ -51,18 +55,17 @@ public abstract class ModSettings implements Named {
     }
 
     /**
-     * Add {@link SourceSet}'s output directories from the current project to be grouped with the named mod.
+     * Add {@link SourceSet}'s output directories from the current project to be
+     * grouped with the named mod.
      */
     public void sourceSet(SourceSet sourceSet) {
         Project project = getProject();
 
         if (!SourceSetHelper.isSourceSetOfProject(sourceSet, project)) {
-            getProject()
-                    .getLogger()
-                    .info(
-                            "Computing owner project for SourceSet {} as it is not a sourceset of {}",
-                            sourceSet.getName(),
-                            project.getPath());
+            getProject().getLogger().info(
+                "Computing owner project for SourceSet {} as it is not a sourceset of {}", sourceSet.getName(),
+                project.getPath()
+            );
             project = SourceSetHelper.getSourceSetProject(sourceSet);
 
             if (project == getProject()) {
@@ -74,8 +77,8 @@ public abstract class ModSettings implements Named {
     }
 
     /**
-     * Add {@link SourceSet}'s output directories from the current project to be grouped with the named mod.
-     *
+     * Add {@link SourceSet}'s output directories from the current project to be
+     * grouped with the named mod.
      * @param name the name of the source set
      */
     public void sourceSet(String name) {
@@ -83,15 +86,16 @@ public abstract class ModSettings implements Named {
     }
 
     /**
-     * Add {@link SourceSet}'s output directories from the supplied project to be grouped with the named mod.
+     * Add {@link SourceSet}'s output directories from the supplied project to
+     * be grouped with the named mod.
      */
     public void sourceSet(SourceSet sourceSet, Project project) {
         getModSourceSets().add(new SourceSetReference(sourceSet, project));
     }
 
     /**
-     * Add {@link SourceSet}'s output directories from the supplied project to be grouped with the named mod.
-     *
+     * Add {@link SourceSet}'s output directories from the supplied project to
+     * be grouped with the named mod.
      * @param name the name of the source set
      */
     public void sourceSet(String name, Project project) {
@@ -99,9 +103,10 @@ public abstract class ModSettings implements Named {
     }
 
     /**
-     * Add a number of {@link Dependency} to the mod's classpath group. Should be used to include all dependencies that are shaded into your mod.
-     *
-     * <p>Uses a detached configuration.
+     * Add a number of {@link Dependency} to the mod's classpath group. Should
+     * be used to include all dependencies that are shaded into your mod.
+     * <p>
+     * Uses a detached configuration.
      */
     public void dependency(Dependency... dependencies) {
         Configuration detachedConfiguration = getProject().getConfigurations().detachedConfiguration(dependencies);
@@ -109,15 +114,17 @@ public abstract class ModSettings implements Named {
     }
 
     /**
-     * Add a {@link Configuration} to the mod's classpath group. Should be used to include all dependencies that are shaded into your mod.
+     * Add a {@link Configuration} to the mod's classpath group. Should be used
+     * to include all dependencies that are shaded into your mod.
      */
     public void configuration(Configuration configuration) {
         getModFiles().from(configuration);
     }
 
     /**
-     * List of classpath directories, used to populate the `fabric.classPathGroups` Fabric Loader system property.
-     * Use the {@link ModSettings#sourceSet} methods to add to this.
+     * List of classpath directories, used to populate the
+     * `fabric.classPathGroups` Fabric Loader system property. Use the
+     * {@link ModSettings#sourceSet} methods to add to this.
      */
     @ApiStatus.Internal
     public abstract ListProperty<SourceSetReference> getModSourceSets();

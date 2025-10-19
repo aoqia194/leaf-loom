@@ -33,7 +33,8 @@ import org.gradle.api.tasks.SourceSet;
 public record SourceSetReference(SourceSet sourceSet, Project project) {
     public SourceSetReference {
         Preconditions.checkArgument(
-                SourceSetHelper.isSourceSetOfProject(sourceSet, project),
-                "SourceSet (%s) does not own to (%s) project".formatted(sourceSet.getName(), project.getName()));
+            SourceSetHelper.isSourceSetOfProject(sourceSet, project),
+            "SourceSet (%s) does not own to (%s) project".formatted(sourceSet.getName(), project.getName())
+        );
     }
 }

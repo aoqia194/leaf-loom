@@ -23,8 +23,9 @@
  */
 package dev.aoqia.leaf.loom.configuration.ide.idea;
 
-import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
 import org.gradle.api.Project;
+
+import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
 
 public class IdeaUtils {
     public static boolean isIdeaSync() {

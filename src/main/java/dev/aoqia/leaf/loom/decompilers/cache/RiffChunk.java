@@ -30,9 +30,9 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Write a RIFF chunk to a file channel
- *
- * <p>Works by writing the chunk header and then reserving space for the chunk size.
- * The chunk size is then written after the chunk data has been written.
+ * <p>
+ * Works by writing the chunk header and then reserving space for the chunk
+ * size. The chunk size is then written after the chunk data has been written.
  */
 public class RiffChunk implements AutoCloseable {
     private final long position;
@@ -62,8 +62,7 @@ public class RiffChunk implements AutoCloseable {
         }
 
         fileChannel.position(position);
-        fileChannel.write(
-                ByteBuffer.allocate(Integer.BYTES).putInt((int) (chunkSize)).flip());
+        fileChannel.write(ByteBuffer.allocate(Integer.BYTES).putInt((int) (chunkSize)).flip());
         fileChannel.position(endPosition);
     }
 }

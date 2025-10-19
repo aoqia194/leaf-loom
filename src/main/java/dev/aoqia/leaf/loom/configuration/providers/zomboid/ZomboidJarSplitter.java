@@ -29,9 +29,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import dev.aoqia.leaf.loom.util.JarUtil;
-
 import com.google.common.collect.Sets;
+
+import dev.aoqia.leaf.loom.util.JarUtil;
 
 public class ZomboidJarSplitter implements AutoCloseable {
     private final Path clientInputJar;
@@ -50,17 +50,15 @@ public class ZomboidJarSplitter implements AutoCloseable {
         Objects.requireNonNull(commonOutputJar);
 
         if (entryData == null) {
-            entryData = new EntryData(JarUtil.getJarEntries(clientInputJar),
-                JarUtil.getJarEntries(serverInputJar));
+            entryData = new EntryData(JarUtil.getJarEntries(clientInputJar), JarUtil.getJarEntries(serverInputJar));
         }
 
-        // Not something we expect, will require 3 jars, server, client and common.
+        // Not something we expect, will require 3 jars, server, client and
+        // common.
         assert entryData.serverOnlyEntries.isEmpty();
 
-        JarUtil.copyEntriesToJar(entryData.commonEntries, serverInputJar, commonOutputJar,
-            "common");
-        JarUtil.copyEntriesToJar(entryData.clientOnlyEntries, clientInputJar, clientOnlyOutputJar,
-            "client");
+        JarUtil.copyEntriesToJar(entryData.commonEntries, serverInputJar, commonOutputJar, "common");
+        JarUtil.copyEntriesToJar(entryData.clientOnlyEntries, clientInputJar, clientOnlyOutputJar, "client");
     }
 
     public void sharedEntry(String path) {
@@ -72,8 +70,7 @@ public class ZomboidJarSplitter implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
-    }
+    public void close() throws Exception {}
 
     private final class EntryData {
         private final Set<String> commonEntries;
@@ -81,10 +78,14 @@ public class ZomboidJarSplitter implements AutoCloseable {
         private final Set<String> serverOnlyEntries;
 
         private EntryData(Set<String> clientEntries, Set<String> serverEntries) {
-            // TODO: Store hashes in value part of entries hashmap, check the hash in a filter func.
-            //   For example when checking the client only entries, if there are any files in
-            //   both client and server that have different hashes from common, put them in client.
-            //   This may be needed in the future if client and server code becomes different a lot.
+            // TODO: Store hashes in value part of entries hashmap, check the
+            // hash in a filter func.
+            // For example when checking the client only entries, if there are
+            // any files in
+            // both client and server that have different hashes from common,
+            // put them in client.
+            // This may be needed in the future if client and server code
+            // becomes different a lot.
 
             this.commonEntries = Sets.newHashSet(clientEntries);
             this.commonEntries.retainAll(serverEntries);

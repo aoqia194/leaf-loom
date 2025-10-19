@@ -23,8 +23,6 @@
  */
 package dev.aoqia.leaf.loom.task;
 
-import dev.aoqia.leaf.loom.task.service.MigrateMappingsService;
-import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
@@ -34,6 +32,9 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
 import org.gradle.work.DisableCachingByDefault;
+
+import dev.aoqia.leaf.loom.task.service.MigrateMappingsService;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
 @DisableCachingByDefault(because = "Always rerun this task.")
 public abstract class MigrateMappingsTask extends AbstractLoomTask {
@@ -56,14 +57,13 @@ public abstract class MigrateMappingsTask extends AbstractLoomTask {
         getInputDir().convention(getProject().getLayout().getProjectDirectory().dir("src/main/java"));
         getOutputDir().convention(getProject().getLayout().getProjectDirectory().dir("remappedSrc"));
         getMigrationServiceOptions()
-                .set(MigrateMappingsService.createOptions(getProject(), getMappings(), getInputDir(), getOutputDir()));
+            .set(MigrateMappingsService.createOptions(getProject(), getMappings(), getInputDir(), getOutputDir()));
     }
 
     @TaskAction
     public void doTask() throws Throwable {
         try (var serviceFactory = new ScopedServiceFactory()) {
-            MigrateMappingsService service =
-                    serviceFactory.get(getMigrationServiceOptions().get());
+            MigrateMappingsService service = serviceFactory.get(getMigrationServiceOptions().get());
             service.migrateMapppings();
         }
     }

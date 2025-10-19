@@ -24,6 +24,7 @@
 package dev.aoqia.leaf.loom.configuration.providers.mappings.file;
 
 import java.util.Objects;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
@@ -77,8 +78,7 @@ public class FileMappingsSpecBuilderImpl implements FileMappingsSpecBuilder {
 
     @Override
     public FileMappingsSpecBuilderImpl mergeNamespace(MappingsNamespace namespace) {
-        mergeNamespace = Objects.requireNonNull(namespace, "merge namespace cannot be null")
-                .toString();
+        mergeNamespace = Objects.requireNonNull(namespace, "merge namespace cannot be null").toString();
         return this;
     }
 
@@ -87,8 +87,9 @@ public class FileMappingsSpecBuilderImpl implements FileMappingsSpecBuilder {
         Objects.requireNonNull(namespace, "merge namespace cannot be null");
 
         if (MappingsNamespace.of(namespace) == null) {
-            throw new IllegalArgumentException("Namespace '" + namespace
-                    + "' is unsupported! It must be either 'official' or 'named'.");
+            throw new IllegalArgumentException(
+                "Namespace '" + namespace + "' is unsupported! It must be either 'official' or 'named'."
+            );
         }
 
         mergeNamespace = namespace;
@@ -97,12 +98,7 @@ public class FileMappingsSpecBuilderImpl implements FileMappingsSpecBuilder {
 
     public FileMappingsSpec build() {
         return new FileMappingsSpec(
-                fileSpec,
-                mappingPath,
-                fallbackSourceNamespace,
-                fallbackTargetNamespace,
-                enigma,
-                unpick,
-                mergeNamespace);
+            fileSpec, mappingPath, fallbackSourceNamespace, fallbackTargetNamespace, enigma, unpick, mergeNamespace
+        );
     }
 }

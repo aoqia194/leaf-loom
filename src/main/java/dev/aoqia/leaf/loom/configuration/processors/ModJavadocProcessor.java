@@ -23,7 +23,6 @@
  */
 package dev.aoqia.leaf.loom.configuration.processors;
 
-import com.google.gson.JsonElement;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,19 +35,22 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
-import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
-import dev.aoqia.leaf.loom.api.processor.SpecContext;
-import dev.aoqia.leaf.loom.util.Checksum;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+
+import com.google.gson.JsonElement;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
+import dev.aoqia.leaf.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.leaf.loom.util.Checksum;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 
 public abstract class ModJavadocProcessor implements ZomboidJarProcessor<ModJavadocProcessor.Spec> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModJavadocProcessor.class);
@@ -104,8 +106,7 @@ public abstract class ModJavadocProcessor implements ZomboidJarProcessor<ModJava
     }
 
     public record ModJavadoc(String modId, MemoryMappingTree mappingTree, String mappingsHash) {
-        @Nullable
-        public static ModJavadoc create(LeafModJson leafModJson) {
+        @Nullable public static ModJavadoc create(LeafModJson leafModJson) {
             final String modId = leafModJson.getId();
             final JsonElement customElement = leafModJson.getCustom(Constants.CustomModJsonKeys.PROVIDED_JAVADOC);
 
@@ -130,12 +131,14 @@ public abstract class ModJavadocProcessor implements ZomboidJarProcessor<ModJava
 
             if (!mappings.getSrcNamespace().equals(MappingsNamespace.OFFICIAL.toString())) {
                 throw new IllegalStateException(
-                        "Javadoc provided by mod (%s) must be have an intermediary source namespace".formatted(modId));
+                    "Javadoc provided by mod (%s) must be have an intermediary source namespace".formatted(modId)
+                );
             }
 
             if (!mappings.getDstNamespaces().isEmpty()) {
                 throw new IllegalStateException(
-                        "Javadoc provided by mod (%s) must not contain any dst names".formatted(modId));
+                    "Javadoc provided by mod (%s) must not contain any dst names".formatted(modId)
+                );
             }
 
             return new ModJavadoc(modId, mappings, mappingsHash);
@@ -143,8 +146,10 @@ public abstract class ModJavadocProcessor implements ZomboidJarProcessor<ModJava
 
         public void apply(MemoryMappingTree target) {
             if (!mappingTree.getSrcNamespace().equals(target.getSrcNamespace())) {
-                throw new IllegalStateException("Cannot apply mappings to differing namespaces. source: %s target: %s"
-                        .formatted(mappingTree.getSrcNamespace(), target.getSrcNamespace()));
+                throw new IllegalStateException(
+                    "Cannot apply mappings to differing namespaces. source: %s target: %s"
+                        .formatted(mappingTree.getSrcNamespace(), target.getSrcNamespace())
+                );
             }
 
             for (MappingTree.ClassMapping sourceClass : mappingTree.getClasses()) {
@@ -152,24 +157,22 @@ public abstract class ModJavadocProcessor implements ZomboidJarProcessor<ModJava
 
                 if (targetClass == null) {
                     LOGGER.warn(
-                            "Could not find provided javadoc target class {} from mod {}",
-                            sourceClass.getSrcName(),
-                            modId);
+                        "Could not find provided javadoc target class {} from mod {}", sourceClass.getSrcName(), modId
+                    );
                     continue;
                 }
 
                 applyComment(sourceClass, targetClass);
 
                 for (MappingTree.FieldMapping sourceField : sourceClass.getFields()) {
-                    final MappingTree.FieldMapping targetField =
-                            targetClass.getField(sourceField.getSrcName(), sourceField.getSrcDesc());
+                    final MappingTree.FieldMapping targetField = targetClass
+                        .getField(sourceField.getSrcName(), sourceField.getSrcDesc());
 
                     if (targetField == null) {
                         LOGGER.warn(
-                                "Could not find provided javadoc target field {}{} from mod {}",
-                                sourceField.getSrcName(),
-                                sourceField.getSrcDesc(),
-                                modId);
+                            "Could not find provided javadoc target field {}{} from mod {}", sourceField.getSrcName(),
+                            sourceField.getSrcDesc(), modId
+                        );
                         continue;
                     }
 
@@ -177,15 +180,14 @@ public abstract class ModJavadocProcessor implements ZomboidJarProcessor<ModJava
                 }
 
                 for (MappingTree.MethodMapping sourceMethod : sourceClass.getMethods()) {
-                    final MappingTree.MethodMapping targetMethod =
-                            targetClass.getMethod(sourceMethod.getSrcName(), sourceMethod.getSrcDesc());
+                    final MappingTree.MethodMapping targetMethod = targetClass
+                        .getMethod(sourceMethod.getSrcName(), sourceMethod.getSrcDesc());
 
                     if (targetMethod == null) {
                         LOGGER.warn(
-                                "Could not find provided javadoc target method {}{} from mod {}",
-                                sourceMethod.getSrcName(),
-                                sourceMethod.getSrcDesc(),
-                                modId);
+                            "Could not find provided javadoc target method {}{} from mod {}", sourceMethod.getSrcName(),
+                            sourceMethod.getSrcDesc(), modId
+                        );
                         continue;
                     }
 

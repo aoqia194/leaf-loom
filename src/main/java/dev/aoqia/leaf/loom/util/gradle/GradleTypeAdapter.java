@@ -23,16 +23,17 @@
  */
 package dev.aoqia.leaf.loom.util.gradle;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.RegularFileProperty;
@@ -40,12 +41,12 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({
+    "rawtypes", "unchecked"
+})
 public class GradleTypeAdapter implements TypeAdapterFactory {
-    public static final Gson GSON = new Gson()
-            .newBuilder()
-            .registerTypeAdapterFactory(new GradleTypeAdapter())
-            .create();
+    public static final Gson GSON = new Gson().newBuilder().registerTypeAdapterFactory(new GradleTypeAdapter())
+        .create();
 
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
@@ -93,10 +94,7 @@ public class GradleTypeAdapter implements TypeAdapterFactory {
         public void write(JsonWriter out, T fileCollection) throws IOException {
             out.beginArray();
 
-            final List<String> files = fileCollection.getFiles().stream()
-                    .map(File::getAbsolutePath)
-                    .sorted()
-                    .toList();
+            final List<String> files = fileCollection.getFiles().stream().map(File::getAbsolutePath).sorted().toList();
 
             for (String file : files) {
                 out.value(file);
@@ -107,7 +105,7 @@ public class GradleTypeAdapter implements TypeAdapterFactory {
     }
 
     private static final class RegularFilePropertyTypeAdapter<T extends RegularFileProperty>
-            extends WriteOnlyTypeAdapter<T> {
+        extends WriteOnlyTypeAdapter<T> {
         @Override
         public void write(JsonWriter out, T property) throws IOException {
             if (!property.isPresent()) {
@@ -121,7 +119,7 @@ public class GradleTypeAdapter implements TypeAdapterFactory {
     }
 
     private static final class DirectoryPropertyTypeAdapter<T extends DirectoryProperty>
-            extends WriteOnlyTypeAdapter<T> {
+        extends WriteOnlyTypeAdapter<T> {
         @Override
         public void write(JsonWriter out, T property) throws IOException {
             if (!property.isPresent()) {

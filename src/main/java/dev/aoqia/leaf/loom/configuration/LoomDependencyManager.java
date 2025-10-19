@@ -23,11 +23,12 @@
  */
 package dev.aoqia.leaf.loom.configuration;
 
+import org.gradle.api.Project;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.mods.ModConfigurationRemapper;
 import dev.aoqia.leaf.loom.util.SourceRemapper;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-import org.gradle.api.Project;
 
 public class LoomDependencyManager {
     public void handleDependencies(Project project, ServiceFactory serviceFactory) {
@@ -37,8 +38,8 @@ public class LoomDependencyManager {
         SourceRemapper sourceRemapper = new SourceRemapper(project, serviceFactory, true);
         String mappingsIdentifier = extension.getMappingConfiguration().mappingsIdentifier();
 
-        ModConfigurationRemapper.supplyModConfigurations(
-                project, serviceFactory, mappingsIdentifier, extension, sourceRemapper);
+        ModConfigurationRemapper
+            .supplyModConfigurations(project, serviceFactory, mappingsIdentifier, extension, sourceRemapper);
 
         sourceRemapper.remapAll();
 

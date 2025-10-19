@@ -23,18 +23,19 @@
  */
 package dev.aoqia.leaf.loom.util.fmj;
 
-import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.readString;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.Nullable;
+
+import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.readString;
 
 public final class LeafModJsonV1 extends LeafModJson {
     LeafModJsonV1(JsonObject jsonObject, LeafModJsonSource source) {
@@ -47,8 +48,7 @@ public final class LeafModJsonV1 extends LeafModJson {
     }
 
     @Override
-    @Nullable
-    public JsonElement getCustom(String key) {
+    @Nullable public JsonElement getCustom(String key) {
         return getCustom(jsonObject, key);
     }
 
@@ -74,9 +74,8 @@ public final class LeafModJsonV1 extends LeafModJson {
             return Collections.emptyList();
         }
 
-        return StreamSupport.stream(mixinArray.spliterator(), false)
-                .map(LeafModJsonV1::readMixinElement)
-                .collect(Collectors.toList());
+        return StreamSupport.stream(mixinArray.spliterator(), false).map(LeafModJsonV1::readMixinElement)
+            .collect(Collectors.toList());
     }
 
     private static String readMixinElement(JsonElement jsonElement) {

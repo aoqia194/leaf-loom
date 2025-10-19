@@ -25,18 +25,20 @@ package dev.aoqia.leaf.loom.configuration.mods;
 
 import java.io.IOException;
 import java.util.List;
+
 import net.fabricmc.accesswidener.AccessWidener;
 import net.fabricmc.accesswidener.AccessWidenerClassVisitor;
 import net.fabricmc.accesswidener.AccessWidenerReader;
-import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependency;
-import dev.aoqia.leaf.loom.util.Constants;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.objectweb.asm.ClassVisitor;
 
+import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependency;
+import dev.aoqia.leaf.loom.util.Constants;
+
 public record AccessWidenerAnalyzeVisitorProvider(AccessWidener accessWidener)
-        implements TinyRemapper.AnalyzeVisitorProvider {
+    implements TinyRemapper.AnalyzeVisitorProvider {
     static AccessWidenerAnalyzeVisitorProvider createFromMods(String namespace, List<ModDependency> mods)
-            throws IOException {
+        throws IOException {
         AccessWidener accessWidener = new AccessWidener();
         accessWidener.visitHeader(namespace);
 

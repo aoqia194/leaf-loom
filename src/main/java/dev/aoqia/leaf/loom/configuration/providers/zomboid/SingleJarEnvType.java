@@ -27,8 +27,7 @@ import java.nio.file.Path;
 import java.util.function.Function;
 
 public enum SingleJarEnvType {
-    CLIENT(ZomboidJar.Client::new, ZomboidJar.Type.CLIENT),
-    SERVER(ZomboidJar.Server::new, ZomboidJar.Type.SERVER);
+    CLIENT(ZomboidJar.Client::new, ZomboidJar.Type.CLIENT), SERVER(ZomboidJar.Server::new, ZomboidJar.Type.SERVER);
 
     private final Function<Path, ZomboidJar> jarFunction;
     private final ZomboidJar.Type type;

@@ -26,11 +26,7 @@ package dev.aoqia.leaf.loom.configuration;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.Strings;
-import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectList;
 import org.gradle.api.Project;
@@ -41,38 +37,38 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.VisibleForTesting;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Strings;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+
 public final class RemapConfigurations {
     private static final List<ConfigurationOption> OPTIONS = List.of(
-            new ConfigurationOption(
-                    mainOnly(SourceSet::getApiConfigurationName),
-                    true,
-                    true,
-                    RemapConfigurationSettings.PublishingMode.COMPILE_AND_RUNTIME),
-            new ConfigurationOption(
-                    SourceSet::getImplementationConfigurationName,
-                    true,
-                    true,
-                    RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY),
-            new ConfigurationOption(
-                    SourceSet::getCompileOnlyConfigurationName,
-                    true,
-                    false,
-                    RemapConfigurationSettings.PublishingMode.NONE),
-            new ConfigurationOption(
-                    mainOnly(SourceSet::getCompileOnlyApiConfigurationName),
-                    true,
-                    false,
-                    RemapConfigurationSettings.PublishingMode.COMPILE_ONLY),
-            new ConfigurationOption(
-                    SourceSet::getRuntimeOnlyConfigurationName,
-                    false,
-                    true,
-                    RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY),
-            new ConfigurationOption(
-                    mainOnly(Constants.Configurations.LOCAL_RUNTIME),
-                    false,
-                    true,
-                    RemapConfigurationSettings.PublishingMode.NONE));
+        new ConfigurationOption(
+            mainOnly(SourceSet::getApiConfigurationName), true, true,
+            RemapConfigurationSettings.PublishingMode.COMPILE_AND_RUNTIME
+        ),
+        new ConfigurationOption(
+            SourceSet::getImplementationConfigurationName, true, true,
+            RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY
+        ),
+        new ConfigurationOption(
+            SourceSet::getCompileOnlyConfigurationName, true, false, RemapConfigurationSettings.PublishingMode.NONE
+        ),
+        new ConfigurationOption(
+            mainOnly(SourceSet::getCompileOnlyApiConfigurationName), true, false,
+            RemapConfigurationSettings.PublishingMode.COMPILE_ONLY
+        ),
+        new ConfigurationOption(
+            SourceSet::getRuntimeOnlyConfigurationName, false, true,
+            RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY
+        ),
+        new ConfigurationOption(
+            mainOnly(Constants.Configurations.LOCAL_RUNTIME), false, true,
+            RemapConfigurationSettings.PublishingMode.NONE
+        )
+    );
 
     private RemapConfigurations() {}
 
@@ -81,13 +77,12 @@ public final class RemapConfigurations {
 
         for (ConfigurationOption option : getValidOptions(sourceSet)) {
             extension.addRemapConfiguration(
-                    option.name(sourceSet),
-                    configure(
-                            sourceSet,
-                            option.targetName(sourceSet),
-                            option.compileClasspath(),
-                            option.runtimeClasspath(),
-                            option.publishingMode()));
+                option.name(sourceSet),
+                configure(
+                    sourceSet, option.targetName(sourceSet), option.compileClasspath(), option.runtimeClasspath(),
+                    option.publishingMode()
+                )
+            );
         }
     }
 
@@ -113,41 +108,41 @@ public final class RemapConfigurations {
     }
 
     /**
-     * Gets or creates the collector configuration for a {@link SourceSet}.
-     * The collector configuration receives all compile-time or runtime remapped mod dependency files.
-     *
-     * @param project  the project
+     * Gets or creates the collector configuration for a {@link SourceSet}. The
+     * collector configuration receives all compile-time or runtime remapped mod
+     * dependency files.
+     * @param project the project
      * @param settings the remap configuration settings
-     * @param runtime  if {@code true}, returns the runtime configuration;
-     *                 if {@code false}, returns the compile-time one
+     * @param runtime if {@code true}, returns the runtime configuration; if
+     * {@code false}, returns the compile-time one
      * @return the collector configuration
      */
     public static Configuration getOrCreateCollectorConfiguration(
-            Project project, RemapConfigurationSettings settings, boolean runtime) {
-        return getOrCreateCollectorConfiguration(
-                project, settings.getSourceSet().get(), runtime);
+        Project project, RemapConfigurationSettings settings, boolean runtime
+    ) {
+        return getOrCreateCollectorConfiguration(project, settings.getSourceSet().get(), runtime);
     }
 
     /**
-     * Gets or creates the collector configuration for a {@link RemapConfigurationSettings} instance.
-     * The collector configuration receives all compile-time or runtime remapped mod dependency files.
-     *
-     * @param project   the project
-     * @param sourceSet the source set to apply the collector config to, should generally match {@link RemapConfigurationSettings#getSourceSet()}
-     * @param runtime   if {@code true}, returns the runtime configuration;
-     *                  if {@code false}, returns the compile-time one
+     * Gets or creates the collector configuration for a
+     * {@link RemapConfigurationSettings} instance. The collector configuration
+     * receives all compile-time or runtime remapped mod dependency files.
+     * @param project the project
+     * @param sourceSet the source set to apply the collector config to, should
+     * generally match {@link RemapConfigurationSettings#getSourceSet()}
+     * @param runtime if {@code true}, returns the runtime configuration; if
+     * {@code false}, returns the compile-time one
      * @return the collector configuration
      */
     // Note: this method is generally called on demand, so these configurations
-    // won't exist at buildscript evaluation time. There's no need for them anyway
+    // won't exist at buildscript evaluation time. There's no need for them
+    // anyway
     // since they're internals.
     public static Configuration getOrCreateCollectorConfiguration(
-            Project project, SourceSet sourceSet, boolean runtime) {
-        final String configurationName = "mod"
-                + (runtime ? "Runtime" : "Compile")
-                + "Classpath"
-                + Strings.capitalize(sourceSet.getName())
-                + "Mapped";
+        Project project, SourceSet sourceSet, boolean runtime
+    ) {
+        final String configurationName = "mod" + (runtime ? "Runtime" : "Compile") + "Classpath"
+            + Strings.capitalize(sourceSet.getName()) + "Mapped";
         final ConfigurationContainer configurations = project.getConfigurations();
         Configuration configuration = configurations.findByName(configurationName);
 
@@ -158,12 +153,15 @@ public final class RemapConfigurations {
             configuration.setTransitive(false);
 
             // Set the usage attribute to fetch the correct artifacts.
-            // Note: Even though most deps are resolved via copies of mod* configurations,
-            // non-remapped mods that get added straight to these collectors will need the attribute.
+            // Note: Even though most deps are resolved via copies of mod*
+            // configurations,
+            // non-remapped mods that get added straight to these collectors
+            // will need the attribute.
             final Usage usage = project.getObjects().named(Usage.class, runtime ? Usage.JAVA_RUNTIME : Usage.JAVA_API);
             configuration.attributes(attributes -> attributes.attribute(Usage.USAGE_ATTRIBUTE, usage));
 
-            // The main classpath also applies to the test source set like with normal dependencies.
+            // The main classpath also applies to the test source set like with
+            // normal dependencies.
             final boolean isMainSourceSet = sourceSet.getName().equals("main");
 
             if (runtime) {
@@ -186,7 +184,8 @@ public final class RemapConfigurations {
     }
 
     public static void applyToProject(Project project, RemapConfigurationSettings settings) {
-        // No point bothering to make it lazily, gradle realises configurations right away.
+        // No point bothering to make it lazily, gradle realises configurations
+        // right away.
         // <https://github.com/gradle/gradle/blob/v7.4.2/subprojects/plugins/src/main/java/org/gradle/api/plugins/BasePlugin.java#L104>
         final Configuration configuration = project.getConfigurations().create(settings.getName());
         configuration.setTransitive(true);
@@ -195,18 +194,15 @@ public final class RemapConfigurations {
             extendsFrom(Constants.Configurations.MOD_COMPILE_CLASSPATH, configuration, project);
         }
 
-        for (String outgoingConfigurationName :
-                settings.getPublishingMode().get().outgoingConfigurations()) {
+        for (String outgoingConfigurationName : settings.getPublishingMode().get().outgoingConfigurations()) {
             extendsFrom(outgoingConfigurationName, configuration, project);
         }
     }
 
     private static Action<RemapConfigurationSettings> configure(
-            SourceSet sourceSet,
-            String targetConfiguration,
-            boolean compileClasspath,
-            boolean runtimeClasspath,
-            RemapConfigurationSettings.PublishingMode publishingMode) {
+        SourceSet sourceSet, String targetConfiguration, boolean compileClasspath, boolean runtimeClasspath,
+        RemapConfigurationSettings.PublishingMode publishingMode
+    ) {
         return configuration -> {
             configuration.getSourceSet().convention(sourceSet);
             configuration.getTargetConfigurationName().convention(targetConfiguration);
@@ -227,8 +223,8 @@ public final class RemapConfigurations {
     }
 
     private static Function<SourceSet, String> mainOnly(Function<SourceSet, String> function) {
-        return sourceSet ->
-                sourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME) ? function.apply(sourceSet) : null;
+        return sourceSet -> sourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME) ? function.apply(sourceSet)
+            : null;
     }
 
     private static Function<SourceSet, String> mainOnly(String name) {
@@ -245,10 +241,9 @@ public final class RemapConfigurations {
 
     @VisibleForTesting
     public record ConfigurationOption(
-            Function<SourceSet, String> targetNameFunc,
-            boolean compileClasspath,
-            boolean runtimeClasspath,
-            RemapConfigurationSettings.PublishingMode publishingMode) {
+        Function<SourceSet, String> targetNameFunc, boolean compileClasspath, boolean runtimeClasspath,
+        RemapConfigurationSettings.PublishingMode publishingMode
+    ) {
         String targetName(SourceSet sourceSet) {
             return targetNameFunc.apply(sourceSet);
         }
@@ -262,7 +257,8 @@ public final class RemapConfigurations {
 
             if (targetName == null) {
                 throw new UnsupportedOperationException(
-                        "Configuration option is not available for sourceset (%s)".formatted(sourceSet.getName()));
+                    "Configuration option is not available for sourceset (%s)".formatted(sourceSet.getName())
+                );
             }
 
             if (targetName.startsWith(sourceSet.getName())) {

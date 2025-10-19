@@ -36,10 +36,7 @@ import java.util.Set;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.api.ModSettings;
-import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
-import dev.aoqia.leaf.loom.util.Constants;
+
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
@@ -51,6 +48,11 @@ import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.xml.sax.InputSource;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.ModSettings;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public final class SourceSetHelper {
     @VisibleForTesting
@@ -70,8 +72,12 @@ public final class SourceSetHelper {
     public static boolean isSourceSetOfProject(SourceSet sourceSet, Project project) {
         if (System.getProperty("fabric-loom.unit.testing") != null) return true;
 
-        return getSourceSets(project).stream()
-                .anyMatch(test -> test == sourceSet); // Ensure we have an identical reference
+        return getSourceSets(project).stream().anyMatch(test -> test == sourceSet); // Ensure
+                                                                                    // we
+                                                                                    // have
+                                                                                    // an
+                                                                                    // identical
+                                                                                    // reference
     }
 
     public static SourceSet getSourceSetByName(String name, Project project) {
@@ -88,8 +94,8 @@ public final class SourceSetHelper {
 
     /**
      * Attempts to compute the owning project for the {@link SourceSet}
-     *
-     * <p>A bit of a hack, would be nice for this to be added to the Gradle API.
+     * <p>
+     * A bit of a hack, would be nice for this to be added to the Gradle API.
      */
     public static Project getSourceSetProject(SourceSet sourceSet) {
         final Project project = getProjectFromSourceSetOutput(sourceSet.getOutput());
@@ -101,10 +107,8 @@ public final class SourceSetHelper {
         return project;
     }
 
-    @Nullable
-    private static Project getProjectFromSourceSetOutput(SourceSetOutput sourceSetOutput) {
-        Set<? extends Task> dependencies =
-                sourceSetOutput.getBuildDependencies().getDependencies(null);
+    @Nullable private static Project getProjectFromSourceSetOutput(SourceSetOutput sourceSetOutput) {
+        Set<? extends Task> dependencies = sourceSetOutput.getBuildDependencies().getDependencies(null);
         Iterator<? extends Task> it = dependencies.iterator();
         return it.hasNext() ? it.next().getProject() : null;
     }
@@ -112,9 +116,10 @@ public final class SourceSetHelper {
     public static List<File> getClasspath(ModSettings modSettings, Project project) {
         final List<File> files = new ArrayList<>();
 
-        files.addAll(modSettings.getModSourceSets().get().stream()
-                .flatMap(sourceSet -> getClasspath(sourceSet, project).stream())
-                .toList());
+        files.addAll(
+            modSettings.getModSourceSets().get().stream()
+                .flatMap(sourceSet -> getClasspath(sourceSet, project).stream()).toList()
+        );
         files.addAll(modSettings.getModFiles().getFiles());
 
         return Collections.unmodifiableList(files);
@@ -144,14 +149,18 @@ public final class SourceSetHelper {
         }
 
         // Add dev jars from dependency projects if the source set is "main".
-        if (SourceSet.MAIN_SOURCE_SET_NAME.equals(reference.sourceSet().getName())
+        if (
+            SourceSet.MAIN_SOURCE_SET_NAME.equals(reference.sourceSet().getName())
                 && !reference.project().getPath().equals(project.getPath())
-                && GradleUtils.isLoomProject(reference.project())) {
-            final Configuration namedElements =
-                    reference.project().getConfigurations().getByName(Constants.Configurations.NAMED_ELEMENTS);
+                && GradleUtils.isLoomProject(reference.project())
+        ) {
+            final Configuration namedElements = reference.project().getConfigurations()
+                .getByName(Constants.Configurations.NAMED_ELEMENTS);
 
-            // Note: We're not looking at the artifacts from configuration variants. It's probably not needed
-            // (certainly not with Loom's setup), but technically someone could add child variants that add additional
+            // Note: We're not looking at the artifacts from configuration
+            // variants. It's probably not needed
+            // (certainly not with Loom's setup), but technically someone could
+            // add child variants that add additional
             // dev jars that wouldn't be picked up by this.
             for (File artifact : namedElements.getOutgoing().getArtifacts().getFiles()) {
                 classpath.add(artifact);
@@ -202,14 +211,15 @@ public final class SourceSetHelper {
         final String name = reference.sourceSet().getName();
         final File projectDir = reference.project().getProjectDir();
         final File outDir = new File(projectDir, "out");
-        final File sourceSetOutDir =
-                new File(outDir, name.equals(SourceSet.MAIN_SOURCE_SET_NAME) ? "production" : name);
+        final File sourceSetOutDir = new File(
+            outDir, name.equals(SourceSet.MAIN_SOURCE_SET_NAME) ? "production" : name
+        );
 
         return List.of(new File(sourceSetOutDir, "classes"), new File(sourceSetOutDir, "resources"));
     }
 
-    @Nullable
-    private static String evaluateXpath(File file, @Language("xpath") String expression) {
+    @Nullable private static String evaluateXpath(File file, @Language("xpath")
+    String expression) {
         final XPath xpath = XPathFactory.newInstance().newXPath();
 
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -229,7 +239,8 @@ public final class SourceSetHelper {
 
     @VisibleForTesting
     public static List<File> getEclipseClasspath(SourceSetReference reference, Project project) {
-        // Somewhat of a guess, I'm unsure if this is correct for multi-project builds
+        // Somewhat of a guess, I'm unsure if this is correct for multi-project
+        // builds
         final File projectDir = project.getProjectDir();
         final File classpath = new File(projectDir, ".classpath");
 
@@ -242,7 +253,8 @@ public final class SourceSetHelper {
 
     @VisibleForTesting
     public static List<File> getVscodeClasspath(SourceSetReference reference, Project project) {
-        // Somewhat of a guess, I'm unsure if this is correct for multi-project builds
+        // Somewhat of a guess, I'm unsure if this is correct for multi-project
+        // builds
         final File projectDir = project.getProjectDir();
         final File dotVscode = new File(projectDir, ".vscode");
 
@@ -263,8 +275,7 @@ public final class SourceSetHelper {
         return Collections.singletonList(new File(binDir, reference.sourceSet().getName()));
     }
 
-    @Nullable
-    public static File findFileInResource(Project project, SourceSet sourceSet, String path) {
+    @Nullable public static File findFileInResource(Project project, SourceSet sourceSet, String path) {
         Objects.requireNonNull(project);
         Objects.requireNonNull(sourceSet);
         Objects.requireNonNull(path);
@@ -284,18 +295,15 @@ public final class SourceSetHelper {
         }
 
         try {
-            return sourceSet
-                    .getResources()
-                    .matching(patternFilterable -> patternFilterable.include(path))
-                    .getSingleFile();
+            return sourceSet.getResources().matching(patternFilterable -> patternFilterable.include(path))
+                .getSingleFile();
         } catch (IllegalStateException e) {
             // File not found
             return null;
         }
     }
 
-    @Nullable
-    public static File findFirstFileInResource(String path, Project project, SourceSet... sourceSets) {
+    @Nullable public static File findFirstFileInResource(String path, Project project, SourceSet... sourceSets) {
         for (SourceSet sourceSet : sourceSets) {
             File file = findFileInResource(project, sourceSet, path);
 

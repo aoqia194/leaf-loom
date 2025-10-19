@@ -29,20 +29,10 @@ import com.google.gson.JsonObject
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import org.intellij.lang.annotations.Language
-import spock.lang.Specification
-
 import dev.aoqia.leaf.loom.util.Constants
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonSource
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment
-
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import org.intellij.lang.annotations.Language
-import spock.lang.Specification
 
 class LeafModJsonV1Test extends Specification {
 	@Language("json")

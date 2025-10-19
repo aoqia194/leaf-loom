@@ -24,6 +24,7 @@
 package dev.aoqia.leaf.loom.util;
 
 import java.util.Objects;
+
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -60,9 +61,9 @@ public class RecordComponentFixVisitor extends ClassVisitor {
     @Override
     public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
         String intermediaryName = Objects.requireNonNull(
-                        mappings.getField(owner, name, descriptor),
-                        "Could not get field for %s:%s%s".formatted(owner, name, descriptor))
-                .getName(intermediaryNsId);
+            mappings.getField(owner, name, descriptor),
+            "Could not get field for %s:%s%s".formatted(owner, name, descriptor)
+        ).getName(intermediaryNsId);
 
         if (!hasExistingComponents && intermediaryName != null && intermediaryName.startsWith("comp_")) {
             super.visitRecordComponent(name, descriptor, signature);

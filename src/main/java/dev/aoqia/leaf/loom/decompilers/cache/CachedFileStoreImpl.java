@@ -36,10 +36,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+
 import org.jetbrains.annotations.Nullable;
 
 public record CachedFileStoreImpl<T>(Path root, EntrySerializer<T> entrySerializer, CacheRules cacheRules)
-        implements CachedFileStore<T> {
+    implements CachedFileStore<T> {
     public CachedFileStoreImpl {
         Objects.requireNonNull(root, "root");
     }
@@ -72,7 +73,8 @@ public record CachedFileStoreImpl<T>(Path root, EntrySerializer<T> entrySerializ
         // Sorted oldest -> newest
         List<PathEntry> entries = new ArrayList<>();
 
-        // Iterate over all the files in the cache, and store them into the sorted list.
+        // Iterate over all the files in the cache, and store them into the
+        // sorted list.
         try (Stream<Path> walk = Files.walk(root)) {
             Iterator<Path> iterator = walk.iterator();
 
@@ -125,9 +127,8 @@ public record CachedFileStoreImpl<T>(Path root, EntrySerializer<T> entrySerializ
 
     /**
      * The rules for the cache.
-     *
      * @param maxFiles The maximum number of files in the cache
-     * @param maxAge  The maximum age of a file in the cache
+     * @param maxAge The maximum age of a file in the cache
      */
     public record CacheRules(long maxFiles, Duration maxAge) {}
 

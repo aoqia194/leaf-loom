@@ -25,6 +25,7 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings.utils;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
+
 import net.fabricmc.mappingio.MappedElementKind;
 import net.fabricmc.mappingio.MappingVisitor;
 import net.fabricmc.mappingio.adapter.ForwardingMappingVisitor;
@@ -43,8 +44,10 @@ public class DstNameFilterMappingVisitor extends ForwardingMappingVisitor {
 
     @Override
     public void visitDstName(MappedElementKind targetKind, int namespace, String name) throws IOException {
-        if ((targetKind == MappedElementKind.FIELD || targetKind == MappedElementKind.METHOD)
-                && pattern.matcher(name).matches()) {
+        if (
+            (targetKind == MappedElementKind.FIELD || targetKind == MappedElementKind.METHOD)
+                && pattern.matcher(name).matches()
+        ) {
             return;
         }
 

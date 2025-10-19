@@ -27,17 +27,18 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import net.fabricmc.mappingio.MappedElementKind;
 import net.fabricmc.mappingio.MappingVisitor;
 import net.fabricmc.mappingio.adapter.ForwardingMappingVisitor;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Adapted from {@link net.fabricmc.mappingio.adapter.MappingNsCompleter}.
- * This visitor completes any empty namespace with some alternative namespace
- * only if that alternative namespace is equal to some test namespace.
- * Mostly this will be used to complete official namespaces with intermediary
- * names only if those intermediary names are equal to the named names.
+ * Adapted from {@link net.fabricmc.mappingio.adapter.MappingNsCompleter}. This
+ * visitor completes any empty namespace with some alternative namespace only if
+ * that alternative namespace is equal to some test namespace. Mostly this will
+ * be used to complete official namespaces with intermediary names only if those
+ * intermediary names are equal to the named names.
  */
 public final class UnobfuscatedMappingNsCompleter extends ForwardingMappingVisitor {
     private final String testNs;
@@ -91,9 +92,11 @@ public final class UnobfuscatedMappingNsCompleter extends ForwardingMappingVisit
                 srcIdx = -1;
             } else {
                 srcIdx = dstNamespaces.indexOf(src);
-                if (srcIdx < 0)
-                    throw new RuntimeException("invalid alternative mapping ns " + src + ": not in " + dstNamespaces
-                            + " or " + srcNamespace);
+                if (
+                    srcIdx < 0
+                ) throw new RuntimeException(
+                    "invalid alternative mapping ns " + src + ": not in " + dstNamespaces + " or " + srcNamespace
+                );
             }
 
             alternativesMapping[i] = srcIdx;
@@ -146,8 +149,7 @@ public final class UnobfuscatedMappingNsCompleter extends ForwardingMappingVisit
     }
 
     @Override
-    public boolean visitMethodVar(int lvtRowIndex, int lvIndex, int startOpIdx, int endOpIdx, @Nullable String srcName)
-            throws IOException {
+    public boolean visitMethodVar(int lvtRowIndex, int lvIndex, int startOpIdx, int endOpIdx, @Nullable String srcName) throws IOException {
         this.srcName = srcName;
 
         return next.visitMethodVar(lvtRowIndex, lvIndex, startOpIdx, endOpIdx, srcName);
@@ -203,9 +205,11 @@ public final class UnobfuscatedMappingNsCompleter extends ForwardingMappingVisit
                         } else {
                             continue nsLoop;
                         }
-                    } else if (newSrc == src) { // no-op (identity) mapping, explicit in case src > 64
+                    } else if (newSrc == src) { // no-op (identity) mapping,
+                                                // explicit in case src > 64
                         continue nsLoop; // always null
-                    } else if ((visited & 1L << newSrc) != 0) { // cyclic mapping
+                    } else if ((visited & 1L << newSrc) != 0) { // cyclic
+                                                                // mapping
                         continue nsLoop; // always null
                     } else {
                         if (unobf[newSrc + 1]) {

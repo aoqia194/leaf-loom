@@ -23,8 +23,6 @@
  */
 package dev.aoqia.leaf.loom.decompilers;
 
-import static java.text.MessageFormat.format;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -35,7 +33,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
 import org.jetbrains.annotations.Nullable;
+
+import static java.text.MessageFormat.format;
 
 public record ClassLineNumbers(Map<String, ClassLineNumbers.Entry> lineMap) {
     public ClassLineNumbers {
@@ -68,7 +69,8 @@ public record ClassLineNumbers(Map<String, ClassLineNumbers.Entry> lineMap) {
         record CurrentClass(String className, int maxLine, int maxLineDest) {
             void putEntry(Map<String, ClassLineNumbers.Entry> entries, Map<Integer, Integer> mappings) {
                 var entry = new ClassLineNumbers.Entry(
-                        className(), maxLine(), maxLineDest(), Collections.unmodifiableMap(mappings));
+                    className(), maxLine(), maxLineDest(), Collections.unmodifiableMap(mappings)
+                );
 
                 final ClassLineNumbers.Entry previous = entries.put(className(), entry);
 
@@ -95,8 +97,9 @@ public record ClassLineNumbers(Map<String, ClassLineNumbers.Entry> lineMap) {
                         currentMappings = new HashMap<>();
                     }
 
-                    currentClass =
-                            new CurrentClass(segments[0], Integer.parseInt(segments[1]), Integer.parseInt(segments[2]));
+                    currentClass = new CurrentClass(
+                        segments[0], Integer.parseInt(segments[1]), Integer.parseInt(segments[2])
+                    );
                 } else {
                     Objects.requireNonNull(currentClass, "No class line mappings found for line " + lineNumber);
                     currentMappings.put(Integer.parseInt(segments[0]), Integer.parseInt(segments[1]));
@@ -121,10 +124,10 @@ public record ClassLineNumbers(Map<String, ClassLineNumbers.Entry> lineMap) {
     }
 
     /**
-     * Merge two ClassLineNumbers together, throwing an exception if there are any duplicate class line mappings.
+     * Merge two ClassLineNumbers together, throwing an exception if there are
+     * any duplicate class line mappings.
      */
-    @Nullable
-    public static ClassLineNumbers merge(@Nullable ClassLineNumbers a, @Nullable ClassLineNumbers b) {
+    @Nullable public static ClassLineNumbers merge(@Nullable ClassLineNumbers a, @Nullable ClassLineNumbers b) {
         if (a == null) {
             return b;
         } else if (b == null) {

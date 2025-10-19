@@ -30,9 +30,6 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableMap;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
@@ -40,60 +37,54 @@ import net.fabricmc.tinyremapper.IMappingProvider;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.gradle.api.Project;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+
 /**
- * Contains shortcuts to create tiny remappers using the mappings accessibly to the project.
+ * Contains shortcuts to create tiny remappers using the mappings accessibly to
+ * the project.
  */
 public final class TinyRemapperHelper {
     private static final Map<String, String> JSR_TO_JETBRAINS = new ImmutableMap.Builder<String, String>()
         .put("javax/annotation/Nullable", "org/jetbrains/annotations/Nullable")
         .put("javax/annotation/Nonnull", "org/jetbrains/annotations/NotNull")
-        .put("javax/annotation/concurrent/Immutable", "org/jetbrains/annotations/Unmodifiable")
-        .build();
+        .put("javax/annotation/concurrent/Immutable", "org/jetbrains/annotations/Unmodifiable").build();
 
     /**
      * Matches the new local variable naming format introduced in 21w37a.
      */
     private static final Pattern MC_LV_PATTERN = Pattern.compile("\\$\\$\\d+");
 
-    private TinyRemapperHelper() {
-    }
+    private TinyRemapperHelper() {}
 
     public static TinyRemapper getTinyRemapper(Project project, ServiceFactory serviceFactory, String fromM, String toM)
         throws IOException {
-        return getTinyRemapper(project, serviceFactory, fromM, toM, false, (builder) -> {
-        });
+        return getTinyRemapper(project, serviceFactory, fromM, toM, false, (builder) -> {});
     }
 
     public static TinyRemapper getTinyRemapper(
-        Project project,
-        ServiceFactory serviceFactory,
-        String fromM,
-        String toM,
-        boolean fixRecords,
-        Consumer<TinyRemapper.Builder> builderConsumer)
-        throws IOException {
+        Project project, ServiceFactory serviceFactory, String fromM, String toM, boolean fixRecords,
+        Consumer<TinyRemapper.Builder> builderConsumer
+    ) throws IOException {
         LoomGradleExtension extension = LoomGradleExtension.get(project);
-        MemoryMappingTree mappingTree = extension
-            .getMappingConfiguration()
-            .getMappingsService(project, serviceFactory)
+        MemoryMappingTree mappingTree = extension.getMappingConfiguration().getMappingsService(project, serviceFactory)
             .getMappingTree();
 
         if (fixRecords && !mappingTree.getSrcNamespace().equals(fromM)) {
-            throw new IllegalStateException("Mappings src namespace must match remap src namespace, expected " + fromM
-                                            + " but got " + mappingTree.getSrcNamespace());
+            throw new IllegalStateException(
+                "Mappings src namespace must match remap src namespace, expected " + fromM + " but got "
+                    + mappingTree.getSrcNamespace()
+            );
         }
 
         int officialNsId = mappingTree.getNamespaceId(MappingsNamespace.OFFICIAL.toString());
 
         TinyRemapper.Builder builder = TinyRemapper.newRemapper(TinyRemapperLoggerAdapter.INSTANCE)
             .withMappings(create(mappingTree, fromM, toM, true))
-            .withMappings(out -> JSR_TO_JETBRAINS.forEach(out::acceptClass))
-            .renameInvalidLocals(true)
-            .rebuildSourceFilenames(true)
-            .invalidLvNamePattern(MC_LV_PATTERN)
-            .inferNameFromSameLvIndex(true)
-            .withKnownIndyBsm(extension.getKnownIndyBsms().get())
-            .extraPreApplyVisitor((cls, next) -> {
+            .withMappings(out -> JSR_TO_JETBRAINS.forEach(out::acceptClass)).renameInvalidLocals(true)
+            .rebuildSourceFilenames(true).invalidLvNamePattern(MC_LV_PATTERN).inferNameFromSameLvIndex(true)
+            .withKnownIndyBsm(extension.getKnownIndyBsms().get()).extraPreApplyVisitor((cls, next) -> {
                 if (fixRecords && !cls.isRecord() && "java/lang/Record".equals(cls.getSuperName())) {
                     return new RecordComponentFixVisitor(next, mappingTree, officialNsId);
                 }
@@ -120,7 +111,8 @@ public final class TinyRemapperHelper {
                 String dstClassName = classDef.getName(toId);
 
                 if (dstClassName == null) {
-                    // Unsure if this is correct, should be better than crashing tho.
+                    // Unsure if this is correct, should be better than crashing
+                    // tho.
                     dstClassName = className;
                 }
 
@@ -171,11 +163,9 @@ public final class TinyRemapperHelper {
 
                         for (MappingTree.MethodVarMapping localVariable : method.getVars()) {
                             acceptor.acceptMethodVar(
-                                methodIdentifier,
-                                localVariable.getLvIndex(),
-                                localVariable.getStartOpIdx(),
-                                localVariable.getLvtRowIndex(),
-                                localVariable.getName(toId));
+                                methodIdentifier, localVariable.getLvIndex(), localVariable.getStartOpIdx(),
+                                localVariable.getLvtRowIndex(), localVariable.getName(toId)
+                            );
                         }
                     }
                 }
