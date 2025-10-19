@@ -25,7 +25,7 @@ Project::class.java.classLoader.getResource("gradle-kotlin-dsl-versions.properti
 
 val kotlinVersion: String? = props.getProperty("kotlin")
 if (libs.versions.kotlin.get() != kotlinVersion) {
-    throw IllegalStateException("Requires Kotlin version: ${kotlinVersion}")
+    throw IllegalStateException("Requires Kotlin version: $kotlinVersion")
 }
 
 repositories {
@@ -75,7 +75,7 @@ configurations.configureEach {
                 GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
                 objects.named(
                     GradlePluginApiVersion::class.java,
-                    GradleVersion.current().getVersion()
+                    GradleVersion.current().version
                 )
             )
         }
@@ -273,7 +273,7 @@ abstract class GenerateVersions : DefaultTask() {
 
         val className = className.get()
         val si = className.lastIndexOf("/")
-        val packageName = className.substring(0, si)
+        val packageName = className.take(si)
         val packagePath = output.toPath().resolve(packageName)
         val sourceName = className.substring(si + 1, className.length)
         val sourcesPath = packagePath.resolve("${sourceName}.java")
@@ -353,7 +353,7 @@ spotless {
         target("src/**/*.gradle", "*.gradle")
         // Exclude build.gradle because it keeps pestering me about it!
         targetExclude("**/build.gradle")
-        indentWithSpaces(4)
+
         trimTrailingWhitespace()
         endWithNewline()
         greclipse()
