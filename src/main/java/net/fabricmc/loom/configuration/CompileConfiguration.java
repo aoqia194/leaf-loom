@@ -51,6 +51,7 @@ import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.api.tasks.testing.Test;
+import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.InterfaceInjectionExtensionAPI;
@@ -120,9 +121,8 @@ public abstract class CompileConfiguration implements Runnable {
 					setupMinecraft(configContext);
 				}
 
-				LoomDependencyManager dependencyManager = new LoomDependencyManager();
-				extension.setDependencyManager(dependencyManager);
-				dependencyManager.handleDependencies(getProject(), serviceFactory);
+				var dependencyManager = new LoomDependencyManager(getProject(), serviceFactory, extension);
+				dependencyManager.handleDependencies();
 			} catch (Exception e) {
 				ExceptionUtil.processException(e, DaemonUtils.Context.fromProject(getProject()));
 				disownLock();
@@ -173,20 +173,22 @@ public abstract class CompileConfiguration implements Runnable {
 		extension.setMinecraftProvider(minecraftProvider);
 		minecraftProvider.provide();
 
-		// Realise the dependencies without actually resolving them, this forces any lazy providers to be created, populating the layered mapping factories.
-		project.getConfigurations().getByName(Configurations.MAPPINGS).getDependencies().toArray();
+		if (!extension.disableObfuscation()) {
+			// Realise the dependencies without actually resolving them, this forces any lazy providers to be created, populating the layered mapping factories.
+			project.getConfigurations().getByName(Configurations.MAPPINGS).getDependencies().toArray();
 
-		// Created any layered mapping files.
-		LayeredMappingsFactory.afterEvaluate(configContext);
+			// Created any layered mapping files.
+			LayeredMappingsFactory.afterEvaluate(configContext);
 
-		// Resolve the mapping files from the configuration
-		final DependencyInfo mappingsDep = DependencyInfo.create(getProject(), Configurations.MAPPINGS);
-		final MappingConfiguration mappingConfiguration = MappingConfiguration.create(getProject(), configContext.serviceFactory(), mappingsDep, minecraftProvider);
-		extension.setMappingConfiguration(mappingConfiguration);
-		mappingConfiguration.applyToProject(getProject(), mappingsDep);
+			// Resolve the mapping files from the configuration
+			final DependencyInfo mappingsDep = DependencyInfo.create(getProject(), Configurations.MAPPINGS);
+			final MappingConfiguration mappingConfiguration = MappingConfiguration.create(getProject(), configContext.serviceFactory(), mappingsDep, minecraftProvider);
+			extension.setMappingConfiguration(mappingConfiguration);
+			mappingConfiguration.applyToProject(getProject(), mappingsDep);
+		}
 
 		// Provide the remapped mc jars
-		final IntermediaryMinecraftProvider<?> intermediaryMinecraftProvider = jarConfiguration.createIntermediaryMinecraftProvider(project);
+		@Nullable IntermediaryMinecraftProvider<?> intermediaryMinecraftProvider = extension.disableObfuscation() ? null : jarConfiguration.createIntermediaryMinecraftProvider(project);
 		NamedMinecraftProvider<?> namedMinecraftProvider = jarConfiguration.createNamedMinecraftProvider(project);
 
 		registerGameProcessors(configContext);
@@ -199,8 +201,10 @@ public abstract class CompileConfiguration implements Runnable {
 
 		final var provideContext = new AbstractMappedMinecraftProvider.ProvideContext(true, extension.refreshDeps(), configContext);
 
-		extension.setIntermediaryMinecraftProvider(intermediaryMinecraftProvider);
-		intermediaryMinecraftProvider.provide(provideContext);
+		if (intermediaryMinecraftProvider != null) {
+			extension.setIntermediaryMinecraftProvider(intermediaryMinecraftProvider);
+			intermediaryMinecraftProvider.provide(provideContext);
+		}
 
 		extension.setNamedMinecraftProvider(namedMinecraftProvider);
 		namedMinecraftProvider.provide(provideContext);
