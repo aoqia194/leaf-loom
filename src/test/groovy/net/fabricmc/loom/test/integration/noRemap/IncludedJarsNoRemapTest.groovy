@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.integration
+package net.fabricmc.loom.test.integration.noRemap
 
 import spock.lang.Specification
 import spock.lang.Unroll
