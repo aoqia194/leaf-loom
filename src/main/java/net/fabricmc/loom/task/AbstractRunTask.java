@@ -61,7 +61,6 @@ import net.fabricmc.loom.util.Constants;
 import net.fabricmc.loom.util.Platform;
 
 public abstract class AbstractRunTask extends JavaExec {
-	private static final CharsetEncoder ASCII_ENCODER = StandardCharsets.US_ASCII.newEncoder();
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRunTask.class);
 
 	@Inject
@@ -132,8 +131,10 @@ public abstract class AbstractRunTask extends JavaExec {
 	}
 
 	private boolean canPathBeASCIIEncoded() {
-		return ASCII_ENCODER.canEncode(getProject().getProjectDir().getAbsolutePath())
-				&& ASCII_ENCODER.canEncode(getProject().getGradle().getGradleUserHomeDir().getAbsolutePath());
+		CharsetEncoder asciiEncoder = StandardCharsets.US_ASCII.newEncoder();
+
+		return asciiEncoder.canEncode(getProject().getProjectDir().getAbsolutePath())
+				&& asciiEncoder.canEncode(getProject().getGradle().getGradleUserHomeDir().getAbsolutePath());
 	}
 
 	@Override
