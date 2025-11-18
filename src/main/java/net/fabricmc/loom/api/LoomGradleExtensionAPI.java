@@ -242,6 +242,11 @@ public interface LoomGradleExtensionAPI {
 	 */
 	Property<String> getIntermediaryUrl();
 
+	/**
+	 * @return the production namespace
+	 */
+	Property<String> getProductionNamespace();
+
 	@ApiStatus.Experimental
 	Property<MinecraftJarConfiguration<?, ?, ?>> getMinecraftJarConfiguration();
 

@@ -95,6 +95,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	protected final Property<Boolean> modProvidedJavadoc;
 	protected final Property<String> intermediary;
 	protected final Property<IntermediateMappingsProvider> intermediateMappingsProvider;
+	private final Property<String> productionNamespace;
 	private final Property<Boolean> runtimeOnlyLog4j;
 	private final Property<Boolean> splitModDependencies;
 	private final Property<MinecraftJarConfiguration<?, ?, ?>> minecraftJarConfiguration;
@@ -139,6 +140,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		this.modProvidedJavadoc.finalizeValueOnRead();
 		this.intermediary = project.getObjects().property(String.class)
 				.convention(DEFAULT_INTERMEDIARY_URL);
+		this.productionNamespace = project.getObjects().property(String.class);
+		this.productionNamespace.finalizeValueOnRead();
 
 		this.intermediateMappingsProvider = project.getObjects().property(IntermediateMappingsProvider.class);
 		this.intermediateMappingsProvider.finalizeValueOnRead();
@@ -339,6 +342,11 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	@Override
 	public Property<String> getIntermediaryUrl() {
 		return intermediary;
+	}
+
+	@Override
+	public Property<String> getProductionNamespace() {
+		return productionNamespace;
 	}
 
 	@Override
