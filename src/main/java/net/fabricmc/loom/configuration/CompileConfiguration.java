@@ -45,6 +45,7 @@ import org.gradle.api.Task;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.AbstractCopyTask;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
@@ -55,6 +56,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.InterfaceInjectionExtensionAPI;
+import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.loom.build.mixin.GroovyApInvoker;
 import net.fabricmc.loom.build.mixin.JavaApInvoker;
 import net.fabricmc.loom.build.mixin.KaptApInvoker;
@@ -271,7 +273,10 @@ public abstract class CompileConfiguration implements Runnable {
 		}
 
 		getProject().getTasks().named(JavaPlugin.TEST_TASK_NAME, Test.class, test -> {
-			test.getInputs().property("LoomClassPathGroups", ClasspathGroupService.create(getProject()));
+			Provider<ClasspathGroupService.Options> optionsProvider = ClasspathGroupService.create(getProject());
+			test.getInputs().property("LoomClassPathGroups", optionsProvider);
+			test.getInputs().files(optionsProvider.map((ClasspathGroupService.Options::getExternalClasspathGroups)));
+
 			test.doFirst(new Action<Task>() {
 				@Override
 				public void execute(Task task) {
