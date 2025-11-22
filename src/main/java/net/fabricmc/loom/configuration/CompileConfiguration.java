@@ -56,7 +56,6 @@ import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.InterfaceInjectionExtensionAPI;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.loom.build.mixin.GroovyApInvoker;
 import net.fabricmc.loom.build.mixin.JavaApInvoker;
 import net.fabricmc.loom.build.mixin.KaptApInvoker;
