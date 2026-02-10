@@ -51,8 +51,8 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.services.ServiceReference;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
@@ -61,6 +61,7 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.process.ExecOperations;
+import org.gradle.work.DisableCachingByDefault;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
 import org.gradle.workers.WorkQueue;
@@ -100,6 +101,7 @@ import net.fabricmc.loom.util.service.ScopedServiceFactory;
 import net.fabricmc.loom.util.service.ServiceFactory;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
+@DisableCachingByDefault
 public abstract class GenerateSourcesTask extends AbstractLoomTask {
 	private static final String CACHE_VERSION = "v1";
 	private final DecompilerOptions decompilerOptions;
@@ -110,13 +112,13 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 	@Input
 	public abstract Property<String> getInputJarName();
 
-	@InputFiles // Only contains a single file
+	@Classpath // Only contains a single file
 	protected abstract ConfigurableFileCollection getClassesInputJar();
 
-	@InputFiles
+	@Classpath
 	protected abstract ConfigurableFileCollection getClasspath();
 
-	@InputFiles
+	@Classpath
 	protected abstract ConfigurableFileCollection getMinecraftCompileLibraries();
 
 	@OutputFile
