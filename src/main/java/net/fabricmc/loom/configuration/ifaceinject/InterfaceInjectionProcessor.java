@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -215,7 +216,9 @@ public abstract class InterfaceInjectionProcessor implements MinecraftJarProcess
 		};
 	}
 
-	private static String appendComment(String comment, List<InjectedInterface> injectedInterfaces) {
+	@Nullable
+	@Contract("!null, _ -> !null")
+	private static String appendComment(@Nullable String comment, List<InjectedInterface> injectedInterfaces) {
 		if (injectedInterfaces.isEmpty()) {
 			return comment;
 		}
@@ -234,7 +237,7 @@ public abstract class InterfaceInjectionProcessor implements MinecraftJarProcess
 			}
 		}
 
-		return comment;
+		return commentBuilder.toString();
 	}
 
 	private record InjectedInterface(String modId, String className, String ifaceName, @Nullable String generics) {
