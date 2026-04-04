@@ -101,6 +101,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	private final Property<String> defaultMixinRemapType;
 	private final Property<Boolean> remapJsrAnnotationsToJetBrains;
 	private final Property<Boolean> runtimeOnlyLog4j;
+	private final Property<Boolean> runtimeOnlyLwjglGraphics;
 	private final Property<Boolean> splitModDependencies;
 	private final Property<Boolean> uncompressNestedJars;
 	private final Property<MinecraftJarConfiguration<?, ?, ?>> minecraftJarConfiguration;
@@ -197,6 +198,9 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 		this.runtimeOnlyLog4j = project.getObjects().property(Boolean.class).convention(false);
 		this.runtimeOnlyLog4j.finalizeValueOnRead();
+
+		this.runtimeOnlyLwjglGraphics = project.getObjects().property(Boolean.class).convention(false);
+		this.runtimeOnlyLwjglGraphics.finalizeValueOnRead();
 
 		this.splitModDependencies = project.getObjects().property(Boolean.class).convention(true);
 		this.splitModDependencies.finalizeValueOnRead();
@@ -442,6 +446,11 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	@Override
 	public Property<Boolean> getRuntimeOnlyLog4j() {
 		return runtimeOnlyLog4j;
+	}
+
+	@Override
+	public Property<Boolean> getRuntimeOnlyLwjglGraphics() {
+		return runtimeOnlyLwjglGraphics;
 	}
 
 	@Override
