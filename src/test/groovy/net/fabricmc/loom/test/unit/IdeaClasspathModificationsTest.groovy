@@ -29,8 +29,8 @@ import java.nio.charset.StandardCharsets
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.ide.RunConfig
 import net.fabricmc.loom.configuration.ide.idea.IdeaSyncTask
+import net.fabricmc.loom.util.Arguments
 
 class IdeaClasspathModificationsTest extends Specification {
 
@@ -66,9 +66,9 @@ class IdeaClasspathModificationsTest extends Specification {
 		dummyConfig = dummyConfig.replace("%NAME%", "Minecraft Client")
 		dummyConfig = dummyConfig.replace("%MAIN_CLASS%", "net.minecraft.client.Main")
 		dummyConfig = dummyConfig.replace("%IDEA_MODULE%", "main.test")
-		dummyConfig = dummyConfig.replace("%RUN_DIRECTORY%", ".run")
-		dummyConfig = dummyConfig.replace("%PROGRAM_ARGS%", RunConfig.joinArguments([]).replaceAll("\"", "&quot;"))
-		dummyConfig = dummyConfig.replace("%VM_ARGS%", RunConfig.joinArguments([]).replaceAll("\"", "&quot;"))
+		dummyConfig = dummyConfig.replace("%RUN_DIRECTORY%", "\$PROJECT_DIR\$/.run")
+		dummyConfig = dummyConfig.replace("%PROGRAM_ARGS%", Arguments.join([]).replaceAll("\"", "&quot;"))
+		dummyConfig = dummyConfig.replace("%VM_ARGS%", Arguments.join([]).replaceAll("\"", "&quot;"))
 		dummyConfig = dummyConfig.replace("%IDEA_FOLDER_NAME%", "")
 
 		return dummyConfig

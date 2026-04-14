@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2023 FabricMC
+ * Copyright (c) 2026 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,34 +24,27 @@
 
 package net.fabricmc.loom.util;
 
-public final class Strings {
-	public static String capitalize(String word) {
-		// Don't capitalize empty strings
-		if (word.isBlank()) {
-			return word;
-		}
+import java.util.List;
 
-		final StringBuilder builder = new StringBuilder();
-		final int codePointCount = word.codePointCount(0, word.length());
-		final int first = Character.toUpperCase(word.codePointAt(0));
-		builder.append(Character.toString(first));
+public class Arguments {
+	public static String join(List<String> args) {
+		final var sb = new StringBuilder();
+		boolean first = true;
 
-		if (codePointCount > 1) {
-			for (int codePoint = 1; codePoint < codePointCount; codePoint++) {
-				builder.append(Character.toString(word.codePointAt(codePoint)));
+		for (String arg : args) {
+			if (!first) {
+				sb.append(" ");
+			}
+
+			first = false;
+
+			if (arg.contains(" ")) {
+				sb.append("\"").append(arg).append("\"");
+			} else {
+				sb.append(arg);
 			}
 		}
 
-		return builder.toString();
-	}
-
-	// Turns camelCase/PascalCase into Capital Case
-	// caseConversionExample -> Case Conversion Example
-	public static String capitalizeCamelCaseName(String name) {
-		if (name.isEmpty()) {
-			return "";
-		}
-
-		return name.substring(0, 1).toUpperCase() + name.substring(1).replaceAll("([^A-Z])([A-Z])", "$1 $2");
+		return sb.toString();
 	}
 }

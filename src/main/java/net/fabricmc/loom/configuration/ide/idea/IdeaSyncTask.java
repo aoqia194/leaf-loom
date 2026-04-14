@@ -26,6 +26,7 @@ package net.fabricmc.loom.configuration.ide.idea;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -43,6 +44,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import groovy.xml.XmlUtil;
+import org.gradle.api.Project;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.project.IsolatedProject;
 import org.gradle.api.provider.ListProperty;
@@ -50,6 +53,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.work.DisableCachingByDefault;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -61,10 +65,15 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.ide.RunConfig;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
+import net.fabricmc.loom.api.RunConfiguration;
+import net.fabricmc.loom.configuration.ide.DefaultRunConfigurationSettings;
+import net.fabricmc.loom.configuration.ide.RunConfigUtils;
+import net.fabricmc.loom.configuration.ide.RuntimeLibraries;
 import net.fabricmc.loom.task.AbstractLoomTask;
+import net.fabricmc.loom.util.Arguments;
 import net.fabricmc.loom.util.Constants;
+import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import net.fabricmc.loom.util.gradle.SourceSetReference;
 
 @DisableCachingByDefault
 public abstract class IdeaSyncTask extends AbstractLoomTask {
@@ -95,17 +104,17 @@ public abstract class IdeaSyncTask extends AbstractLoomTask {
 
 		List<IntellijRunConfig> configs = new ArrayList<>();
 
-		for (RunConfigSettings settings : extension.getRunConfigs()) {
-			if (!settings.isIdeConfigGenerated()) {
+		for (RunConfiguration settings : extension.getRunConfigs()) {
+			if (!settings.getGenerateRunConfig().get()) {
 				continue;
 			}
 
-			RunConfig config = RunConfig.runConfig(getProject(), settings);
-			String name = config.configName.replaceAll("[^a-zA-Z0-9$_]", "_");
+			RunConfiguration runConfiguration = DefaultRunConfigurationSettings.finialise(settings, getProject());
+			String name = RunConfigUtils.getDisplayName(runConfiguration, getProject()).replaceAll("[^a-zA-Z0-9$_]", "_");
 
 			File runConfigFile = new File(runConfigsDir, name + projectPath + ".xml");
-			String runConfigXml = config.fromDummy("idea_run_config_template.xml", true, getProject());
-			final List<String> excludedLibraryPaths = config.getExcludedLibraryPaths(getProject());
+			String runConfigXml = fromTemplate(runConfiguration, getProject());
+			final List<String> excludedLibraryPaths = RuntimeLibraries.getExcludedLibraryPaths(getProject(), runConfiguration);
 
 			IntellijRunConfig irc = getProject().getObjects().newInstance(IntellijRunConfig.class);
 			irc.getRunConfigXml().set(runConfigXml);
@@ -113,10 +122,33 @@ public abstract class IdeaSyncTask extends AbstractLoomTask {
 			irc.getLaunchFile().set(runConfigFile);
 			configs.add(irc);
 
-			settings.makeRunDir();
+			RunConfigUtils.createRunDirectory(settings);
 		}
 
 		return configs;
+	}
+
+	private static String fromTemplate(RunConfiguration run, Project project) throws IOException {
+		String xml;
+
+		try (InputStream input = IdeaSyncTask.class.getClassLoader().getResourceAsStream("idea_run_config_template.xml")) {
+			xml = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+		}
+
+		String runDir = RunConfigUtils.formatRunDir(run, project, File::getAbsolutePath, "$PROJECT_DIR$/%s"::formatted);
+		String folderName = run.getIdeConfigFolder().getOrNull();
+		SourceSet sourceSet = SourceSetHelper.getSourceSetByName(run.getSourceSet().get(), project);
+
+		xml = xml.replace("%NAME%", RunConfigUtils.getDisplayName(run, project));
+		xml = xml.replace("%MAIN_CLASS%", run.getDevLaunchMainClass().get());
+		xml = xml.replace("%IDEA_MODULE%", IdeaUtils.getIdeaModuleName(new SourceSetReference(sourceSet, project)));
+		xml = xml.replace("%RUN_DIRECTORY%", runDir);
+		xml = xml.replace("%PROGRAM_ARGS%", Arguments.join(run.getProgramArguments().get()).replace("\"", "&quot;"));
+		xml = xml.replace("%VM_ARGS%", Arguments.join(run.getJvmArguments().get()).replace("\"", "&quot;"));
+		xml = xml.replace("%IDEA_ENV_VARS%", RunConfigUtils.formatEnvVars(run, "<env name=\"%s\" value=\"%s\"/>"));
+		xml = xml.replace("%IDEA_FOLDER_NAME%", folderName == null ? "" : "folderName=\"" + XmlUtil.escapeXml(folderName) + "\"");
+
+		return xml;
 	}
 
 	public interface IntellijRunConfig {
