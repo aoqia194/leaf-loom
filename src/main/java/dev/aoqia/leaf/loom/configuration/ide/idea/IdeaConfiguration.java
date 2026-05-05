@@ -26,14 +26,16 @@ package dev.aoqia.leaf.loom.configuration.ide.idea;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
-import dev.aoqia.leaf.loom.task.LoomTasks;
-import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+
 import org.gradle.StartParameter;
 import org.gradle.TaskExecutionRequest;
 import org.gradle.api.Project;
 import org.gradle.internal.DefaultTaskExecutionRequest;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.task.LoomTasks;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 public abstract class IdeaConfiguration implements Runnable {
     @Inject
@@ -41,8 +43,10 @@ public abstract class IdeaConfiguration implements Runnable {
 
     public void run() {
         getProject().getTasks().register("ideaSyncTask", IdeaSyncTask.class, task -> {
-            if (LoomGradleExtension.get(getProject()).getRunConfigs().stream()
-                    .anyMatch(RunConfigSettings::isIdeConfigGenerated)) {
+            if (
+                LoomGradleExtension.get(getProject()).getRunConfigs().stream()
+                    .anyMatch(RunConfigSettings::isIdeConfigGenerated)
+            ) {
                 task.dependsOn(LoomTasks.getIDELaunchConfigureTaskName(getProject()));
             } else {
                 task.setEnabled(false);

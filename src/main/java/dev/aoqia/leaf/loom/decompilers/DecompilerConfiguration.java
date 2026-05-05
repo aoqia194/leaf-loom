@@ -28,6 +28,13 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import javax.inject.Inject;
+
+import org.gradle.api.NamedDomainObjectProvider;
+import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.decompilers.DecompilationMetadata;
 import dev.aoqia.leaf.loom.api.decompilers.LoomDecompiler;
@@ -36,11 +43,6 @@ import dev.aoqia.leaf.loom.decompilers.fernflower.FabricFernFlowerDecompiler;
 import dev.aoqia.leaf.loom.decompilers.vineflower.VineflowerDecompiler;
 import dev.aoqia.leaf.loom.util.LoomVersions;
 import dev.aoqia.leaf.loom.util.ZipUtils;
-import org.gradle.api.NamedDomainObjectProvider;
-import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class DecompilerConfiguration implements Runnable {
     @Inject
@@ -59,17 +61,16 @@ public abstract class DecompilerConfiguration implements Runnable {
 
     private NamedDomainObjectProvider<Configuration> createConfiguration(String name, LoomVersions version) {
         final String configurationName = name + "DecompilerClasspath";
-        NamedDomainObjectProvider<Configuration> configuration =
-                getProject().getConfigurations().register(configurationName);
+        NamedDomainObjectProvider<Configuration> configuration = getProject().getConfigurations()
+            .register(configurationName);
         getProject().getDependencies().add(configurationName, version.mavenNotation());
         return configuration;
     }
 
     private void registerDecompiler(
-            Project project,
-            String name,
-            Class<? extends LoomDecompiler> decompilerClass,
-            NamedDomainObjectProvider<Configuration> configuration) {
+        Project project, String name, Class<? extends LoomDecompiler> decompilerClass,
+        NamedDomainObjectProvider<Configuration> configuration
+    ) {
         LoomGradleExtension.get(project).getDecompilerOptions().register(name, options -> {
             options.getDecompilerClassName().set(decompilerClass.getName());
             options.getClasspath().from(configuration);
@@ -77,9 +78,10 @@ public abstract class DecompilerConfiguration implements Runnable {
     }
 
     // We need to wrap the internal API with the public API.
-    // This is needed as the sourceset containing fabric's decompilers do not have access to loom classes.
+    // This is needed as the sourceset containing fabric's decompilers do not
+    // have access to loom classes.
     private abstract static sealed class BuiltinDecompiler implements LoomDecompiler
-            permits BuiltinFernflower, BuiltinCfr, BuiltinVineflower {
+        permits BuiltinFernflower, BuiltinCfr, BuiltinVineflower {
         private final LoomInternalDecompiler internalDecompiler;
 
         BuiltinDecompiler(LoomInternalDecompiler internalDecompiler) {
@@ -88,7 +90,8 @@ public abstract class DecompilerConfiguration implements Runnable {
 
         @Override
         public void decompile(
-                Path compiledJar, Path sourcesDestination, Path linemapDestination, DecompilationMetadata metaData) {
+            Path compiledJar, Path sourcesDestination, Path linemapDestination, DecompilationMetadata metaData
+        ) {
             final Logger slf4jLogger = LoggerFactory.getLogger(internalDecompiler.getClass());
 
             final var logger = new LoomInternalDecompiler.Logger() {

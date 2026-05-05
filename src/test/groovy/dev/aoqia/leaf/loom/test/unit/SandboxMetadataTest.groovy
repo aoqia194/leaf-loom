@@ -30,17 +30,7 @@ import dev.aoqia.loom.test.util.ZipTestUtils
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import dev.aoqia.loom.test.util.PlatformTestUtils
-import dev.aoqia.loom.test.util.ZipTestUtils
-import org.intellij.lang.annotations.Language
-import spock.lang.Specification
-
 import dev.aoqia.leaf.loom.configuration.sandbox.SandboxMetadata
-
-import dev.aoqia.loom.test.util.PlatformTestUtils
-import dev.aoqia.loom.test.util.ZipTestUtils
-import org.intellij.lang.annotations.Language
-import spock.lang.Specification
 
 class SandboxMetadataTest extends Specification {
 	def "test sandbox metadata"() {

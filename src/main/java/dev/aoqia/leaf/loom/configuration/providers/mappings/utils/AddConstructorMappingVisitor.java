@@ -26,13 +26,15 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings.utils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
 import net.fabricmc.mappingio.MappedElementKind;
 import net.fabricmc.mappingio.MappingVisitor;
 import net.fabricmc.mappingio.adapter.ForwardingMappingVisitor;
 
 /**
- * Adds the constructor method {@code <init>} to the destination namespaces,
- * as long as the source name is {@code <init>} and the destination mapping is null.
+ * Adds the constructor method {@code <init>} to the destination namespaces, as
+ * long as the source name is {@code <init>} and the destination mapping is
+ * null.
  */
 public class AddConstructorMappingVisitor extends ForwardingMappingVisitor {
     private boolean inConstructor;

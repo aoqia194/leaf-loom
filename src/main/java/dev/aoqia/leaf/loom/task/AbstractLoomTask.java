@@ -23,10 +23,11 @@
  */
 package dev.aoqia.leaf.loom.task;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.util.Constants;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Internal;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public abstract class AbstractLoomTask extends DefaultTask {
     public AbstractLoomTask() {

@@ -25,6 +25,7 @@ package dev.aoqia.leaf.loom.util.service;
 
 import java.io.Closeable;
 import java.io.IOException;
+
 import org.gradle.api.Project;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
@@ -32,9 +33,12 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
 
 // Note: This file mostly acts as documentation for the new service system.
-// Services are classes that wrap expensive to create objects, such as mappings or tiny remapper.
-// Services can be reused multiple times within a given scope, such as configuration or a single task action.
-// Services need to have serializable inputs, used as a cache key and serialised to be passed between Gradle contexts.
+// Services are classes that wrap expensive to create objects, such as mappings
+// or tiny remapper.
+// Services can be reused multiple times within a given scope, such as
+// configuration or a single task action.
+// Services need to have serializable inputs, used as a cache key and serialised
+// to be passed between Gradle contexts.
 // E.g task inputs, or work action params.
 public final class ExampleService extends Service<ExampleService.Options> implements Closeable {
     public static ServiceType<Options, ExampleService> TYPE = new ServiceType<>(Options.class, ExampleService.class);
@@ -52,9 +56,12 @@ public final class ExampleService extends Service<ExampleService.Options> implem
         });
     }
 
-    // An example of how a service could be used, this could be within a task action.
-    // ServiceFactory would be similar to the existing ScopedSharedServiceManager
-    // Thus if a service with the same options has previously been created it will be reused.
+    // An example of how a service could be used, this could be within a task
+    // action.
+    // ServiceFactory would be similar to the existing
+    // ScopedSharedServiceManager
+    // Thus if a service with the same options has previously been created it
+    // will be reused.
     static void howToUse(Options options, ServiceFactory factory) {
         ExampleService exampleService = factory.get(options);
         exampleService.doSomething();
@@ -65,7 +72,8 @@ public final class ExampleService extends Service<ExampleService.Options> implem
     }
 
     public void doSomething() {
-        // The service factory used to the creation the current service can be used to get or create other services
+        // The service factory used to the creation the current service can be
+        // used to get or create other services
         // based on the current service's options.
         AnotherService another = getServiceFactory().get(getOptions().getNested());
         System.out.println("ExampleService: " + another.getExample());
@@ -73,12 +81,14 @@ public final class ExampleService extends Service<ExampleService.Options> implem
 
     @Override
     public void close() throws IOException {
-        // Anything that needs to be cleaned up when the service is no longer needed.
+        // Anything that needs to be cleaned up when the service is no longer
+        // needed.
     }
 
     public static final class AnotherService extends Service<AnotherService.Options> {
-        public static ServiceType<Options, AnotherService> TYPE =
-                new ServiceType<>(Options.class, AnotherService.class);
+        public static ServiceType<Options, AnotherService> TYPE = new ServiceType<>(
+            Options.class, AnotherService.class
+        );
 
         public interface Options extends Service.Options {
             @Input
@@ -95,7 +105,8 @@ public final class ExampleService extends Service<ExampleService.Options> implem
             super(options, serviceFactory);
         }
 
-        // Services can expose any methods they wish, either to return data or do a job.
+        // Services can expose any methods they wish, either to return data or
+        // do a job.
         public String getExample() {
             return getOptions().getExample().get();
         }

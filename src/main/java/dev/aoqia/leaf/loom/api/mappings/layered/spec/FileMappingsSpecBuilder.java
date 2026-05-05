@@ -23,38 +23,35 @@
  */
 package dev.aoqia.leaf.loom.api.mappings.layered.spec;
 
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import org.jetbrains.annotations.ApiStatus;
 
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+
 /**
- * A builder for a file mappings layer.
- * This layer type supports any mapping type that mapping-io can read.
+ * A builder for a file mappings layer. This layer type supports any mapping
+ * type that mapping-io can read.
  */
 @ApiStatus.Experimental
 public interface FileMappingsSpecBuilder {
     /**
-     * Sets the mapping path inside a zip or jar.
-     * This will have no effect if the file of this mapping spec
-     * is not a zip.
-     *
-     * <p>Path components within the path should be separated with {@code /}.
-     *
-     * <p>The default mapping path is {@code mappings/mappings.tiny}, matching regular mapping dependency jars
-     * such as Yarn's.
-     *
+     * Sets the mapping path inside a zip or jar. This will have no effect if
+     * the file of this mapping spec is not a zip.
+     * <p>
+     * Path components within the path should be separated with {@code /}.
+     * <p>
+     * The default mapping path is {@code mappings/mappings.tiny}, matching
+     * regular mapping dependency jars such as Yarn's.
      * @param mappingPath the mapping path
      * @return this builder
      */
     FileMappingsSpecBuilder mappingPath(String mappingPath);
 
     /**
-     * Sets the fallback namespaces. They will be used
-     * if the mapping format itself doesn't provide namespaces with names
-     * (e.g. Enigma mappings).
-     *
-     * <p>The default fallback namespaces are {@code intermediary} as the source namespace
-     * and {@code named} as the target namespace as in Yarn.
-     *
+     * Sets the fallback namespaces. They will be used if the mapping format
+     * itself doesn't provide namespaces with names (e.g. Enigma mappings).
+     * <p>
+     * The default fallback namespaces are {@code intermediary} as the source
+     * namespace and {@code named} as the target namespace as in Yarn.
      * @param sourceNamespace the fallback source namespace
      * @param targetNamespace the fallback target namespace
      * @return this builder
@@ -62,29 +59,26 @@ public interface FileMappingsSpecBuilder {
     FileMappingsSpecBuilder fallbackNamespaces(String sourceNamespace, String targetNamespace);
 
     /**
-     * Marks that the file contains Enigma mappings.
-     * Because they are stored in a directory, the format cannot be auto-detected.
-     *
+     * Marks that the file contains Enigma mappings. Because they are stored in
+     * a directory, the format cannot be auto-detected.
      * @return this builder
      */
     FileMappingsSpecBuilder enigmaMappings();
 
     /**
      * Marks that the zip file contains unpick data.
-     *
      * @return this builder
      */
     FileMappingsSpecBuilder containsUnpick();
 
     /**
      * Sets the merge namespace of this mappings spec.
-     *
-     * <p>The merge namespace is the namespace that is used to match up this layer's
-     * names to the rest of the mappings. For example, Yarn mappings should be merged through
-     * the intermediary names.
-     *
-     * <p>The default merge namespace is {@link MappingsNamespace#OFFICIAL}.
-     *
+     * <p>
+     * The merge namespace is the namespace that is used to match up this
+     * layer's names to the rest of the mappings. For example, Yarn mappings
+     * should be merged through the intermediary names.
+     * <p>
+     * The default merge namespace is {@link MappingsNamespace#OFFICIAL}.
      * @param namespace the new merge namespace
      * @return this builder
      */
@@ -92,13 +86,12 @@ public interface FileMappingsSpecBuilder {
 
     /**
      * Sets the merge namespace of this mappings spec.
-     *
-     * <p>The merge namespace is the namespace that is used to match up this layer's
-     * names to the rest of the mappings. For example, Yarn mappings should be merged through
-     * the intermediary names.
-     *
-     * <p>The default merge namespace is {@code intermediary}.
-     *
+     * <p>
+     * The merge namespace is the namespace that is used to match up this
+     * layer's names to the rest of the mappings. For example, Yarn mappings
+     * should be merged through the intermediary names.
+     * <p>
+     * The default merge namespace is {@code intermediary}.
      * @param namespace the new merge namespace
      * @return this builder
      */

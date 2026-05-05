@@ -24,8 +24,7 @@
 package dev.aoqia.leaf.loom.extension;
 
 import java.util.Objects;
-import dev.aoqia.leaf.loom.api.MixinExtensionAPI;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+
 import org.gradle.api.Action;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
@@ -35,6 +34,9 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.util.PatternSet;
+
+import dev.aoqia.leaf.loom.api.MixinExtensionAPI;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 
 public abstract class MixinExtensionApiImpl implements MixinExtensionAPI {
     protected final Project project;
@@ -47,8 +49,8 @@ public abstract class MixinExtensionApiImpl implements MixinExtensionAPI {
         this.project = Objects.requireNonNull(project);
         this.useMixinAp = project.getObjects().property(Boolean.class).convention(false);
 
-        this.refmapTargetNamespace =
-                project.getObjects().property(String.class).convention(MappingsNamespace.OFFICIAL.toString());
+        this.refmapTargetNamespace = project.getObjects().property(String.class)
+            .convention(MappingsNamespace.OFFICIAL.toString());
         this.refmapTargetNamespace.finalizeValueOnRead();
 
         this.messages = project.getObjects().mapProperty(String.class, String.class);
@@ -71,9 +73,11 @@ public abstract class MixinExtensionApiImpl implements MixinExtensionAPI {
 
     @Override
     public Property<String> getRefmapTargetNamespace() {
-        if (!getUseLegacyMixinAp().get())
-            throw new IllegalStateException(
-                    "You need to set useLegacyMixinAp = true to configure Mixin annotation processor.");
+        if (
+            !getUseLegacyMixinAp().get()
+        ) throw new IllegalStateException(
+            "You need to set useLegacyMixinAp = true to configure Mixin annotation processor."
+        );
 
         return refmapTargetNamespace;
     }
@@ -145,10 +149,8 @@ public abstract class MixinExtensionApiImpl implements MixinExtensionAPI {
 
     private SourceSet resolveSourceSet(String sourceSetName) {
         // try to find sourceSet with name sourceSetName in this project
-        SourceSet sourceSet = project.getExtensions()
-                .getByType(JavaPluginExtension.class)
-                .getSourceSets()
-                .findByName(sourceSetName);
+        SourceSet sourceSet = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets()
+            .findByName(sourceSetName);
 
         if (sourceSet == null) {
             throw new InvalidUserDataException("No sourceSet " + sourceSetName + " was found");
@@ -157,7 +159,8 @@ public abstract class MixinExtensionApiImpl implements MixinExtensionAPI {
         return sourceSet;
     }
 
-    // This is here to ensure that LoomGradleExtensionApiImpl compiles without any unimplemented methods
+    // This is here to ensure that LoomGradleExtensionApiImpl compiles without
+    // any unimplemented methods
     private final class EnsureCompile extends MixinExtensionApiImpl {
         private EnsureCompile() {
             super(null);

@@ -32,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 public interface ServiceFactory {
     /**
      * Gets or creates a service instance with the given options.
-     *
      * @param options The options to use.
      * @param <O> The options type.
      * @param <S> The service type.
@@ -43,14 +42,14 @@ public interface ServiceFactory {
     }
 
     /**
-     * Gets or creates a service instance with the given options, or returns null if the options are not present.
+     * Gets or creates a service instance with the given options, or returns
+     * null if the options are not present.
      * @param options The options to use.
      * @param <O> The options type.
      * @param <S> The service type.
      * @return The service instance, or null if the options are not present.
      */
-    @Nullable
-    default <O extends Service.Options, S extends Service<O>> S getOrNull(Provider<O> options) {
+    @Nullable default <O extends Service.Options, S extends Service<O>> S getOrNull(Provider<O> options) {
         if (options.isPresent()) {
             return get(options);
         } else {
@@ -60,7 +59,6 @@ public interface ServiceFactory {
 
     /**
      * Gets or creates a service instance with the given options.
-     *
      * @param options The options to use.
      * @param <O> The options type.
      * @param <S> The service type.

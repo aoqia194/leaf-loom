@@ -24,6 +24,7 @@
 package dev.aoqia.leaf.loom.util;
 
 import java.util.Locale;
+
 import net.fabricmc.tinyremapper.TinyRemapper;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;

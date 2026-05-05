@@ -23,7 +23,6 @@
  */
 package dev.aoqia.leaf.loom.util;
 
-
 import java.nio.file.Path;
 
 import org.gradle.api.plugins.ExtensionAware;
@@ -66,8 +65,7 @@ public class MirrorUtil {
             return ext.get("clientVersionManifestUrl").toString();
         }
 
-        return String.format("%s/client/%s/version_manifest.json", Constants.VERSION_MANIFESTS,
-            getOsStringForUrl());
+        return String.format("%s/client/%s/version_manifest.json", Constants.VERSION_MANIFESTS, getOsStringForUrl());
     }
 
     public static String getServerVersionManifestUrl(ExtensionAware aware) {
@@ -77,8 +75,7 @@ public class MirrorUtil {
             return ext.get("serverVersionManifestUrl").toString();
         }
 
-        return String.format("%s/server/%s/version_manifest.json", Constants.VERSION_MANIFESTS,
-            getOsStringForUrl());
+        return String.format("%s/server/%s/version_manifest.json", Constants.VERSION_MANIFESTS, getOsStringForUrl());
     }
 
     public static String getOsStringForUrl() throws RuntimeException {

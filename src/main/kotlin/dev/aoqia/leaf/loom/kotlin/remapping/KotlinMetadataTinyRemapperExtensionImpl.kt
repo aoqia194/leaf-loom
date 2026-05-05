@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2022 FabricMC
+ * Copyright (c) 2022 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package dev.aoqia.leaf.loom.kotlin.remapping
 
 import dev.aoqia.leaf.loom.util.kotlin.KotlinMetadataTinyRemapperExtension
@@ -32,10 +31,8 @@ import org.objectweb.asm.ClassVisitor
 object KotlinMetadataTinyRemapperExtensionImpl : KotlinMetadataTinyRemapperExtension {
     override fun insertApplyVisitor(
         cls: TrClass,
-        next: ClassVisitor?
-    ): ClassVisitor {
-        return KotlinMetadataRemappingClassVisitor(cls.environment.remapper, next)
-    }
+        next: ClassVisitor?,
+    ): ClassVisitor = KotlinMetadataRemappingClassVisitor(cls.environment.remapper, next)
 
     override fun attach(builder: TinyRemapper.Builder) {
         builder.extraPreApplyVisitor(this)

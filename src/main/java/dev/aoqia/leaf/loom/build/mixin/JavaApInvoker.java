@@ -27,19 +27,21 @@ import java.io.File;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.extension.MixinExtension;
-
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.extension.MixinExtension;
+
 public class JavaApInvoker extends AnnotationProcessorInvoker<JavaCompile> {
     public JavaApInvoker(Project project) {
-        super(project, AnnotationProcessorInvoker.getApConfigurations(project,
-                SourceSet::getAnnotationProcessorConfigurationName), getInvokerTasks(project),
-            AnnotationProcessorInvoker.JAVA);
+        super(
+            project,
+            AnnotationProcessorInvoker.getApConfigurations(project, SourceSet::getAnnotationProcessorConfigurationName),
+            getInvokerTasks(project), AnnotationProcessorInvoker.JAVA
+        );
     }
 
     private static Map<SourceSet, TaskProvider<JavaCompile>> getInvokerTasks(Project project) {

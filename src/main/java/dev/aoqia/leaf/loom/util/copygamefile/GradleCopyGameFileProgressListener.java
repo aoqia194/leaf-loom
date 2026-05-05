@@ -25,6 +25,7 @@ package dev.aoqia.leaf.loom.util.copygamefile;
 
 import java.util.Objects;
 import java.util.function.Function;
+
 import org.gradle.internal.logging.progress.ProgressLogger;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,8 +33,7 @@ public class GradleCopyGameFileProgressListener implements CopyGameFileProgressL
     private final String name;
     private final Function<String, ProgressLogger> progressLoggerFactory;
 
-    @Nullable
-    private ProgressLogger progressLogger;
+    @Nullable private ProgressLogger progressLogger;
 
     public GradleCopyGameFileProgressListener(String name, Function<String, ProgressLogger> progressLoggerFactory) {
         this.name = name;
@@ -49,7 +49,8 @@ public class GradleCopyGameFileProgressListener implements CopyGameFileProgressL
     public void onProgress(long bytesTransferred, long contentLength) {
         Objects.requireNonNull(progressLogger);
         progressLogger.progress(
-                "Downloading %s - %s / %s".formatted(name, humanBytes(bytesTransferred), humanBytes(contentLength)));
+            "Downloading %s - %s / %s".formatted(name, humanBytes(bytesTransferred), humanBytes(contentLength))
+        );
     }
 
     @Override

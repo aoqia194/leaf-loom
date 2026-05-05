@@ -27,12 +27,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
-import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef;
-
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.jetbrains.annotations.Nullable;
+
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef;
 
 // Single jar in and out
 public final class SimpleModDependency extends ModDependency {
@@ -40,11 +40,9 @@ public final class SimpleModDependency extends ModDependency {
     private final LocalMavenHelper maven;
 
     public SimpleModDependency(
-        ArtifactRef artifact,
-        ArtifactMetadata metadata,
-        ModDependencyOptions options,
-        Configuration targetConfig,
-        Project project) {
+        ArtifactRef artifact, ArtifactMetadata metadata, ModDependencyOptions options, Configuration targetConfig,
+        Project project
+    ) {
         super(artifact, metadata, options);
         this.targetConfig = Objects.requireNonNull(targetConfig);
         this.maven = createMavenHelper(project, null);
@@ -56,8 +54,7 @@ public final class SimpleModDependency extends ModDependency {
     }
 
     @Override
-    public void copyToCache(Project project, Path path, @Nullable String variant) throws
-        IOException {
+    public void copyToCache(Project project, Path path, @Nullable String variant) throws IOException {
         maven.copyToMaven(path, variant);
     }
 

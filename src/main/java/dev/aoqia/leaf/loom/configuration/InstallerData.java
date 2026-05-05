@@ -29,12 +29,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.LoomRepositoryPlugin;
-import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.FileSystemUtil;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -47,6 +41,12 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.plugins.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomRepositoryPlugin;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
 
 public record InstallerData(String version, JsonObject installerJson) {
     private static final Logger LOGGER = LoggerFactory.getLogger(InstallerData.class);
@@ -83,90 +83,85 @@ public record InstallerData(String version, JsonObject installerJson) {
             if (jsonObject.has("file")) {
                 final URI file = URI.create(jsonObject.get("file").getAsString());
 
-                if (file.getScheme().equalsIgnoreCase("loader")) {
-                    if (appliedJijJars) {
-                        break;
-                    }
-
-                    File loaderJar = null;
-
-                    final var cfg = project.getConfigurations().getByName("modImplementation");
-                    if (!cfg.isCanBeResolved()) {
-                        throw new RuntimeException(
-                            String.format("Skipping configuration (%s) because it cant be resolved",
-                                cfg.getName()));
-                    }
-                    var result = cfg.getIncoming()
-                        .getArtifacts()
-                        .getArtifacts()
-                        .stream()
-                        .filter(artifact -> artifact.getId()
-                            .getComponentIdentifier()
-                            .toString()
-                            .startsWith("dev.aoqia.leaf:loader"))
-                        .toList();
-
-                    if (!result.isEmpty()) {
-                        loaderJar = result.get(0).getFile();
-                    }
-
-                    if (loaderJar == null) {
-                        throw new RuntimeException(
-                            String.format("Expected loader jar with string (%s) but found nothing.",
-                                file));
-                    }
-
-                    if (!FileSystemUtil.isFileLocked(loaderJar)) {
-                        final String walkPath = "/META-INF/jars";
-                        try (var fs = FileSystemUtil.getJarFileSystem(loaderJar, false);
-                             var walk = Files.walk(fs.getPath(walkPath), 1)) {
-                            for (var iterator = walk.iterator(); iterator.hasNext(); ) {
-                                Path entry = iterator.next();
-
-                                // Files.walk includes the start path too, so skip it. :c
-                                if (entry.toString().equals(walkPath)) {
-                                    continue;
-                                }
-
-                                Path src = fs.getPath("/").resolve(entry);
-                                // Is jars, not the jar itself
-                                Path srcFile = src.getFileName();
-                                Path dest = extension.getFiles()
-                                    .getProjectBuildCache()
-                                    .toPath()
-                                    .resolve(FileSystem.getCurrent()
-                                        .normalizeSeparators(srcFile.toString()));
-
-                                if (!dest.toFile().exists()) {
-                                    Files.copy(src, dest);
-
-                                    Dependency modDep = project.getDependencies()
-                                        .create(project.files(dest));
-                                    addDependency(modDep, extension, annotationProcessor,
-                                        loaderDepsConfig);
-                                }
-                            }
-                        } catch (IOException e) {
-                            throw new RuntimeException("Failed to extract loader JiJ jars", e);
-                        }
-                    } else {
-                        LOGGER.warn(
-                            "Failed to extract loader JiJ jars because the jar is locked." +
-                            "If you are hotswapping classes, ignore me.");
-                    }
-
-                    appliedJijJars = true;
+                if (!file.getScheme().equalsIgnoreCase("loader")) {
+                    continue;
                 }
+
+                if (appliedJijJars) {
+                    break;
+                }
+
+                File loaderJar = null;
+
+                final var cfg = project.getConfigurations().getByName("modImplementation");
+                if (!cfg.isCanBeResolved()) {
+                    throw new RuntimeException(
+                        String.format("Skipping configuration (%s) because it cant be resolved", cfg.getName())
+                    );
+                }
+                var result = cfg.getIncoming().getArtifacts().getArtifacts().stream().filter(
+                    artifact -> artifact.getId().getComponentIdentifier().toString().startsWith("dev.aoqia.leaf:loader")
+                ).toList();
+
+                if (!result.isEmpty()) {
+                    loaderJar = result.get(0).getFile();
+                }
+
+                if (loaderJar == null) {
+                    throw new RuntimeException(
+                        String.format("Expected loader jar with string (%s) but found nothing.", file)
+                    );
+                }
+
+                if (!FileSystemUtil.isFileLocked(loaderJar)) {
+                    final String walkPath = "/META-INF/jars";
+                    try (
+                        var fs = FileSystemUtil.getJarFileSystem(loaderJar, false);
+                        var walk = Files.walk(fs.getPath(walkPath), 1)
+                    ) {
+                        for (var iterator = walk.iterator(); iterator.hasNext();) {
+                            Path entry = iterator.next();
+
+                            // Files.walk includes the start path too, so
+                            // skip it. :c
+                            if (entry.toString().equals(walkPath)) {
+                                continue;
+                            }
+
+                            Path src = fs.getPath("/").resolve(entry);
+                            // Is jars, not the jar itself
+                            Path srcFile = src.getFileName();
+                            Path dest = extension.getFiles().getProjectBuildCache().toPath()
+                                .resolve(FileSystem.getCurrent().normalizeSeparators(srcFile.toString()));
+
+                            if (!dest.toFile().exists()) {
+                                Files.copy(src, dest);
+
+                                Dependency modDep = project.getDependencies().create(project.files(dest));
+                                addDependency(modDep, extension, annotationProcessor, loaderDepsConfig);
+                            }
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to extract loader JiJ jars", e);
+                    }
+                } else {
+                    LOGGER.warn(
+                        "Failed to extract loader JiJ jars because the jar is locked."
+                            + "If you are hotswapping classes, ignore me."
+                    );
+                }
+
+                appliedJijJars = true;
             } else {
-                ExternalModuleDependency modDep = (ExternalModuleDependency)
-                    project.getDependencies().create(name);
+                ExternalModuleDependency modDep = (ExternalModuleDependency) project.getDependencies().create(name);
 
                 // Match the launcher in not being transitive
                 modDep.setTransitive(false);
                 addDependency(modDep, extension, annotationProcessor, loaderDepsConfig);
             }
 
-            // If user choose to use dependencyResolutionManagement, then they should declare
+            // If user choose to use dependencyResolutionManagement, then they
+            // should declare
             // these repositories manually in the settings file.
             if (project.getGradle().getPlugins().hasPlugin(LoomRepositoryPlugin.class)) {
                 continue;
@@ -176,8 +171,9 @@ public record InstallerData(String version, JsonObject installerJson) {
         }
     }
 
-    private void addDependency(Dependency dep, LoomGradleExtension extension, Configuration ap,
-        Configuration loaderDeps) {
+    private void addDependency(
+        Dependency dep, LoomGradleExtension extension, Configuration ap, Configuration loaderDeps
+    ) {
         loaderDeps.getDependencies().add(dep);
 
         // Work around https://github.com/FabricMC/Mixin/pull/60 and
@@ -196,15 +192,13 @@ public record InstallerData(String version, JsonObject installerJson) {
         final boolean isPresent = project.getRepositories().stream()
             .filter(artifactRepository -> artifactRepository instanceof MavenArtifactRepository)
             .map(artifactRepository -> (MavenArtifactRepository) artifactRepository)
-            .anyMatch(mavenArtifactRepository ->
-                mavenArtifactRepository.getUrl().toString().equalsIgnoreCase(url));
+            .anyMatch(mavenArtifactRepository -> mavenArtifactRepository.getUrl().toString().equalsIgnoreCase(url));
 
         if (isPresent) {
             return;
         }
 
         project.getRepositories()
-            .maven(mavenArtifactRepository ->
-                mavenArtifactRepository.setUrl(jsonObject.get("url").getAsString()));
+            .maven(mavenArtifactRepository -> mavenArtifactRepository.setUrl(jsonObject.get("url").getAsString()));
     }
 }

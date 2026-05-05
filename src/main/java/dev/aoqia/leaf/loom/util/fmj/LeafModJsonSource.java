@@ -28,15 +28,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import dev.aoqia.leaf.loom.util.ZipUtils;
-import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 
+import dev.aoqia.leaf.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+
 /**
- * A mod may be a zip, directory or Gradle {@link SourceSet}
- * This abstraction allows easily reading a contained file from the mod.
+ * A mod may be a zip, directory or Gradle {@link SourceSet} This abstraction
+ * allows easily reading a contained file from the mod.
  */
 public interface LeafModJsonSource {
     byte[] read(String path) throws IOException;

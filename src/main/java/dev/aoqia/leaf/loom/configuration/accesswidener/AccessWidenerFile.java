@@ -23,19 +23,22 @@
  */
 package dev.aoqia.leaf.loom.configuration.accesswidener;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import dev.aoqia.leaf.loom.util.ZipUtils;
 
 public record AccessWidenerFile(String path, String modId, byte[] content) {
     /**
-     * Reads the access-widener contained in a mod jar, or returns null if there is none.
+     * Reads the access-widener contained in a mod jar, or returns null if there
+     * is none.
      */
     public static AccessWidenerFile fromModJar(Path modJarPath) {
         byte[] modJsonBytes;
@@ -44,7 +47,8 @@ public record AccessWidenerFile(String path, String modId, byte[] content) {
             modJsonBytes = ZipUtils.unpackNullable(modJarPath, "leaf.mod.json");
         } catch (IOException e) {
             throw new UncheckedIOException(
-                    "Failed to read access-widener file from: " + modJarPath.toAbsolutePath(), e);
+                "Failed to read access-widener file from: " + modJarPath.toAbsolutePath(), e
+            );
         }
 
         if (modJsonBytes == null) {
@@ -66,9 +70,10 @@ public record AccessWidenerFile(String path, String modId, byte[] content) {
             content = ZipUtils.unpack(modJarPath, awPath);
         } catch (IOException e) {
             throw new UncheckedIOException(
-                    "Could not find access widener file (%s) defined in the leaf.mod.json file of %s"
-                            .formatted(awPath, modJarPath.toAbsolutePath()),
-                    e);
+                "Could not find access widener file (%s) defined in the leaf.mod.json file of %s"
+                    .formatted(awPath, modJarPath.toAbsolutePath()),
+                e
+            );
         }
 
         return new AccessWidenerFile(awPath, modId, content);

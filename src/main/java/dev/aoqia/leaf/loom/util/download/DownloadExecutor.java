@@ -26,12 +26,15 @@ package dev.aoqia.leaf.loom.util.download;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class DownloadExecutor implements AutoCloseable {
     private final ExecutorService executorService;
-    private final List<DownloadException> downloadExceptions = Collections.synchronizedList(
-        new ArrayList<>());
+    private final List<DownloadException> downloadExceptions = Collections.synchronizedList(new ArrayList<>());
 
     public DownloadExecutor(int threads) {
         executorService = Executors.newFixedThreadPool(threads);
@@ -39,8 +42,7 @@ public class DownloadExecutor implements AutoCloseable {
 
     CompletableFuture<DownloadResult> runAsync(DownloadRunner downloadRunner) {
         if (!downloadExceptions.isEmpty()) {
-            return CompletableFuture.failedFuture(
-                new DownloadException("Download blocked due to previous errors"));
+            return CompletableFuture.failedFuture(new DownloadException("Download blocked due to previous errors"));
         }
 
         return CompletableFuture.supplyAsync(() -> {

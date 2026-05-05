@@ -30,17 +30,9 @@ import dev.aoqia.loom.test.LoomTestConstants
 import dev.aoqia.loom.test.unit.download.DownloadTest
 import org.intellij.lang.annotations.Language
 
-import dev.aoqia.loom.test.LoomTestConstants
-import dev.aoqia.loom.test.unit.download.DownloadTest
-import org.intellij.lang.annotations.Language
-
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ManifestLocations
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidMetadataProvider
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFile
-
-import dev.aoqia.loom.test.LoomTestConstants
-import dev.aoqia.loom.test.unit.download.DownloadTest
-import org.intellij.lang.annotations.Language
 
 class ZomboidMetadataProviderTest extends DownloadTest {
 	Path testDir

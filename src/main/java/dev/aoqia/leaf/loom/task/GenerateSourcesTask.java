@@ -23,8 +23,11 @@
  */
 package dev.aoqia.leaf.loom.task;
 
-import javax.inject.Inject;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
@@ -32,34 +35,34 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 
-import dev.aoqia.leaf.loom.api.decompilers.DecompilationMetadata;
-import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
-import dev.aoqia.leaf.loom.api.decompilers.LoomDecompiler;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.AbstractMappedZomboidProvider;
-import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers;
-import dev.aoqia.leaf.loom.decompilers.LineNumberRemapper;
-import dev.aoqia.leaf.loom.decompilers.cache.CachedData;
-import dev.aoqia.leaf.loom.decompilers.cache.CachedFileStoreImpl;
-import dev.aoqia.leaf.loom.decompilers.cache.CachedJarProcessor;
-import dev.aoqia.leaf.loom.task.service.SourceMappingsService;
-import dev.aoqia.leaf.loom.util.*;
-import dev.aoqia.leaf.loom.util.gradle.*;
-import dev.aoqia.leaf.loom.util.gradle.daemon.DaemonUtils;
-import dev.aoqia.leaf.loom.util.ipc.IPCClient;
-import dev.aoqia.leaf.loom.util.ipc.IPCServer;
-import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.services.ServiceReference;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.UntrackedTask;
 import org.gradle.api.tasks.options.Option;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.process.ExecOperations;
@@ -72,6 +75,33 @@ import org.gradle.workers.internal.WorkerDaemonClientsManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import dev.aoqia.leaf.loom.api.decompilers.DecompilationMetadata;
+import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
+import dev.aoqia.leaf.loom.api.decompilers.LoomDecompiler;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.AbstractMappedZomboidProvider;
+import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers;
+import dev.aoqia.leaf.loom.decompilers.LineNumberRemapper;
+import dev.aoqia.leaf.loom.decompilers.cache.CachedData;
+import dev.aoqia.leaf.loom.decompilers.cache.CachedFileStoreImpl;
+import dev.aoqia.leaf.loom.decompilers.cache.CachedJarProcessor;
+import dev.aoqia.leaf.loom.task.service.SourceMappingsService;
+import dev.aoqia.leaf.loom.util.Checksum;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.ExceptionUtil;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.IOStringConsumer;
+import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.util.gradle.SyncTaskBuildService;
+import dev.aoqia.leaf.loom.util.gradle.ThreadedProgressLoggerConsumer;
+import dev.aoqia.leaf.loom.util.gradle.ThreadedSimpleProgressLogger;
+import dev.aoqia.leaf.loom.util.gradle.WorkerDaemonClientsManagerHelper;
+import dev.aoqia.leaf.loom.util.gradle.daemon.DaemonUtils;
+import dev.aoqia.leaf.loom.util.ipc.IPCClient;
+import dev.aoqia.leaf.loom.util.ipc.IPCServer;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
+
 @UntrackedTask(because = "Manually invoked, has internal caching")
 public abstract class GenerateSourcesTask extends AbstractLoomTask {
     private static final String CACHE_VERSION = "v1";
@@ -82,8 +112,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         this.decompilerOptions = decompilerOptions;
 
         getClassesInputJar().setFrom(getInputJarName().map(zomboidJarName -> {
-            final List<ZomboidJar> zomboidJars =
-                getExtension().getNamedZomboidProvider().getZomboidJars();
+            final List<ZomboidJar> zomboidJars = getExtension().getNamedZomboidProvider().getZomboidJars();
 
             for (ZomboidJar zomboidJar : zomboidJars) {
                 if (zomboidJar.getName().equals(zomboidJarName)) {
@@ -97,12 +126,10 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
                 }
             }
 
-            throw new IllegalStateException(
-                "Input zomboid jar not found: " + getInputJarName().get());
+            throw new IllegalStateException("Input zomboid jar not found: " + getInputJarName().get());
         }));
         getClassesOutputJar().setFrom(getInputJarName().map(zomboidJarName -> {
-            final List<ZomboidJar> zomboidJars =
-                getExtension().getNamedZomboidProvider().getZomboidJars();
+            final List<ZomboidJar> zomboidJars = getExtension().getNamedZomboidProvider().getZomboidJars();
 
             for (ZomboidJar zomboidJar : zomboidJars) {
                 if (zomboidJar.getName().equals(zomboidJarName)) {
@@ -110,15 +137,14 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
                 }
             }
 
-            throw new IllegalStateException(
-                "Input zomboid jar not found: " + getInputJarName().get());
+            throw new IllegalStateException("Input zomboid jar not found: " + getInputJarName().get());
         }));
 
         getClasspath().from(decompilerOptions.getClasspath()).finalizeValueOnRead();
         dependsOn(decompilerOptions.getClasspath().getBuiltBy());
 
-        getZomboidCompileLibraries().from(getProject().getConfigurations()
-            .getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
+        getZomboidCompileLibraries()
+            .from(getProject().getConfigurations().getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
         getDecompileCacheFile().set(getExtension().getFiles().getDecompileCache(CACHE_VERSION));
         getUnpickRuntimeClasspath()
             .from(getProject().getConfigurations().getByName(Constants.Configurations.UNPICK_CLASSPATH));
@@ -129,10 +155,14 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
         getMappings().set(SourceMappingsService.create(getProject()));
 
-        getMaxCachedFiles().set(GradleUtils.getIntegerPropertyProvider(getProject(),
-            Constants.Properties.DECOMPILE_CACHE_MAX_FILES).orElse(50_000));
-        getMaxCacheFileAge().set(GradleUtils.getIntegerPropertyProvider(getProject(),
-            Constants.Properties.DECOMPILE_CACHE_MAX_AGE).orElse(90));
+        getMaxCachedFiles().set(
+            GradleUtils.getIntegerPropertyProvider(getProject(), Constants.Properties.DECOMPILE_CACHE_MAX_FILES)
+                .orElse(50_000)
+        );
+        getMaxCacheFileAge().set(
+            GradleUtils.getIntegerPropertyProvider(getProject(), Constants.Properties.DECOMPILE_CACHE_MAX_AGE)
+                .orElse(90)
+        );
 
         getDaemonUtilsContext().set(getProject().getObjects().newInstance(DaemonUtils.Context.class, getProject()));
         mustRunAfter(getProject().getTasks().withType(AbstractRemapJarTask.class));
@@ -149,7 +179,8 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
     // Contains the remapped linenumbers
     @OutputFile
-    protected abstract ConfigurableFileCollection getClassesOutputJar(); // Single jar
+    protected abstract ConfigurableFileCollection getClassesOutputJar(); // Single
+                                                                         // jar
 
     @InputFiles
     protected abstract ConfigurableFileCollection getClasspath();
@@ -194,7 +225,12 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     protected abstract Property<Integer> getMaxCacheFileAge();// Injects
 
     @Nested
-    protected abstract Property<DaemonUtils.Context> getDaemonUtilsContext();// Prevent Gradle from running two gen
+    protected abstract Property<DaemonUtils.Context> getDaemonUtilsContext();// Prevent
+                                                                             // Gradle
+                                                                             // from
+                                                                             // running
+                                                                             // two
+                                                                             // gen
 
     public static File getJarFileWithSuffix(String suffix, Path runtimeJar) {
         final String path = runtimeJar.toFile().getAbsolutePath();
@@ -206,8 +242,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         return new File(path.substring(0, path.length() - 4) + suffix);
     }
 
-    @Nullable
-    private static ClassLineNumbers readLineNumbers(Path linemapFile) throws IOException {
+    @Nullable private static ClassLineNumbers readLineNumbers(Path linemapFile) throws IOException {
         if (Files.notExists(linemapFile)) {
             return null;
         }
@@ -219,7 +254,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
     private static Constructor<LoomDecompiler> getDecompilerConstructor(String clazz) {
         try {
-            //noinspection unchecked
+            // noinspection unchecked
             return (Constructor<LoomDecompiler>) Class.forName(clazz).getConstructor();
         } catch (NoSuchMethodException e) {
             return null;
@@ -239,9 +274,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     private static String fileCollectionHash(FileCollection files) {
         var sj = new StringJoiner(",");
 
-        files.getFiles().stream()
-            .sorted(Comparator.comparing(File::getAbsolutePath))
-            .map(GenerateSourcesTask::fileHash)
+        files.getFiles().stream().sorted(Comparator.comparing(File::getAbsolutePath)).map(GenerateSourcesTask::fileHash)
             .forEach(sj::add);
 
         return sj.toString();
@@ -289,7 +322,8 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
         if (!platform.getArchitecture().is64Bit()) {
             throw new UnsupportedOperationException(
-                "GenSources task requires a 64bit JVM to run due to the memory requirements.");
+                "GenSources task requires a 64bit JVM to run due to the memory requirements."
+            );
         }
 
         if (!getUseCache().get()) {
@@ -315,7 +349,8 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
                 Files.deleteIfExists(cacheFile);
             }
 
-            // TODO ensure we have a lock on this file to prevent multiple tasks from running at the same time
+            // TODO ensure we have a lock on this file to prevent multiple tasks
+            // from running at the same time
 
             Files.createDirectories(cacheFile.getParent());
 
@@ -340,8 +375,9 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         final Path classesInputJar = getClassesInputJar().getSingleFile().toPath();
         final Path sourcesOutputJar = getSourcesOutputJar().get().getAsFile().toPath();
         final Path classesOutputJar = getClassesOutputJar().getSingleFile().toPath();
-        final var cacheRules = new CachedFileStoreImpl.CacheRules(getMaxCachedFiles().get(),
-            Duration.ofDays(getMaxCacheFileAge().get()));
+        final var cacheRules = new CachedFileStoreImpl.CacheRules(
+            getMaxCachedFiles().get(), Duration.ofDays(getMaxCacheFileAge().get())
+        );
         final var decompileCache = new CachedFileStoreImpl<>(cacheRoot, CachedData.SERIALIZER, cacheRules);
         final String cacheKey = getCacheKey();
         final CachedJarProcessor cachedJarProcessor = new CachedJarProcessor(decompileCache, cacheKey);
@@ -363,8 +399,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
         if (job instanceof CachedJarProcessor.WorkToDoJob workToDoJob) {
             Path workInputJar = workToDoJob.incomplete();
-            @Nullable
-            Path existingClasses = (job instanceof CachedJarProcessor.PartialWorkJob partialWorkJob)
+            @Nullable Path existingClasses = (job instanceof CachedJarProcessor.PartialWorkJob partialWorkJob)
                 ? partialWorkJob.existingClasses()
                 : null;
 
@@ -433,8 +468,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         applyLineNumbers(lineNumbers, classesInputJar, classesOutputJar);
     }
 
-    private void applyLineNumbers(@Nullable ClassLineNumbers lineNumbers, Path classesInputJar, Path classesOutputJar)
-        throws IOException {
+    private void applyLineNumbers(@Nullable ClassLineNumbers lineNumbers, Path classesInputJar, Path classesOutputJar) throws IOException {
         if (lineNumbers == null) {
             getLogger().info("No line numbers to remap, skipping remapping");
             return;
@@ -469,8 +503,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         sj.add(decompilerOptions.getDecompilerClassName().get());
         sj.add(fileCollectionHash(decompilerOptions.getClasspath()));
 
-        for (Map.Entry<String, String> entry :
-            decompilerOptions.getOptions().get().entrySet()) {
+        for (Map.Entry<String, String> entry : decompilerOptions.getOptions().get().entrySet()) {
             sj.add(entry.getKey() + "=" + entry.getValue());
         }
 
@@ -490,18 +523,16 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         return sj.toString();
     }
 
-    @Nullable
-    private ClassLineNumbers runDecompileJob(Path inputJar, Path outputJar, @Nullable Path existingJar)
-        throws IOException {
+    @Nullable private ClassLineNumbers runDecompileJob(Path inputJar, Path outputJar, @Nullable Path existingJar) throws IOException {
         final Platform platform = Platform.CURRENT;
         final Path lineMapFile = File.createTempFile("loom", "linemap").toPath();
         Files.delete(lineMapFile);
 
         if (!platform.supportsUnixDomainSockets()) {
-            getLogger()
-                .warn(
-                    "Decompile worker logging disabled as Unix Domain Sockets is not supported on your operating " +
-                    "system.");
+            getLogger().warn(
+                "Decompile worker logging disabled as Unix Domain Sockets is not supported on your operating "
+                    + "system."
+            );
 
             doWork(null, inputJar, outputJar, lineMapFile, existingJar);
             return readLineNumbers(lineMapFile);
@@ -511,12 +542,12 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         final Path ipcPath = Files.createTempFile("loom", "ipc");
         Files.deleteIfExists(ipcPath);
 
-        try (ThreadedProgressLoggerConsumer loggerConsumer = new ThreadedProgressLoggerConsumer(
-            getLogger(),
-            getProgressLoggerFactory(),
-            decompilerOptions.getName(),
-            "Decompiling zomboid sources");
-             IPCServer logReceiver = new IPCServer(ipcPath, loggerConsumer)) {
+        try (
+            ThreadedProgressLoggerConsumer loggerConsumer = new ThreadedProgressLoggerConsumer(
+                getLogger(), getProgressLoggerFactory(), decompilerOptions.getName(), "Decompiling zomboid sources"
+            );
+            IPCServer logReceiver = new IPCServer(ipcPath, loggerConsumer)
+        ) {
             doWork(logReceiver, inputJar, outputJar, lineMapFile, existingJar);
         } catch (InterruptedException e) {
             throw new RuntimeException("Failed to shutdown log receiver", e);
@@ -535,8 +566,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
             spec.getMainClass().set("daomephsta.unpick.cli.Main");
             spec.classpath(getUnpickRuntimeClasspath());
             spec.args(args);
-            spec.systemProperty(
-                "java.util.logging.config.file", writeUnpickLogConfig().getAbsolutePath());
+            spec.systemProperty("java.util.logging.config.file", writeUnpickLogConfig().getAbsolutePath());
         });
 
         result.rethrowFailure();
@@ -566,10 +596,12 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     private File writeUnpickLogConfig() {
         final File unpickLoggingConfigFile = getUnpickLogConfig().getAsFile().get();
 
-        try (InputStream is =
-                 GenerateSourcesTask.class.getClassLoader().getResourceAsStream("unpick-logging.properties")) {
+        try (
+            InputStream is = GenerateSourcesTask.class.getClassLoader().getResourceAsStream("unpick-logging.properties")
+        ) {
             Files.copy(
-                Objects.requireNonNull(is), unpickLoggingConfigFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Objects.requireNonNull(is), unpickLoggingConfigFile.toPath(), StandardCopyOption.REPLACE_EXISTING
+            );
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to copy unpick logging config", e);
         }
@@ -591,12 +623,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         getLogger().info("Wrote linemap to {}", lineMap);
     }
 
-    private void doWork(
-        @Nullable IPCServer ipcServer,
-        Path inputJar,
-        Path outputJar,
-        Path linemapFile,
-        @Nullable Path existingClasses) {
+    private void doWork(@Nullable IPCServer ipcServer, Path inputJar, Path outputJar, Path linemapFile, @Nullable Path existingClasses) {
         final String jvmMarkerValue = UUID.randomUUID().toString();
         final WorkQueue workQueue = createWorkQueue(jvmMarkerValue);
 
@@ -623,8 +650,8 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
             workQueue.await();
         } finally {
             if (ipcServer != null) {
-                boolean stopped =
-                    WorkerDaemonClientsManagerHelper.stopIdleJVM(getWorkerDaemonClientsManager(), jvmMarkerValue);
+                boolean stopped = WorkerDaemonClientsManagerHelper
+                    .stopIdleJVM(getWorkerDaemonClientsManager(), jvmMarkerValue);
 
                 if (!stopped && ipcServer.hasReceivedMessage()) {
                     getLogger().info("Failed to stop decompile worker JVM, it may have already been stopped?");
@@ -642,12 +669,10 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
         return getWorkerExecutor().processIsolation(spec -> {
             spec.forkOptions(forkOptions -> {
-                forkOptions.setMinHeapSize(String.format(
-                    Locale.ENGLISH,
-                    "%dm",
-                    Math.min(512, decompilerOptions.getMemory().get())));
-                forkOptions.setMaxHeapSize(String.format(
-                    Locale.ENGLISH, "%dm", decompilerOptions.getMemory().get()));
+                forkOptions.setMinHeapSize(
+                    String.format(Locale.ENGLISH, "%dm", Math.min(512, decompilerOptions.getMemory().get()))
+                );
+                forkOptions.setMaxHeapSize(String.format(Locale.ENGLISH, "%dm", decompilerOptions.getMemory().get()));
                 forkOptions.systemProperty(WorkerDaemonClientsManagerHelper.MARKER_PROP, jvmMarkerValue);
             });
             spec.getClasspath().from(getClasspath());
@@ -655,7 +680,8 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
     }
 
     private boolean useProcessIsolation() {
-        // Useful if you want to debug the decompiler, make sure you run gradle with enough memory.
+        // Useful if you want to debug the decompiler, make sure you run gradle
+        // with enough memory.
         return !Boolean.getBoolean("leaf.loom.genSources.debug");
     }
 
@@ -698,23 +724,19 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         }
 
         private void doDecompile(IOStringConsumer logger) {
-            final Path inputJar =
-                getParameters().getInputJar().get().getAsFile().toPath();
-            final Path linemap =
-                getParameters().getLinemapFile().get().getAsFile().toPath();
-            final Path outputJar =
-                getParameters().getOutputJar().get().getAsFile().toPath();
+            final Path inputJar = getParameters().getInputJar().get().getAsFile().toPath();
+            final Path linemap = getParameters().getLinemapFile().get().getAsFile().toPath();
+            final Path outputJar = getParameters().getOutputJar().get().getAsFile().toPath();
 
-            final DecompilerOptions.Dto decompilerOptions =
-                getParameters().getDecompilerOptions().get();
+            final DecompilerOptions.Dto decompilerOptions = getParameters().getDecompilerOptions().get();
 
             final LoomDecompiler decompiler;
 
             try {
                 final String className = decompilerOptions.className();
                 final Constructor<LoomDecompiler> decompilerConstructor = getDecompilerConstructor(className);
-                Objects.requireNonNull(
-                    decompilerConstructor, "%s must have a no args constructor".formatted(className));
+                Objects
+                    .requireNonNull(decompilerConstructor, "%s must have a no args constructor".formatted(className));
 
                 decompiler = decompilerConstructor.newInstance();
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -722,15 +744,12 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
             }
 
             try (var serviceFactory = new ScopedServiceFactory()) {
-                final SourceMappingsService mappingsService =
-                    serviceFactory.get(getParameters().getMappings());
+                final SourceMappingsService mappingsService = serviceFactory.get(getParameters().getMappings());
 
                 final var metadata = new DecompilationMetadata(
-                    decompilerOptions.maxThreads(),
-                    mappingsService.getMappingsFile(),
-                    getLibraries(),
-                    logger,
-                    decompilerOptions.options());
+                    decompilerOptions.maxThreads(), mappingsService.getMappingsFile(), getLibraries(), logger,
+                    decompilerOptions.options()
+                );
 
                 decompiler.decompile(inputJar, outputJar, linemap, metadata);
 
@@ -746,9 +765,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
         }
 
         private Collection<Path> getLibraries() {
-            return getParameters().getClassPath().getFiles().stream()
-                .map(File::toPath)
-                .collect(Collectors.toSet());
+            return getParameters().getClassPath().getFiles().stream().map(File::toPath).collect(Collectors.toSet());
         }
     }
 

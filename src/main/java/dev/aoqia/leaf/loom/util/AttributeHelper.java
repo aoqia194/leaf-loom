@@ -33,7 +33,6 @@ import java.nio.file.Path;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.Optional;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +53,7 @@ public final class AttributeHelper {
             final UserDefinedFileAttributeView attributeView;
 
             try {
-                attributeView = Files.getFileAttributeView(path,
-                    UserDefinedFileAttributeView.class);
+                attributeView = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
             } catch (UnsupportedOperationException ignored) {
                 throw new FileSystemException("AttributeView was not supported, probably ZipFs.");
             }
@@ -78,8 +76,7 @@ public final class AttributeHelper {
         }
     }
 
-    public static void writeAttribute(Path path, String key, String value,
-        boolean forceFallback) throws IOException {
+    public static void writeAttribute(Path path, String key, String value, boolean forceFallback) throws IOException {
         final Path attributesFile = getFallbackPath(path, key);
 
         try {
@@ -89,10 +86,10 @@ public final class AttributeHelper {
 
             final UserDefinedFileAttributeView attributeView;
 
-            // Try-catch required due to getFileAttributeView going crazy when writing to zip/jar.
+            // Try-catch required due to getFileAttributeView going crazy when
+            // writing to zip/jar.
             try {
-                attributeView = Files.getFileAttributeView(path,
-                    UserDefinedFileAttributeView.class);
+                attributeView = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
             } catch (UnsupportedOperationException ignored) {
                 throw new FileSystemException("AttributeView was not supported, probably ZipFs.");
             }
@@ -110,7 +107,8 @@ public final class AttributeHelper {
                 Files.delete(attributesFile);
             }
         } catch (FileSystemException e) {
-            // Fallback to a separate file when using a file system that does not attributes.
+            // Fallback to a separate file when using a file system that does
+            // not attributes.
             LOGGER.debug("Falling back to attribute file because: {}", e.getMessage());
             Files.writeString(attributesFile, value, StandardCharsets.UTF_8);
         }
@@ -122,7 +120,6 @@ public final class AttributeHelper {
 
     // A faster exists check
     private static boolean exists(Path path) {
-        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists()
-            : Files.exists(path);
+        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists() : Files.exists(path);
     }
 }

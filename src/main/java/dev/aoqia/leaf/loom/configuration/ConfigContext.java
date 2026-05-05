@@ -23,9 +23,10 @@
  */
 package dev.aoqia.leaf.loom.configuration;
 
+import org.gradle.api.Project;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-import org.gradle.api.Project;
 
 public interface ConfigContext {
     Project project();

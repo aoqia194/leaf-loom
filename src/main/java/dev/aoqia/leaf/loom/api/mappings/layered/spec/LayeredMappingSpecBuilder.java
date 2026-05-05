@@ -25,9 +25,10 @@ package dev.aoqia.leaf.loom.api.mappings.layered.spec;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import dev.aoqia.leaf.loom.util.ClosureAction;
 import org.gradle.api.Action;
 import org.jetbrains.annotations.ApiStatus;
+
+import dev.aoqia.leaf.loom.util.ClosureAction;
 
 /**
  * Used to configure a layered mapping spec.
@@ -40,17 +41,16 @@ public interface LayeredMappingSpecBuilder {
     LayeredMappingSpecBuilder addLayer(MappingsSpec<?> mappingSpec);
 
     /**
-     * Add a signatureFix layer. Reads the @extras/record_signatures.json" file in a jar file such as yarn.
+     * Add a signatureFix layer. Reads the @extras/record_signatures.json" file
+     * in a jar file such as yarn.
      */
     @ApiStatus.Experimental
     LayeredMappingSpecBuilder signatureFix(Object object);
 
     /**
      * Add a layer that uses a mappings file or directory.
-     *
      * @param file the file notation for a {@link FileSpec}
      * @return this builder
-     *
      * @see FileMappingsSpecBuilder
      */
     @ApiStatus.Experimental
@@ -60,11 +60,9 @@ public interface LayeredMappingSpecBuilder {
 
     /**
      * Configure and add a layer that uses a mappings file or directory.
-     *
      * @param file the file notation for a {@link FileSpec}
      * @param action the configuration action
      * @return this builder
-     *
      * @see FileMappingsSpecBuilder
      */
     @ApiStatus.Experimental
@@ -72,17 +70,16 @@ public interface LayeredMappingSpecBuilder {
 
     /**
      * Configure and add a layer that uses a mappings file or directory.
-     *
      * @param file the file notation for a {@link FileSpec}
      * @param closure the configuration action
      * @return this builder
-     *
      * @see FileMappingsSpecBuilder
      */
     @ApiStatus.Experimental
     default LayeredMappingSpecBuilder mappings(
-            Object file,
-            @DelegatesTo(value = FileMappingsSpecBuilder.class, strategy = Closure.DELEGATE_FIRST) Closure<?> closure) {
+        Object file, @DelegatesTo(value = FileMappingsSpecBuilder.class, strategy = Closure.DELEGATE_FIRST)
+        Closure<?> closure
+    ) {
         return mappings(file, new ClosureAction<>(closure));
     }
 }

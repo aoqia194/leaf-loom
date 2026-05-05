@@ -31,12 +31,16 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.Set;
 
-import dev.aoqia.leaf.loom.util.AsyncZipProcessor;
-import dev.aoqia.leaf.loom.util.Constants;
-
-import org.objectweb.asm.*;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.util.AsyncZipProcessor;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public record LineNumberRemapper(ClassLineNumbers lineNumbers) {
     private static final Logger LOGGER = LoggerFactory.getLogger(LineNumberRemapper.class);
@@ -61,9 +65,9 @@ public record LineNumberRemapper(ClassLineNumbers lineNumbers) {
                     // Strip the leading slash and the .class extension
                     String idx = fileName.substring(1, fileName.length() - 6);
 
-                    int dollarPos =
-                        idx.indexOf(
-                            '$'); // This makes the assumption that only Java classes are to be
+                    int dollarPos = idx.indexOf('$'); // This makes the
+                                                      // assumption that only
+                                                      // Java classes are to be
                     // remapped.
 
                     if (dollarPos >= 0) {
@@ -78,11 +82,8 @@ public record LineNumberRemapper(ClassLineNumbers lineNumbers) {
                             ClassWriter writer = new ClassWriter(0);
 
                             reader.accept(
-                                new LineNumberVisitor(
-                                    Constants.ASM_VERSION,
-                                    writer,
-                                    lineNumbers.lineMap().get(idx)),
-                                0);
+                                new LineNumberVisitor(Constants.ASM_VERSION, writer, lineNumbers.lineMap().get(idx)), 0
+                            );
                             Files.write(dst, writer.toByteArray());
                             return;
                         }
@@ -106,9 +107,9 @@ public record LineNumberRemapper(ClassLineNumbers lineNumbers) {
 
         @Override
         public MethodVisitor visitMethod(
-            int access, String name, String descriptor, String signature, String[] exceptions) {
-            return new MethodVisitor(api,
-                super.visitMethod(access, name, descriptor, signature, exceptions)) {
+            int access, String name, String descriptor, String signature, String[] exceptions
+        ) {
+            return new MethodVisitor(api, super.visitMethod(access, name, descriptor, signature, exceptions)) {
                 @Override
                 public void visitLineNumber(int line, Label start) {
                     if (line <= 0) {

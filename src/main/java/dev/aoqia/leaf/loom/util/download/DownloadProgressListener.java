@@ -32,15 +32,12 @@ public interface DownloadProgressListener {
 
     DownloadProgressListener NONE = new DownloadProgressListener() {
         @Override
-        public void onStart() {
-        }
+        public void onStart() {}
 
         @Override
-        public void onProgress(long bytesTransferred, long contentLength) {
-        }
+        public void onProgress(long bytesTransferred, long contentLength) {}
 
         @Override
-        public void onEnd() {
-        }
+        public void onEnd() {}
     };
 }

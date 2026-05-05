@@ -25,10 +25,7 @@ package dev.aoqia.leaf.loom.extension;
 
 import java.lang.reflect.Constructor;
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.api.remapping.RemapperContext;
-import dev.aoqia.leaf.loom.api.remapping.RemapperExtension;
-import dev.aoqia.leaf.loom.api.remapping.RemapperParameters;
-import dev.aoqia.leaf.loom.api.remapping.TinyRemapperExtension;
+
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.api.TrClass;
 import org.gradle.api.provider.Property;
@@ -37,6 +34,11 @@ import org.gradle.api.tasks.Optional;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.commons.Remapper;
+
+import dev.aoqia.leaf.loom.api.remapping.RemapperContext;
+import dev.aoqia.leaf.loom.api.remapping.RemapperExtension;
+import dev.aoqia.leaf.loom.api.remapping.RemapperParameters;
+import dev.aoqia.leaf.loom.api.remapping.TinyRemapperExtension;
 
 public abstract class RemapperExtensionHolder {
     @Inject
@@ -53,18 +55,18 @@ public abstract class RemapperExtensionHolder {
     public void apply(TinyRemapper.Builder tinyRemapperBuilder, String sourceNamespace, String targetNamespace) {
         final RemapperExtension<?> remapperExtension = newInstance();
 
-        tinyRemapperBuilder.extraPostApplyVisitor(
-                new RemapperExtensionImpl(remapperExtension, sourceNamespace, targetNamespace));
+        tinyRemapperBuilder
+            .extraPostApplyVisitor(new RemapperExtensionImpl(remapperExtension, sourceNamespace, targetNamespace));
 
         if (remapperExtension instanceof TinyRemapperExtension tinyRemapperExtension) {
             final var context = new TinyRemapperContextImpl(sourceNamespace, targetNamespace);
 
-            final TinyRemapper.AnalyzeVisitorProvider analyzeVisitorProvider =
-                    tinyRemapperExtension.getAnalyzeVisitorProvider(context);
-            final TinyRemapper.ApplyVisitorProvider preApplyVisitorProvider =
-                    tinyRemapperExtension.getPreApplyVisitor(context);
-            final TinyRemapper.ApplyVisitorProvider postApplyVisitorProvider =
-                    tinyRemapperExtension.getPostApplyVisitor(context);
+            final TinyRemapper.AnalyzeVisitorProvider analyzeVisitorProvider = tinyRemapperExtension
+                .getAnalyzeVisitorProvider(context);
+            final TinyRemapper.ApplyVisitorProvider preApplyVisitorProvider = tinyRemapperExtension
+                .getPreApplyVisitor(context);
+            final TinyRemapper.ApplyVisitorProvider postApplyVisitorProvider = tinyRemapperExtension
+                .getPostApplyVisitor(context);
 
             if (analyzeVisitorProvider != null) {
                 tinyRemapperBuilder.extraAnalyzeVisitor(analyzeVisitorProvider);
@@ -82,22 +84,20 @@ public abstract class RemapperExtensionHolder {
 
     private RemapperExtension<?> newInstance() {
         try {
-            //noinspection unchecked
-            final Class<? extends RemapperExtension<?>> remapperExtensionClass = (Class<? extends RemapperExtension<?>>)
-                    Class.forName(getRemapperExtensionClass().get());
+            // noinspection unchecked
+            final Class<? extends RemapperExtension<?>> remapperExtensionClass = (Class<? extends RemapperExtension<?>>) Class
+                .forName(getRemapperExtensionClass().get());
             final Constructor<?> constructor = getInjectedConstructor(remapperExtensionClass);
 
             if (getRemapperParameters().get() instanceof RemapperParameters.None) {
                 return (RemapperExtension<?>) constructor.newInstance();
             }
 
-            return (RemapperExtension<?>)
-                    constructor.newInstance(getRemapperParameters().get());
+            return (RemapperExtension<?>) constructor.newInstance(getRemapperParameters().get());
         } catch (Exception e) {
             throw new RuntimeException(
-                    "Failed to create remapper extension for class: "
-                            + getRemapperExtensionClass().get(),
-                    e);
+                "Failed to create remapper extension for class: " + getRemapperExtensionClass().get(), e
+            );
         }
     }
 
@@ -108,7 +108,8 @@ public abstract class RemapperExtensionHolder {
         for (Constructor<?> constructor : constructors) {
             if (injectedConstructor != null) {
                 throw new RuntimeException(
-                        "RemapperExtension class " + clazz.getName() + " has more than one constructor");
+                    "RemapperExtension class " + clazz.getName() + " has more than one constructor"
+                );
             }
 
             injectedConstructor = constructor;
@@ -126,11 +127,11 @@ public abstract class RemapperExtensionHolder {
         private final String sourceNamespace;
         private final String targetNamespace;
 
-        @Nullable
-        private RemapperContext context;
+        @Nullable private RemapperContext context;
 
         private RemapperExtensionImpl(
-                RemapperExtension<?> remapperExtension, String sourceNamespace, String targetNamespace) {
+            RemapperExtension<?> remapperExtension, String sourceNamespace, String targetNamespace
+        ) {
             this.remapperExtension = remapperExtension;
             this.sourceNamespace = sourceNamespace;
             this.targetNamespace = targetNamespace;
@@ -147,8 +148,8 @@ public abstract class RemapperExtensionHolder {
     }
 
     private record RemapperContextImpl(Remapper remapper, String sourceNamespace, String targetNamespace)
-            implements RemapperContext {}
+        implements RemapperContext {}
 
     private record TinyRemapperContextImpl(String sourceNamespace, String targetNamespace)
-            implements TinyRemapperExtension.Context {}
+        implements TinyRemapperExtension.Context {}
 }

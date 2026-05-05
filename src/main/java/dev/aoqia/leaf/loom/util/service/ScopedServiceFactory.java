@@ -29,11 +29,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
+
 import dev.aoqia.leaf.loom.util.gradle.GradleTypeAdapter;
 
 /**
- * An implementation of {@link ServiceFactory} that creates services scoped to the factory instance.
- * When the factory is closed, all services created by it are closed and discarded.
+ * An implementation of {@link ServiceFactory} that creates services scoped to
+ * the factory instance. When the factory is closed, all services created by it
+ * are closed and discarded.
  */
 public final class ScopedServiceFactory implements ServiceFactory, Closeable {
     private final Map<Service.Options, Service<?>> servicesIdentityMap = new IdentityHashMap<>();
@@ -41,19 +43,21 @@ public final class ScopedServiceFactory implements ServiceFactory, Closeable {
 
     @Override
     public <O extends Service.Options, S extends Service<O>> S get(O options) {
-        // First check if the service is already created, using the identity map saving the need to serialize the
+        // First check if the service is already created, using the identity map
+        // saving the need to serialize the
         // options
-        //noinspection unchecked
+        // noinspection unchecked
         S service = (S) servicesIdentityMap.get(options);
 
         if (service != null) {
             return service;
         }
 
-        // If the service is not already created, serialize the options and check the json map as it may be an
+        // If the service is not already created, serialize the options and
+        // check the json map as it may be an
         // equivalent service
         String key = getOptionsCacheKey(options);
-        //noinspection unchecked
+        // noinspection unchecked
         service = (S) servicesJsonMap.get(key);
 
         if (service != null) {
@@ -69,18 +73,17 @@ public final class ScopedServiceFactory implements ServiceFactory, Closeable {
     }
 
     private static <O extends Service.Options, S extends Service<O>> S createService(
-            O options, ServiceFactory serviceFactory) {
+        O options, ServiceFactory serviceFactory
+    ) {
         // We need to create the service from the provided options
         final Class<? extends S> serviceClass;
 
         // Find the service class
         try {
-            //noinspection unchecked
-            serviceClass =
-                    (Class<? extends S>) Class.forName(options.getServiceClass().get());
+            // noinspection unchecked
+            serviceClass = (Class<? extends S>) Class.forName(options.getServiceClass().get());
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(
-                    "Failed to find service class: " + options.getServiceClass().get(), e);
+            throw new RuntimeException("Failed to find service class: " + options.getServiceClass().get(), e);
         }
 
         try {
@@ -89,17 +92,21 @@ public final class ScopedServiceFactory implements ServiceFactory, Closeable {
                 throw new RuntimeException("Service class must have exactly 1 constructor");
             }
 
-            // Check the constructor takes the correct types, the options class and a ScopedServiceFactory
+            // Check the constructor takes the correct types, the options class
+            // and a ScopedServiceFactory
             Class<?>[] parameterTypes = serviceClass.getDeclaredConstructors()[0].getParameterTypes();
 
-            if (parameterTypes.length != 2
-                    || !parameterTypes[0].isAssignableFrom(options.getClass())
-                    || !parameterTypes[1].isAssignableFrom(ServiceFactory.class)) {
-                throw new RuntimeException("Service class" + serviceClass.getName()
-                        + " constructor must take the options class and a ScopedServiceFactory");
+            if (
+                parameterTypes.length != 2 || !parameterTypes[0].isAssignableFrom(options.getClass())
+                    || !parameterTypes[1].isAssignableFrom(ServiceFactory.class)
+            ) {
+                throw new RuntimeException(
+                    "Service class" + serviceClass.getName()
+                        + " constructor must take the options class and a ScopedServiceFactory"
+                );
             }
 
-            //noinspection unchecked
+            // noinspection unchecked
             return (S) serviceClass.getDeclaredConstructors()[0].newInstance(options, serviceFactory);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Failed to create service instance", e);

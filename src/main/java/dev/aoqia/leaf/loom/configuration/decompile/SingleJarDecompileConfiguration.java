@@ -26,12 +26,13 @@ package dev.aoqia.leaf.loom.configuration.decompile;
 import java.io.File;
 import java.util.List;
 
+import org.gradle.api.Project;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.Constants;
-import org.gradle.api.Project;
 
 public class SingleJarDecompileConfiguration extends DecompileConfiguration<MappedZomboidProvider> {
     public SingleJarDecompileConfiguration(Project project, MappedZomboidProvider minecraftProvider) {
@@ -54,7 +55,8 @@ public class SingleJarDecompileConfiguration extends DecompileConfiguration<Mapp
             final String decompilerName = options.getFormattedName();
             String taskName = "%sWith%s".formatted(taskBaseName, decompilerName);
 
-            // Decompiler will be passed to the constructor of GenerateSourcesTask
+            // Decompiler will be passed to the constructor of
+            // GenerateSourcesTask
             project.getTasks().register(taskName, GenerateSourcesTask.class, options).configure(task -> {
                 task.getInputJarName().set(zomboidJar.getName());
                 task.getSourcesOutputJar()
@@ -65,8 +67,9 @@ public class SingleJarDecompileConfiguration extends DecompileConfiguration<Mapp
                 task.setGroup(Constants.TaskGroup.LEAF);
 
                 if (mappingConfiguration.hasUnpickDefinitions()) {
-                    final File outputJar = new File(extension.getMappingConfiguration()
-                        .mappingsWorkingDir().toFile(), "zomboid-unpicked.jar");
+                    final File outputJar = new File(
+                        extension.getMappingConfiguration().mappingsWorkingDir().toFile(), "zomboid-unpicked.jar"
+                    );
                     configureUnpick(task, outputJar);
                 }
             });

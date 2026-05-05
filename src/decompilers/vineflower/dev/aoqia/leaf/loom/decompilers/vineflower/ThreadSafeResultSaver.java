@@ -40,6 +40,7 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 import org.jetbrains.java.decompiler.main.DecompilerContext;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 
@@ -81,13 +82,15 @@ public class ThreadSafeResultSaver implements IResultSaver {
 
     @Override
     public void saveClassEntry(
-            String path, String archiveName, String qualifiedName, String entryName, String content) {
+        String path, String archiveName, String qualifiedName, String entryName, String content
+    ) {
         this.saveClassEntry(path, archiveName, qualifiedName, entryName, content, null);
     }
 
     @Override
     public void saveClassEntry(
-            String path, String archiveName, String qualifiedName, String entryName, String content, int[] mapping) {
+        String path, String archiveName, String qualifiedName, String entryName, String content, int[] mapping
+    ) {
         String key = path + "/" + archiveName;
         ExecutorService executor = saveExecutors.get(key);
         executor.submit(() -> {
@@ -111,11 +114,7 @@ public class ThreadSafeResultSaver implements IResultSaver {
                 for (int i = 0; i < mapping.length; i += 2) {
                     maxLine = Math.max(maxLine, mapping[i]);
                     maxLineDest = Math.max(maxLineDest, mapping[i + 1]);
-                    builder.append("\t")
-                            .append(mapping[i])
-                            .append("\t")
-                            .append(mapping[i + 1])
-                            .append("\n");
+                    builder.append("\t").append(mapping[i]).append("\t").append(mapping[i + 1]).append("\n");
                 }
 
                 lineMapWriter.println(qualifiedName + "\t" + maxLine + "\t" + maxLineDest);

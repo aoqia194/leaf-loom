@@ -27,13 +27,15 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.accesswidener.AccessWidenerVisitor;
+import net.fabricmc.tinyremapper.TinyRemapper;
+import org.jetbrains.annotations.Nullable;
+
 import dev.aoqia.leaf.loom.util.Checksum;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
-import net.fabricmc.tinyremapper.TinyRemapper;
-import org.jetbrains.annotations.Nullable;
 
 public record LocalAccessWidenerEntry(Path path, String hash) implements AccessWidenerEntry {
     public static LocalAccessWidenerEntry create(Path path) {

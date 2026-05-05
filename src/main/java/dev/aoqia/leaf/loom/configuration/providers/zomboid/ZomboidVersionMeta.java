@@ -29,23 +29,20 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.google.gson.JsonElement;
-import dev.aoqia.leaf.loom.util.Platform;
 import org.jetbrains.annotations.Nullable;
+
+import dev.aoqia.leaf.loom.util.Platform;
 
 @SuppressWarnings("unused")
 public record ZomboidVersionMeta(
-    Arguments arguments,
-    AssetIndex assetIndex,
-    int javaVersion,
-    List<Library> libraries,
-    String mainClass,
-    String releaseTime,
-    String time,
-    String id) {
+    Arguments arguments, AssetIndex assetIndex, int javaVersion, List<Library> libraries, String mainClass,
+    String releaseTime, String time, String id
+) {
+
     private static final Map<Platform.OperatingSystem, String> OS_NAMES = Map.of(
-        Platform.OperatingSystem.WINDOWS, "windows",
-        Platform.OperatingSystem.MAC_OS, "osx",
-        Platform.OperatingSystem.LINUX, "linux");
+        Platform.OperatingSystem.WINDOWS, "windows", Platform.OperatingSystem.MAC_OS, "osx",
+        Platform.OperatingSystem.LINUX, "linux"
+    );
 
     public boolean isVersionOrNewer(String releaseTime) {
         return this.releaseTime().compareTo(releaseTime) >= 0;
@@ -56,11 +53,8 @@ public record ZomboidVersionMeta(
     }
 
     public record Library(
-        Downloads downloads,
-        String name,
-        Map<String, String> natives,
-        List<Rule> rules,
-        Object extract) {
+        Downloads downloads, String name, Map<String, String> natives, List<Rule> rules, Object extract
+    ) {
         public boolean hasNativesForOS(Platform platform) {
             if (!hasNatives()) {
                 return false;
@@ -94,8 +88,7 @@ public record ZomboidVersionMeta(
             return this.natives != null;
         }
 
-        @Nullable
-        public Download classifierForOS(Platform platform) {
+        @Nullable public Download classifierForOS(Platform platform) {
             String classifier = natives.get(OS_NAMES.get(platform.getOperatingSystem()));
 
             if (classifier == null) {
@@ -112,8 +105,7 @@ public record ZomboidVersionMeta(
             }
 
             // Used in the twitch library in 1.7.10
-            classifier =
-                classifier.replace("${arch}", platform.getArchitecture().is64Bit() ? "64" : "32");
+            classifier = classifier.replace("${arch}", platform.getArchitecture().is64Bit() ? "64" : "32");
 
             return downloads().classifier(classifier);
         }
@@ -127,18 +119,17 @@ public record ZomboidVersionMeta(
         }
     }
 
-    // JsonElement here can be a String or an Arg object. Don't know how to do union types tho.
+    // JsonElement here can be a String or an Arg object. Don't know how to do
+    // union types tho.
     public record Arguments(List<JsonElement> game, List<JsonElement> jvm) {}
 
     // JsonElement here can be a String or a list of String.
     public record Argument(List<Rule> rules, JsonElement value) {}
 
-    public record AssetIndex(String sha1, long size, String url) {
-    }
+    public record AssetIndex(String sha1, long size, String url) {}
 
     public record Downloads(Download artifact, Map<String, Download> classifiers) {
-        @Nullable
-        public Download classifier(String os) {
+        @Nullable public Download classifier(String os) {
             return classifiers.get(os);
         }
     }
@@ -155,8 +146,7 @@ public record ZomboidVersionMeta(
 
     public record OS(String name) {
         public boolean isValidForOS(Platform platform) {
-            return name() == null ||
-                   name().equalsIgnoreCase(OS_NAMES.get(platform.getOperatingSystem()));
+            return name() == null || name().equalsIgnoreCase(OS_NAMES.get(platform.getOperatingSystem()));
         }
     }
 

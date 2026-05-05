@@ -23,13 +23,21 @@
  */
 package dev.aoqia.leaf.loom.task.service;
 
-import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import com.google.gson.JsonObject;
+import org.gradle.api.Project;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.SourceSet;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.extension.MixinExtension;
 import dev.aoqia.leaf.loom.task.RemapJarTask;
@@ -39,16 +47,11 @@ import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 import dev.aoqia.leaf.loom.util.service.Service;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import dev.aoqia.leaf.loom.util.service.ServiceType;
-import org.gradle.api.Project;
-import org.gradle.api.provider.ListProperty;
-import org.gradle.api.provider.Property;
-import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.SourceSet;
 
 public class MixinRefmapService extends Service<MixinRefmapService.Options> {
-    public static final ServiceType<Options, MixinRefmapService> TYPE =
-            new ServiceType<>(Options.class, MixinRefmapService.class);
+    public static final ServiceType<Options, MixinRefmapService> TYPE = new ServiceType<>(
+        Options.class, MixinRefmapService.class
+    );
 
     public interface Options extends Service.Options {
         @Input
@@ -72,22 +75,15 @@ public class MixinRefmapService extends Service<MixinRefmapService.Options> {
             List<Provider<Options>> options = new ArrayList<>();
 
             for (SourceSet sourceSet : mixinExtension.getMixinSourceSets()) {
-                MixinExtension.MixinInformationContainer container =
-                        Objects.requireNonNull(MixinExtension.getMixinInformationContainer(sourceSet));
+                MixinExtension.MixinInformationContainer container = Objects
+                    .requireNonNull(MixinExtension.getMixinInformationContainer(sourceSet));
 
-                final List<String> rootPaths = ClientEntriesService.getRootPaths(
-                        sourceSet.getResources().getSrcDirs());
+                final List<String> rootPaths = ClientEntriesService.getRootPaths(sourceSet.getResources().getSrcDirs());
 
                 final String refmapName = container.refmapNameProvider().get();
-                final List<String> mixinConfigs =
-                        container
-                                .sourceSet()
-                                .getResources()
-                                .matching(container.mixinConfigPattern())
-                                .getFiles()
-                                .stream()
-                                .map(ClientEntriesService.relativePath(rootPaths))
-                                .toList();
+                final List<String> mixinConfigs = container.sourceSet().getResources()
+                    .matching(container.mixinConfigPattern()).getFiles().stream()
+                    .map(ClientEntriesService.relativePath(rootPaths)).toList();
 
                 options.add(createOptions(project, mixinConfigs, refmapName));
             }
@@ -116,19 +112,19 @@ public class MixinRefmapService extends Service<MixinRefmapService.Options> {
 
         final List<String> allMixinConfigs = leafModJson.getMixinConfigurations();
         final List<String> mixinConfigs = getOptions().getMixinConfigs().get().stream()
-                .filter(allMixinConfigs::contains)
-                .toList();
+            .filter(allMixinConfigs::contains).toList();
         final String refmapName = getOptions().getRefmapName().get();
 
         if (ZipUtils.contains(path, refmapName)) {
             int transformed = ZipUtils.transformJson(
-                    JsonObject.class, path, mixinConfigs.stream().collect(Collectors.toMap(s -> s, s -> json -> {
-                        if (!json.has("refmap")) {
-                            json.addProperty("refmap", refmapName);
-                        }
+                JsonObject.class, path, mixinConfigs.stream().collect(Collectors.toMap(s -> s, s -> json -> {
+                    if (!json.has("refmap")) {
+                        json.addProperty("refmap", refmapName);
+                    }
 
-                        return json;
-                    })));
+                    return json;
+                }))
+            );
         }
     }
 }

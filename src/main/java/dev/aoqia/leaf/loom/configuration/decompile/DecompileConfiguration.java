@@ -24,6 +24,10 @@
 package dev.aoqia.leaf.loom.configuration.decompile;
 
 import java.io.File;
+
+import org.gradle.api.Project;
+import org.gradle.api.artifacts.ConfigurationContainer;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
@@ -31,8 +35,6 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.Constants;
-import org.gradle.api.Project;
-import org.gradle.api.artifacts.ConfigurationContainer;
 
 public abstract class DecompileConfiguration<T extends MappedZomboidProvider> {
     static final String DEFAULT_DECOMPILER = "Vineflower";

@@ -1,7 +1,7 @@
 /*
- * This file is part of fabric-loom, licensed under the MIT License (MIT).
+ * This file is part of leaf-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2022-2023 FabricMC
+ * Copyright (c) 2022-2023 aoqia, FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package dev.aoqia.leaf.loom.kotlin.remapping
 
 import org.objectweb.asm.AnnotationVisitor
@@ -35,14 +34,13 @@ import kotlin.metadata.jvm.Metadata
 class KotlinClassMetadataRemappingAnnotationVisitor(
     private val remapper: Remapper,
     val next: AnnotationVisitor,
-    val className: String?
-) :
-    AnnotationNode(Opcodes.ASM9, KotlinMetadataRemappingClassVisitor.ANNOTATION_DESCRIPTOR) {
+    val className: String?,
+) : AnnotationNode(Opcodes.ASM9, KotlinMetadataRemappingClassVisitor.ANNOTATION_DESCRIPTOR) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun visit(
         name: String?,
-        value: Any?
+        value: Any?,
     ) {
         super.visit(name, value)
     }
@@ -59,7 +57,7 @@ class KotlinClassMetadataRemappingAnnotationVisitor(
             logger.info(
                 "Kotlin metadata for class ($className) as it was built using a different major Kotlin " +
                     "version (${header.metadataVersion[0]}.${header.metadataVersion[1]}.x) while the remapper " +
-                    "is using (${KotlinVersion.CURRENT})."
+                    "is using (${KotlinVersion.CURRENT}).",
             )
         }
         val metadata = KotlinClassMetadata.readLenient(header)
@@ -103,12 +101,13 @@ class KotlinClassMetadataRemappingAnnotationVisitor(
                 var kpackage = metadata.kmPackage
                 kpackage = KotlinClassRemapper(remapper).remap(kpackage)
                 val remapped =
-                    KotlinClassMetadata.MultiFileClassPart(
-                        kpackage,
-                        metadata.facadeClassName,
-                        metadata.version,
-                        metadata.flags
-                    ).write()
+                    KotlinClassMetadata
+                        .MultiFileClassPart(
+                            kpackage,
+                            metadata.facadeClassName,
+                            metadata.version,
+                            metadata.flags,
+                        ).write()
                 writeClassHeader(remapped)
                 validateKotlinClassHeader(remapped, header)
             }
@@ -172,14 +171,14 @@ class KotlinClassMetadataRemappingAnnotationVisitor(
 
     private fun validateKotlinClassHeader(
         remapped: Metadata,
-        original: Metadata
+        original: Metadata,
     ) {
         // This can happen when the remapper is ran on a kotlin version
         // that does not match the version the class was compiled with.
         if (remapped.data2.size != original.data2.size) {
             logger.info(
                 "Kotlin class metadata size mismatch: data2 size does not match original in class $className. " +
-                    "New: ${remapped.data2.size} Old: ${original.data2.size}"
+                    "New: ${remapped.data2.size} Old: ${original.data2.size}",
             )
         }
     }

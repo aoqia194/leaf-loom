@@ -28,13 +28,16 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+
 public class LeafModJsonHelpers {
-    // Returns a list of Mods found in the provided project's main or client sourcesets
+    // Returns a list of Mods found in the provided project's main or client
+    // sourcesets
     public static List<LeafModJson> getModsInProject(Project project) {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);
         var sourceSets = new ArrayList<SourceSet>();
@@ -45,8 +48,8 @@ public class LeafModJsonHelpers {
         }
 
         try {
-            final LeafModJson leafModJson =
-                    LeafModJsonFactory.createFromSourceSetsNullable(project, sourceSets.toArray(SourceSet[]::new));
+            final LeafModJson leafModJson = LeafModJsonFactory
+                .createFromSourceSetsNullable(project, sourceSets.toArray(SourceSet[]::new));
 
             if (leafModJson != null) {
                 return List.of(leafModJson);

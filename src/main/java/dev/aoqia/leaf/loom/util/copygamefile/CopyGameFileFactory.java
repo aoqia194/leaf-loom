@@ -23,22 +23,23 @@
  */
 package dev.aoqia.leaf.loom.util.copygamefile;
 
-import javax.inject.Inject;
 import java.nio.file.Path;
+import javax.inject.Inject;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
 import org.gradle.api.Project;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+
 /**
- * Can be used to create a {@link CopyGameFileBuilder} with the correct settings for the project within a task.
+ * Can be used to create a {@link CopyGameFileBuilder} with the correct settings
+ * for the project within a task.
  */
 public abstract class CopyGameFileFactory {
     @Inject
     public CopyGameFileFactory() {
-        getIsManualRefreshDependencies()
-            .set(LoomGradleExtension.get(getProject()).refreshDeps());
+        getIsManualRefreshDependencies().set(LoomGradleExtension.get(getProject()).refreshDeps());
     }
 
     @Input

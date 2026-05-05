@@ -29,16 +29,18 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import net.fabricmc.accesswidener.AccessWidener;
 import net.fabricmc.accesswidener.AccessWidenerClassVisitor;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.Pair;
-import dev.aoqia.leaf.loom.util.ZipUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Pair;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 
 final class AccessWidenerTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessWidenerTransformer.class);
@@ -62,16 +64,16 @@ final class AccessWidenerTransformer {
 
     private List<Pair<String, ZipUtils.UnsafeUnaryOperator<byte[]>>> getTransformers(Set<String> classes) {
         return classes.stream()
-                .map(string -> new Pair<>(string.replaceAll("\\.", "/") + ".class", getTransformer(string)))
-                .collect(Collectors.toList());
+            .map(string -> new Pair<>(string.replaceAll("\\.", "/") + ".class", getTransformer(string)))
+            .collect(Collectors.toList());
     }
 
     private ZipUtils.UnsafeUnaryOperator<byte[]> getTransformer(String className) {
         return input -> {
             ClassReader reader = new ClassReader(input);
             ClassWriter writer = new ClassWriter(0);
-            ClassVisitor classVisitor =
-                    AccessWidenerClassVisitor.createClassVisitor(Constants.ASM_VERSION, writer, accessWidener);
+            ClassVisitor classVisitor = AccessWidenerClassVisitor
+                .createClassVisitor(Constants.ASM_VERSION, writer, accessWidener);
 
             LOGGER.debug("Applying access widener to " + className);
 

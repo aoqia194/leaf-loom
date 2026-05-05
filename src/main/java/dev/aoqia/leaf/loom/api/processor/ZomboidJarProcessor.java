@@ -25,18 +25,17 @@ package dev.aoqia.leaf.loom.api.processor;
 
 import java.io.IOException;
 import java.nio.file.Path;
+
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.gradle.api.Named;
 import org.jetbrains.annotations.Nullable;
 
 public interface ZomboidJarProcessor<S extends ZomboidJarProcessor.Spec> extends Named {
-    @Nullable
-    S buildSpec(SpecContext context);
+    @Nullable S buildSpec(SpecContext context);
 
     void processJar(Path jar, S spec, ProcessorContext context) throws IOException;
 
-    @Nullable
-    default MappingsProcessor<S> processMappings() {
+    @Nullable default MappingsProcessor<S> processMappings() {
         return null;
     }
 

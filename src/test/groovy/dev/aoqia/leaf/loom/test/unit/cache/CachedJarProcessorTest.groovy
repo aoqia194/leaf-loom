@@ -33,24 +33,12 @@ import org.objectweb.asm.Opcodes
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import dev.aoqia.loom.test.util.ZipTestUtils
-import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.Opcodes
-import spock.lang.Specification
-import spock.lang.TempDir
-
 import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers
 import dev.aoqia.leaf.loom.decompilers.cache.CachedData
 import dev.aoqia.leaf.loom.decompilers.cache.CachedFileStore
 import dev.aoqia.leaf.loom.decompilers.cache.CachedFileStoreImpl
 import dev.aoqia.leaf.loom.decompilers.cache.CachedJarProcessor
 import dev.aoqia.leaf.loom.util.ZipUtils
-
-import dev.aoqia.loom.test.util.ZipTestUtils
-import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.Opcodes
-import spock.lang.Specification
-import spock.lang.TempDir
 
 class CachedJarProcessorTest extends Specification {
 	static Map<String, byte[]> jarEntries = [

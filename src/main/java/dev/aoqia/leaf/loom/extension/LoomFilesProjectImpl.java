@@ -25,6 +25,7 @@ package dev.aoqia.leaf.loom.extension;
 
 import java.io.File;
 import java.util.Objects;
+
 import org.gradle.api.Project;
 
 public final class LoomFilesProjectImpl extends LoomFilesBaseImpl {

@@ -23,14 +23,23 @@
  */
 package dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.function.Function;
+import javax.annotation.Nullable;
+
+import net.fabricmc.tinyremapper.OutputConsumerPath;
+import net.fabricmc.tinyremapper.TinyRemapper;
+import org.gradle.api.Project;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
@@ -44,9 +53,6 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.extension.LoomFiles;
 import dev.aoqia.leaf.loom.util.SidedClassVisitor;
 import dev.aoqia.leaf.loom.util.TinyRemapperHelper;
-import net.fabricmc.tinyremapper.OutputConsumerPath;
-import net.fabricmc.tinyremapper.TinyRemapper;
-import org.gradle.api.Project;
 
 public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
     implements MappedZomboidProvider.ProviderImpl {
@@ -60,13 +66,15 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
         this.extension = LoomGradleExtension.get(project);
     }
 
-    // Create two copies of the remapped jar, the backup jar is used as the input of genSources
+    // Create two copies of the remapped jar, the backup jar is used as the
+    // input of genSources
     public static Path getBackupJarPath(ZomboidJar zomboidJar) {
         final Path outputJarPath = zomboidJar.getPath();
         return outputJarPath.resolveSibling(outputJarPath.getFileName() + ".backup");
     }
 
-    // Configure the remapper to add the client @Environment annotation to all classes in the client jar.
+    // Configure the remapper to add the client @Environment annotation to all
+    // classes in the client jar.
     public static void configureSplitRemapper(RemappedJars remappedJars, TinyRemapper.Builder tinyRemapperBuilder) {
         final ZomboidJar outputJar = remappedJars.outputJar();
         assert !outputJar.isMerged();
@@ -79,15 +87,15 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
 
     public abstract List<RemappedJars> getRemappedJars();
 
-    // Returns a list of MinecraftJar.Type's that this provider exports to be used as a dependency
+    // Returns a list of MinecraftJar.Type's that this provider exports to be
+    // used as a dependency
     public List<ZomboidJar.Type> getDependencyTypes() {
         return Collections.emptyList();
     }
 
     public List<ZomboidJar> provide(ProvideContext context) throws Exception {
         final List<RemappedJars> remappedJars = getRemappedJars();
-        final List<ZomboidJar> zomboidJars =
-            remappedJars.stream().map(RemappedJars::outputJar).toList();
+        final List<ZomboidJar> zomboidJars = remappedJars.stream().map(RemappedJars::outputJar).toList();
 
         if (remappedJars.isEmpty()) {
             throw new IllegalStateException("No remapped jars provided");
@@ -108,11 +116,11 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
             final List<ZomboidJar.Type> dependencyTargets = getDependencyTypes();
 
             if (!dependencyTargets.isEmpty()) {
-                ZomboidSourceSets.get(getProject())
-                    .applyDependencies(
-                        (configuration, type) ->
-                            getProject().getDependencies().add(configuration, getDependencyNotation(type)),
-                        dependencyTargets);
+                ZomboidSourceSets.get(getProject()).applyDependencies(
+                    (configuration, type) -> getProject().getDependencies()
+                        .add(configuration, getDependencyNotation(type)),
+                    dependencyTargets
+                );
             }
         }
 
@@ -142,11 +150,8 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
 
     public LocalMavenHelper getMavenHelper(ZomboidJar.Type type) {
         return new LocalMavenHelper(
-            "com.theindiestone",
-            getName(type),
-            getVersion(),
-            null,
-            getMavenScope().getRoot(extension));
+            "com.theindiestone", getName(type), getVersion(), null, getMavenScope().getRoot(extension)
+        );
     }
 
     public abstract MavenScope getMavenScope();
@@ -156,10 +161,11 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
         sj.add("zomboid");
         sj.add(type.toString());
 
-        // Include the intermediate mapping name if it's not the default intermediary
-        //        if (!intermediateName.equals(IntermediaryMappingsProvider.NAME)) {
-        //            sj.add(intermediateName);
-        //        }
+        // Include the intermediate mapping name if it's not the default
+        // intermediary
+        // if (!intermediateName.equals(IntermediaryMappingsProvider.NAME)) {
+        // sj.add(intermediateName);
+        // }
 
         if (getTargetNamespace() != MappingsNamespace.NAMED) {
             sj.add(getTargetNamespace().name());
@@ -171,13 +177,12 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
     public abstract MappingsNamespace getTargetNamespace();
 
     protected String getVersion() {
-        @Nullable
-        final MappingConfiguration mappingConfig = extension.getMappingConfiguration();
+        @Nullable final MappingConfiguration mappingConfig = extension.getMappingConfiguration();
 
-        return "%s%s"
-            .formatted(
-                extension.getZomboidProvider().clientZomboidVersion(),
-                Objects.nonNull(mappingConfig) ? "-" + mappingConfig.mappingsIdentifier() : "");
+        return "%s%s".formatted(
+            extension.getZomboidProvider().clientZomboidVersion(),
+            Objects.nonNull(mappingConfig) ? "-" + mappingConfig.mappingsIdentifier() : ""
+        );
     }
 
     protected String getDependencyNotation(ZomboidJar.Type type) {
@@ -210,15 +215,13 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
         Files.deleteIfExists(remappedJars.outputJarPath());
 
         final Map<String, String> remappedSignatures = SignatureFixerApplyVisitor.getRemappedSignatures(
-            getTargetNamespace() == MappingsNamespace.OFFICIAL,
-            mappingConfiguration,
-            getProject(),
-            configContext.serviceFactory(),
-            toM);
+            getTargetNamespace() == MappingsNamespace.OFFICIAL, mappingConfiguration, getProject(),
+            configContext.serviceFactory(), toM
+        );
         final boolean fixRecords = zomboidProvider.getClientVersionInfo().javaVersion() >= 16;
 
-        TinyRemapper remapper = TinyRemapperHelper.getTinyRemapper(
-            getProject(), configContext.serviceFactory(), fromM, toM, fixRecords, (builder) -> {
+        TinyRemapper remapper = TinyRemapperHelper
+            .getTinyRemapper(getProject(), configContext.serviceFactory(), fromM, toM, fixRecords, (builder) -> {
                 builder.extraPostApplyVisitor(new SignatureFixerApplyVisitor(remappedSignatures));
                 configureRemapper(remappedJars, builder);
             });
@@ -235,8 +238,9 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
         } catch (Exception e) {
             throw new RuntimeException(
                 "Failed to remap JAR " + remappedJars.inputJar() + " with mappings from "
-                + mappingConfiguration.tinyMappings,
-                e);
+                    + mappingConfiguration.tinyMappings,
+                e
+            );
         } finally {
             remapper.finish();
         }
@@ -244,8 +248,7 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
         getMavenHelper(remappedJars.type()).savePom();
     }
 
-    protected void configureRemapper(RemappedJars remappedJars, TinyRemapper.Builder tinyRemapperBuilder) {
-    }
+    protected void configureRemapper(RemappedJars remappedJars, TinyRemapper.Builder tinyRemapperBuilder) {}
 
     private void cleanOutputs(List<RemappedJars> remappedJars) throws IOException {
         for (RemappedJars remappedJar : remappedJars) {
@@ -286,7 +289,8 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider>
     }
 
     public record RemappedJars(
-        Path inputJar, ZomboidJar outputJar, MappingsNamespace sourceNamespace, Path... remapClasspath) {
+        Path inputJar, ZomboidJar outputJar, MappingsNamespace sourceNamespace, Path... remapClasspath
+    ) {
         public Path outputJarPath() {
             return outputJar().getPath();
         }

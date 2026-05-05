@@ -26,7 +26,6 @@ package dev.aoqia.leaf.loom.util.gradle.daemon;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
-
 import javax.inject.Inject;
 
 import org.gradle.api.Project;
@@ -52,8 +51,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This uses a vast amount of Gradle internal APIs, however this is only used when the JVM is in an unrecoverable state.
- * The alternative is to kill the JVM, using System.exit, which is not ideal and leaves scary messages in the log.
+ * This uses a vast amount of Gradle internal APIs, however this is only used
+ * when the JVM is in an unrecoverable state. The alternative is to kill the
+ * JVM, using System.exit, which is not ideal and leaves scary messages in the
+ * log.
  */
 public final class DaemonUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(DaemonUtils.class);
@@ -82,14 +83,15 @@ public final class DaemonUtils {
         RemoteConnection<Message> connection = null;
 
         try {
-            // Gradle communicates with the daemon using a TCP connection, and a custom binary protocol.
-            // We connect to the daemon using the daemon's address, and then send a StopWhenIdle message.
-            connection = new TcpOutgoingConnector()
-                    .connect(daemonInfo.getAddress())
-                    .create(Serializers.stateful(DaemonMessageSerializer.create(null)));
+            // Gradle communicates with the daemon using a TCP connection, and a
+            // custom binary protocol.
+            // We connect to the daemon using the daemon's address, and then
+            // send a StopWhenIdle message.
+            connection = new TcpOutgoingConnector().connect(daemonInfo.getAddress())
+                .create(Serializers.stateful(DaemonMessageSerializer.create(null)));
             DaemonClientConnection daemonClientConnection = new DaemonClientConnection(connection, daemonInfo, null);
             new StopDispatcher()
-                    .dispatch(daemonClientConnection, new StopWhenIdle(UUID.randomUUID(), daemonInfo.getToken()));
+                .dispatch(daemonClientConnection, new StopWhenIdle(UUID.randomUUID(), daemonInfo.getToken()));
         } finally {
             if (connection != null) {
                 connection.stop();
@@ -100,15 +102,15 @@ public final class DaemonUtils {
         return true;
     }
 
-    @Nullable
-    private static DaemonInfo findCurrentDaemon(DaemonUtils.Context context) {
+    @Nullable private static DaemonInfo findCurrentDaemon(DaemonUtils.Context context) {
         // Gradle maintains a list of running daemons in a registry.bin file.
         final Path registryBin = Path.of(context.getRegistryBin().get());
         LOGGER.info("Looking for daemon in: {}", registryBin);
 
         // We can use a PersistentDaemonRegistry to read this
-        final  DaemonRegistry registry = new PersistentDaemonRegistry(
-                registryBin.toFile(), context.getFileLockManager(), context.getChmod());
+        final DaemonRegistry registry = new PersistentDaemonRegistry(
+            registryBin.toFile(), context.getFileLockManager(), context.getChmod()
+        );
 
         final long pid = ProcessHandle.current().pid();
         final List<DaemonInfo> runningDaemons = registry.getAll();
@@ -146,11 +148,8 @@ public final class DaemonUtils {
         }
 
         private static String getRegistryBinPathName(Project project) {
-            return project.getGradle().getGradleUserHomeDir().toPath()
-                    .resolve("daemon")
-                    .resolve(GradleVersion.current().getVersion())
-                    .resolve("registry.bin")
-                    .toAbsolutePath().toString();
+            return project.getGradle().getGradleUserHomeDir().toPath().resolve("daemon")
+                .resolve(GradleVersion.current().getVersion()).resolve("registry.bin").toAbsolutePath().toString();
         }
     }
 }

@@ -26,8 +26,10 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid.library;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import dev.aoqia.leaf.loom.util.Platform;
+
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
+
+import dev.aoqia.leaf.loom.util.Platform;
 
 public abstract class LibraryProcessor {
     protected static final Predicate<Library> ALLOW_ALL = library -> true;
@@ -50,7 +52,8 @@ public abstract class LibraryProcessor {
 
     public enum ApplicationResult {
         /**
-         * This processor should be applied automatically to enable Minecraft to run on the current platform.
+         * This processor should be applied automatically to enable Minecraft to
+         * run on the current platform.
          */
         MUST_APPLY,
         /**
@@ -58,7 +61,8 @@ public abstract class LibraryProcessor {
          */
         CAN_APPLY,
         /**
-         * This processor is incompatible with the current platform and should not be applied on the current platform.
+         * This processor is incompatible with the current platform and should
+         * not be applied on the current platform.
          */
         DONT_APPLY
     }

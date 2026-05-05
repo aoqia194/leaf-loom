@@ -25,13 +25,13 @@ package dev.aoqia.leaf.loom.task;
 
 import java.io.IOException;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.util.Constants;
-
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.TaskAction;
+
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public abstract class ClearLoomCacheTask extends DefaultTask {
     public ClearLoomCacheTask() {
@@ -51,7 +51,8 @@ public abstract class ClearLoomCacheTask extends DefaultTask {
             throw new RuntimeException("Failed to delete leaf-loom gradle cache directory.");
         } catch (IllegalArgumentException e) {
             throw new RuntimeException(
-                "Expected directory but found file when trying to delete leaf-loom gradle cache.");
+                "Expected directory but found file when trying to delete leaf-loom gradle cache."
+            );
         }
     }
 }

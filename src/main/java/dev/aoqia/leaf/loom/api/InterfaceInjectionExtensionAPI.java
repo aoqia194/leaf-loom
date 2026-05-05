@@ -29,10 +29,10 @@ import org.gradle.api.tasks.SourceSet;
 
 public interface InterfaceInjectionExtensionAPI {
     /**
-     * When true loom will inject interfaces declared in dependency mod manifests into the zomboid jar file.
-     * This is used to expose interfaces that are implemented on Minecraft classes by mixins at runtime
-     * in the dev environment.
-     *
+     * When true loom will inject interfaces declared in dependency mod
+     * manifests into the zomboid jar file. This is used to expose interfaces
+     * that are implemented on Minecraft classes by mixins at runtime in the dev
+     * environment.
      * @return the property controlling interface injection.
      */
     Property<Boolean> getEnableDependencyInterfaceInjection();
@@ -40,7 +40,8 @@ public interface InterfaceInjectionExtensionAPI {
     Property<Boolean> getIsEnabled();
 
     /**
-     * @deprecated now uses the source sets defined in {@link LoomGradleExtensionAPI#getMods()}
+     * @deprecated now uses the source sets defined in
+     * {@link LoomGradleExtensionAPI#getMods()}
      */
     @Deprecated(forRemoval = true)
     ListProperty<SourceSet> getInterfaceInjectionSourceSets();

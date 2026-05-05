@@ -26,6 +26,14 @@ package dev.aoqia.leaf.loom.task;
 import javax.inject.Inject;
 
 import com.google.common.base.Preconditions;
+import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.TaskContainer;
+import org.gradle.api.tasks.TaskProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
@@ -35,13 +43,6 @@ import dev.aoqia.leaf.loom.task.launch.GenerateLog4jConfigTask;
 import dev.aoqia.leaf.loom.task.launch.GenerateRemapClasspathTask;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
-import org.gradle.api.Project;
-import org.gradle.api.Task;
-import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.TaskContainer;
-import org.gradle.api.tasks.TaskProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class LoomTasks implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoomTasks.class);
@@ -53,9 +54,10 @@ public abstract class LoomTasks implements Runnable {
             return;
         }
 
-        // Used for clearing loom cache from IDE when there are lots of versions.
+        // Used for clearing loom cache from IDE when there are lots of
+        // versions.
         getTasks().register("clearLoomCache", ClearLoomCacheTask.class, t -> {
-           t.setDescription("Clears the leaf-loom gradle caches.");
+            t.setDescription("Clears the leaf-loom gradle caches.");
         });
 
         var generateLog4jConfig = getTasks().register("generateLog4jConfig", GenerateLog4jConfigTask.class, t -> {
@@ -95,7 +97,8 @@ public abstract class LoomTasks implements Runnable {
         registerIDETasks();
         registerRunTasks();
 
-        // Must be done in afterEvaluate to allow time for the build script to configure the jar config.
+        // Must be done in afterEvaluate to allow time for the build script to
+        // configure the jar config.
         GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
             LoomGradleExtension extension = LoomGradleExtension.get(getProject());
 
@@ -139,18 +142,15 @@ public abstract class LoomTasks implements Runnable {
         LoomGradleExtension extension = LoomGradleExtension.get(getProject());
 
         Preconditions.checkArgument(
-            extension.getRunConfigs().isEmpty(),
-            "Run configurations must not be registered before loom");
+            extension.getRunConfigs().isEmpty(), "Run configurations must not be registered before loom"
+        );
 
         extension.getRunConfigs().whenObjectAdded(config -> {
-            getTasks()
-                .register(getRunConfigTaskName(config), RunGameTask.class, config)
-                .configure(t -> {
-                    t.setDescription("Starts the '" + config.getConfigName() + "' run configuration");
+            getTasks().register(getRunConfigTaskName(config), RunGameTask.class, config).configure(t -> {
+                t.setDescription("Starts the '" + config.getConfigName() + "' run configuration");
 
-                    t.dependsOn(config.getEnvironment().equals("client")
-                        ? "configureClientLaunch" : "configureLaunch");
-                });
+                t.dependsOn(config.getEnvironment().equals("client") ? "configureClientLaunch" : "configureLaunch");
+            });
         });
 
         extension.getRunConfigs().whenObjectRemoved(runConfigSettings -> {
@@ -163,7 +163,8 @@ public abstract class LoomTasks implements Runnable {
         extension.getRunConfigs().create("client", RunConfigSettings::client);
         extension.getRunConfigs().create("server", RunConfigSettings::server);
 
-        // Remove the client or server run config when not required. Done by name to not remove any possible custom run
+        // Remove the client or server run config when not required. Done by
+        // name to not remove any possible custom run
         // configs
         GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
             String taskName;
@@ -208,10 +209,8 @@ public abstract class LoomTasks implements Runnable {
     public static Provider<Task> getIDELaunchConfigureTaskName(Project project) {
         return project.provider(() -> {
             final ZomboidJarConfiguration jarConfiguration = LoomGradleExtension.get(project)
-                .getZomboidJarConfiguration()
-                .get();
-            final String name = jarConfiguration == ZomboidJarConfiguration.SERVER_ONLY
-                ? "configureLaunch"
+                .getZomboidJarConfiguration().get();
+            final String name = jarConfiguration == ZomboidJarConfiguration.SERVER_ONLY ? "configureLaunch"
                 : "configureClientLaunch";
             return project.getTasks().getByName(name);
         });

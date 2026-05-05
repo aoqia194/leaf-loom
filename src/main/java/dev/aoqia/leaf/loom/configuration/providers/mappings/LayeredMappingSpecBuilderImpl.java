@@ -26,13 +26,15 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.gradle.api.Action;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.signatures.SignatureFixesSpec;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl;
-import org.gradle.api.Action;
 
 public class LayeredMappingSpecBuilderImpl implements LayeredMappingSpecBuilder {
     private final List<MappingsSpec<?>> layers = new LinkedList<>();

@@ -30,20 +30,6 @@ import spock.lang.Stepwise
 import spock.lang.Unroll
 import spock.util.environment.RestoreSystemProperties
 
-import dev.aoqia.loom.test.util.GradleProjectTestTrait
-import dev.aoqia.loom.test.util.MockMavenServerTrait
-import spock.lang.Specification
-import spock.lang.Stepwise
-import spock.lang.Unroll
-import spock.util.environment.RestoreSystemProperties
-
-import dev.aoqia.loom.test.util.GradleProjectTestTrait
-import dev.aoqia.loom.test.util.MockMavenServerTrait
-import spock.lang.Specification
-import spock.lang.Stepwise
-import spock.lang.Unroll
-import spock.util.environment.RestoreSystemProperties
-
 import static dev.aoqia.loom.test.LoomTestConstants.*
 import static java.lang.System.setProperty
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

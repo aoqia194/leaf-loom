@@ -23,15 +23,11 @@
  */
 package dev.aoqia.leaf.loom.task.service;
 
-import com.google.common.base.Suppliers;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.function.Supplier;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
-import dev.aoqia.leaf.loom.util.service.Service;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-import dev.aoqia.leaf.loom.util.service.ServiceType;
+
+import com.google.common.base.Suppliers;
 import net.fabricmc.lorenztiny.TinyMappingsReader;
 import org.cadixdev.lorenz.MappingSet;
 import org.gradle.api.Project;
@@ -39,9 +35,16 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Nested;
 
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 public final class LorenzMappingService extends Service<LorenzMappingService.Options> {
-    public static final ServiceType<Options, LorenzMappingService> TYPE =
-            new ServiceType<>(Options.class, LorenzMappingService.class);
+    public static final ServiceType<Options, LorenzMappingService> TYPE = new ServiceType<>(
+        Options.class, LorenzMappingService.class
+    );
 
     public interface Options extends Service.Options {
         @Nested
@@ -49,10 +52,15 @@ public final class LorenzMappingService extends Service<LorenzMappingService.Opt
     }
 
     public static Provider<Options> createOptions(
-            Project project, MappingConfiguration mappingConfiguration, MappingsNamespace from, MappingsNamespace to) {
-        return TYPE.create(project, options -> options.getMappings()
-                .set(MappingsService.createOptions(
-                        project, mappingConfiguration.tinyMappings, from.toString(), to.toString(), false)));
+        Project project, MappingConfiguration mappingConfiguration, MappingsNamespace from, MappingsNamespace to
+    ) {
+        return TYPE.create(
+            project,
+            options -> options.getMappings().set(
+                MappingsService
+                    .createOptions(project, mappingConfiguration.tinyMappings, from.toString(), to.toString(), false)
+            )
+        );
     }
 
     private final Supplier<MappingSet> mappings = Suppliers.memoize(this::readMappings);
@@ -62,12 +70,14 @@ public final class LorenzMappingService extends Service<LorenzMappingService.Opt
     }
 
     private MappingSet readMappings() {
-        MappingsService mappingsService =
-                getServiceFactory().get(getOptions().getMappings().get());
+        MappingsService mappingsService = getServiceFactory().get(getOptions().getMappings().get());
 
         try {
-            try (var reader = new TinyMappingsReader(
-                    mappingsService.getMemoryMappingTree(), mappingsService.getFrom(), mappingsService.getTo())) {
+            try (
+                var reader = new TinyMappingsReader(
+                    mappingsService.getMemoryMappingTree(), mappingsService.getFrom(), mappingsService.getTo()
+                )
+            ) {
                 return reader.read();
             }
         } catch (IOException e) {

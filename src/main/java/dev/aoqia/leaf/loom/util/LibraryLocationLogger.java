@@ -23,9 +23,10 @@
  */
 package dev.aoqia.leaf.loom.util;
 
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
-import java.util.List;
 import kotlin.metadata.jvm.KotlinClassMetadata;
 import org.apache.commons.io.FileUtils;
 import org.objectweb.asm.ClassVisitor;
@@ -37,32 +38,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * It's quite common for other plugins to shade these libraries, thus the wrong version is used.
- * This file logs out the version + location of each library as a debugging aid.
- *
- * <p>gradlew buildEnvironment is a useful command to run alongside this.
+ * It's quite common for other plugins to shade these libraries, thus the wrong
+ * version is used. This file logs out the version + location of each library as
+ * a debugging aid.
+ * <p>
+ * gradlew buildEnvironment is a useful command to run alongside this.
  */
 public final class LibraryLocationLogger {
     private static final List<Class<?>> libraryClasses = List.of(
-            KotlinClassMetadata.class,
-            ClassVisitor.class,
-            Analyzer.class,
-            ClassRemapper.class,
-            ClassNode.class,
-            ASMifier.class,
-            Gson.class,
-            Preconditions.class,
-            FileUtils.class);
+        KotlinClassMetadata.class, ClassVisitor.class, Analyzer.class, ClassRemapper.class, ClassNode.class,
+        ASMifier.class, Gson.class, Preconditions.class, FileUtils.class
+    );
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LibraryLocationLogger.class);
 
     public static void logLibraryVersions() {
         for (Class<?> clazz : libraryClasses) {
             LOGGER.info(
-                    "({}) with version ({}) was loaded from ({})",
-                    clazz.getName(),
-                    clazz.getPackage().getImplementationVersion(),
-                    clazz.getProtectionDomain().getCodeSource().getLocation().getPath());
+                "({}) with version ({}) was loaded from ({})", clazz.getName(),
+                clazz.getPackage().getImplementationVersion(),
+                clazz.getProtectionDomain().getCodeSource().getLocation().getPath()
+            );
         }
     }
 

@@ -36,10 +36,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.gradle.SyncTaskBuildService;
 import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
@@ -56,6 +52,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.gradle.SyncTaskBuildService;
+
 public abstract class AbstractRunTask extends JavaExec {
     private static final CharsetEncoder ASCII_ENCODER = StandardCharsets.US_ASCII.newEncoder();
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRunTask.class);
@@ -66,9 +67,7 @@ public abstract class AbstractRunTask extends JavaExec {
 
         final Provider<RunConfig> config = getProject().provider(() -> configProvider.apply(getProject()));
 
-        getInternalClasspath().from(config.map(runConfig -> runConfig
-            .sourceSet
-            .getRuntimeClasspath()));
+        getInternalClasspath().from(config.map(runConfig -> runConfig.sourceSet.getRuntimeClasspath()));
 
         getArgumentProviders().add(() -> config.get().programArgs);
         getMainClass().set(config.map(runConfig -> runConfig.mainClass));
@@ -99,15 +98,13 @@ public abstract class AbstractRunTask extends JavaExec {
             char c = arg.charAt(i);
 
             switch (c) {
-                case ' ',
-                     '#',
-                     '\'' -> sb.append('"').append(c).append('"');
-                case '"' -> sb.append("\"\\\"\"");
-                case '\n' -> sb.append("\"\\n\"");
-                case '\r' -> sb.append("\"\\r\"");
-                case '\t' -> sb.append("\"\\t\"");
-                case '\f' -> sb.append("\"\\f\"");
-                default -> sb.append(c);
+            case ' ', '#', '\'' -> sb.append('"').append(c).append('"');
+            case '"' -> sb.append("\"\\\"\"");
+            case '\n' -> sb.append("\"\\n\"");
+            case '\r' -> sb.append("\"\\r\"");
+            case '\t' -> sb.append("\"\\t\"");
+            case '\f' -> sb.append("\"\\f\"");
+            default -> sb.append(c);
             }
         }
 
@@ -116,13 +113,11 @@ public abstract class AbstractRunTask extends JavaExec {
 
     // https://github.com/JetBrains/intellij-community/blob/295dd68385a458bdfde638152e36d19bed18b666/platform/util/base/src/com/intellij/openapi/util/text/Strings.java#L100-L118
     public static boolean containsAnyChar(final @NotNull String value, final @NotNull String chars) {
-        return chars.length() > value.length()
-            ? containsAnyChar(value, chars, 0, value.length())
+        return chars.length() > value.length() ? containsAnyChar(value, chars, 0, value.length())
             : containsAnyChar(chars, value, 0, chars.length());
     }
 
-    public static boolean containsAnyChar(
-        final @NotNull String value, final @NotNull String chars, final int start, final int end) {
+    public static boolean containsAnyChar(final @NotNull String value, final @NotNull String chars, final int start, final int end) {
         for (int i = start; i < end; i++) {
             if (chars.indexOf(value.charAt(i)) >= 0) {
                 return true;
@@ -132,7 +127,8 @@ public abstract class AbstractRunTask extends JavaExec {
         return false;
     }
 
-    // We control the classpath, as we use a ArgFile to pass it over the command line:
+    // We control the classpath, as we use a ArgFile to pass it over the command
+    // line:
     // https://docs.oracle.com/javase/7/docs/technotes/tools/windows/javac.html#commandlineargfile
     @InputFiles
     protected abstract ConfigurableFileCollection getInternalClasspath();
@@ -142,10 +138,8 @@ public abstract class AbstractRunTask extends JavaExec {
 
         if (getUseArgFile().get()) {
             final String content = "-classpath\n"
-                                   + this.getInternalClasspath().getFiles().stream()
-                                       .map(File::getAbsolutePath)
-                                       .map(AbstractRunTask::quoteArg)
-                                       .collect(Collectors.joining(File.pathSeparator));
+                + this.getInternalClasspath().getFiles().stream().map(File::getAbsolutePath)
+                    .map(AbstractRunTask::quoteArg).collect(Collectors.joining(File.pathSeparator));
 
             try {
                 final Path argsFile = Paths.get(getArgFilePath().get());
@@ -175,12 +169,14 @@ public abstract class AbstractRunTask extends JavaExec {
 
     private boolean canUseArgFile() {
         if (!canPathBeASCIIEncoded()) {
-            // The gradle home or project dir contain chars that cannot be ascii encoded, thus are not supported by an
+            // The gradle home or project dir contain chars that cannot be ascii
+            // encoded, thus are not supported by an
             // arg file.
             return false;
         }
 
-        // @-files were added for java (not javac) in Java 9, see https://bugs.openjdk.org/browse/JDK-8027634
+        // @-files were added for java (not javac) in Java 9, see
+        // https://bugs.openjdk.org/browse/JDK-8027634
         return getJavaVersion().isJava9Compatible();
     }
 
@@ -188,13 +184,13 @@ public abstract class AbstractRunTask extends JavaExec {
     protected abstract Property<String> getGameRunDir();
 
     @Input
-    // We use a string here, as it's technically an output, but we don't want to cache runs of this task by default.
+    // We use a string here, as it's technically an output, but we don't want to
+    // cache runs of this task by default.
     protected abstract Property<String> getArgFilePath();
 
     private boolean canPathBeASCIIEncoded() {
         return ASCII_ENCODER.canEncode(getProject().getProjectDir().getAbsolutePath())
-               && ASCII_ENCODER.canEncode(
-            getProject().getGradle().getGradleUserHomeDir().getAbsolutePath());
+            && ASCII_ENCODER.canEncode(getProject().getGradle().getGradleUserHomeDir().getAbsolutePath());
     }
 
     // Prevent Gradle from running two run tasks in parallel
@@ -205,17 +201,22 @@ public abstract class AbstractRunTask extends JavaExec {
     public void exec() {
         if (getUseArgFile().get()) {
             LOGGER.debug("Using arg file for {}", getName());
-            // We're using an arg file, pass an empty classpath to the super JavaExec.
+            // We're using an arg file, pass an empty classpath to the super
+            // JavaExec.
             super.setClasspath(getObjectFactory().fileCollection());
         } else {
             LOGGER.debug("Using bare classpath for {}", getName());
-            // The classpath is passed normally, so pass the full classpath to the super JavaExec.
+            // The classpath is passed normally, so pass the full classpath to
+            // the super JavaExec.
             super.setClasspath(getInternalClasspath());
         }
 
-        // The game doesn't like us setting the working directory to the runDir like FabricMC/loom does for Minecraft.
-        // We get around this by setting the workingDir to the assets folder, and then setting runDir via cachedir.
-        // setWorkingDir(new File(getProjectDir().get(), getInternalRunDir().get()));
+        // The game doesn't like us setting the working directory to the runDir
+        // like FabricMC/loom does for Minecraft.
+        // We get around this by setting the workingDir to the assets folder,
+        // and then setting runDir via cachedir.
+        // setWorkingDir(new File(getProjectDir().get(),
+        // getInternalRunDir().get()));
         this.setWorkingDir(getInternalRunDir().get());
 
         // Ensure that the run dir was created.
@@ -238,7 +239,7 @@ public abstract class AbstractRunTask extends JavaExec {
     }
 
     @Override
-    public @NotNull JavaExec classpath(Object @NotNull ... paths) {
+    public @NotNull JavaExec classpath(Object @NotNull... paths) {
         this.getInternalClasspath().from(paths);
         return this;
     }

@@ -26,6 +26,7 @@ package dev.aoqia.leaf.loom.configuration;
 import java.io.File;
 import java.util.Optional;
 import java.util.Set;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
@@ -51,12 +52,14 @@ public class DependencyInfo {
 
         if (dependencies.isEmpty()) {
             throw new IllegalArgumentException(
-                    String.format("Configuration '%s' has no dependencies", configuration.getName()));
+                String.format("Configuration '%s' has no dependencies", configuration.getName())
+            );
         }
 
         if (dependencies.size() != 1) {
             throw new IllegalArgumentException(
-                    String.format("Configuration '%s' must only have 1 dependency", configuration.getName()));
+                String.format("Configuration '%s' must only have 1 dependency", configuration.getName())
+            );
         }
 
         return create(project, dependencies.iterator().next(), configuration);
@@ -85,10 +88,8 @@ public class DependencyInfo {
             return resolvedVersion;
         }
 
-        for (ResolvedDependency rd :
-                sourceConfiguration.getResolvedConfiguration().getFirstLevelModuleDependencies()) {
-            if (rd.getModuleGroup().equals(dependency.getGroup())
-                    && rd.getModuleName().equals(dependency.getName())) {
+        for (ResolvedDependency rd : sourceConfiguration.getResolvedConfiguration().getFirstLevelModuleDependencies()) {
+            if (rd.getModuleGroup().equals(dependency.getGroup()) && rd.getModuleName().equals(dependency.getName())) {
                 resolvedVersion = rd.getModuleVersion();
                 return resolvedVersion;
             }
@@ -105,19 +106,16 @@ public class DependencyInfo {
     private boolean matches(ComponentIdentifier identifier) {
         if (identifier instanceof ModuleComponentIdentifier moduleComponentIdentifier) {
             return moduleComponentIdentifier.getGroup().equals(dependency.getGroup())
-                    && moduleComponentIdentifier.getModule().equals(dependency.getName())
-                    && moduleComponentIdentifier.getVersion().equals(dependency.getVersion());
+                && moduleComponentIdentifier.getModule().equals(dependency.getName())
+                && moduleComponentIdentifier.getVersion().equals(dependency.getVersion());
         }
 
         return false;
     }
 
     public Set<File> resolve() {
-        return sourceConfiguration
-                .getIncoming()
-                .artifactView(view -> view.componentFilter(this::matches))
-                .getFiles()
-                .getFiles();
+        return sourceConfiguration.getIncoming().artifactView(view -> view.componentFilter(this::matches)).getFiles()
+            .getFiles();
     }
 
     public Optional<File> resolveFile() {

@@ -33,6 +33,15 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import net.fabricmc.mappingio.adapter.MappingDstNsReorder;
+import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
+import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.gradle.api.Project;
+import org.gradle.api.artifacts.Dependency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
@@ -43,14 +52,6 @@ import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.AddConstructorMappingVisitor;
 import dev.aoqia.leaf.loom.util.ZipUtils;
-import net.fabricmc.mappingio.adapter.MappingDstNsReorder;
-import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
-import org.gradle.api.Project;
-import org.gradle.api.artifacts.Dependency;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public record LayeredMappingsFactory(LayeredMappingSpec spec) {
     private static final String GROUP = "loom";
@@ -58,17 +59,18 @@ public record LayeredMappingsFactory(LayeredMappingSpec spec) {
     private static final Logger LOGGER = LoggerFactory.getLogger(LayeredMappingsFactory.class);
 
     /*
-    As we no longer have SelfResolvingDependency we now always create the mappings file after evaluation.
-    This works in a similar way to how remapped mods are handled.
+     * As we no longer have SelfResolvingDependency we now always create the
+     * mappings file after evaluation. This works in a similar way to how
+     * remapped mods are handled.
      */
     public static void afterEvaluate(ConfigContext configContext) {
-        for (LayeredMappingsFactory layeredMappingFactory :
-            configContext.extension().getLayeredMappingFactories()) {
+        for (LayeredMappingsFactory layeredMappingFactory : configContext.extension().getLayeredMappingFactories()) {
             try {
                 layeredMappingFactory.evaluate(configContext);
             } catch (IOException e) {
                 throw new UncheckedIOException(
-                    "Failed to setup layered mappings: %s".formatted(layeredMappingFactory.mavenNotation()), e);
+                    "Failed to setup layered mappings: %s".formatted(layeredMappingFactory.mavenNotation()), e
+                );
             }
         }
     }
@@ -85,9 +87,9 @@ public record LayeredMappingsFactory(LayeredMappingSpec spec) {
     public Path resolve(Project project) throws IOException {
         final LoomGradleExtension extension = LoomGradleExtension.get(project);
         final MappingContext mappingContext = new GradleMappingContext(
-            project, spec.getVersion().replace("+", "_").replace(".", "_"));
-        final Path mappingsDir =
-            mappingContext.zomboidProvider().dir("layered").toPath();
+            project, spec.getVersion().replace("+", "_").replace(".", "_")
+        );
+        final Path mappingsDir = mappingContext.zomboidProvider().dir("layered").toPath();
         final Path mappingsZip = mappingsDir.resolve(String.format("%s.%s-%s.jar", GROUP, MODULE, spec.getVersion()));
 
         if (Files.exists(mappingsZip) && !mappingContext.refreshDeps()) {
@@ -121,10 +123,12 @@ public record LayeredMappingsFactory(LayeredMappingSpec spec) {
         try (Writer writer = new StringWriter()) {
             var tiny2Writer = new Tiny2FileWriter(writer, false);
 
-            MappingDstNsReorder nsReorder = new MappingDstNsReorder(tiny2Writer,
-                List.of(MappingsNamespace.NAMED.toString(), MappingsNamespace.OFFICIAL.toString()));
-            MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsReorder,
-                MappingsNamespace.OFFICIAL.toString(), true);
+            MappingDstNsReorder nsReorder = new MappingDstNsReorder(
+                tiny2Writer, List.of(MappingsNamespace.NAMED.toString(), MappingsNamespace.OFFICIAL.toString())
+            );
+            MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(
+                nsReorder, MappingsNamespace.OFFICIAL.toString(), true
+            );
             AddConstructorMappingVisitor addConstructor = new AddConstructorMappingVisitor(nsSwitch);
             mappings.accept(addConstructor);
 

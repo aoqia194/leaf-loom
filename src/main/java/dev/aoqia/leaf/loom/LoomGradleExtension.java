@@ -27,6 +27,12 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
+import org.gradle.api.Project;
+import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.provider.ListProperty;
+import org.jetbrains.annotations.ApiStatus;
+
 import dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.InstallerData;
@@ -43,11 +49,6 @@ import dev.aoqia.leaf.loom.extension.MixinExtension;
 import dev.aoqia.leaf.loom.extension.RemapperExtensionHolder;
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
 import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
-import org.gradle.api.Project;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.FileCollection;
-import org.gradle.api.provider.ListProperty;
-import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public interface LoomGradleExtension extends LoomGradleExtensionAPI {
@@ -81,8 +82,8 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 
     default List<Path> getZomboidJars(MappingsNamespace mappingsNamespace) {
         return switch (mappingsNamespace) {
-            case NAMED -> getNamedZomboidProvider().getZomboidJarPaths();
-            case OFFICIAL -> getZomboidProvider().getZomboidJars();
+        case NAMED -> getNamedZomboidProvider().getZomboidJarPaths();
+        case OFFICIAL -> getZomboidProvider().getZomboidJars();
         };
     }
 

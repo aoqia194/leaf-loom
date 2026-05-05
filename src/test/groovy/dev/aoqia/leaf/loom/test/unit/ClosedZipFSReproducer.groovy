@@ -33,10 +33,6 @@ import java.nio.file.Path
 
 import spock.lang.Specification
 
-import spock.lang.Specification
-
-import spock.lang.Specification
-
 // Test to prove https://bugs.openjdk.org/browse/JDK-8291712
 // If this test starts failing on a new JDK, it is likely that the bug has been fixed!
 class ClosedZipFSReproducer extends Specification {

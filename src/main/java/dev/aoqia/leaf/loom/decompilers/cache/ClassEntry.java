@@ -31,18 +31,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import dev.aoqia.leaf.loom.util.Checksum;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.util.Checksum;
 
 /**
  * @param name The class name
  * @param innerClasses A list of inner class names
- * @param superClasses A list of parent classes (super and interface) from the class and all inner
- * classes
+ * @param superClasses A list of parent classes (super and interface) from the
+ * class and all inner classes
  */
 public record ClassEntry(String name, List<String> innerClasses, List<String> superClasses) {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassEntry.class);
 
     public ClassEntry {
@@ -54,26 +55,22 @@ public record ClassEntry(String name, List<String> innerClasses, List<String> su
             throw new IllegalArgumentException("Class name must be in a package: " + name);
         }
 
-
         String className = name.replace(".class", "");
 
         for (String innerClass : innerClasses) {
             if (!innerClass.endsWith(".class")) {
-                throw new IllegalArgumentException(
-                    "Inner class name must end with '.class': " + name);
+                throw new IllegalArgumentException("Inner class name must end with '.class': " + name);
             }
             if (!innerClass.startsWith(className)) {
-                throw new IllegalArgumentException("Inner class (" + innerClass +
-                                                   ") does not have the parent class name as a " +
-                                                   "prefix: " +
-                                                   name);
+                throw new IllegalArgumentException(
+                    "Inner class (" + innerClass + ") does not have the parent class name as a " + "prefix: " + name
+                );
             }
         }
 
         for (String superClass : superClasses) {
             if (!superClass.endsWith(".class")) {
-                throw new IllegalArgumentException(
-                    "Super class name must end with '.class': " + superClass);
+                throw new IllegalArgumentException("Super class name must end with '.class': " + superClass);
             }
         }
     }
@@ -85,7 +82,6 @@ public record ClassEntry(String name, List<String> innerClasses, List<String> su
 
     /**
      * Copy the class and its inner classes to the target root.
-     *
      * @param sourceRoot The root of the source jar
      * @param targetRoot The root of the target jar
      * @throws IOException If an error occurs while copying the files
@@ -102,10 +98,8 @@ public record ClassEntry(String name, List<String> innerClasses, List<String> su
 
     /**
      * Hash the class and its inner classes using sha256.
-     *
      * @param root The root of the jar
      * @return The hash of the class and its inner classes
-     *
      * @throws IOException If an error occurs while hashing the files
      */
     public String hash(Path root) throws IOException {
@@ -124,8 +118,7 @@ public record ClassEntry(String name, List<String> innerClasses, List<String> su
      * Return a hash of the class and its super classes.
      */
     public String hashSuperHierarchy(Map<String, String> hashes) throws IOException {
-        final String selfHash = Objects.requireNonNull(hashes.get(name),
-            "Hash for own class not found");
+        final String selfHash = Objects.requireNonNull(hashes.get(name), "Hash for own class not found");
 
         if (superClasses.isEmpty()) {
             return selfHash;
@@ -140,7 +133,8 @@ public record ClassEntry(String name, List<String> innerClasses, List<String> su
             if (superHash != null) {
                 joiner.add(superHash);
             } else if (!superClass.startsWith("java/")) {
-                // This will happen if the super class is not part of the input jar
+                // This will happen if the super class is not part of the input
+                // jar
                 LOGGER.debug("Hash for super class {} of {} not found", superClass, name);
             }
         }

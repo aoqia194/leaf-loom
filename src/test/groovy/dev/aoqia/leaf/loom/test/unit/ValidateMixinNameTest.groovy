@@ -28,15 +28,7 @@ import org.spongepowered.asm.mixin.Mixin
 import org.spongepowered.asm.mixin.gen.Accessor
 import spock.lang.Specification
 
-import org.spongepowered.asm.mixin.Mixin
-import org.spongepowered.asm.mixin.gen.Accessor
-import spock.lang.Specification
-
 import dev.aoqia.leaf.loom.task.ValidateMixinNameTask
-
-import org.spongepowered.asm.mixin.Mixin
-import org.spongepowered.asm.mixin.gen.Accessor
-import spock.lang.Specification
 
 class ValidateMixinNameTest extends Specification {
 	def "TestMixin"() {
@@ -98,7 +90,7 @@ class TestInnerMixin {
 @Mixin(Test.class)
 interface TestAccessor {
 	@Accessor
-	Object getNothing();
+	Object getNothing()
 }
 
 @Mixin([Test.class, Test.Inner.class])

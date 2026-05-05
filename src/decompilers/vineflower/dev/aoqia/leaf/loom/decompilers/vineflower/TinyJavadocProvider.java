@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.fabricmc.fernflower.api.IFabricJavadocProvider;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
@@ -62,9 +63,9 @@ public class TinyJavadocProvider implements IFabricJavadocProvider {
         }
 
         /**
-         * Handle the record component docs here.
-         *
-         * Record components are mapped via the field name, thus take the docs from the fields and display them on then class.
+         * Handle the record component docs here. Record components are mapped
+         * via the field name, thus take the docs from the fields and display
+         * them on then class.
          */
         List<String> parts = new ArrayList<>();
 
@@ -76,8 +77,8 @@ public class TinyJavadocProvider implements IFabricJavadocProvider {
 
         for (StructRecordComponent component : structClass.getRecordComponents()) {
             // The component will always match the field name and descriptor
-            MappingTree.FieldMapping fieldMapping =
-                    classMapping.getField(component.getName(), component.getDescriptor());
+            MappingTree.FieldMapping fieldMapping = classMapping
+                .getField(component.getName(), component.getDescriptor());
 
             if (fieldMapping == null) {
                 continue;
@@ -87,7 +88,8 @@ public class TinyJavadocProvider implements IFabricJavadocProvider {
 
             if (comment != null) {
                 if (!addedParam && classMapping.getComment() != null) {
-                    // Add a blank line before components when the class has a comment
+                    // Add a blank line before components when the class has a
+                    // comment
                     parts.add("");
                     addedParam = true;
                 }
@@ -116,8 +118,8 @@ public class TinyJavadocProvider implements IFabricJavadocProvider {
             return null;
         }
 
-        MappingTree.FieldMapping fieldMapping =
-                classMapping.getField(structField.getName(), structField.getDescriptor());
+        MappingTree.FieldMapping fieldMapping = classMapping
+            .getField(structField.getName(), structField.getDescriptor());
 
         return fieldMapping != null ? fieldMapping.getComment() : null;
     }
@@ -130,8 +132,8 @@ public class TinyJavadocProvider implements IFabricJavadocProvider {
             return null;
         }
 
-        MappingTree.MethodMapping methodMapping =
-                classMapping.getMethod(structMethod.getName(), structMethod.getDescriptor());
+        MappingTree.MethodMapping methodMapping = classMapping
+            .getMethod(structMethod.getName(), structMethod.getDescriptor());
 
         if (methodMapping != null) {
             List<String> parts = new ArrayList<>();
@@ -147,7 +149,8 @@ public class TinyJavadocProvider implements IFabricJavadocProvider {
 
                 if (comment != null) {
                     if (!addedParam && methodMapping.getComment() != null) {
-                        // Add a blank line before params when the method has a comment
+                        // Add a blank line before params when the method has a
+                        // comment
                         parts.add("");
                         addedParam = true;
                     }

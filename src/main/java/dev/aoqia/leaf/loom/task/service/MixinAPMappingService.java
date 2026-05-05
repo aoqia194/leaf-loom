@@ -32,14 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.build.mixin.AnnotationProcessorInvoker;
-import dev.aoqia.leaf.loom.util.TinyRemapperHelper;
-import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
-import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
-import dev.aoqia.leaf.loom.util.service.Service;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 import net.fabricmc.tinyremapper.IMappingProvider;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -53,16 +46,27 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.build.mixin.AnnotationProcessorInvoker;
+import dev.aoqia.leaf.loom.util.TinyRemapperHelper;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 public class MixinAPMappingService extends Service<MixinAPMappingService.Options> {
-    public static final ServiceType<Options, MixinAPMappingService> TYPE =
-            new ServiceType<>(Options.class, MixinAPMappingService.class);
+    public static final ServiceType<Options, MixinAPMappingService> TYPE = new ServiceType<>(
+        Options.class, MixinAPMappingService.class
+    );
 
     // Again look into what the result of changing this would be.
     private static final boolean USE_ALL_SOURCE_SETS = true;
     private static final Logger LOGGER = LoggerFactory.getLogger(MixinAPMappingService.class);
 
     public interface Options extends Service.Options {
-        @InputFiles // We need to depend on all the outputs, as we don't know if the mixin mapping will exist at the
+        @InputFiles // We need to depend on all the outputs, as we don't know if
+                    // the mixin mapping will exist at the
         // time of task creation
         ConfigurableFileCollection getCompileOutputs();
 
@@ -77,7 +81,8 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
     }
 
     public static Provider<List<Options>> createOptions(
-            Project thisProject, Provider<String> from, Provider<String> to) {
+        Project thisProject, Provider<String> from, Provider<String> to
+    ) {
         final LoomGradleExtension thisExtension = LoomGradleExtension.get(thisProject);
         String mappingId = thisExtension.getMappingConfiguration().mappingsIdentifier;
 
@@ -86,9 +91,8 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
         Consumer<Project> processProject = project -> {
             final LoomGradleExtension extension = LoomGradleExtension.get(project);
 
-            Collection<SourceSet> sourceSets = USE_ALL_SOURCE_SETS
-                    ? SourceSetHelper.getSourceSets(project)
-                    : extension.getMixin().getMixinSourceSets();
+            Collection<SourceSet> sourceSets = USE_ALL_SOURCE_SETS ? SourceSetHelper.getSourceSets(project)
+                : extension.getMixin().getMixinSourceSets();
 
             for (SourceSet sourceSet : sourceSets) {
                 LOGGER.debug("Creating MixinAPMappingService for source set: {}", sourceSet.getName());
@@ -104,14 +108,16 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
         };
 
         if (thisExtension.isProjectIsolationActive()) {
-            // TODO provide a project isolated way of remapping with dependency mixin mapping
+            // TODO provide a project isolated way of remapping with dependency
+            // mixin mapping
             processProject.accept(thisProject);
         } else {
             GradleUtils.allLoomProjects(thisProject.getGradle(), project -> {
                 final LoomGradleExtension extension = LoomGradleExtension.get(project);
 
                 if (!mappingId.equals(extension.getMappingConfiguration().mappingsIdentifier)) {
-                    // Only find mixin mappings that are from other projects with the same mapping id.
+                    // Only find mixin mappings that are from other projects
+                    // with the same mapping id.
                     return;
                 }
 
@@ -122,12 +128,15 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
         return thisProject.provider(() -> providers.stream().map(Provider::get).toList());
     }
 
-    @Nullable
-    public static Provider<Options> createOptions(
-            Project project, SourceSet sourceSet, Provider<String> from, Provider<String> to) {
+    @Nullable public static Provider<Options> createOptions(
+        Project project, SourceSet sourceSet, Provider<String> from, Provider<String> to
+    ) {
         final File mixinMappings = AnnotationProcessorInvoker.getMixinMappingsForSourceSet(project, sourceSet);
-        final Task compileTask =
-                project.getTasks().findByName(sourceSet.getCompileJavaTaskName()); // TODO what about other languages?
+        final Task compileTask = project.getTasks().findByName(sourceSet.getCompileJavaTaskName()); // TODO
+                                                                                                    // what
+                                                                                                    // about
+                                                                                                    // other
+                                                                                                    // languages?
 
         if (compileTask == null) {
             return null;
@@ -144,9 +153,9 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
 
         if (!containsOutput) {
             LOGGER.warn(
-                    "Failed to find mixin mappings {} in task outputs: {}",
-                    mixinMappings.getName(),
-                    compileTask.getOutputs().getFiles());
+                "Failed to find mixin mappings {} in task outputs: {}", mixinMappings.getName(),
+                compileTask.getOutputs().getFiles()
+            );
             return null;
         }
 
@@ -165,8 +174,7 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
         super(options, serviceFactory);
     }
 
-    @Nullable
-    public IMappingProvider getMappingsProvider() {
+    @Nullable public IMappingProvider getMappingsProvider() {
         if (!exists) {
             return null;
         }
@@ -180,11 +188,8 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
             }
 
             try {
-                mappingProvider = TinyRemapperHelper.create(
-                        mappingsPath,
-                        getOptions().getFrom().get(),
-                        getOptions().getTo().get(),
-                        false);
+                mappingProvider = TinyRemapperHelper
+                    .create(mappingsPath, getOptions().getFrom().get(), getOptions().getTo().get(), false);
             } catch (IOException e) {
                 throw new UncheckedIOException("Failed to read mappings from: " + mappingsPath, e);
             }
@@ -193,7 +198,8 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
         return mappingProvider;
     }
 
-    // We should always find the file in the task outputs, regardless of if it exists or not.
+    // We should always find the file in the task outputs, regardless of if it
+    // exists or not.
     private Path getMappingsPath() {
         for (File file : getOptions().getCompileOutputs().getFiles()) {
             if (file.getName().equals(getOptions().getMixinMappingFileName().get())) {
@@ -201,7 +207,8 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
             }
         }
 
-        throw new RuntimeException("Failed to find mixin mappings file: "
-                + getOptions().getMixinMappingFileName().get());
+        throw new RuntimeException(
+            "Failed to find mixin mappings file: " + getOptions().getMixinMappingFileName().get()
+        );
     }
 }

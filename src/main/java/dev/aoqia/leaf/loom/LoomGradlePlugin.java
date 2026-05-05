@@ -29,6 +29,10 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+import org.gradle.api.plugins.PluginAware;
+
 import dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI;
 import dev.aoqia.leaf.loom.configuration.CompileConfiguration;
 import dev.aoqia.leaf.loom.configuration.LoomConfigurations;
@@ -41,28 +45,19 @@ import dev.aoqia.leaf.loom.extension.LoomGradleExtensionImpl;
 import dev.aoqia.leaf.loom.task.LoomTasks;
 import dev.aoqia.leaf.loom.task.RemapTaskConfiguration;
 import dev.aoqia.leaf.loom.util.LibraryLocationLogger;
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
-import org.gradle.api.plugins.PluginAware;
 
 public class LoomGradlePlugin implements Plugin<PluginAware> {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final String LOOM_VERSION =
-        Objects.requireNonNullElse(LoomGradlePlugin.class.getPackage().getImplementationVersion(),
-            "0.0.0+unknown");
+    public static final String LOOM_VERSION = Objects
+        .requireNonNullElse(LoomGradlePlugin.class.getPackage().getImplementationVersion(), "0.0.0+unknown");
 
     /**
      * An ordered list of setup job classes.
      */
     private static final List<Class<? extends Runnable>> SETUP_JOBS = List.of(
-        LoomConfigurations.class,
-        CompileConfiguration.class,
-        MavenPublication.class,
-        RemapTaskConfiguration.class,
-        LoomTasks.class,
-        DecompilerConfiguration.class,
-        IdeaConfiguration.class,
-        SandboxConfiguration.class);
+        LoomConfigurations.class, CompileConfiguration.class, MavenPublication.class, RemapTaskConfiguration.class,
+        LoomTasks.class, DecompilerConfiguration.class, IdeaConfiguration.class, SandboxConfiguration.class
+    );
 
     @Override
     public void apply(PluginAware target) {
@@ -83,14 +78,10 @@ public class LoomGradlePlugin implements Plugin<PluginAware> {
 
         // Setup extensions
 
-        project.getExtensions()
-            .create(
-                LoomGradleExtensionAPI.class,
-                "loom",
-                LoomGradleExtensionImpl.class,
-                project,
-                LoomFiles.create(project));
-        //        project.getExtensions().create("leafApi", LeafApiExtension.class);
+        project.getExtensions().create(
+            LoomGradleExtensionAPI.class, "loom", LoomGradleExtensionImpl.class, project, LoomFiles.create(project)
+        );
+        // project.getExtensions().create("leafApi", LeafApiExtension.class);
 
         for (Class<? extends Runnable> jobClass : SETUP_JOBS) {
             project.getObjects().newInstance(jobClass).run();

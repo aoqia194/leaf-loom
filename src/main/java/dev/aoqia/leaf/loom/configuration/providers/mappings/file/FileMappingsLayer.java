@@ -29,11 +29,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
-import dev.aoqia.leaf.loom.util.FileSystemUtil;
-import dev.aoqia.leaf.loom.util.ZipUtils;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.MappingUtil;
 import net.fabricmc.mappingio.MappingVisitor;
@@ -42,15 +37,27 @@ import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.format.MappingFormat;
 import org.jetbrains.annotations.Nullable;
 
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.ZipUtils;
+
 public record FileMappingsLayer(
-    Path path,
-    String mappingPath,
-    String fallbackSourceNamespace,
-    String fallbackTargetNamespace,
-    boolean enigma, // Enigma cannot be automatically detected since it's stored in a directory.
-    boolean unpick,
-    String mergeNamespace)
-    implements MappingLayer, UnpickLayer {
+    Path path, String mappingPath, String fallbackSourceNamespace, String fallbackTargetNamespace, boolean enigma, // Enigma
+                                                                                                                   // cannot
+                                                                                                                   // be
+                                                                                                                   // automatically
+                                                                                                                   // detected
+                                                                                                                   // since
+                                                                                                                   // it's
+                                                                                                                   // stored
+                                                                                                                   // in
+                                                                                                                   // a
+                                                                                                                   // directory.
+    boolean unpick, String mergeNamespace
+) implements MappingLayer, UnpickLayer {
+
     private static final String UNPICK_METADATA_PATH = "extras/unpick.json";
     private static final String UNPICK_DEFINITIONS_PATH = "extras/definitions.unpick";
 
@@ -67,13 +74,14 @@ public record FileMappingsLayer(
     }
 
     private void visit(Path path, MappingVisitor mappingVisitor) throws IOException {
-        MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(mappingVisitor, mergeNamespace.toString());
+        MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(mappingVisitor, mergeNamespace);
 
         // Replace the default fallback namespaces with
         // our fallback namespaces if potentially needed.
         Map<String, String> fallbackNamespaceReplacements = Map.of(
-            MappingUtil.NS_SOURCE_FALLBACK, fallbackSourceNamespace,
-            MappingUtil.NS_TARGET_FALLBACK, fallbackTargetNamespace);
+            MappingUtil.NS_SOURCE_FALLBACK, fallbackSourceNamespace, MappingUtil.NS_TARGET_FALLBACK,
+            fallbackTargetNamespace
+        );
         MappingNsRenamer renamer = new MappingNsRenamer(nsSwitch, fallbackNamespaceReplacements);
 
         MappingReader.read(path, enigma ? MappingFormat.ENIGMA_DIR : null, renamer);

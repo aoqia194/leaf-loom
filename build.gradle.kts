@@ -25,7 +25,7 @@ Project::class.java.classLoader.getResource("gradle-kotlin-dsl-versions.properti
 
 val kotlinVersion: String? = props.getProperty("kotlin")
 if (libs.versions.kotlin.get() != kotlinVersion) {
-    throw IllegalStateException("Requires Kotlin version: ${kotlinVersion}")
+    throw IllegalStateException("Requires Kotlin version: $kotlinVersion")
 }
 
 repositories {
@@ -42,11 +42,11 @@ plugins {
     idea
     eclipse
     groovy
-
+//    codenarc
+//    checkstyle
     alias(libs.plugins.kotlin)
     alias(libs.plugins.spotless)
     alias(libs.plugins.retry)
-
     // Publishing to Maven Central
     alias(libs.plugins.jreleaser)
     `maven-publish`
@@ -75,7 +75,7 @@ configurations.configureEach {
                 GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
                 objects.named(
                     GradlePluginApiVersion::class.java,
-                    GradleVersion.current().getVersion()
+                    GradleVersion.current().version
                 )
             )
         }
@@ -273,7 +273,7 @@ abstract class GenerateVersions : DefaultTask() {
 
         val className = className.get()
         val si = className.lastIndexOf("/")
-        val packageName = className.substring(0, si)
+        val packageName = className.take(si)
         val packagePath = output.toPath().resolve(packageName)
         val sourceName = className.substring(si + 1, className.length)
         val sourcesPath = packagePath.resolve("${sourceName}.java")
@@ -320,32 +320,32 @@ spotless {
     setLineEndings(LineEnding.UNIX)
 
     java {
-        targetExclude("**/loom/util/DownloadUtil.java")
         targetExclude("**/generated/**")
+
+        importOrder("java|javax", "", "\\#", "$group", "\\#$group")
         removeUnusedImports()
-        indentWithSpaces(4)
+        forbidWildcardImports()
+
+        cleanthat()
+        eclipse()
+            .configFile(file("eclipse-formatter.xml"))
+        // NOTE(aoqia): It's a nice feature but it causes some issues, so it will remain disabled for now.
+//            .sortMembersEnabled(true)
+        formatAnnotations()
+
         trimTrailingWhitespace()
         endWithNewline()
-        licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
-        //palantirJavaFormat()
+        licenseHeaderFile(file("HEADER")).yearSeparator("-")
     }
 
     groovy {
-        indentWithSpaces(4)
+        importOrder("java|javax", "groovy", "", "\\#", "$group", "\\#$group")
+
         trimTrailingWhitespace()
         endWithNewline()
-        importOrder(
-            "java",
-            "javax",
-            "",
-            "groovy",
-            "net.fabricmc",
-            "",
-            "${rootProject.group}",
-            "",
-            "\\#"
-        )
-        licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
+        licenseHeaderFile(file("HEADER")).yearSeparator("-")
+        removeSemicolons()
+
         greclipse()
     }
 
@@ -353,22 +353,33 @@ spotless {
         target("src/**/*.gradle", "*.gradle")
         // Exclude build.gradle because it keeps pestering me about it!
         targetExclude("**/build.gradle")
-        indentWithSpaces(4)
+
         trimTrailingWhitespace()
         endWithNewline()
         greclipse()
     }
 
     kotlin {
-        indentWithSpaces(4)
-        trimTrailingWhitespace()
-        endWithNewline()
-        licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
         targetExclude("**/build.gradle.kts")
         targetExclude("src/test/resources/projects/*/**")
+
         ktlint()
+
+        trimTrailingWhitespace()
+        endWithNewline()
+        licenseHeaderFile(file("HEADER")).yearSeparator("-")
     }
 }
+
+// TODO(aoqia): Enable and setup codenarc after initial formatting
+// codenarc {
+//     configFile = file("codenarc.groovy")
+// }
+
+// TODO(aoqia): Setup checkstyle
+// checkstyle {
+//     configFile = file("checkstyle.xml")
+// }
 
 gradlePlugin {
     website = property("url").toString()

@@ -25,12 +25,14 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
+
 import dev.aoqia.leaf.loom.LoomRepositoryPlugin;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessor;
 import dev.aoqia.leaf.loom.util.Platform;
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
 public class LWJGL3UpgradeLibraryProcessor extends LibraryProcessor {
     private static final String LWJGL_GROUP = "org.lwjgl";
@@ -62,7 +64,8 @@ public class LWJGL3UpgradeLibraryProcessor extends LibraryProcessor {
 
         if (upgradeLinuxRiscV()) {
             if (!context.hasClasspathNatives()) {
-                // Don't support upgrading versions not using classpath natives to support RISC-V
+                // Don't support upgrading versions not using classpath natives
+                // to support RISC-V
                 return ApplicationResult.DONT_APPLY;
             }
 
@@ -80,9 +83,10 @@ public class LWJGL3UpgradeLibraryProcessor extends LibraryProcessor {
 
         return library -> {
             if (library.is(LWJGL_GROUP) && library.name().startsWith("lwjgl")) {
-                // Replace the natives with the new version, none natives become runtime only
-                final Library.Target target =
-                        library.target() == Library.Target.NATIVES ? Library.Target.NATIVES : Library.Target.RUNTIME;
+                // Replace the natives with the new version, none natives become
+                // runtime only
+                final Library.Target target = library.target() == Library.Target.NATIVES ? Library.Target.NATIVES
+                    : Library.Target.RUNTIME;
                 final Library upgradedLibrary = library.withVersion(version).withTarget(target);
                 dependencyConsumer.accept(upgradedLibrary);
             }
@@ -98,16 +102,13 @@ public class LWJGL3UpgradeLibraryProcessor extends LibraryProcessor {
 
     // Add support for macOS
     private boolean upgradeMacOSArm() {
-        return platform.getOperatingSystem().isMacOS()
-                && platform.getArchitecture().isArm()
-                && !context.supportsArm64(Platform.OperatingSystem.MAC_OS)
-                && !context.hasClasspathNatives();
+        return platform.getOperatingSystem().isMacOS() && platform.getArchitecture().isArm()
+            && !context.supportsArm64(Platform.OperatingSystem.MAC_OS) && !context.hasClasspathNatives();
     }
 
     // Add support for Linux RISC-V
     private boolean upgradeLinuxRiscV() {
-        return platform.getOperatingSystem().isLinux()
-                && platform.getArchitecture().isRiscV()
-                && platform.getArchitecture().is64Bit();
+        return platform.getOperatingSystem().isLinux() && platform.getArchitecture().isRiscV()
+            && platform.getArchitecture().is64Bit();
     }
 }

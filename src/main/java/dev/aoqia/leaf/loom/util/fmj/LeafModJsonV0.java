@@ -23,14 +23,15 @@
  */
 package dev.aoqia.leaf.loom.util.fmj;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.Nullable;
 
 @Deprecated
@@ -45,8 +46,7 @@ public final class LeafModJsonV0 extends LeafModJson {
     }
 
     @Override
-    @Nullable
-    public JsonElement getCustom(String key) {
+    @Nullable public JsonElement getCustom(String key) {
         return null;
     }
 
@@ -69,14 +69,16 @@ public final class LeafModJsonV0 extends LeafModJson {
                         mixins.add(jsonPrimitive.getAsString());
                     } else {
                         throw new LeafModJsonUtils.ParseException(
-                                "Expected entries in mixin %s to be an array of strings", key);
+                            "Expected entries in mixin %s to be an array of strings", key
+                        );
                     }
                 }
             } else if (jsonElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
                 mixins.add(jsonPrimitive.getAsString());
             } else {
                 throw new LeafModJsonUtils.ParseException(
-                        "Expected mixin %s to be a string or an array of strings", key);
+                    "Expected mixin %s to be a string or an array of strings", key
+                );
             }
         }
 

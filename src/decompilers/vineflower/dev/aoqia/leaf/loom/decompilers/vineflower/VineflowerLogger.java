@@ -24,8 +24,10 @@
 package dev.aoqia.leaf.loom.decompilers.vineflower;
 
 import java.io.IOException;
-import dev.aoqia.leaf.loom.decompilers.LoomInternalDecompiler;
+
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
+
+import dev.aoqia.leaf.loom.decompilers.LoomInternalDecompiler;
 
 public class VineflowerLogger extends IFernflowerLogger {
     private final LoomInternalDecompiler.Logger logger;

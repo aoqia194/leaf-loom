@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.util.Constants;
+
 import net.fabricmc.tinyremapper.extension.mixin.common.data.Constant;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -56,6 +56,8 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.util.Constants;
 
 /**
  * Task to validate mixin names.
@@ -102,8 +104,7 @@ public abstract class ValidateMixinNameTask extends SourceTask {
 
         @Override
         public void execute() {
-            final Set<File> files =
-                    getParameters().getInputClasses().getAsFileTree().getFiles();
+            final Set<File> files = getParameters().getInputClasses().getAsFileTree().getFiles();
             final List<String> errors = new LinkedList<>();
 
             for (File file : files) {
@@ -131,20 +132,21 @@ public abstract class ValidateMixinNameTask extends SourceTask {
             }
 
             final String message = "Mixin name validation failed: "
-                    + errors.stream().collect(Collectors.joining(System.lineSeparator()));
+                + errors.stream().collect(Collectors.joining(System.lineSeparator()));
 
             if (getParameters().getSoftFailures().get()) {
                 LOGGER.warn(message);
                 return;
             }
 
-            throw new GradleException("Mixin name validation failed: "
-                    + errors.stream().collect(Collectors.joining(System.lineSeparator())));
+            throw new GradleException(
+                "Mixin name validation failed: " + errors.stream().collect(Collectors.joining(System.lineSeparator()))
+            );
         }
     }
 
     private static String toSimpleName(String internalName) {
-        return internalName.substring(internalName.lastIndexOf("/") + 1);
+        return internalName.substring(internalName.lastIndexOf('/') + 1);
     }
 
     @VisibleForTesting
@@ -154,8 +156,7 @@ public abstract class ValidateMixinNameTask extends SourceTask {
         }
     }
 
-    @Nullable
-    private static Mixin getMixin(File file) {
+    @Nullable private static Mixin getMixin(File file) {
         try (InputStream is = new FileInputStream(file)) {
             return getMixin(is);
         } catch (IOException e) {
@@ -163,8 +164,7 @@ public abstract class ValidateMixinNameTask extends SourceTask {
         }
     }
 
-    @Nullable
-    @VisibleForTesting
+    @Nullable @VisibleForTesting
     public static Mixin getMixin(InputStream is) throws IOException {
         final ClassReader reader = new ClassReader(is);
 
@@ -192,7 +192,8 @@ public abstract class ValidateMixinNameTask extends SourceTask {
 
         @Override
         public void visit(
-                int version, int access, String name, String signature, String superName, String[] interfaces) {
+            int version, int access, String name, String signature, String superName, String[] interfaces
+        ) {
             this.className = name;
             this.isInterface = (access & Opcodes.ACC_INTERFACE) != 0;
             super.visit(version, access, name, signature, superName, interfaces);
@@ -211,7 +212,8 @@ public abstract class ValidateMixinNameTask extends SourceTask {
 
         @Override
         public MethodVisitor visitMethod(
-                int access, String name, String descriptor, String signature, String[] exceptions) {
+            int access, String name, String descriptor, String signature, String[] exceptions
+        ) {
             MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
 
             if (mixinTarget != null) {

@@ -23,9 +23,10 @@
  */
 package dev.aoqia.leaf.loom.api.processor;
 
+import net.fabricmc.tinyremapper.TinyRemapper;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
-import net.fabricmc.tinyremapper.TinyRemapper;
 
 public interface MappingProcessorContext {
     LazyCloseable<TinyRemapper> createRemapper(MappingsNamespace from, MappingsNamespace to);

@@ -39,11 +39,11 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.IntConsumer;
 
-import dev.aoqia.leaf.loom.util.AttributeHelper;
-import dev.aoqia.leaf.loom.util.Checksum;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.util.AttributeHelper;
+import dev.aoqia.leaf.loom.util.Checksum;
 
 public final class CopyGameFile {
     private static final Logger LOGGER = LoggerFactory.getLogger(CopyGameFile.class);
@@ -55,13 +55,10 @@ public final class CopyGameFile {
     private final int attempt;
     private final CopyGameFileProgressListener progressListener;
 
-    CopyGameFile(Path path,
-        String expectedHash,
-        Duration maxAge,
-        boolean forced,
-        boolean fallback,
-        int attempt,
-        CopyGameFileProgressListener progressListener) {
+    CopyGameFile(
+        Path path, String expectedHash, Duration maxAge, boolean forced, boolean fallback, int attempt,
+        CopyGameFileProgressListener progressListener
+    ) {
         this.path = path;
         this.expectedHash = expectedHash;
         this.maxAge = maxAge;
@@ -77,13 +74,11 @@ public final class CopyGameFile {
 
     /**
      * This function is faster than the normal exists check.
-     *
      * @param path Path to check.
      * @return True if the file exists.
      */
     private static boolean exists(Path path) {
-        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists()
-            : Files.exists(path);
+        return path.getFileSystem() == FileSystems.getDefault() ? path.toFile().exists() : Files.exists(path);
     }
 
     private void copyGameFileToPath(Path output) throws IOException {
@@ -100,9 +95,10 @@ public final class CopyGameFile {
         final long length = this.path.toFile().length();
         AtomicLong totalBytes = new AtomicLong(0);
 
-        try (InputStream inputStream = Files.newInputStream(this.path, StandardOpenOption.READ);
-             OutputStream outputStream = Files.newOutputStream(partFile,
-                 StandardOpenOption.CREATE_NEW)) {
+        try (
+            InputStream inputStream = Files.newInputStream(this.path, StandardOpenOption.READ);
+            OutputStream outputStream = Files.newOutputStream(partFile, StandardOpenOption.CREATE_NEW)
+        ) {
             copyWithCallback(inputStream, outputStream, value -> {
                 progressListener.onProgress(totalBytes.addAndGet(value), length);
             });
@@ -120,8 +116,8 @@ public final class CopyGameFile {
 
                 if (actualLength != length) {
                     throw error(
-                        "Unexpected file length of %d bytes, expected %d bytes".formatted(
-                            actualLength, length));
+                        "Unexpected file length of %d bytes, expected %d bytes".formatted(actualLength, length)
+                    );
                 }
             } catch (IOException e) {
                 throw error(e);
@@ -129,17 +125,18 @@ public final class CopyGameFile {
         }
 
         try {
-            // Once the file has been fully read, move it to the destination file.
-            // This ensures that the output file only exists in fully populated state.
+            // Once the file has been fully read, move it to the destination
+            // file.
+            // This ensures that the output file only exists in fully populated
+            // state.
             Files.move(partFile, output);
-            //            Files.move(partFile, output, StandardCopyOption.COPY_ATTRIBUTES);
+            // Files.move(partFile, output, StandardCopyOption.COPY_ATTRIBUTES);
         } catch (IOException e) {
             throw error(e, "Failed to complete copy of game file");
         }
     }
 
-    private void copyWithCallback(InputStream is, OutputStream os, IntConsumer consumer) throws
-        IOException {
+    private void copyWithCallback(InputStream is, OutputStream os, IntConsumer consumer) throws IOException {
         byte[] buffer = new byte[1024];
         int length;
 
@@ -167,11 +164,10 @@ public final class CopyGameFile {
 
         if (locked && attempt == 1) {
             LOGGER.warn(
-                "Forcing copy of game file {} as existing lock file was found. This may happen if" +
-                " the gradle build " +
-                "was " +
-                "forcefully canceled.",
-                output);
+                "Forcing copy of game file {} as existing lock file was found. This may happen if"
+                    + " the gradle build " + "was " + "forcefully canceled.",
+                output
+            );
             return true;
         }
 
@@ -317,7 +313,8 @@ public final class CopyGameFile {
             throw error(e, "Failed to create parent directories");
         }
 
-        // Create a .lock file, this allows us to re-download if the download was forcefully
+        // Create a .lock file, this allows us to re-download if the download
+        // was forcefully
         // aborted part way through.
         createLock(output);
         progressListener.onStart();
@@ -325,7 +322,8 @@ public final class CopyGameFile {
 
         if (exists(output) && isOutdated(output)) {
             try {
-                // Update the last modified time so we don't retry the request until the max age
+                // Update the last modified time so we don't retry the request
+                // until the max age
                 // has passed again.
                 Files.setLastModifiedTime(output, FileTime.from(Instant.now()));
             } catch (IOException e) {
@@ -350,14 +348,12 @@ public final class CopyGameFile {
                 actualHash = "unknown hash";
             }
 
-            throw error("Failed to copy (%s) with expected hash: %s got %s",
-                path,
-                expectedHash,
-                actualHash);
+            throw error("Failed to copy (%s) with expected hash: %s got %s", path, expectedHash, actualHash);
         }
 
         // Write the hash to the file attribute.
-        // This saves a lot of time trying to re-compute the hash when re-visiting this file.
+        // This saves a lot of time trying to re-compute the hash when
+        // re-visiting this file.
         writeHash(output, expectedHash);
     }
 

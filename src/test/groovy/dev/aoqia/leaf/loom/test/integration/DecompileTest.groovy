@@ -26,16 +26,10 @@ package dev.aoqia.leaf.loom.test.integration
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import spock.lang.Specification
-import spock.lang.Unroll
-
-import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
-
-import spock.lang.Specification
-import spock.lang.Unroll
-
 import static dev.aoqia.loom.test.LoomTestConstants.*
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+
+import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 
 class DecompileTest extends Specification implements GradleProjectTestTrait {
 	@Unroll

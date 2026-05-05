@@ -32,15 +32,9 @@ import java.time.Instant
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import spock.lang.Specification
-import spock.lang.TempDir
-
 import dev.aoqia.leaf.loom.decompilers.cache.CachedFileStore
 import dev.aoqia.leaf.loom.decompilers.cache.CachedFileStoreImpl
 import dev.aoqia.leaf.loom.util.FileSystemUtil
-
-import spock.lang.Specification
-import spock.lang.TempDir
 
 class CachedFileStoreTest extends Specification {
 	@TempDir

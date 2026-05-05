@@ -28,15 +28,7 @@ import dev.aoqia.loom.test.util.GradleProjectTestTrait
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import dev.aoqia.loom.test.util.GradleProjectTestTrait
-import spock.lang.Specification
-import spock.lang.Unroll
-
 import dev.aoqia.leaf.loom.build.nesting.NestableJarGenerationTask
-
-import dev.aoqia.loom.test.util.GradleProjectTestTrait
-import spock.lang.Specification
-import spock.lang.Unroll
 
 class SemVerParsingTest extends Specification implements GradleProjectTestTrait {
 	@Unroll

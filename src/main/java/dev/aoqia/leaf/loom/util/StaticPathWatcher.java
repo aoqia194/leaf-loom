@@ -75,11 +75,11 @@ public final class StaticPathWatcher {
             if (!pathsObserved.containsKey(parentPath)) {
                 try {
                     pathsObserved.put(
-                            parentPath,
-                            parentPath.register(
-                                    service,
-                                    StandardWatchEventKinds.ENTRY_MODIFY,
-                                    StandardWatchEventKinds.ENTRY_DELETE));
+                        parentPath,
+                        parentPath.register(
+                            service, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE
+                        )
+                    );
 
                     return true;
                 } catch (IOException e) {

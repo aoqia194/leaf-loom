@@ -23,21 +23,29 @@
  */
 package dev.aoqia.leaf.loom.configuration.ide;
 
-import javax.inject.Inject;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
+import javax.inject.Inject;
+
+import org.gradle.api.Named;
+import org.gradle.api.Project;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.SourceSet;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
-import org.gradle.api.Named;
-import org.gradle.api.Project;
-import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.SourceSet;
-import org.jetbrains.annotations.ApiStatus;
 
 public class RunConfigSettings implements Named {
     /**
@@ -50,28 +58,30 @@ public class RunConfigSettings implements Named {
      */
     private final List<String> programArgs = new ArrayList<>();
     /**
-     * Whether to append the project path to the {@link #configName} when {@code project} isn't the root project.
-     *
-     * <p>Warning: could produce ambiguous run config names if disabled, unless used carefully in conjunction with
-     * {@link #configName}.
+     * Whether to append the project path to the {@link #configName} when
+     * {@code project} isn't the root project.
+     * <p>
+     * Warning: could produce ambiguous run config names if disabled, unless
+     * used carefully in conjunction with {@link #configName}.
      */
     private final Property<Boolean> appendProjectPathToConfigName;
     /**
      * The main class of the run configuration.
-     *
-     * <p>If unset, {@link #defaultMainClass} is used as the fallback, including the overwritten main class
-     * from installer files.
+     * <p>
+     * If unset, {@link #defaultMainClass} is used as the fallback, including
+     * the overwritten main class from installer files.
      */
     private final Property<String> mainClass;
     /**
-     * The true entrypoint, this is usually dev launch injector. This should not be changed unless you know what you are
-     * doing.
+     * The true entrypoint, this is usually dev launch injector. This should not
+     * be changed unless you know what you are doing.
      */
     @ApiStatus.Internal
     @ApiStatus.Experimental
     private final Property<String> devLaunchMainClass;
     /**
-     * The base name of the run configuration, which is the name it is created with, i.e. 'client'
+     * The base name of the run configuration, which is the name it is created
+     * with, i.e. 'client'
      */
     private final String name;
     private final Map<String, Object> environmentVariables = new HashMap<>();
@@ -83,32 +93,36 @@ public class RunConfigSettings implements Named {
     private String environment;
     /**
      * The full name of the run configuration, i.e. 'Minecraft Client'.
-     *
-     * <p>By default this is determined from the base name.
-     *
-     * <p>Note: unless the project is the root project (or {@link #appendProjectPathToConfigName} is disabled),
-     * the project path will be appended automatically, e.g. 'Minecraft Client (:some:project)'.
+     * <p>
+     * By default this is determined from the base name.
+     * <p>
+     * Note: unless the project is the root project (or
+     * {@link #appendProjectPathToConfigName} is disabled), the project path
+     * will be appended automatically, e.g. 'Minecraft Client (:some:project)'.
      */
     private String configName;
     /**
      * The default main class of the run configuration.
-     *
-     * <p>This can be overwritten in {@code fabric_installer.[method].json}. Note that this <em>doesn't</em> take
-     * priority over the main class specified in the Fabric installer configuration.
+     * <p>
+     * This can be overwritten in {@code fabric_installer.[method].json}. Note
+     * that this <em>doesn't</em> take priority over the main class specified in
+     * the Fabric installer configuration.
      */
     private String defaultMainClass;
     /**
-     * The source set getter, which obtains the source set from the given project.
+     * The source set getter, which obtains the source set from the given
+     * project.
      */
     private Function<Project, SourceSet> source;
     /**
-     * The run directory for this configuration, relative to the root project directory.
+     * The run directory for this configuration, relative to the root project
+     * directory.
      */
     private String runDir;
     /**
      * When true a run configuration file will be generated for IDE's.
-     *
-     * <p>By default only run configs on the root project will be generated.
+     * <p>
+     * By default only run configs on the root project will be generated.
      */
     private boolean ideConfigGenerated;
 
@@ -116,8 +130,7 @@ public class RunConfigSettings implements Named {
     public RunConfigSettings(Project project, String name) {
         this.name = name;
         this.project = project;
-        this.appendProjectPathToConfigName =
-            project.getObjects().property(Boolean.class).convention(true);
+        this.appendProjectPathToConfigName = project.getObjects().property(Boolean.class).convention(true);
         this.extension = LoomGradleExtension.get(project);
         this.ideConfigGenerated = extension.isRootProject();
         this.mainClass = project.getObjects().property(String.class).convention(project.provider(() -> {
@@ -125,8 +138,8 @@ public class RunConfigSettings implements Named {
             Objects.requireNonNull(defaultMainClass, "Run config " + name + " must specify default main class");
             return RunConfig.getMainClass(environment, extension, defaultMainClass);
         }));
-        this.devLaunchMainClass =
-            project.getObjects().property(String.class).convention("net.fabricmc.devlaunchinjector.Main");
+        this.devLaunchMainClass = project.getObjects().property(String.class)
+            .convention("net.fabricmc.devlaunchinjector.Main");
 
         setSource(p -> {
             final String sourceSetName = ZomboidSourceSets.get(p).getSourceSetForEnv(getEnvironment());
@@ -145,7 +158,7 @@ public class RunConfigSettings implements Named {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
@@ -191,9 +204,9 @@ public class RunConfigSettings implements Named {
 
     /**
      * The main class of the run configuration.
-     *
-     * <p>If unset, {@link #getDefaultMainClass defaultMainClass} is used as the fallback,
-     * including the overwritten main class from installer files.
+     * <p>
+     * If unset, {@link #getDefaultMainClass defaultMainClass} is used as the
+     * fallback, including the overwritten main class from installer files.
      */
     public Property<String> getMainClass() {
         return mainClass;
@@ -301,10 +314,11 @@ public class RunConfigSettings implements Named {
      */
     public void client() {
         // Zomboid specific JVM args that aren't added to the manifests.
-        // They aren't added to manifests so the user can change them freely in the run config.
+        // They aren't added to manifests so the user can change them freely in
+        // the run config.
         // Because they aren't critical to the game's execution.
         // TODO: Maybe also move these to the manifest since
-        //       they could change in a later game version?
+        // they could change in a later game version?
         property("zomboid.steam", "0");
         property("zomboid.znetlog", "1");
 
@@ -322,7 +336,8 @@ public class RunConfigSettings implements Named {
      */
     public void server() {
         // Zomboid specific JVM args that aren't added to the manifests.
-        // They aren't added to manifests so the user can change them freely in the run config.
+        // They aren't added to manifests so the user can change them freely in
+        // the run config.
         // Because they aren't critical to the game's execution.
         property("zomboid.steam", "0");
         property("zomboid.znetlog", "1");

@@ -31,21 +31,9 @@ import spock.lang.Specification
 import spock.lang.Timeout
 import spock.lang.Unroll
 
-import dev.aoqia.loom.test.util.GradleProjectTestTrait
-import dev.aoqia.loom.test.util.ServerRunner
-import spock.lang.Specification
-import spock.lang.Timeout
-import spock.lang.Unroll
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 import dev.aoqia.leaf.loom.util.ZipUtils
-
-import dev.aoqia.loom.test.util.GradleProjectTestTrait
-import dev.aoqia.loom.test.util.ServerRunner
-import spock.lang.Specification
-import spock.lang.Timeout
-import spock.lang.Unroll
-
-import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 @Timeout(value = 30, unit = TimeUnit.MINUTES)
 class LeafApiTest extends Specification implements GradleProjectTestTrait {

@@ -31,7 +31,8 @@ public class SandboxEntrypoint {
             throw new IllegalStateException("Unable to find real main");
         }
 
-        // Print the curren stacktrace, we can use this to ensure that we haven't been launched via DLI
+        // Print the curren stacktrace, we can use this to ensure that we
+        // haven't been launched via DLI
         Thread.dumpStack();
 
         System.out.println("Running real main: " + realMain);

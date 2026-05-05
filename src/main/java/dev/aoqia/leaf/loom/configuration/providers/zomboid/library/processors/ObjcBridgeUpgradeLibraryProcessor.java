@@ -25,6 +25,7 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessor;
@@ -46,16 +47,14 @@ public class ObjcBridgeUpgradeLibraryProcessor extends LibraryProcessor {
             return ApplicationResult.DONT_APPLY;
         }
 
-        if (!(platform.getOperatingSystem().isMacOS()
-                && platform.getArchitecture().isArm())) {
+        if (!(platform.getOperatingSystem().isMacOS() && platform.getArchitecture().isArm())) {
             // Only supported on arm64 macOS
             return ApplicationResult.DONT_APPLY;
         }
 
         // Apply when Arm64 macOS is unsupported by Minecraft
-        return context.supportsArm64(Platform.OperatingSystem.MAC_OS)
-                ? ApplicationResult.DONT_APPLY
-                : ApplicationResult.MUST_APPLY;
+        return context.supportsArm64(Platform.OperatingSystem.MAC_OS) ? ApplicationResult.DONT_APPLY
+            : ApplicationResult.MUST_APPLY;
     }
 
     @Override
@@ -65,7 +64,8 @@ public class ObjcBridgeUpgradeLibraryProcessor extends LibraryProcessor {
 
         return library -> {
             if (library.is(OBJC_BRIDGE_PREFIX)) {
-                // Remove the natives, as they are included in the dep library we added to the runtime classpath above.
+                // Remove the natives, as they are included in the dep library
+                // we added to the runtime classpath above.
                 return library.target() != Library.Target.NATIVES;
             }
 

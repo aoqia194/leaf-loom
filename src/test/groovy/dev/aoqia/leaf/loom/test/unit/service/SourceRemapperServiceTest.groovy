@@ -31,19 +31,9 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.intellij.lang.annotations.Language
 
-import dev.aoqia.loom.test.util.GradleTestUtil
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.provider.Property
-import org.intellij.lang.annotations.Language
-
 import dev.aoqia.leaf.loom.task.service.MappingsService
 import dev.aoqia.leaf.loom.task.service.SourceRemapperService
 import dev.aoqia.leaf.loom.util.DeletingFileVisitor
-
-import dev.aoqia.loom.test.util.GradleTestUtil
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.provider.Property
-import org.intellij.lang.annotations.Language
 
 class SourceRemapperServiceTest extends ServiceTestBase {
 	def "remap sources"() {
@@ -83,7 +73,7 @@ class SourceRemapperServiceTest extends ServiceTestBase {
 	static String SOURCE = """
         class Source {
             public void test() {
-                System.out.println("Hello");
+                System.out.println("Hello")
             }
         }
     """.trim()

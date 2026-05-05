@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+
 import org.gradle.api.Project;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.logging.Logger;
@@ -55,7 +56,8 @@ public class ThreadedProgressLoggerConsumer implements Consumer<String>, AutoClo
     }
 
     public ThreadedProgressLoggerConsumer(
-            Logger logger, ProgressLoggerFactory progressLoggerFactory, String name, String desc) {
+        Logger logger, ProgressLoggerFactory progressLoggerFactory, String name, String desc
+    ) {
         this.logger = logger;
         this.name = name;
         this.desc = desc;

@@ -26,12 +26,6 @@ package dev.aoqia.leaf.loom.test.integration.buildSrc.remapext
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.MethodVisitor
-
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.MethodVisitor
-
 class StringReplacementClassVisitor extends ClassVisitor {
 	final Map<String, String> replacements
 

@@ -25,12 +25,14 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
+
 import dev.aoqia.leaf.loom.LoomRepositoryPlugin;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessor;
 import dev.aoqia.leaf.loom.util.Platform;
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
 /**
  * A processor to add support for RISC-V.
@@ -70,10 +72,12 @@ public class RiscVNativesLibraryProcessor extends LibraryProcessor {
     @Override
     public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
         return library -> {
-            // Add additional RISC-V natives for LWJGL, alongside the existing x64 linux natives.
-            if (library.is(LWJGL_GROUP)
-                    && library.target() == Library.Target.NATIVES
-                    && (library.classifier() != null && library.classifier().equals("natives-linux"))) {
+            // Add additional RISC-V natives for LWJGL, alongside the existing
+            // x64 linux natives.
+            if (
+                library.is(LWJGL_GROUP) && library.target() == Library.Target.NATIVES
+                    && (library.classifier() != null && library.classifier().equals("natives-linux"))
+            ) {
                 // Add the RISC-V natives.
                 dependencyConsumer.accept(library.withClassifier(library.classifier() + "-riscv64"));
             }

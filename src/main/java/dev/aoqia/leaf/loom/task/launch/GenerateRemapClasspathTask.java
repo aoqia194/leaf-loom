@@ -29,15 +29,17 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
-import dev.aoqia.leaf.loom.task.AbstractLoomTask;
-import dev.aoqia.leaf.loom.util.Constants;
+
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
+
+import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public abstract class GenerateRemapClasspathTask extends AbstractLoomTask {
     @InputFiles
@@ -50,10 +52,8 @@ public abstract class GenerateRemapClasspathTask extends AbstractLoomTask {
         final ConfigurationContainer configurations = getProject().getConfigurations();
 
         getRemapClasspath().from(configurations.named(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
-        getExtension().getRuntimeRemapConfigurations().stream()
-                .map(RemapConfigurationSettings::getName)
-                .map(configurations::named)
-                .forEach(getRemapClasspath()::from);
+        getExtension().getRuntimeRemapConfigurations().stream().map(RemapConfigurationSettings::getName)
+            .map(configurations::named).forEach(getRemapClasspath()::from);
 
         getRemapClasspathFile().set(getExtension().getFiles().getRemapClasspathFile());
     }

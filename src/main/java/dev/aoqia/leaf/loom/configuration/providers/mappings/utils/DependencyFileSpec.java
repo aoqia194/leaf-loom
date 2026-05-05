@@ -27,10 +27,12 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Set;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
-import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
+
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.FileCollectionDependency;
+
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
 
 public record DependencyFileSpec(Dependency dependency) implements FileSpec {
     @Override
@@ -39,12 +41,14 @@ public record DependencyFileSpec(Dependency dependency) implements FileSpec {
             Set<File> files = fileCollectionDependency.getFiles().getFiles();
 
             if (files.isEmpty()) {
-                throw new RuntimeException("FileCollectionDependency (%s) resolved no files"
-                        .formatted(fileCollectionDependency.toString()));
+                throw new RuntimeException(
+                    "FileCollectionDependency (%s) resolved no files".formatted(fileCollectionDependency.toString())
+                );
             } else if (files.size() > 1) {
                 throw new RuntimeException(
-                        "FileCollectionDependency (%s) resolved too many files (%d) only 1 is expected"
-                                .formatted(fileCollectionDependency.toString(), files.size()));
+                    "FileCollectionDependency (%s) resolved too many files (%d) only 1 is expected"
+                        .formatted(fileCollectionDependency.toString(), files.size())
+                );
             }
 
             return files.iterator().next().toPath();

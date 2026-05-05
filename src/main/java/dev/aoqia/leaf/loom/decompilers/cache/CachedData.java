@@ -37,15 +37,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Objects;
-import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers;
+
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers;
+
 // Serialised data for a class entry in the cache
-// Uses the RIFF format, allows for appending the line numbers to the end of the file
+// Uses the RIFF format, allows for appending the line numbers to the end of the
+// file
 // Stores the source code and line numbers for the class
 public record CachedData(String className, String sources, @Nullable ClassLineNumbers.Entry lineNumbers) {
+
     public static final CachedFileStore.EntrySerializer<CachedData> SERIALIZER = new EntrySerializer();
 
     private static final String HEADER_ID = "LOOM";
@@ -94,8 +98,7 @@ public record CachedData(String className, String sources, @Nullable ClassLineNu
     private void writeLineNumbers(FileChannel fileChannel) throws IOException {
         Objects.requireNonNull(lineNumbers);
 
-        try (var c = new RiffChunk(LINE_NUMBERS_ID, fileChannel);
-                StringWriter stringWriter = new StringWriter()) {
+        try (var c = new RiffChunk(LINE_NUMBERS_ID, fileChannel); StringWriter stringWriter = new StringWriter()) {
             lineNumbers.write(stringWriter);
             fileChannel.write(ByteBuffer.wrap(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
         }
@@ -122,43 +125,47 @@ public record CachedData(String className, String sources, @Nullable ClassLineNu
             byte[] chunkData = readBytes(inputStream, chunkLength);
 
             switch (chunkHeader) {
-                case NAME_ID -> {
-                    if (className != null) {
-                        throw new IOException("Duplicate name chunk");
+            case NAME_ID -> {
+                if (className != null) {
+                    throw new IOException("Duplicate name chunk");
+                }
+
+                className = new String(chunkData, StandardCharsets.UTF_8);
+            }
+            case SOURCES_ID -> {
+                if (sources != null) {
+                    throw new IOException("Duplicate sources chunk");
+                }
+
+                sources = new String(chunkData, StandardCharsets.UTF_8);
+            }
+            case LINE_NUMBERS_ID -> {
+                if (lineNumbers != null) {
+                    throw new IOException("Duplicate line numbers chunk");
+                }
+
+                try (
+                    var br = new BufferedReader(
+                        new InputStreamReader(new ByteArrayInputStream(chunkData), StandardCharsets.UTF_8)
+                    )
+                ) {
+                    ClassLineNumbers classLineNumbers = ClassLineNumbers.readMappings(br);
+
+                    if (classLineNumbers.lineMap().size() != 1) {
+                        throw new IOException(
+                            "Expected exactly one class line numbers entry got " + classLineNumbers.lineMap().size()
+                                + " entries"
+                        );
                     }
 
-                    className = new String(chunkData, StandardCharsets.UTF_8);
+                    lineNumbers = classLineNumbers.lineMap().values().iterator().next();
                 }
-                case SOURCES_ID -> {
-                    if (sources != null) {
-                        throw new IOException("Duplicate sources chunk");
-                    }
-
-                    sources = new String(chunkData, StandardCharsets.UTF_8);
-                }
-                case LINE_NUMBERS_ID -> {
-                    if (lineNumbers != null) {
-                        throw new IOException("Duplicate line numbers chunk");
-                    }
-
-                    try (var br = new BufferedReader(
-                            new InputStreamReader(new ByteArrayInputStream(chunkData), StandardCharsets.UTF_8))) {
-                        ClassLineNumbers classLineNumbers = ClassLineNumbers.readMappings(br);
-
-                        if (classLineNumbers.lineMap().size() != 1) {
-                            throw new IOException("Expected exactly one class line numbers entry got "
-                                    + classLineNumbers.lineMap().size() + " entries");
-                        }
-
-                        lineNumbers =
-                                classLineNumbers.lineMap().values().iterator().next();
-                    }
-                }
-                default -> {
-                    // Skip unknown chunk
-                    LOGGER.warn("Skipping unknown chunk: {} of size {}", chunkHeader, chunkLength);
-                    inputStream.skip(chunkLength);
-                }
+            }
+            default -> {
+                // Skip unknown chunk
+                LOGGER.warn("Skipping unknown chunk: {} of size {}", chunkHeader, chunkLength);
+                inputStream.skip(chunkLength);
+            }
             }
         }
 
@@ -201,8 +208,10 @@ public record CachedData(String className, String sources, @Nullable ClassLineNu
 
         @Override
         public void write(CachedData entry, Path path) throws IOException {
-            try (FileChannel fileChannel =
-                    FileChannel.open(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
+            try (
+                FileChannel fileChannel = FileChannel
+                    .open(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)
+            ) {
                 entry.write(fileChannel);
             }
         }

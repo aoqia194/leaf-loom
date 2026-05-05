@@ -26,11 +26,9 @@ package dev.aoqia.leaf.loom.api.decompilers;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
+
 import dev.aoqia.leaf.loom.util.IOStringConsumer;
 
 public record DecompilationMetadata(
-        int numberOfThreads,
-        Path javaDocs,
-        Collection<Path> libraries,
-        IOStringConsumer logger,
-        Map<String, String> options) {}
+    int numberOfThreads, Path javaDocs, Collection<Path> libraries, IOStringConsumer logger, Map<String, String> options
+) {}

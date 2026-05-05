@@ -30,15 +30,12 @@ import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Opcodes;
 
 public class Constants {
-    public static final String INDEX_MANIFEST_PATH =
-        "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/indexes";
-    public static final String VERSION_MANIFESTS =
-        "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests";
+    public static final String INDEX_MANIFEST_PATH = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/indexes";
+    public static final String VERSION_MANIFESTS = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests";
     public static final String FABRIC_REPOSITORY = "https://maven.fabricmc.net/";
     public static final int ASM_VERSION = Opcodes.ASM9;
     public static final Path CLIENT_INSTALL_PATH = Path.of("steamapps", "common", "ProjectZomboid");
-    public static final Path SERVER_INSTALL_PATH = Path.of("steamapps", "common",
-        "Project Zomboid Dedicated Server");
+    public static final Path SERVER_INSTALL_PATH = Path.of("steamapps", "common", "Project Zomboid Dedicated Server");
 
     private Constants() {}
 
@@ -77,15 +74,13 @@ public class Constants {
          * These configurations contain the zomboid client libraries.
          */
         public static final String ZOMBOID_CLIENT_COMPILE_LIBRARIES = "zomboidClientLibraries";
-        public static final String ZOMBOID_CLIENT_RUNTIME_LIBRARIES =
-            "zomboidClientRuntimeLibraries";
+        public static final String ZOMBOID_CLIENT_RUNTIME_LIBRARIES = "zomboidClientRuntimeLibraries";
 
         /**
          * Find the client only dependencies on the "zomboidLibraries" config.
          */
         public static final String ZOMBOID_SERVER_COMPILE_LIBRARIES = "zomboidServerLibraries";
-        public static final String ZOMBOID_SERVER_RUNTIME_LIBRARIES =
-            "zomboidServerRuntimeLibraries";
+        public static final String ZOMBOID_SERVER_RUNTIME_LIBRARIES = "zomboidServerRuntimeLibraries";
 
         public static final String ZOMBOID_EXTRACTED_LIBRARIES = "zomboidExtractedLibraries";
         public static final String ZOMBOID_NATIVES = "zomboidNatives";
@@ -97,15 +92,15 @@ public class Constants {
         public static final String MAPPING_CONSTANTS = "mappingsConstants";
         public static final String UNPICK_CLASSPATH = "unpick";
         /**
-         * A configuration that behaves like {@code runtimeOnly} but is not exposed in
-         * {@code runtimeElements} to dependents. A bit like {@code testRuntimeOnly}, but for mods.
+         * A configuration that behaves like {@code runtimeOnly} but is not
+         * exposed in {@code runtimeElements} to dependents. A bit like
+         * {@code testRuntimeOnly}, but for mods.
          */
         public static final String LOCAL_RUNTIME = "localRuntime";
 
         public static final String NAMED_ELEMENTS = "namedElements";
 
-        private Configurations() {
-        }
+        private Configurations() {}
     }
 
     public static final class MixinArguments {
@@ -116,31 +111,27 @@ public class Constants {
         public static final String QUIET = "quiet";
         public static final String SHOW_MESSAGE_TYPES = "showMessageTypes";
 
-        private MixinArguments() {
-        }
+        private MixinArguments() {}
     }
 
     public static final class Knot {
         public static final String KNOT_CLIENT = "dev.aoqia.leaf.loader.launch.knot.KnotClient";
         public static final String KNOT_SERVER = "dev.aoqia.leaf.loader.launch.knot.KnotServer";
 
-        private Knot() {
-        }
+        private Knot() {}
     }
 
     public static final class TaskGroup {
         public static final String LEAF = "leaf";
         public static final String IDE = "ide";
 
-        private TaskGroup() {
-        }
+        private TaskGroup() {}
     }
 
     public static final class Task {
         public static final String PROCESS_INCLUDE_JARS = "processIncludeJars";
 
-        private Task() {
-        }
+        private Task() {}
     }
 
     public static final class CustomModJsonKeys {
@@ -154,19 +145,19 @@ public class Constants {
         public static final String IGNORE_MISSING_FILES = "leaf.loom.ignoreMissingFiles";
         public static final String DONT_REMAP = "leaf.loom.dontRemap";
         public static final String DISABLE_REMAPPED_VARIANTS = "leaf.loom.disableRemappedVariants";
-        public static final String DISABLE_PROJECT_DEPENDENT_MODS = "leaf.loom" +
-                                                                    ".disableProjectDependentMods";
+        public static final String DISABLE_PROJECT_DEPENDENT_MODS = "leaf.loom" + ".disableProjectDependentMods";
         public static final String LIBRARY_PROCESSORS = "leaf.loom.libraryProcessors";
 
         @ApiStatus.Experimental
         public static final String SANDBOX = "leaf.loom.experimental.sandbox";
         /**
-         * When set the version of java that will be assumed that the game will run on, this
-         * defaults to the current java version. Only set this when you have a good reason to do so,
-         * the default should be fine for almost all cases.
+         * When set the version of java that will be assumed that the game will
+         * run on, this defaults to the current java version. Only set this when
+         * you have a good reason to do so, the default should be fine for
+         * almost all cases.
          */
-        public static final String RUNTIME_JAVA_COMPATIBILITY_VERSION = "leaf.loom" +
-                                                                        ".runtimeJavaCompatibilityVersion";
+        public static final String RUNTIME_JAVA_COMPATIBILITY_VERSION = "leaf.loom"
+            + ".runtimeJavaCompatibilityVersion";
         public static final String DECOMPILE_CACHE_MAX_FILES = "leaf.loom.decompileCacheMaxFiles";
         public static final String DECOMPILE_CACHE_MAX_AGE = "leaf.loom.decompileCacheMaxAge";
     }
@@ -183,8 +174,7 @@ public class Constants {
         public static final String JAR_TYPE = "Leaf-Jar-Type";
         public static final String GRADLE_VERSION = "Leaf-Gradle-Version";
         public static final String LOOM_VERSION = "Leaf-Loom-Version";
-        public static final String MIXIN_COMPILE_EXTENSIONS_VERSION = "Leaf-Mixin-Compile" +
-                                                                      "-Extensions-Version";
+        public static final String MIXIN_COMPILE_EXTENSIONS_VERSION = "Leaf-Mixin-Compile" + "-Extensions-Version";
         public static final String ZOMBOID_VERSION = "Leaf-Zomboid-Version";
         public static final String TINY_REMAPPER_VERSION = "Leaf-Tiny-Remapper-Version";
         public static final String LEAF_LOADER_VERSION = "Leaf-Loader-Version";

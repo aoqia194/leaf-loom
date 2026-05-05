@@ -26,6 +26,7 @@ package dev.aoqia.leaf.loom.api.mappings.layered;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
 import net.fabricmc.mappingio.MappingVisitor;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -38,7 +39,9 @@ public interface MappingLayer {
     }
 
     /**
-     * Provides a list of layer classes that this mapping layer depends on. If such a layer is not present an Exception will be thrown when trying to resolve the layer.
+     * Provides a list of layer classes that this mapping layer depends on. If
+     * such a layer is not present an Exception will be thrown when trying to
+     * resolve the layer.
      * @return A list of MappingLayer classes to depend on.
      */
     default List<Class<? extends MappingLayer>> dependsOn() {

@@ -24,6 +24,7 @@
 package dev.aoqia.leaf.loom.configuration.providers.mappings.extras.signatures;
 
 import java.util.Map;
+
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental

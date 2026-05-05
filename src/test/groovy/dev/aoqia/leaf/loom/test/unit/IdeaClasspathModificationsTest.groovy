@@ -28,14 +28,8 @@ import java.nio.charset.StandardCharsets
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import org.intellij.lang.annotations.Language
-import spock.lang.Specification
-
 import dev.aoqia.leaf.loom.configuration.ide.RunConfig
 import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaSyncTask
-
-import org.intellij.lang.annotations.Language
-import spock.lang.Specification
 
 class IdeaClasspathModificationsTest extends Specification {
 

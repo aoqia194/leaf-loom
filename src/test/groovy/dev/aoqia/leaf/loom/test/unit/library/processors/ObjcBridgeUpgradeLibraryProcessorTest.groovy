@@ -25,13 +25,9 @@ package dev.aoqia.leaf.loom.test.unit.library.processors
 
 import dev.aoqia.loom.test.util.PlatformTestUtils
 
-import dev.aoqia.loom.test.util.PlatformTestUtils
-
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessor
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.ObjcBridgeUpgradeLibraryProcessor
-
-import dev.aoqia.loom.test.util.PlatformTestUtils
 
 class ObjcBridgeUpgradeLibraryProcessorTest extends LibraryProcessorTest {
 	def "Only apply to arm64 macOS"() {

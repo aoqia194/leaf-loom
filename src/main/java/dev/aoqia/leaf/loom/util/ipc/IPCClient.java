@@ -29,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+
 import dev.aoqia.leaf.loom.util.IOStringConsumer;
 
 public final class IPCClient implements IOStringConsumer, AutoCloseable {

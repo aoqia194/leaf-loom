@@ -23,9 +23,6 @@
  */
 package dev.aoqia.leaf.loom.configuration.ifaceinject;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -38,15 +35,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
-import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
-import dev.aoqia.leaf.loom.api.processor.SpecContext;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.LazyCloseable;
-import dev.aoqia.leaf.loom.util.Pair;
-import dev.aoqia.leaf.loom.util.ZipUtils;
-import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;
@@ -61,6 +53,16 @@ import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.util.CheckSignatureAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
+import dev.aoqia.leaf.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.LazyCloseable;
+import dev.aoqia.leaf.loom.util.Pair;
+import dev.aoqia.leaf.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 
 public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor<InterfaceInjectionProcessor.Spec> {
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceInjectionProcessor.class);
@@ -84,8 +86,10 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
         List<InjectedInterface> injectedInterfaces = new ArrayList<>();
 
         injectedInterfaces.addAll(InjectedInterface.fromMods(context.localMods()));
-        // Find the injected interfaces from mods that are both on the compile and runtime classpath.
-        // Runtime is also required to ensure that the interface and it's impl is present when running the mc jar.
+        // Find the injected interfaces from mods that are both on the compile
+        // and runtime classpath.
+        // Runtime is also required to ensure that the interface and it's impl
+        // is present when running the mc jar.
 
         if (fromDependencies) {
             injectedInterfaces.addAll(InjectedInterface.fromMods(context.modDependenciesCompileRuntime()));
@@ -107,14 +111,17 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
         final int officialIndex = mappings.getNamespaceId(MappingsNamespace.OFFICIAL.toString());
         final int namedIndex = mappings.getNamespaceId(MappingsNamespace.NAMED.toString());
 
-        try (LazyCloseable<TinyRemapper> tinyRemapper =
-                context.createRemapper(MappingsNamespace.OFFICIAL, MappingsNamespace.NAMED)) {
+        try (
+            LazyCloseable<TinyRemapper> tinyRemapper = context
+                .createRemapper(MappingsNamespace.OFFICIAL, MappingsNamespace.NAMED)
+        ) {
             final List<InjectedInterface> remappedInjectedInterfaces = spec.injectedInterfaces().stream()
-                    .map(injectedInterface -> remap(
-                            injectedInterface,
-                            s -> mappings.mapClassName(s, officialIndex, namedIndex),
-                            tinyRemapper.get().getEnvironment().getRemapper()))
-                    .toList();
+                .map(
+                    injectedInterface -> remap(
+                        injectedInterface, s -> mappings.mapClassName(s, officialIndex, namedIndex),
+                        tinyRemapper.get().getEnvironment().getRemapper()
+                    )
+                ).toList();
             try {
                 ZipUtils.transform(jar, getTransformers(remappedInjectedInterfaces));
             } catch (IOException e) {
@@ -124,42 +131,55 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
     }
 
     private InjectedInterface remap(
-            InjectedInterface in, Function<String, String> remapper, TrRemapper signatureRemapper) {
+        InjectedInterface in, Function<String, String> remapper, TrRemapper signatureRemapper
+    ) {
         String generics = null;
 
         if (in.generics() != null) {
-            String fakeSignature = signatureRemapper.mapSignature(
-                    "Ljava/lang/Object" + in.generics() + ";",
-                    false); // Turning the raw generics string into a fake signature
-            generics = fakeSignature.substring(
-                    "Ljava/lang/Object".length(),
-                    fakeSignature.length()
-                            - 1); // Retrieving the remapped raw generics string from the remapped fake signature
+            String fakeSignature = signatureRemapper.mapSignature("Ljava/lang/Object" + in.generics() + ";", false); // Turning
+                                                                                                                     // the
+                                                                                                                     // raw
+                                                                                                                     // generics
+                                                                                                                     // string
+                                                                                                                     // into
+                                                                                                                     // a
+                                                                                                                     // fake
+                                                                                                                     // signature
+            generics = fakeSignature.substring("Ljava/lang/Object".length(), fakeSignature.length() - 1); // Retrieving
+                                                                                                          // the
+                                                                                                          // remapped
+                                                                                                          // raw
+                                                                                                          // generics
+                                                                                                          // string
+                                                                                                          // from
+                                                                                                          // the
+                                                                                                          // remapped
+                                                                                                          // fake
+                                                                                                          // signature
         }
 
         return new InjectedInterface(
-                in.modId(), remapper.apply(in.className()), remapper.apply(in.ifaceName()), generics);
+            in.modId(), remapper.apply(in.className()), remapper.apply(in.ifaceName()), generics
+        );
     }
 
     private List<Pair<String, ZipUtils.UnsafeUnaryOperator<byte[]>>> getTransformers(
-            List<InjectedInterface> injectedInterfaces) {
-        return injectedInterfaces.stream()
-                .collect(Collectors.groupingBy(InjectedInterface::className))
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    final String zipEntry = entry.getKey().replaceAll("\\.", "/") + ".class";
-                    return new Pair<>(zipEntry, getTransformer(entry.getValue()));
-                })
-                .toList();
+        List<InjectedInterface> injectedInterfaces
+    ) {
+        return injectedInterfaces.stream().collect(Collectors.groupingBy(InjectedInterface::className)).entrySet()
+            .stream().map(entry -> {
+                final String zipEntry = entry.getKey().replaceAll("\\.", "/") + ".class";
+                return new Pair<>(zipEntry, getTransformer(entry.getValue()));
+            }).toList();
     }
 
     private ZipUtils.UnsafeUnaryOperator<byte[]> getTransformer(List<InjectedInterface> injectedInterfaces) {
         return input -> {
             final ClassReader reader = new ClassReader(input);
             final ClassWriter writer = new ClassWriter(0);
-            final ClassVisitor classVisitor =
-                    new InjectingClassVisitor(Constants.ASM_VERSION, writer, injectedInterfaces);
+            final ClassVisitor classVisitor = new InjectingClassVisitor(
+                Constants.ASM_VERSION, writer, injectedInterfaces
+            );
             reader.accept(classVisitor, 0);
             return writer.toByteArray();
         };
@@ -170,11 +190,12 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
         return (mappings, spec, context) -> {
             if (!MappingsNamespace.NAMED.toString().equals(mappings.getSrcNamespace())) {
                 throw new IllegalStateException(
-                        "Mapping tree must have named src mappings not " + mappings.getSrcNamespace());
+                    "Mapping tree must have named src mappings not " + mappings.getSrcNamespace()
+                );
             }
 
-            Map<String, List<InjectedInterface>> map =
-                    spec.injectedInterfaces().stream().collect(Collectors.groupingBy(InjectedInterface::className));
+            Map<String, List<InjectedInterface>> map = spec.injectedInterfaces().stream()
+                .collect(Collectors.groupingBy(InjectedInterface::className));
 
             for (Map.Entry<String, List<InjectedInterface>> entry : map.entrySet()) {
                 final String className = entry.getKey();
@@ -183,12 +204,11 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
                 MappingTree.ClassMapping classMapping = mappings.getClass(className);
 
                 if (classMapping == null) {
-                    final String modIds = injectedInterfaces.stream()
-                            .map(InjectedInterface::modId)
-                            .distinct()
-                            .collect(Collectors.joining(","));
+                    final String modIds = injectedInterfaces.stream().map(InjectedInterface::modId).distinct()
+                        .collect(Collectors.joining(","));
                     LOGGER.warn(
-                            "Failed to find class ({}) to add injected interfaces from mod(s) ({})", className, modIds);
+                        "Failed to find class ({}) to add injected interfaces from mod(s) ({})", className, modIds
+                    );
                     continue;
                 }
 
@@ -207,10 +227,9 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
         var commentBuilder = comment == null ? new StringBuilder() : new StringBuilder(comment);
 
         for (InjectedInterface injectedInterface : injectedInterfaces) {
-            String iiComment = "<p>Interface {@link %s} injected by mod %s</p>"
-                    .formatted(
-                            injectedInterface.ifaceName().replace('/', '.').replace('$', '.'),
-                            injectedInterface.modId());
+            String iiComment = "<p>Interface {@link %s} injected by mod %s</p>".formatted(
+                injectedInterface.ifaceName().replace('/', '.').replace('$', '.'), injectedInterface.modId()
+            );
 
             if (commentBuilder.indexOf(iiComment) == -1) {
                 if (commentBuilder.isEmpty()) {
@@ -247,13 +266,15 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
                     String generics = null;
 
                     if (ifaceInfo.contains("<") && ifaceInfo.contains(">")) {
-                        name = ifaceInfo.substring(0, ifaceInfo.indexOf("<"));
-                        generics = ifaceInfo.substring(ifaceInfo.indexOf("<"));
+                        name = ifaceInfo.substring(0, ifaceInfo.indexOf('<'));
+                        generics = ifaceInfo.substring(ifaceInfo.indexOf('<'));
 
-                        // First Generics Check, if there are generics, are they correctly written?
+                        // First Generics Check, if there are generics, are they
+                        // correctly written?
                         SignatureReader reader = new SignatureReader("Ljava/lang/Object" + generics + ";");
-                        CheckSignatureAdapter checker =
-                                new CheckSignatureAdapter(CheckSignatureAdapter.CLASS_SIGNATURE, null);
+                        CheckSignatureAdapter checker = new CheckSignatureAdapter(
+                            CheckSignatureAdapter.CLASS_SIGNATURE, null
+                        );
                         reader.accept(checker);
                     }
 
@@ -265,10 +286,7 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
         }
 
         public static List<InjectedInterface> fromMods(List<LeafModJson> leafModJsons) {
-            return leafModJsons.stream()
-                    .map(InjectedInterface::fromMod)
-                    .flatMap(List::stream)
-                    .toList();
+            return leafModJsons.stream().map(InjectedInterface::fromMod).flatMap(List::stream).toList();
         }
 
         public static boolean containsGenerics(List<InjectedInterface> injectedInterfaces) {
@@ -283,8 +301,8 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
     }
 
     private static class InjectingClassVisitor extends ClassVisitor {
-        private static final int INTERFACE_ACCESS =
-                Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_ABSTRACT | Opcodes.ACC_INTERFACE;
+        private static final int INTERFACE_ACCESS = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_ABSTRACT
+            | Opcodes.ACC_INTERFACE;
 
         private final List<InjectedInterface> injectedInterfaces;
         private final Set<String> knownInnerClasses = new HashSet<>();
@@ -296,7 +314,8 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
 
         @Override
         public void visit(
-                int version, int access, String name, String signature, String superName, String[] interfaces) {
+            int version, int access, String name, String signature, String superName, String[] interfaces
+        ) {
             String[] baseInterfaces = interfaces.clone();
             Set<String> modifiedInterfaces = new LinkedHashSet<>(interfaces.length + injectedInterfaces.size());
             Collections.addAll(modifiedInterfaces, interfaces);
@@ -305,10 +324,13 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
                 modifiedInterfaces.add(injectedInterface.ifaceName());
             }
 
-            // See JVMS: https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-4.html#jvms-ClassSignature
+            // See JVMS:
+            // https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-4.html#jvms-ClassSignature
             if (InjectedInterface.containsGenerics(injectedInterfaces) && signature == null) {
-                // Classes that are not using generics don't need signatures, so their signatures are null
-                // If the class is not using generics but that an injected interface targeting the class is using them,
+                // Classes that are not using generics don't need signatures, so
+                // their signatures are null
+                // If the class is not using generics but that an injected
+                // interface targeting the class is using them,
                 // we are creating the class signature
                 StringBuilder baseSignatureBuilder = new StringBuilder("L" + superName + ";");
 
@@ -322,7 +344,8 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
             if (signature != null) {
                 SignatureReader reader = new SignatureReader(signature);
 
-                // Second Generics Check, if there are passed generics, are all of them present in the target class?
+                // Second Generics Check, if there are passed generics, are all
+                // of them present in the target class?
                 GenericsChecker checker = new GenericsChecker(Constants.ASM_VERSION, injectedInterfaces);
                 reader.accept(checker);
                 checker.check();
@@ -333,8 +356,8 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
                     String superinterfaceSignature;
 
                     if (injectedInterface.generics() != null) {
-                        superinterfaceSignature =
-                                "L" + injectedInterface.ifaceName() + injectedInterface.generics() + ";";
+                        superinterfaceSignature = "L" + injectedInterface.ifaceName() + injectedInterface.generics()
+                            + ";";
                     } else {
                         superinterfaceSignature = "L" + injectedInterface.ifaceName() + ";";
                     }
@@ -352,7 +375,8 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
 
         @Override
         public void visitInnerClass(
-                final String name, final String outerName, final String innerName, final int access) {
+            final String name, final String outerName, final String innerName, final int access
+        ) {
             this.knownInnerClasses.add(name);
             super.visitInnerClass(name, outerName, innerName, access);
         }
@@ -360,7 +384,8 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
         @Override
         public void visitEnd() {
             // inject any necessary inner class entries
-            // this may produce technically incorrect bytecode cuz we don't know the actual access flags for inner class
+            // this may produce technically incorrect bytecode cuz we don't know
+            // the actual access flags for inner class
             // entries,
             // but it's hopefully enough to quiet some IDE errors
             for (final InjectedInterface itf : injectedInterfaces) {
@@ -369,12 +394,13 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
                 }
 
                 int simpleNameIdx = itf.ifaceName().lastIndexOf('/');
-                final String simpleName =
-                        simpleNameIdx == -1 ? itf.ifaceName() : itf.ifaceName().substring(simpleNameIdx + 1);
+                final String simpleName = simpleNameIdx == -1 ? itf.ifaceName()
+                    : itf.ifaceName().substring(simpleNameIdx + 1);
                 int lastIdx = -1;
                 int dollarIdx = -1;
 
-                // Iterate through inner class entries starting from outermost to innermost
+                // Iterate through inner class entries starting from outermost
+                // to innermost
                 while ((dollarIdx = simpleName.indexOf('$', dollarIdx + 1)) != -1) {
                     if (dollarIdx - lastIdx == 1) {
                         continue;
@@ -419,17 +445,18 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
             super.visitFormalTypeParameter(name);
         }
 
-        // Ensures that injected interfaces only use collected type parameters from the target class
+        // Ensures that injected interfaces only use collected type parameters
+        // from the target class
         public void check() {
             for (InjectedInterface injectedInterface : this.injectedInterfaces) {
                 if (injectedInterface.generics() != null) {
-                    SignatureReader reader =
-                            new SignatureReader("Ljava/lang/Object" + injectedInterface.generics() + ";");
+                    SignatureReader reader = new SignatureReader(
+                        "Ljava/lang/Object" + injectedInterface.generics() + ";"
+                    );
                     GenericsConfirm confirm = new GenericsConfirm(
-                            Constants.ASM_VERSION,
-                            injectedInterface.className(),
-                            injectedInterface.ifaceName(),
-                            this.typeParameters);
+                        Constants.ASM_VERSION, injectedInterface.className(), injectedInterface.ifaceName(),
+                        this.typeParameters
+                    );
                     reader.accept(confirm);
                 }
             }
@@ -443,7 +470,8 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
             private final List<String> acceptedTypeVariables;
 
             GenericsConfirm(
-                    int asmVersion, String className, String interfaceName, List<String> acceptedTypeVariables) {
+                int asmVersion, String className, String interfaceName, List<String> acceptedTypeVariables
+            ) {
                 super(asmVersion);
                 this.className = className;
                 this.interfaceName = interfaceName;
@@ -453,13 +481,10 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
             @Override
             public void visitTypeVariable(String name) {
                 if (!this.acceptedTypeVariables.contains(name)) {
-                    throw new IllegalStateException("Interface "
-                            + this.interfaceName
-                            + " attempted to use a type variable named "
-                            + name
-                            + " which is not present in the "
-                            + this.className
-                            + " class");
+                    throw new IllegalStateException(
+                        "Interface " + this.interfaceName + " attempted to use a type variable named " + name
+                            + " which is not present in the " + this.className + " class"
+                    );
                 }
 
                 super.visitTypeVariable(name);

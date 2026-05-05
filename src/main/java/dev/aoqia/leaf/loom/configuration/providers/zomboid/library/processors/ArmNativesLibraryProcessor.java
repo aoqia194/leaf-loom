@@ -25,12 +25,14 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
+
 import dev.aoqia.leaf.loom.LoomRepositoryPlugin;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessor;
 import dev.aoqia.leaf.loom.util.Platform;
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
 /**
  * A processor to add support for ARM64.
@@ -60,32 +62,35 @@ public class ArmNativesLibraryProcessor extends LibraryProcessor {
         }
 
         if (platform.getOperatingSystem().isMacOS()) {
-            // Must upgrade natives to support macos ARM, even if not using classpath natives.
+            // Must upgrade natives to support macos ARM, even if not using
+            // classpath natives.
             return ApplicationResult.MUST_APPLY;
         }
 
         if (!context.hasClasspathNatives()) {
-            // Only support updating linux and windows versions that have the natives on the classpath.
+            // Only support updating linux and windows versions that have the
+            // natives on the classpath.
             return ApplicationResult.DONT_APPLY;
         }
 
-        // Must add arm 64 to Windows and Linux for versions that use classpath natives.
+        // Must add arm 64 to Windows and Linux for versions that use classpath
+        // natives.
         return ApplicationResult.MUST_APPLY;
     }
 
     @Override
     public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
-        final String osName =
-                switch (platform.getOperatingSystem()) {
-                    case MAC_OS -> "macos";
-                    case WINDOWS -> "windows";
-                    case LINUX -> "linux";
-                };
+        final String osName = switch (platform.getOperatingSystem()) {
+        case MAC_OS -> "macos";
+        case WINDOWS -> "windows";
+        case LINUX -> "linux";
+        };
 
         return library -> {
-            if (library.is(LWJGL_GROUP)
-                    && library.target() == Library.Target.NATIVES
-                    && (library.classifier() != null && library.classifier().equals("natives-" + osName))) {
+            if (
+                library.is(LWJGL_GROUP) && library.target() == Library.Target.NATIVES
+                    && (library.classifier() != null && library.classifier().equals("natives-" + osName))
+            ) {
                 // Add the arm64 natives.
                 dependencyConsumer.accept(library.withClassifier(library.classifier() + "-arm64"));
 

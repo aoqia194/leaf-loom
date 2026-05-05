@@ -23,8 +23,6 @@
  */
 package dev.aoqia.leaf.loom;
 
-import dev.aoqia.leaf.loom.extension.LoomFiles;
-import dev.aoqia.leaf.loom.util.MirrorUtil;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ArtifactRepositoryContainer;
@@ -35,6 +33,9 @@ import org.gradle.api.invocation.Gradle;
 import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.PluginAware;
 import org.jetbrains.annotations.NotNull;
+
+import dev.aoqia.leaf.loom.extension.LoomFiles;
+import dev.aoqia.leaf.loom.util.MirrorUtil;
 
 public class LoomRepositoryPlugin implements Plugin<PluginAware> {
     public static void forceLWJGLFromMavenCentral(RepositoryHandler repositories) {
@@ -64,9 +65,8 @@ public class LoomRepositoryPlugin implements Plugin<PluginAware> {
     public void apply(@NotNull PluginAware target) {
         if (target instanceof Settings settings) {
             declareRepositories(
-                settings.getDependencyResolutionManagement().getRepositories(),
-                LoomFiles.create(settings),
-                settings);
+                settings.getDependencyResolutionManagement().getRepositories(), LoomFiles.create(settings), settings
+            );
 
             // leave a marker so projects don't try to override these
             settings.getGradle().getPluginManager().apply(LoomRepositoryPlugin.class);
@@ -76,10 +76,10 @@ public class LoomRepositoryPlugin implements Plugin<PluginAware> {
             }
 
             declareRepositories(project.getRepositories(), LoomFiles.create(project), project);
-        } else if (target instanceof Gradle) {
-        } else {
+        } else if (target instanceof Gradle) {} else {
             throw new IllegalArgumentException(
-                "Expected target to be a Project or Settings, but was a " + target.getClass());
+                "Expected target to be a Project or Settings, but was a " + target.getClass()
+            );
         }
     }
 

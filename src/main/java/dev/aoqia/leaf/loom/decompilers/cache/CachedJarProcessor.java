@@ -32,11 +32,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers;
-import dev.aoqia.leaf.loom.util.FileSystemUtil;
+
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
 
 public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String baseHash) {
     private static final Logger LOGGER = LoggerFactory.getLogger(CachedJarProcessor.class);
@@ -61,10 +63,12 @@ public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String b
         int hits = 0;
         int misses = 0;
 
-        try (FileSystemUtil.Delegate inputFs = FileSystemUtil.getJarFileSystem(inputJar, false);
-                FileSystemUtil.Delegate incompleteFs = FileSystemUtil.getJarFileSystem(incompleteJar, true);
-                FileSystemUtil.Delegate existingSourcesFs = FileSystemUtil.getJarFileSystem(existingSourcesJar, true);
-                FileSystemUtil.Delegate existingClassesFs = FileSystemUtil.getJarFileSystem(existingClassesJar, true)) {
+        try (
+            FileSystemUtil.Delegate inputFs = FileSystemUtil.getJarFileSystem(inputJar, false);
+            FileSystemUtil.Delegate incompleteFs = FileSystemUtil.getJarFileSystem(incompleteJar, true);
+            FileSystemUtil.Delegate existingSourcesFs = FileSystemUtil.getJarFileSystem(existingSourcesJar, true);
+            FileSystemUtil.Delegate existingClassesFs = FileSystemUtil.getJarFileSystem(existingClassesJar, true)
+        ) {
             final List<ClassEntry> inputClasses = JarWalker.findClasses(inputFs);
             final Map<String, String> rawEntryHashes = getEntryHashes(inputClasses, inputFs.getRoot());
 
@@ -75,7 +79,8 @@ public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String b
                 final CachedData entryData = fileStore.getEntry(fullHash);
 
                 if (entryData == null) {
-                    // Cached entry was not found, so copy the input to the incomplete jar to be processed
+                    // Cached entry was not found, so copy the input to the
+                    // incomplete jar to be processed
                     entry.copyTo(inputFs.getRoot(), incompleteFs.getRoot());
                     isIncomplete = true;
                     outputNameMap.put(outputFileName, fullHash);
@@ -103,12 +108,13 @@ public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String b
             }
         }
 
-        // A jar file that will be created by the work action, containing the newly processed items.
+        // A jar file that will be created by the work action, containing the
+        // newly processed items.
         Path outputJar = Files.createTempFile("loom-cache-output", ".jar");
         Files.delete(outputJar);
 
-        final ClassLineNumbers lineNumbers =
-                lineNumbersMap.isEmpty() ? null : new ClassLineNumbers(Collections.unmodifiableMap(lineNumbersMap));
+        final ClassLineNumbers lineNumbers = lineNumbersMap.isEmpty() ? null
+            : new ClassLineNumbers(Collections.unmodifiableMap(lineNumbersMap));
         final var stats = new CacheStats(hits, misses);
 
         if (isIncomplete && !hasSomeExisting) {
@@ -123,9 +129,10 @@ public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String b
             // The cache did not contain everything so we have some work to do
             LOGGER.info("Some cached entries found, using partial work job");
             return new PartialWorkJob(incompleteJar, existingSourcesJar, existingClassesJar, outputJar, outputNameMap)
-                    .asRequest(stats, lineNumbers);
+                .asRequest(stats, lineNumbers);
         } else {
-            // The cached contained everything we need, so the existing jar is the output
+            // The cached contained everything we need, so the existing jar is
+            // the output
             LOGGER.info("All cached entries found, using completed work job");
             Files.delete(incompleteJar);
             Files.delete(existingClassesJar);
@@ -160,8 +167,10 @@ public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String b
             // Sources name -> hash
             Map<String, String> outputNameMap = workToDoJob.outputNameMap();
 
-            try (FileSystemUtil.Delegate outputFs = FileSystemUtil.getJarFileSystem(workToDoJob.output(), false);
-                    Stream<Path> walk = Files.walk(outputFs.getRoot())) {
+            try (
+                FileSystemUtil.Delegate outputFs = FileSystemUtil.getJarFileSystem(workToDoJob.output(), false);
+                Stream<Path> walk = Files.walk(outputFs.getRoot())
+            ) {
                 Iterator<Path> iterator = walk.iterator();
 
                 while (iterator.hasNext()) {
@@ -175,16 +184,16 @@ public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String b
                         continue;
                     }
 
-                    final String hash = outputNameMap.get(fsPath.toString()
-                            .substring(outputFs.getRoot().toString().length()));
+                    final String hash = outputNameMap
+                        .get(fsPath.toString().substring(outputFs.getRoot().toString().length()));
 
                     if (hash == null) {
                         throw new IllegalStateException("Unexpected output: " + fsPath);
                     }
 
                     // Trim the leading / and the .java extension
-                    final String className =
-                            fsPath.toString().substring(1, fsPath.toString().length() - ".java".length());
+                    final String className = fsPath.toString()
+                        .substring(1, fsPath.toString().length() - ".java".length());
                     final String sources = Files.readString(fsPath);
 
                     ClassLineNumbers.Entry lineMapEntry = null;
@@ -209,10 +218,12 @@ public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String b
 
         if (workJob instanceof PartialWorkJob partialWorkJob) {
             // Copy all the existing items to the output jar
-            try (FileSystemUtil.Delegate outputFs = FileSystemUtil.getJarFileSystem(partialWorkJob.output(), false);
-                    FileSystemUtil.Delegate existingFs =
-                            FileSystemUtil.getJarFileSystem(partialWorkJob.existingSources(), false);
-                    Stream<Path> walk = Files.walk(existingFs.getRoot())) {
+            try (
+                FileSystemUtil.Delegate outputFs = FileSystemUtil.getJarFileSystem(partialWorkJob.output(), false);
+                FileSystemUtil.Delegate existingFs = FileSystemUtil
+                    .getJarFileSystem(partialWorkJob.existingSources(), false);
+                Stream<Path> walk = Files.walk(existingFs.getRoot())
+            ) {
                 Iterator<Path> iterator = walk.iterator();
 
                 while (iterator.hasNext()) {
@@ -270,29 +281,32 @@ public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String b
 
     /**
      * No work to be done, all restored from cache.
-     *
      * @param completed
      */
     public record CompletedWorkJob(Path completed) implements WorkJob {}
 
     /**
      * Some work needs to be done.
-     *
-     * @param incomplete A path to jar file containing all the classes to be processed
-     * @param existingSources A path pointing to a jar containing existing sources that have previously been processed
-     * @param existingClasses A path pointing to a jar containing existing classes that have previously been processed
-     * @param output A path to a temporary jar where work output should be written to
+     * @param incomplete A path to jar file containing all the classes to be
+     * processed
+     * @param existingSources A path pointing to a jar containing existing
+     * sources that have previously been processed
+     * @param existingClasses A path pointing to a jar containing existing
+     * classes that have previously been processed
+     * @param output A path to a temporary jar where work output should be
+     * written to
      * @param outputNameMap A map of sources name to hash
      */
     public record PartialWorkJob(
-            Path incomplete, Path existingSources, Path existingClasses, Path output, Map<String, String> outputNameMap)
-            implements WorkToDoJob {}
+        Path incomplete, Path existingSources, Path existingClasses, Path output, Map<String, String> outputNameMap
+    ) implements WorkToDoJob {}
 
     /**
      * The full jar must be processed.
-     *
-     * @param incomplete A path to jar file containing all the classes to be processed
-     * @param output A path to a temporary jar where work output should be written to
+     * @param incomplete A path to jar file containing all the classes to be
+     * processed
+     * @param output A path to a temporary jar where work output should be
+     * written to
      * @param outputNameMap A map of sources name to hash
      */
     public record FullWorkJob(Path incomplete, Path output, Map<String, String> outputNameMap) implements WorkToDoJob {}

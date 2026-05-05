@@ -1,7 +1,3 @@
-// Because gradle makes it read only in build scripts
-val name: String by settings
-rootProject.name = name
-
 pluginManagement {
     repositories {
         maven {
@@ -24,3 +20,8 @@ dependencyResolutionManagement {
 		}
 	}
 }
+
+// Because gradle makes it read only in build scripts
+val name: String by settings
+rootProject.name = name
+

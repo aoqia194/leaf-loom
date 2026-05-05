@@ -27,6 +27,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
 import dev.aoqia.leaf.loom.util.Checksum;
@@ -43,11 +44,13 @@ public class LocalFileSpec implements FileSpec {
     private int calculateHashCode() {
         if (!file.exists()) {
             throw new RuntimeException(
-                    "Could not find %s, it must be present at spec creation time to calculate mappings hash"
-                            .formatted(file.getAbsolutePath()));
+                "Could not find %s, it must be present at spec creation time to calculate mappings hash"
+                    .formatted(file.getAbsolutePath())
+            );
         }
 
-        // Use the file hash as part of the spec, this means if the input file changes the mappings will be
+        // Use the file hash as part of the spec, this means if the input file
+        // changes the mappings will be
         // re-generated.
         return Objects.hash(Arrays.hashCode(Checksum.sha256(file)), file.getAbsolutePath());
     }

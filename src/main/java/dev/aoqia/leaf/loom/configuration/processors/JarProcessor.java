@@ -28,11 +28,13 @@ import java.io.File;
 @Deprecated()
 public interface JarProcessor {
     /**
-     * Returns a unique ID for this jar processor, containing all configuration details.
-     *
-     * <p>If the jar processor implementation class supports creating multiple jar processors with different effects,
-     * the needed configuration should also be included in this ID. Example: {@code path.to.MyJarProcessor#someOption}.
-     *
+     * Returns a unique ID for this jar processor, containing all configuration
+     * details.
+     * <p>
+     * If the jar processor implementation class supports creating multiple jar
+     * processors with different effects, the needed configuration should also
+     * be included in this ID. Example:
+     * {@code path.to.MyJarProcessor#someOption}.
      * @return the unique ID of this jar processor
      */
     String getId();

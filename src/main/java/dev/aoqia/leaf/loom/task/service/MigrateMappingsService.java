@@ -23,17 +23,12 @@
  */
 package dev.aoqia.leaf.loom.task.service;
 
-import com.google.common.collect.ImmutableMap;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.TinyMappingsService;
-import dev.aoqia.leaf.loom.util.service.Service;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-import dev.aoqia.leaf.loom.util.service.ServiceType;
+
+import com.google.common.collect.ImmutableMap;
 import net.fabricmc.lorenztiny.TinyMappingsJoiner;
 import org.cadixdev.lorenz.MappingSet;
 import org.cadixdev.mercury.Mercury;
@@ -49,26 +44,39 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Nested;
+import org.gradle.api.tasks.OutputDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.TinyMappingsService;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 public class MigrateMappingsService extends Service<MigrateMappingsService.Options> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MigrateMappingsService.class);
-    private static final ServiceType<Options, MigrateMappingsService> TYPE =
-            new ServiceType<>(Options.class, MigrateMappingsService.class);
+    private static final ServiceType<Options, MigrateMappingsService> TYPE = new ServiceType<>(
+        Options.class, MigrateMappingsService.class
+    );
 
     public MigrateMappingsService(Options options, ServiceFactory serviceFactory) {
         super(options, serviceFactory);
     }
 
     public static Provider<Options> createOptions(
-            Project project, Provider<String> targetMappings, DirectoryProperty inputDir, DirectoryProperty outputDir) {
+        Project project, Provider<String> targetMappings, DirectoryProperty inputDir, DirectoryProperty outputDir
+    ) {
         LoomGradleExtension extension = LoomGradleExtension.get(project);
         final Provider<String> from = project.provider(() -> "official");
         final Provider<String> to = project.provider(() -> "named");
-        final JavaVersion javaVersion =
-                project.getExtensions().getByType(JavaPluginExtension.class).getSourceCompatibility();
+        final JavaVersion javaVersion = project.getExtensions().getByType(JavaPluginExtension.class)
+            .getSourceCompatibility();
 
         ConfigurableFileCollection classpath = project.getObjects().fileCollection();
         classpath.from(project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME));
@@ -80,7 +88,7 @@ public class MigrateMappingsService extends Service<MigrateMappingsService.Optio
             FileCollection targetMappingsFile = getTargetMappingsFile(project, targetMappings.get());
             o.getSourceMappings().set(MappingsService.createOptionsWithProjectMappings(project, from, to));
             o.getTargetMappings()
-                    .set(TinyMappingsService.createOptions(project, targetMappingsFile, "mappings/mappings.tiny"));
+                .set(TinyMappingsService.createOptions(project, targetMappingsFile, "mappings/mappings.tiny"));
             o.getSourceCompatibility().set(javaVersion.toString());
             o.getInputDir().set(inputDir);
             o.getClasspath().from(classpath);
@@ -94,7 +102,8 @@ public class MigrateMappingsService extends Service<MigrateMappingsService.Optio
     private static FileCollection getTargetMappingsFile(Project project, String mappings) {
         if (mappings == null || mappings.isEmpty()) {
             throw new IllegalArgumentException(
-                    "No mappings were specified. Use --mappings=\"\" to specify target mappings");
+                "No mappings were specified. Use --mappings=\"\" to specify target mappings"
+            );
         }
 
         try {
@@ -103,9 +112,12 @@ public class MigrateMappingsService extends Service<MigrateMappingsService.Optio
         } catch (IllegalDependencyNotation ignored) {
             LOGGER.info("Could not locate mappings, presuming V2 Yarn");
             return project.getConfigurations()
-                    .detachedConfiguration(project.getDependencies()
-                            .create(ImmutableMap.of(
-                                    "group", "net.fabricmc", "name", "yarn", "version", mappings, "classifier", "v2")));
+                .detachedConfiguration(
+                    project.getDependencies().create(
+                        ImmutableMap
+                            .of("group", "net.fabricmc", "name", "yarn", "version", mappings, "classifier", "v2")
+                    )
+                );
         }
     }
 
@@ -124,18 +136,15 @@ public class MigrateMappingsService extends Service<MigrateMappingsService.Optio
         mercury.setGracefulClasspathChecks(true);
         mercury.setSourceCompatibility(getOptions().getSourceCompatibility().get());
 
-        final MappingsService sourceMappingsService =
-                getServiceFactory().get(getOptions().getSourceMappings().get());
-        final TinyMappingsService targetMappingsService =
-                getServiceFactory().get(getOptions().getTargetMappings().get());
+        final MappingsService sourceMappingsService = getServiceFactory().get(getOptions().getSourceMappings().get());
+        final TinyMappingsService targetMappingsService = getServiceFactory()
+            .get(getOptions().getTargetMappings().get());
 
         final MappingSet mappingSet = new TinyMappingsJoiner(
-                        sourceMappingsService.getMemoryMappingTree(),
-                        MappingsNamespace.NAMED.toString(),
-                        targetMappingsService.getMappingTree(),
-                        MappingsNamespace.NAMED.toString(),
-                        MappingsNamespace.OFFICIAL.toString())
-                .read();
+            sourceMappingsService.getMemoryMappingTree(), MappingsNamespace.NAMED.toString(),
+            targetMappingsService.getMappingTree(), MappingsNamespace.NAMED.toString(),
+            MappingsNamespace.OFFICIAL.toString()
+        ).read();
 
         mercury.getProcessors().add(MercuryRemapper.create(mappingSet));
 

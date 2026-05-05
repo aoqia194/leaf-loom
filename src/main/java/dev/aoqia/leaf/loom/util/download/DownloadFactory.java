@@ -24,7 +24,6 @@
 package dev.aoqia.leaf.loom.util.download;
 
 import java.net.URISyntaxException;
-
 import javax.inject.Inject;
 
 import org.gradle.api.Project;
@@ -34,7 +33,8 @@ import org.gradle.api.tasks.Input;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 
 /**
- * Can be used to create a {@link DownloadBuilder} with the correct settings for the project within a task.
+ * Can be used to create a {@link DownloadBuilder} with the correct settings for
+ * the project within a task.
  */
 public abstract class DownloadFactory {
     @Input

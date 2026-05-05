@@ -26,11 +26,7 @@ package dev.aoqia.leaf.loom.test.unit
 
 import spock.lang.Specification
 
-import spock.lang.Specification
-
 import dev.aoqia.leaf.loom.util.ProcessUtil
-
-import spock.lang.Specification
 
 class ProcessUtilTest extends Specification {
 	def "print process info"() {

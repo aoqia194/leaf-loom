@@ -35,16 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.extension.RemapperExtensionHolder;
-import dev.aoqia.leaf.loom.task.AbstractRemapJarTask;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
-import dev.aoqia.leaf.loom.util.kotlin.KotlinClasspathService;
-import dev.aoqia.leaf.loom.util.kotlin.KotlinRemapperClassloader;
-import dev.aoqia.leaf.loom.util.service.Service;
-import dev.aoqia.leaf.loom.util.service.ServiceFactory;
-import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 import net.fabricmc.tinyremapper.IMappingProvider;
 import net.fabricmc.tinyremapper.InputTag;
 import net.fabricmc.tinyremapper.TinyRemapper;
@@ -62,9 +53,21 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 import org.jetbrains.annotations.Nullable;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.extension.RemapperExtensionHolder;
+import dev.aoqia.leaf.loom.task.AbstractRemapJarTask;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
+import dev.aoqia.leaf.loom.util.kotlin.KotlinClasspathService;
+import dev.aoqia.leaf.loom.util.kotlin.KotlinRemapperClassloader;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 public class TinyRemapperService extends Service<TinyRemapperService.Options> implements Closeable {
-    public static final ServiceType<Options, TinyRemapperService> TYPE =
-            new ServiceType<>(Options.class, TinyRemapperService.class);
+    public static final ServiceType<Options, TinyRemapperService> TYPE = new ServiceType<>(
+        Options.class, TinyRemapperService.class
+    );
 
     public interface Options extends Service.Options {
         @Input
@@ -101,21 +104,19 @@ public class TinyRemapperService extends Service<TinyRemapperService.Options> im
         return TYPE.create(project, options -> {
             final LoomGradleExtension extension = LoomGradleExtension.get(project);
             final ConfigurationContainer configurations = project.getConfigurations();
-            final boolean legacyMixin =
-                    extension.getMixin().getUseLegacyMixinAp().get();
-            final FileCollection classpath = remapJarTask
-                    .getClasspath()
-                    .minus(configurations.getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES))
-                    .minus(configurations.getByName(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES));
+            final boolean legacyMixin = extension.getMixin().getUseLegacyMixinAp().get();
+            final FileCollection classpath = remapJarTask.getClasspath()
+                .minus(configurations.getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES))
+                .minus(configurations.getByName(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES));
 
             options.getFrom().set(remapJarTask.getSourceNamespace());
             options.getTo().set(remapJarTask.getTargetNamespace());
             options.getMappings()
-                    .add(MappingsService.createOptionsWithProjectMappings(project, options.getFrom(), options.getTo()));
+                .add(MappingsService.createOptionsWithProjectMappings(project, options.getFrom(), options.getTo()));
 
             if (legacyMixin) {
                 options.getMixinApMappings()
-                        .set(MixinAPMappingService.createOptions(project, options.getFrom(), options.getTo()));
+                    .set(MixinAPMappingService.createOptions(project, options.getFrom(), options.getTo()));
             }
 
             options.getUselegacyMixinAP().set(legacyMixin);
@@ -128,8 +129,7 @@ public class TinyRemapperService extends Service<TinyRemapperService.Options> im
 
     private TinyRemapper tinyRemapper;
 
-    @Nullable
-    private KotlinRemapperClassloader kotlinRemapperClassloader;
+    @Nullable private KotlinRemapperClassloader kotlinRemapperClassloader;
 
     private final Map<String, InputTag> inputTagMap = new HashMap<>();
     private final HashSet<Path> classpath = new HashSet<>();
@@ -144,7 +144,7 @@ public class TinyRemapperService extends Service<TinyRemapperService.Options> im
 
     private TinyRemapper createTinyRemapper() {
         TinyRemapper.Builder builder = TinyRemapper.newRemapper(TinyRemapperLoggerAdapter.INSTANCE)
-                .withKnownIndyBsm(Set.copyOf(getOptions().getKnownIndyBsms().get()));
+            .withKnownIndyBsm(Set.copyOf(getOptions().getKnownIndyBsms().get()));
 
         for (MappingsService.Options options : getOptions().getMappings().get()) {
             MappingsService mappingsService = getServiceFactory().get(options);
@@ -156,23 +156,19 @@ public class TinyRemapperService extends Service<TinyRemapperService.Options> im
         }
 
         if (getOptions().getKotlinClasspathService().isPresent()) {
-            KotlinClasspathService kotlinClasspathService =
-                    getServiceFactory().get(getOptions().getKotlinClasspathService());
+            KotlinClasspathService kotlinClasspathService = getServiceFactory()
+                .get(getOptions().getKotlinClasspathService());
             kotlinRemapperClassloader = KotlinRemapperClassloader.create(kotlinClasspathService);
             builder.extension(kotlinRemapperClassloader.getTinyRemapperExtension());
         }
 
-        for (RemapperExtensionHolder holder :
-                getOptions().getRemapperExtensions().get()) {
-            holder.apply(
-                    builder, getOptions().getFrom().get(), getOptions().getTo().get());
+        for (RemapperExtensionHolder holder : getOptions().getRemapperExtensions().get()) {
+            holder.apply(builder, getOptions().getFrom().get(), getOptions().getTo().get());
         }
 
         if (getOptions().getUselegacyMixinAP().get()) {
-            for (MixinAPMappingService.Options options :
-                    getOptions().getMixinApMappings().get()) {
-                MixinAPMappingService mixinAPMappingService =
-                        getServiceFactory().get(options);
+            for (MixinAPMappingService.Options options : getOptions().getMixinApMappings().get()) {
+                MixinAPMappingService mixinAPMappingService = getServiceFactory().get(options);
                 IMappingProvider provider = mixinAPMappingService.getMappingsProvider();
 
                 if (provider != null) {

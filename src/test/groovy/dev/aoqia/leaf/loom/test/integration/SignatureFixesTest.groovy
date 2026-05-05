@@ -27,14 +27,6 @@ import dev.aoqia.loom.test.util.GradleProjectTestTrait
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import dev.aoqia.loom.test.util.GradleProjectTestTrait
-import spock.lang.Specification
-import spock.lang.Unroll
-
-import dev.aoqia.loom.test.util.GradleProjectTestTrait
-import spock.lang.Specification
-import spock.lang.Unroll
-
 import static dev.aoqia.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 

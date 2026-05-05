@@ -54,8 +54,8 @@ public record Library(String group, String name, String version, @Nullable Strin
 
     /**
      * Returns true when the group or the group and name match.
-     *
-     * @param str Takes a string containing the maven group, or a group and name split by :
+     * @param str Takes a string containing the maven group, or a group and name
+     * split by :
      * @return true when the group or the group and name match.
      */
     public boolean is(String str) {

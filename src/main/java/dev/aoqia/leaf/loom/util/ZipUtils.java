@@ -41,11 +41,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import dev.aoqia.leaf.loom.LoomGradlePlugin;
+
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
 
 public class ZipUtils {
     public static boolean isZip(Path zip) throws IOException {
@@ -75,8 +77,10 @@ public class ZipUtils {
     }
 
     public static void unpackAll(Path zip, Path output) throws IOException {
-        try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(zip, false);
-                Stream<Path> walk = Files.walk(fs.getRoot())) {
+        try (
+            FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(zip, false);
+            Stream<Path> walk = Files.walk(fs.getRoot())
+        ) {
             Iterator<Path> iterator = walk.iterator();
 
             while (iterator.hasNext()) {
@@ -109,8 +113,7 @@ public class ZipUtils {
         return LoomGradlePlugin.GSON.fromJson(new String(bytes, StandardCharsets.UTF_8), clazz);
     }
 
-    @Nullable
-    public static <T> T unpackGsonNullable(Path zip, String path, Class<T> clazz) throws IOException {
+    @Nullable public static <T> T unpackGsonNullable(Path zip, String path, Class<T> clazz) throws IOException {
         try {
             return unpackGson(zip, path, clazz);
         } catch (NoSuchFileException e) {
@@ -130,8 +133,10 @@ public class ZipUtils {
 
         int count = 0;
 
-        try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(zip, true);
-                Stream<Path> walk = Files.walk(from)) {
+        try (
+            FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(zip, true);
+            Stream<Path> walk = Files.walk(from)
+        ) {
             Iterator<Path> iterator = walk.iterator();
 
             while (iterator.hasNext()) {
@@ -182,47 +187,46 @@ public class ZipUtils {
     }
 
     public static int transformString(Path zip, Collection<Pair<String, UnsafeUnaryOperator<String>>> transforms)
-            throws IOException {
+        throws IOException {
         return transformString(zip, transforms.stream());
     }
 
     public static int transformString(Path zip, Stream<Pair<String, UnsafeUnaryOperator<String>>> transforms)
-            throws IOException {
+        throws IOException {
         return transformString(zip, collectTransformersStream(transforms));
     }
 
     public static int transformString(Path zip, Map<String, UnsafeUnaryOperator<String>> transforms)
-            throws IOException {
+        throws IOException {
         return transformMapped(
-                zip,
-                transforms,
-                bytes -> new String(bytes, StandardCharsets.UTF_8),
-                s -> s.getBytes(StandardCharsets.UTF_8));
+            zip, transforms, bytes -> new String(bytes, StandardCharsets.UTF_8), s -> s.getBytes(StandardCharsets.UTF_8)
+        );
     }
 
     public static <T> int transformJson(
-            Class<T> typeOfT, Path zip, Collection<Pair<String, UnsafeUnaryOperator<T>>> transforms)
-            throws IOException {
+        Class<T> typeOfT, Path zip, Collection<Pair<String, UnsafeUnaryOperator<T>>> transforms
+    ) throws IOException {
         return transformJson(typeOfT, zip, transforms.stream());
     }
 
     public static <T> int transformJson(
-            Class<T> typeOfT, Path zip, Stream<Pair<String, UnsafeUnaryOperator<T>>> transforms) throws IOException {
+        Class<T> typeOfT, Path zip, Stream<Pair<String, UnsafeUnaryOperator<T>>> transforms
+    ) throws IOException {
         return transformJson(typeOfT, zip, collectTransformersStream(transforms));
     }
 
     public static <T> int transformJson(Class<T> typeOfT, Path zip, Map<String, UnsafeUnaryOperator<T>> transforms)
-            throws IOException {
+        throws IOException {
         return transformMapped(
-                zip,
-                transforms,
-                bytes -> LoomGradlePlugin.GSON.fromJson(
-                        new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.UTF_8), typeOfT),
-                s -> LoomGradlePlugin.GSON.toJson(s, typeOfT).getBytes(StandardCharsets.UTF_8));
+            zip, transforms,
+            bytes -> LoomGradlePlugin.GSON
+                .fromJson(new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.UTF_8), typeOfT),
+            s -> LoomGradlePlugin.GSON.toJson(s, typeOfT).getBytes(StandardCharsets.UTF_8)
+        );
     }
 
     public static <T> void transformJson(Class<T> typeOfT, Path zip, String path, UnsafeUnaryOperator<T> transformer)
-            throws IOException {
+        throws IOException {
         int transformed = transformJson(typeOfT, zip, Map.of(path, transformer));
 
         if (transformed != 1) {
@@ -231,21 +235,19 @@ public class ZipUtils {
     }
 
     public static int transform(Path zip, Collection<Pair<String, UnsafeUnaryOperator<byte[]>>> transforms)
-            throws IOException {
+        throws IOException {
         return transform(zip, transforms.stream());
     }
 
     public static int transform(Path zip, Stream<Pair<String, UnsafeUnaryOperator<byte[]>>> transforms)
-            throws IOException {
+        throws IOException {
         return transform(zip, collectTransformersStream(transforms));
     }
 
     public static <T> int transformMapped(
-            Path zip,
-            Map<String, UnsafeUnaryOperator<T>> transforms,
-            Function<byte[], T> deserializer,
-            Function<T, byte[]> serializer)
-            throws IOException {
+        Path zip, Map<String, UnsafeUnaryOperator<T>> transforms, Function<byte[], T> deserializer,
+        Function<T, byte[]> serializer
+    ) throws IOException {
         Map<String, UnsafeUnaryOperator<byte[]>> newTransforms = new HashMap<>();
 
         for (Map.Entry<String, UnsafeUnaryOperator<T>> entry : transforms.entrySet()) {
@@ -268,10 +270,9 @@ public class ZipUtils {
 
                 if (Files.exists(fsPath) && entry.getValue() != null) {
                     Files.write(
-                            fsPath,
-                            entry.getValue().apply(Files.readAllBytes(fsPath)),
-                            StandardOpenOption.CREATE,
-                            StandardOpenOption.TRUNCATE_EXISTING);
+                        fsPath, entry.getValue().apply(Files.readAllBytes(fsPath)), StandardOpenOption.CREATE,
+                        StandardOpenOption.TRUNCATE_EXISTING
+                    );
                     replacedCount++;
                 }
             }
@@ -300,7 +301,8 @@ public class ZipUtils {
     }
 
     private static <T> Map<String, UnsafeUnaryOperator<T>> collectTransformersStream(
-            Stream<Pair<String, UnsafeUnaryOperator<T>>> transforms) {
+        Stream<Pair<String, UnsafeUnaryOperator<T>>> transforms
+    ) {
         Map<String, UnsafeUnaryOperator<T>> map = new HashMap<>();
         Iterator<Pair<String, UnsafeUnaryOperator<T>>> iterator = transforms.iterator();
 
