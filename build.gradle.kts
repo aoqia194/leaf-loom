@@ -267,7 +267,7 @@ tasks.named<Test>("test") {
 
     // Forward system prop onto tests.
     val prop = System.getProperty("leaf.${rootProject.name}.test.homeDir")
-    if (prop.isNotEmpty()) {
+    if (prop != null && prop.isNotEmpty()) {
         systemProperty("leaf.${rootProject.name}.test.homeDir", prop)
     }
 
