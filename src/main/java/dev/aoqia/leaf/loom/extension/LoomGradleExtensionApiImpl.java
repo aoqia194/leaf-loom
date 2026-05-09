@@ -368,7 +368,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 	@Override
 	public void disableDeprecatedPomGeneration(MavenPublication publication) {
-		net.fabricmc.loom.configuration.MavenPublication.excludePublication(publication);
+		dev.aoqia.leaf.loom.configuration.MavenPublication.excludePublication(publication);
 	}
 
 	@Override

@@ -34,8 +34,9 @@ import java.util.function.BiFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.aoqia.leaf.loom.nativeplatform.LoomNativePlatform;
-import dev.aoqia.leaf.loom.nativeplatform.LoomNativePlatformException;
+import net.fabricmc.loom.nativeplatform.LoomNativePlatform;
+import net.fabricmc.loom.nativeplatform.LoomNativePlatformException;
+
 import dev.aoqia.leaf.loom.util.gradle.daemon.DaemonUtils;
 
 public final class ExceptionUtil {
