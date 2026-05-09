@@ -87,7 +87,7 @@ public class Constants {
 		 */
 		public static final String MINECRAFT_TEST_CLIENT_RUNTIME_LIBRARIES = "minecraftTestClientRuntimeLibraries";
 		/**
-		 * Mods to be used by {@link net.fabricmc.loom.task.prod.AbstractProductionRunTask} tasks by default.
+		 * Mods to be used by {@link dev.aoqia.leaf.loom.task.prod.AbstractProductionRunTask} tasks by default.
 		 */
 		public static final String PRODUCTION_RUNTIME_MODS = "productionRuntimeMods";
 		/**
@@ -163,7 +163,7 @@ public class Constants {
 		 */
 		public static final String DROP_NON_INTERMEDIATE_ROOT_METHODS = "fabric.loom.dropNonIntermediateRootMethods";
 		/**
-		 * Set to true in all {@link net.fabricmc.loom.task.RenderDocRunTask} can be used to determine at runtime if running with loom's renderdoc setup.
+		 * Set to true in all {@link dev.aoqia.leaf.loom.task.RenderDocRunTask} can be used to determine at runtime if running with loom's renderdoc setup.
 		 */
 		public static final String RENDER_DOC = "fabric.loom.renderdoc.enabled";
 	}

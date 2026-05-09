@@ -36,7 +36,7 @@ import org.objectweb.asm.ClassVisitor;
  * A single constructor annotated with {@link Inject}, and taking a single argument of the parameters.
  * Or a single constructor annotated with {@link Inject} taking no arguments, when the extension does not have any parameters.
  *
- * <p>Use {@link net.fabricmc.loom.api.LoomGradleExtensionAPI#addRemapperExtension(Class, Class, Action)} to register a remapper extension.
+ * <p>Use {@link dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI#addRemapperExtension(Class, Class, Action)} to register a remapper extension.
  *
  * @param <T> Parameter type for the extension. Should be {@link RemapperParameters.None} if the action does not have parameters.
  */
