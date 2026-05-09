@@ -33,7 +33,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
 import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
@@ -57,7 +57,7 @@ abstract class FabricApiAbstractSourceSet {
 			dependsOn(ss, mainSourceSet);
 
 			if (isClientAndSplit) {
-				dependsOn(ss, SourceSetHelper.getSourceSetByName(MinecraftSourceSets.Split.CLIENT_ONLY_SOURCE_SET_NAME, getProject()));
+				dependsOn(ss, SourceSetHelper.getSourceSetByName(ZomboidSourceSets.Split.CLIENT_ONLY_SOURCE_SET_NAME, getProject()));
 			}
 		});
 

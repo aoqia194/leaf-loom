@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.util.Constants;
 
-public class MinecraftClassMerger {
+public class ZomboidClassMerger {
 	private static final String SIDE_DESCRIPTOR = "Lnet/fabricmc/api/EnvType;";
 	private static final String ITF_DESCRIPTOR = "Lnet/fabricmc/api/EnvironmentInterface;";
 	private static final String ITF_LIST_DESCRIPTOR = "Lnet/fabricmc/api/EnvironmentInterfaces;";
@@ -56,7 +56,7 @@ public class MinecraftClassMerger {
 	// The permission flags that are allowed to differ between client and server.
 	private static final int PERMISSION_BITS = Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MinecraftClassMerger.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ZomboidClassMerger.class);
 
 	private abstract static class Merger<T> {
 		private final Map<String, T> entriesClient, entriesServer;
@@ -140,7 +140,7 @@ public class MinecraftClassMerger {
 		}
 	}
 
-	public MinecraftClassMerger() {
+	public ZomboidClassMerger() {
 	}
 
 	public byte[] merge(byte[] classClient, byte[] classServer) {

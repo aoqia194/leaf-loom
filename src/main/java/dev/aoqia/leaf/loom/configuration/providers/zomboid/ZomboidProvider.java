@@ -41,7 +41,7 @@ import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.verify.MinecraftJarVerification;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.verify.ZomboidJarVerification;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.verify.SignatureVerificationFailure;
 import dev.aoqia.leaf.loom.util.Check;
 import dev.aoqia.leaf.loom.util.Constants;
@@ -50,10 +50,10 @@ import dev.aoqia.leaf.loom.util.download.GradleDownloadProgressListener;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 import dev.aoqia.leaf.loom.util.gradle.ProgressGroup;
 
-public abstract class MinecraftProvider {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MinecraftProvider.class);
+public abstract class ZomboidProvider {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ZomboidProvider.class);
 
-	private final MinecraftMetadataProvider metadataProvider;
+	private final ZomboidMetadataProvider metadataProvider;
 
 	private File minecraftClientJar;
 	// Note this will be the boostrap jar starting with 21w39a
@@ -65,7 +65,7 @@ public abstract class MinecraftProvider {
 
 	private final ConfigContext configContext;
 
-	public MinecraftProvider(MinecraftMetadataProvider metadataProvider, ConfigContext configContext) {
+	public ZomboidProvider(ZomboidMetadataProvider metadataProvider, ConfigContext configContext) {
 		this.metadataProvider = metadataProvider;
 		this.configContext = configContext;
 	}
@@ -81,7 +81,7 @@ public abstract class MinecraftProvider {
 	public void provide() throws Exception {
 		initFiles();
 
-		final MinecraftVersionMeta.JavaVersion javaVersion = getVersionInfo().javaVersion();
+		final ZomboidVersionMeta.JavaVersion javaVersion = getVersionInfo().javaVersion();
 
 		if (javaVersion != null) {
 			final int requiredMajorJavaVersion = getVersionInfo().javaVersion().majorVersion();
@@ -106,7 +106,7 @@ public abstract class MinecraftProvider {
 			verifyJars();
 		}
 
-		final MinecraftLibraryProvider libraryProvider = new MinecraftLibraryProvider(this, configContext.project());
+		final ZomboidLibraryProvider libraryProvider = new ZomboidLibraryProvider(this, configContext.project());
 		libraryProvider.provide();
 	}
 
@@ -129,7 +129,7 @@ public abstract class MinecraftProvider {
 
 		LOGGER.info("Verifying Minecraft jars");
 
-		MinecraftJarVerification verification = getProject().getObjects().newInstance(MinecraftJarVerification.class, minecraftVersion());
+		ZomboidJarVerification verification = getProject().getObjects().newInstance(ZomboidJarVerification.class, minecraftVersion());
 
 		if (provideClient()) {
 			verification.verifyClientJar(minecraftClientJar.toPath());
@@ -153,7 +153,7 @@ public abstract class MinecraftProvider {
 		try (ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download Minecraft jars");
 				DownloadExecutor executor = new DownloadExecutor(2)) {
 			if (provideClient()) {
-				final MinecraftVersionMeta.Download client = getVersionInfo().download("client");
+				final ZomboidVersionMeta.Download client = getVersionInfo().download("client");
 				getExtension().download(client.url())
 						.sha1(client.sha1())
 						.progress(new GradleDownloadProgressListener("Minecraft client", progressGroup::createProgressLogger))
@@ -166,7 +166,7 @@ public abstract class MinecraftProvider {
 			}
 
 			if (provideServer()) {
-				final MinecraftVersionMeta.Download server = getVersionInfo().download("server");
+				final ZomboidVersionMeta.Download server = getVersionInfo().download("server");
 				getExtension().download(server.url())
 						.sha1(server.sha1())
 						.progress(new GradleDownloadProgressListener("Minecraft server", progressGroup::createProgressLogger))
@@ -241,7 +241,7 @@ public abstract class MinecraftProvider {
 		return Objects.requireNonNull(metadataProvider, "Metadata provider not setup").getMinecraftVersion();
 	}
 
-	public MinecraftVersionMeta getVersionInfo() {
+	public ZomboidVersionMeta getVersionInfo() {
 		return Objects.requireNonNull(metadataProvider, "Metadata provider not setup").getVersionMeta();
 	}
 

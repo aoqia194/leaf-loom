@@ -39,8 +39,8 @@ import org.gradle.api.tasks.TaskProvider;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJarConfiguration;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.task.launch.GenerateDLIConfigTask;
 import dev.aoqia.leaf.loom.task.launch.GenerateLog4jConfigTask;
 import dev.aoqia.leaf.loom.task.launch.GenerateRemapClasspathTask;
@@ -102,12 +102,12 @@ public abstract class LoomTasks implements Runnable {
 		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
 			LoomGradleExtension extension = LoomGradleExtension.get(getProject());
 
-			if (extension.getMinecraftJarConfiguration().get() == MinecraftJarConfiguration.SERVER_ONLY) {
+			if (extension.getMinecraftJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY) {
 				// Server only, nothing more to do.
 				return;
 			}
 
-			final MinecraftVersionMeta versionInfo = extension.getMinecraftProvider().getVersionInfo();
+			final ZomboidVersionMeta versionInfo = extension.getMinecraftProvider().getVersionInfo();
 
 			if (versionInfo == null) {
 				// Something has gone wrong, don't register the task.
@@ -175,8 +175,8 @@ public abstract class LoomTasks implements Runnable {
 		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
 			String taskName;
 
-			boolean serverOnly = extension.getMinecraftJarConfiguration().get() == MinecraftJarConfiguration.SERVER_ONLY;
-			boolean clientOnly = extension.getMinecraftJarConfiguration().get() == MinecraftJarConfiguration.CLIENT_ONLY;
+			boolean serverOnly = extension.getMinecraftJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY;
+			boolean clientOnly = extension.getMinecraftJarConfiguration().get() == ZomboidJarConfiguration.CLIENT_ONLY;
 
 			if (serverOnly) {
 				// Server only, remove the client run config
@@ -269,8 +269,8 @@ public abstract class LoomTasks implements Runnable {
 
 	public static Provider<Task> getIDELaunchConfigureTaskName(Project project) {
 		return project.provider(() -> {
-			final MinecraftJarConfiguration jarConfiguration = LoomGradleExtension.get(project).getMinecraftJarConfiguration().get();
-			final String name = jarConfiguration == MinecraftJarConfiguration.SERVER_ONLY ? "configureLaunch" : "configureClientLaunch";
+			final ZomboidJarConfiguration jarConfiguration = LoomGradleExtension.get(project).getMinecraftJarConfiguration().get();
+			final String name = jarConfiguration == ZomboidJarConfiguration.SERVER_ONLY ? "configureLaunch" : "configureClientLaunch";
 			return project.getTasks().getByName(name);
 		});
 	}

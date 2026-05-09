@@ -27,42 +27,42 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped;
 import java.nio.file.Path;
 import java.util.List;
 
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarEnvType;
 
-public interface MappedMinecraftProvider {
+public interface MappedZomboidProvider {
 	default List<Path> getMinecraftJarPaths() {
-		return getMinecraftJars().stream().map(MinecraftJar::getPath).toList();
+		return getMinecraftJars().stream().map(ZomboidJar::getPath).toList();
 	}
 
-	List<MinecraftJar> getMinecraftJars();
+	List<ZomboidJar> getMinecraftJars();
 
-	interface ProviderImpl extends MappedMinecraftProvider {
-		Path getJar(MinecraftJar.Type type);
+	interface ProviderImpl extends MappedZomboidProvider {
+		Path getJar(ZomboidJar.Type type);
 	}
 
 	interface Merged extends ProviderImpl {
-		default MinecraftJar getMergedJar() {
-			return new MinecraftJar.Merged(getJar(MinecraftJar.Type.MERGED));
+		default ZomboidJar getMergedJar() {
+			return new ZomboidJar.Merged(getJar(ZomboidJar.Type.MERGED));
 		}
 
 		@Override
-		default List<MinecraftJar> getMinecraftJars() {
+		default List<ZomboidJar> getMinecraftJars() {
 			return List.of(getMergedJar());
 		}
 	}
 
 	interface Split extends ProviderImpl {
-		default MinecraftJar getCommonJar() {
-			return new MinecraftJar.Common(getJar(MinecraftJar.Type.COMMON));
+		default ZomboidJar getCommonJar() {
+			return new ZomboidJar.Common(getJar(ZomboidJar.Type.COMMON));
 		}
 
-		default MinecraftJar getClientOnlyJar() {
-			return new MinecraftJar.ClientOnly(getJar(MinecraftJar.Type.CLIENT_ONLY));
+		default ZomboidJar getClientOnlyJar() {
+			return new ZomboidJar.ClientOnly(getJar(ZomboidJar.Type.CLIENT_ONLY));
 		}
 
 		@Override
-		default List<MinecraftJar> getMinecraftJars() {
+		default List<ZomboidJar> getMinecraftJars() {
 			return List.of(getCommonJar(), getClientOnlyJar());
 		}
 	}
@@ -70,16 +70,16 @@ public interface MappedMinecraftProvider {
 	interface SingleJar extends ProviderImpl {
 		SingleJarEnvType env();
 
-		default MinecraftJar.Type envType() {
+		default ZomboidJar.Type envType() {
 			return env().getType();
 		}
 
-		default MinecraftJar getEnvOnlyJar() {
+		default ZomboidJar getEnvOnlyJar() {
 			return env().getJar().apply(getJar(env().getType()));
 		}
 
 		@Override
-		default List<MinecraftJar> getMinecraftJars() {
+		default List<ZomboidJar> getMinecraftJars() {
 			return List.of(getEnvOnlyJar());
 		}
 	}

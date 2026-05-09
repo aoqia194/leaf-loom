@@ -47,7 +47,7 @@ import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.ConfigContextImpl;
 import dev.aoqia.leaf.loom.configuration.processors.MappingProcessorContextImpl;
-import dev.aoqia.leaf.loom.configuration.processors.MinecraftJarProcessorManager;
+import dev.aoqia.leaf.loom.configuration.processors.ZomboidJarProcessorManager;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 import dev.aoqia.leaf.loom.util.service.Service;
@@ -83,7 +83,7 @@ public class SourceMappingsService extends Service<SourceMappingsService.Options
 
 	private static Path getMappings(Project project, Property<String> hashProperty) {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		final MinecraftJarProcessorManager jarProcessor = MinecraftJarProcessorManager.create(project);
+		final ZomboidJarProcessorManager jarProcessor = ZomboidJarProcessorManager.create(project);
 
 		if (jarProcessor == null) {
 			LOGGER.info("No jar processor found, not creating source mappings, using project mappings");
@@ -114,7 +114,7 @@ public class SourceMappingsService extends Service<SourceMappingsService.Options
 		return path;
 	}
 
-	private static void createMappings(Project project, MinecraftJarProcessorManager jarProcessor, Path outputMappings) throws IOException {
+	private static void createMappings(Project project, ZomboidJarProcessorManager jarProcessor, Path outputMappings) throws IOException {
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
 		Path inputMappings = extension.getMappingConfiguration().tinyMappings;
 		MemoryMappingTree mappingTree = new MemoryMappingTree();

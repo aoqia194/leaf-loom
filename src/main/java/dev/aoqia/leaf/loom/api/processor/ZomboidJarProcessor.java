@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
-public interface MinecraftJarProcessor<S extends MinecraftJarProcessor.Spec> extends Named {
+public interface ZomboidJarProcessor<S extends ZomboidJarProcessor.Spec> extends Named {
 	@Nullable
 	S buildSpec(SpecContext context);
 

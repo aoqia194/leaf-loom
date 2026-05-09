@@ -60,16 +60,16 @@ import dev.aoqia.leaf.loom.build.mixin.KaptApInvoker;
 import dev.aoqia.leaf.loom.build.mixin.ScalaApInvoker;
 import dev.aoqia.leaf.loom.configuration.accesswidener.AccessWidenerJarProcessor;
 import dev.aoqia.leaf.loom.configuration.ifaceinject.InterfaceInjectionProcessor;
-import dev.aoqia.leaf.loom.configuration.processors.MinecraftJarProcessorManager;
+import dev.aoqia.leaf.loom.configuration.processors.ZomboidJarProcessorManager;
 import dev.aoqia.leaf.loom.configuration.processors.ModJavadocProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingsFactory;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftMetadataProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.AbstractMappedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidMetadataProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.AbstractMappedZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
 import dev.aoqia.leaf.loom.extension.MixinExtension;
 import dev.aoqia.leaf.loom.task.service.ClasspathGroupService;
 import dev.aoqia.leaf.loom.util.Checksum;
@@ -102,7 +102,7 @@ public abstract class CompileConfiguration implements Runnable {
 		afterEvaluationWithService((serviceFactory) -> {
 			final ConfigContext configContext = new ConfigContextImpl(getProject(), serviceFactory, extension);
 
-			MinecraftSourceSets.get(getProject()).afterEvaluate(getProject());
+			ZomboidSourceSets.get(getProject()).afterEvaluate(getProject());
 
 			final boolean previousRefreshDeps = extension.refreshDeps();
 
@@ -163,13 +163,13 @@ public abstract class CompileConfiguration implements Runnable {
 		final Project project = configContext.project();
 		final LoomGradleExtension extension = configContext.extension();
 
-		final MinecraftMetadataProvider metadataProvider = MinecraftMetadataProvider.create(configContext);
+		final ZomboidMetadataProvider metadataProvider = ZomboidMetadataProvider.create(configContext);
 		extension.setMetadataProvider(metadataProvider);
 
 		var jarConfiguration = extension.getMinecraftJarConfiguration().get();
 
 		// Provide the vanilla mc jars
-		final MinecraftProvider minecraftProvider = jarConfiguration.createMinecraftProvider(metadataProvider, configContext);
+		final ZomboidProvider minecraftProvider = jarConfiguration.createMinecraftProvider(metadataProvider, configContext);
 		extension.setMinecraftProvider(minecraftProvider);
 		minecraftProvider.provide();
 
@@ -186,18 +186,18 @@ public abstract class CompileConfiguration implements Runnable {
 		mappingConfiguration.applyToProject(getProject(), mappingsDep);
 
 		// Provide the remapped mc jars
-		final IntermediaryMinecraftProvider<?> intermediaryMinecraftProvider = jarConfiguration.createIntermediaryMinecraftProvider(project);
-		NamedMinecraftProvider<?> namedMinecraftProvider = jarConfiguration.createNamedMinecraftProvider(project);
+		final IntermediaryZomboidProvider<?> intermediaryMinecraftProvider = jarConfiguration.createIntermediaryMinecraftProvider(project);
+		NamedZomboidProvider<?> namedMinecraftProvider = jarConfiguration.createNamedMinecraftProvider(project);
 
 		registerGameProcessors(configContext);
-		MinecraftJarProcessorManager minecraftJarProcessorManager = MinecraftJarProcessorManager.create(getProject());
+		ZomboidJarProcessorManager minecraftJarProcessorManager = ZomboidJarProcessorManager.create(getProject());
 
 		if (minecraftJarProcessorManager != null) {
 			// Wrap the named MC provider for one that will provide the processed jars
 			namedMinecraftProvider = jarConfiguration.createProcessedNamedMinecraftProvider(namedMinecraftProvider, minecraftJarProcessorManager);
 		}
 
-		final var provideContext = new AbstractMappedMinecraftProvider.ProvideContext(true, extension.refreshDeps(), configContext);
+		final var provideContext = new AbstractMappedZomboidProvider.ProvideContext(true, extension.refreshDeps(), configContext);
 
 		extension.setIntermediaryMinecraftProvider(intermediaryMinecraftProvider);
 		intermediaryMinecraftProvider.provide(provideContext);

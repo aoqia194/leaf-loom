@@ -32,14 +32,14 @@ import javax.inject.Inject;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Nullable;
 
-import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
 
 /**
  * Wrapper around the deprecated API.
  */
-public abstract class LegacyJarProcessorWrapper implements MinecraftJarProcessor<LegacyJarProcessorWrapper.Spec> {
+public abstract class LegacyJarProcessorWrapper implements ZomboidJarProcessor<LegacyJarProcessorWrapper.Spec> {
 	private final JarProcessor delegate;
 
 	@Inject
@@ -66,6 +66,6 @@ public abstract class LegacyJarProcessorWrapper implements MinecraftJarProcessor
 		delegate.process(jar.toFile());
 	}
 
-	public record Spec(String cacheValue) implements MinecraftJarProcessor.Spec {
+	public record Spec(String cacheValue) implements ZomboidJarProcessor.Spec {
 	}
 }

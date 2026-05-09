@@ -33,91 +33,91 @@ import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.decompile.DecompileConfiguration;
 import dev.aoqia.leaf.loom.configuration.decompile.SingleJarDecompileConfiguration;
 import dev.aoqia.leaf.loom.configuration.decompile.SplitDecompileConfiguration;
-import dev.aoqia.leaf.loom.configuration.processors.MinecraftJarProcessorManager;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.ProcessedNamedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.processors.ZomboidJarProcessorManager;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.ProcessedNamedZomboidProvider;
 
-public record MinecraftJarConfiguration<
-		M extends MinecraftProvider,
-		N extends NamedMinecraftProvider<M>,
-		Q extends MappedMinecraftProvider>(
+public record ZomboidJarConfiguration<
+		M extends ZomboidProvider,
+		N extends NamedZomboidProvider<M>,
+		Q extends MappedZomboidProvider>(
 				MinecraftProviderFactory<M> minecraftProviderFactory,
 				IntermediaryMinecraftProviderFactory<M> intermediaryMinecraftProviderFactory,
 				NamedMinecraftProviderFactory<M> namedMinecraftProviderFactory,
 				ProcessedNamedMinecraftProviderFactory<M, N> processedNamedMinecraftProviderFactory,
 				DecompileConfigurationFactory<Q> decompileConfigurationFactory,
 				List<String> supportedEnvironments) {
-	public static final MinecraftJarConfiguration<
-			MergedMinecraftProvider,
-			NamedMinecraftProvider.MergedImpl,
-			MappedMinecraftProvider> MERGED = new MinecraftJarConfiguration<>(
-				MergedMinecraftProvider::new,
-				IntermediaryMinecraftProvider.MergedImpl::new,
-				NamedMinecraftProvider.MergedImpl::new,
-				ProcessedNamedMinecraftProvider.MergedImpl::new,
+	public static final ZomboidJarConfiguration<
+			MergedZomboidProvider,
+				NamedZomboidProvider.MergedImpl,
+			MappedZomboidProvider> MERGED = new ZomboidJarConfiguration<>(
+				MergedZomboidProvider::new,
+				IntermediaryZomboidProvider.MergedImpl::new,
+				NamedZomboidProvider.MergedImpl::new,
+				ProcessedNamedZomboidProvider.MergedImpl::new,
 				SingleJarDecompileConfiguration::new,
 				List.of("client", "server")
 			);
-	public static final MinecraftJarConfiguration<
-			LegacyMergedMinecraftProvider,
-			NamedMinecraftProvider.LegacyMergedImpl,
-			MappedMinecraftProvider> LEGACY_MERGED = new MinecraftJarConfiguration<>(
-				LegacyMergedMinecraftProvider::new,
-				IntermediaryMinecraftProvider.LegacyMergedImpl::new,
-				NamedMinecraftProvider.LegacyMergedImpl::new,
-				ProcessedNamedMinecraftProvider.LegacyMergedImpl::new,
+	public static final ZomboidJarConfiguration<
+			LegacyMergedZomboidProvider,
+				NamedZomboidProvider.LegacyMergedImpl,
+			MappedZomboidProvider> LEGACY_MERGED = new ZomboidJarConfiguration<>(
+				LegacyMergedZomboidProvider::new,
+				IntermediaryZomboidProvider.LegacyMergedImpl::new,
+				NamedZomboidProvider.LegacyMergedImpl::new,
+				ProcessedNamedZomboidProvider.LegacyMergedImpl::new,
 				SingleJarDecompileConfiguration::new,
 				List.of("client", "server")
 			);
-	public static final MinecraftJarConfiguration<
-			SingleJarMinecraftProvider,
-			NamedMinecraftProvider.SingleJarImpl,
-			MappedMinecraftProvider> SERVER_ONLY = new MinecraftJarConfiguration<>(
-				SingleJarMinecraftProvider::server,
-				IntermediaryMinecraftProvider.SingleJarImpl::server,
-				NamedMinecraftProvider.SingleJarImpl::server,
-				ProcessedNamedMinecraftProvider.SingleJarImpl::server,
+	public static final ZomboidJarConfiguration<
+			SingleJarZomboidProvider,
+				NamedZomboidProvider.SingleJarImpl,
+			MappedZomboidProvider> SERVER_ONLY = new ZomboidJarConfiguration<>(
+				SingleJarZomboidProvider::server,
+				IntermediaryZomboidProvider.SingleJarImpl::server,
+				NamedZomboidProvider.SingleJarImpl::server,
+				ProcessedNamedZomboidProvider.SingleJarImpl::server,
 				SingleJarDecompileConfiguration::new,
 				List.of("server")
 			);
-	public static final MinecraftJarConfiguration<
-			SingleJarMinecraftProvider,
-			NamedMinecraftProvider.SingleJarImpl,
-			MappedMinecraftProvider> CLIENT_ONLY = new MinecraftJarConfiguration<>(
-				SingleJarMinecraftProvider::client,
-				IntermediaryMinecraftProvider.SingleJarImpl::client,
-				NamedMinecraftProvider.SingleJarImpl::client,
-				ProcessedNamedMinecraftProvider.SingleJarImpl::client,
+	public static final ZomboidJarConfiguration<
+			SingleJarZomboidProvider,
+				NamedZomboidProvider.SingleJarImpl,
+			MappedZomboidProvider> CLIENT_ONLY = new ZomboidJarConfiguration<>(
+				SingleJarZomboidProvider::client,
+				IntermediaryZomboidProvider.SingleJarImpl::client,
+				NamedZomboidProvider.SingleJarImpl::client,
+				ProcessedNamedZomboidProvider.SingleJarImpl::client,
 				SingleJarDecompileConfiguration::new,
 				List.of("client")
 			);
-	public static final MinecraftJarConfiguration<
-			SplitMinecraftProvider,
-			NamedMinecraftProvider.SplitImpl,
-			MappedMinecraftProvider.Split> SPLIT = new MinecraftJarConfiguration<>(
-				SplitMinecraftProvider::new,
-				IntermediaryMinecraftProvider.SplitImpl::new,
-				NamedMinecraftProvider.SplitImpl::new,
-				ProcessedNamedMinecraftProvider.SplitImpl::new,
+	public static final ZomboidJarConfiguration<
+			SplitZomboidProvider,
+				NamedZomboidProvider.SplitImpl,
+				MappedZomboidProvider.Split> SPLIT = new ZomboidJarConfiguration<>(
+				SplitZomboidProvider::new,
+				IntermediaryZomboidProvider.SplitImpl::new,
+				NamedZomboidProvider.SplitImpl::new,
+				ProcessedNamedZomboidProvider.SplitImpl::new,
 				SplitDecompileConfiguration::new,
 				List.of("client", "server")
 			);
 
-	public MinecraftProvider createMinecraftProvider(MinecraftMetadataProvider metadataProvider, ConfigContext context) {
+	public ZomboidProvider createMinecraftProvider(ZomboidMetadataProvider metadataProvider, ConfigContext context) {
 		return minecraftProviderFactory.create(metadataProvider, context);
 	}
 
-	public IntermediaryMinecraftProvider<M> createIntermediaryMinecraftProvider(Project project) {
+	public IntermediaryZomboidProvider<M> createIntermediaryMinecraftProvider(Project project) {
 		return intermediaryMinecraftProviderFactory.create(project, getMinecraftProvider(project));
 	}
 
-	public NamedMinecraftProvider<M> createNamedMinecraftProvider(Project project) {
+	public NamedZomboidProvider<M> createNamedMinecraftProvider(Project project) {
 		return namedMinecraftProviderFactory.create(project, getMinecraftProvider(project));
 	}
 
-	public ProcessedNamedMinecraftProvider<M, N> createProcessedNamedMinecraftProvider(NamedMinecraftProvider<?> namedMinecraftProvider, MinecraftJarProcessorManager jarProcessorManager) {
+	public ProcessedNamedZomboidProvider<M, N> createProcessedNamedMinecraftProvider(NamedZomboidProvider<?> namedMinecraftProvider, ZomboidJarProcessorManager jarProcessorManager) {
 		return processedNamedMinecraftProviderFactory.create((N) namedMinecraftProvider, jarProcessorManager);
 	}
 
@@ -138,23 +138,23 @@ public record MinecraftJarConfiguration<
 	}
 
 	// Factory interfaces:
-	private interface MinecraftProviderFactory<M extends MinecraftProvider> {
-		M create(MinecraftMetadataProvider metadataProvider, ConfigContext configContext);
+	private interface MinecraftProviderFactory<M extends ZomboidProvider> {
+		M create(ZomboidMetadataProvider metadataProvider, ConfigContext configContext);
 	}
 
-	private interface IntermediaryMinecraftProviderFactory<M extends MinecraftProvider> {
-		IntermediaryMinecraftProvider<M> create(Project project, M minecraftProvider);
+	private interface IntermediaryMinecraftProviderFactory<M extends ZomboidProvider> {
+		IntermediaryZomboidProvider<M> create(Project project, M minecraftProvider);
 	}
 
-	private interface NamedMinecraftProviderFactory<M extends MinecraftProvider> {
-		NamedMinecraftProvider<M> create(Project project, M minecraftProvider);
+	private interface NamedMinecraftProviderFactory<M extends ZomboidProvider> {
+		NamedZomboidProvider<M> create(Project project, M minecraftProvider);
 	}
 
-	private interface ProcessedNamedMinecraftProviderFactory<M extends MinecraftProvider, N extends NamedMinecraftProvider<M>> {
-		ProcessedNamedMinecraftProvider<M, N> create(N namedMinecraftProvider, MinecraftJarProcessorManager jarProcessorManager);
+	private interface ProcessedNamedMinecraftProviderFactory<M extends ZomboidProvider, N extends NamedZomboidProvider<M>> {
+		ProcessedNamedZomboidProvider<M, N> create(N namedMinecraftProvider, ZomboidJarProcessorManager jarProcessorManager);
 	}
 
-	private interface DecompileConfigurationFactory<M extends MappedMinecraftProvider> {
+	private interface DecompileConfigurationFactory<M extends MappedZomboidProvider> {
 		DecompileConfiguration<M> create(Project project, M minecraftProvider);
 	}
 }

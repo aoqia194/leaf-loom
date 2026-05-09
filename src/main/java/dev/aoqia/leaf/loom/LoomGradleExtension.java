@@ -41,11 +41,11 @@ import dev.aoqia.leaf.loom.configuration.LoomDependencyManager;
 import dev.aoqia.leaf.loom.configuration.accesswidener.AccessWidenerFile;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingsFactory;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftMetadataProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidMetadataProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
 import dev.aoqia.leaf.loom.extension.LoomFiles;
 import dev.aoqia.leaf.loom.extension.MixinExtension;
 import dev.aoqia.leaf.loom.extension.RemapperExtensionHolder;
@@ -69,25 +69,25 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 
 	LoomDependencyManager getDependencyManager();
 
-	MinecraftMetadataProvider getMetadataProvider();
+	ZomboidMetadataProvider getMetadataProvider();
 
-	void setMetadataProvider(MinecraftMetadataProvider metadataProvider);
+	void setMetadataProvider(ZomboidMetadataProvider metadataProvider);
 
-	MinecraftProvider getMinecraftProvider();
+	ZomboidProvider getMinecraftProvider();
 
-	void setMinecraftProvider(MinecraftProvider minecraftProvider);
+	void setMinecraftProvider(ZomboidProvider minecraftProvider);
 
 	MappingConfiguration getMappingConfiguration();
 
 	void setMappingConfiguration(MappingConfiguration mappingConfiguration);
 
-	NamedMinecraftProvider<?> getNamedMinecraftProvider();
+	NamedZomboidProvider<?> getNamedMinecraftProvider();
 
-	IntermediaryMinecraftProvider<?> getIntermediaryMinecraftProvider();
+	IntermediaryZomboidProvider<?> getIntermediaryMinecraftProvider();
 
-	void setNamedMinecraftProvider(NamedMinecraftProvider<?> namedMinecraftProvider);
+	void setNamedMinecraftProvider(NamedZomboidProvider<?> namedMinecraftProvider);
 
-	void setIntermediaryMinecraftProvider(IntermediaryMinecraftProvider<?> intermediaryMinecraftProvider);
+	void setIntermediaryMinecraftProvider(IntermediaryZomboidProvider<?> intermediaryMinecraftProvider);
 
 	default List<Path> getMinecraftJars(MappingsNamespace mappingsNamespace) {
 		return switch (mappingsNamespace) {

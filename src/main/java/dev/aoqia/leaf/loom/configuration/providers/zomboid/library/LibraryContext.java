@@ -28,14 +28,14 @@ import java.util.Arrays;
 
 import org.gradle.api.JavaVersion;
 
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.util.Platform;
 
 public final class LibraryContext {
-	private final MinecraftVersionMeta versionMeta;
+	private final ZomboidVersionMeta versionMeta;
 	private final JavaVersion javaVersion;
 
-	public LibraryContext(MinecraftVersionMeta versionMeta, JavaVersion javaVersion) {
+	public LibraryContext(ZomboidVersionMeta versionMeta, JavaVersion javaVersion) {
 		this.versionMeta = versionMeta;
 		this.javaVersion = javaVersion;
 	}

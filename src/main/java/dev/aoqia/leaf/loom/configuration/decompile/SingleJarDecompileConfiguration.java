@@ -29,26 +29,26 @@ import java.util.List;
 import org.gradle.api.Project;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.Constants;
 
-public class SingleJarDecompileConfiguration extends DecompileConfiguration<MappedMinecraftProvider> {
-	public SingleJarDecompileConfiguration(Project project, MappedMinecraftProvider minecraftProvider) {
+public class SingleJarDecompileConfiguration extends DecompileConfiguration<MappedZomboidProvider> {
+	public SingleJarDecompileConfiguration(Project project, MappedZomboidProvider minecraftProvider) {
 		super(project, minecraftProvider);
 	}
 
 	@Override
-	public String getTaskName(MinecraftJar.Type type) {
+	public String getTaskName(ZomboidJar.Type type) {
 		return "genSources";
 	}
 
 	@Override
 	public final void afterEvaluation() {
-		final List<MinecraftJar> minecraftJars = minecraftProvider.getMinecraftJars();
+		final List<ZomboidJar> minecraftJars = minecraftProvider.getMinecraftJars();
 		assert minecraftJars.size() == 1;
-		final MinecraftJar minecraftJar = minecraftJars.get(0);
+		final ZomboidJar minecraftJar = minecraftJars.get(0);
 		final String taskBaseName = getTaskName(minecraftJar.getType());
 
 		LoomGradleExtension.get(project).getDecompilerOptions().forEach(options -> {

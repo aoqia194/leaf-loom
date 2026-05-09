@@ -49,8 +49,8 @@ import org.gradle.api.tasks.TaskAction;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 import dev.aoqia.leaf.loom.task.service.ClasspathGroupService;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
@@ -119,7 +119,7 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 
 	@TaskAction
 	public void run() throws IOException {
-		final MinecraftVersionMeta versionInfo = LoomGradlePlugin.GSON.fromJson(getVersionInfoJson().get(), MinecraftVersionMeta.class);
+		final ZomboidVersionMeta versionInfo = LoomGradlePlugin.GSON.fromJson(getVersionInfoJson().get(), ZomboidVersionMeta.class);
 		File assetsDirectory = new File(getAssetsDirectoryPath().get());
 
 		if (versionInfo.assets().equals("legacy")) {
@@ -173,7 +173,7 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	}
 
 	private String getGameJarPath(String env) {
-		MappedMinecraftProvider.Split split = (MappedMinecraftProvider.Split) getExtension().getNamedMinecraftProvider();
+		MappedZomboidProvider.Split split = (MappedZomboidProvider.Split) getExtension().getNamedMinecraftProvider();
 
 		return switch (env) {
 		case "client" -> split.getClientOnlyJar().getPath().toAbsolutePath().toString();

@@ -43,23 +43,23 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.ManifestLocations.Man
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
 
-public final class MinecraftMetadataProvider {
+public final class ZomboidMetadataProvider {
 	private final Options options;
 	private final Function<String, DownloadBuilder> download;
 
 	private ManifestEntryLocation versionEntry;
-	private MinecraftVersionMeta versionMeta;
+	private ZomboidVersionMeta versionMeta;
 
-	private MinecraftMetadataProvider(Options options, Function<String, DownloadBuilder> download) {
+	private ZomboidMetadataProvider(Options options, Function<String, DownloadBuilder> download) {
 		this.options = options;
 		this.download = download;
 	}
 
-	public static MinecraftMetadataProvider create(ConfigContext configContext) {
+	public static ZomboidMetadataProvider create(ConfigContext configContext) {
 		final String minecraftVersion = resolveMinecraftVersion(configContext.project());
 
-		return new MinecraftMetadataProvider(
-				MinecraftMetadataProvider.Options.create(
+		return new ZomboidMetadataProvider(
+				ZomboidMetadataProvider.Options.create(
 						minecraftVersion,
 						configContext.project()
 				),
@@ -76,7 +76,7 @@ public final class MinecraftMetadataProvider {
 		return options.minecraftVersion();
 	}
 
-	public MinecraftVersionMeta getVersionMeta() {
+	public ZomboidVersionMeta getVersionMeta() {
 		try {
 			if (versionEntry == null) {
 				versionEntry = getVersionEntry();
@@ -145,7 +145,7 @@ public final class MinecraftMetadataProvider {
 		return null;
 	}
 
-	private MinecraftVersionMeta readVersionMeta() throws IOException {
+	private ZomboidVersionMeta readVersionMeta() throws IOException {
 		final DownloadBuilder builder = download.apply(versionEntry.entry.url);
 
 		if (versionEntry.entry.sha1 != null) {
@@ -157,7 +157,7 @@ public final class MinecraftMetadataProvider {
 		final String fileName = getVersionMetaFileName();
 		final Path cacheFile = options.workingDir().resolve(fileName);
 		final String json = builder.downloadString(cacheFile);
-		return LoomGradlePlugin.GSON.fromJson(json, MinecraftVersionMeta.class);
+		return LoomGradlePlugin.GSON.fromJson(json, ZomboidVersionMeta.class);
 	}
 
 	private String getVersionMetaFileName() {
@@ -178,7 +178,7 @@ public final class MinecraftMetadataProvider {
 		public static Options create(String minecraftVersion, Project project) {
 			final LoomGradleExtension extension = LoomGradleExtension.get(project);
 			final Path userCache = extension.getFiles().getUserCache().toPath();
-			final Path workingDir = MinecraftProvider.minecraftWorkingDirectory(project, minecraftVersion).toPath();
+			final Path workingDir = ZomboidProvider.minecraftWorkingDirectory(project, minecraftVersion).toPath();
 
 			final ManifestLocations manifestLocations = extension.getVersionsManifests();
 			final Property<String> customMetaUrl = extension.getCustomMinecraftMetadata();

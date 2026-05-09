@@ -43,7 +43,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
@@ -149,7 +149,7 @@ public abstract class RunConfigSettings implements Named {
 		this.devLaunchMainClass = project.getObjects().property(String.class).convention("net.fabricmc.devlaunchinjector.Main");
 
 		setSource(p -> {
-			final String sourceSetName = MinecraftSourceSets.get(p).getSourceSetForEnv(getEnvironment());
+			final String sourceSetName = ZomboidSourceSets.get(p).getSourceSetForEnv(getEnvironment());
 			return SourceSetHelper.getSourceSetByName(sourceSetName, p);
 		});
 

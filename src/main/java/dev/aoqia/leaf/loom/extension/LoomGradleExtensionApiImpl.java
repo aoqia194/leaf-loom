@@ -56,7 +56,7 @@ import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
 import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
-import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.remapping.RemapperExtension;
 import dev.aoqia.leaf.loom.api.remapping.RemapperParameters;
 import dev.aoqia.leaf.loom.configuration.RemapConfigurations;
@@ -66,9 +66,9 @@ import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpec;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingsFactory;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ManifestLocations;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJarConfiguration;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftMetadataProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidMetadataProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.DeprecationHelper;
 import dev.aoqia.leaf.loom.util.MirrorUtil;
@@ -95,7 +95,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	protected final Property<IntermediateMappingsProvider> intermediateMappingsProvider;
 	private final Property<Boolean> runtimeOnlyLog4j;
 	private final Property<Boolean> splitModDependencies;
-	private final Property<MinecraftJarConfiguration<?, ?, ?>> minecraftJarConfiguration;
+	private final Property<ZomboidJarConfiguration<?, ?, ?>> minecraftJarConfiguration;
 	private final Property<Boolean> splitEnvironmentalSourceSet;
 	private final InterfaceInjectionExtensionAPI interfaceInjectionExtension;
 
@@ -103,7 +103,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	private final NamedDomainObjectContainer<DecompilerOptions> decompilers;
 	private final NamedDomainObjectContainer<ModSettings> mods;
 	private final NamedDomainObjectList<RemapConfigurationSettings> remapConfigurations;
-	private final ListProperty<MinecraftJarProcessor<?>> minecraftJarProcessors;
+	private final ListProperty<ZomboidJarProcessor<?>> minecraftJarProcessors;
 	protected final ListProperty<RemapperExtensionHolder> remapperExtensions;
 
 	// A common mistake with layered mappings is to call the wrong `officialMojangMappings` method, use this to keep track of when we are building a layered mapping spec.
@@ -149,25 +149,25 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		this.mods = project.getObjects().domainObjectContainer(ModSettings.class);
 		this.remapConfigurations = project.getObjects().namedDomainObjectList(RemapConfigurationSettings.class);
 		//noinspection unchecked
-		this.minecraftJarProcessors = (ListProperty<MinecraftJarProcessor<?>>) (Object) project.getObjects().listProperty(MinecraftJarProcessor.class);
+		this.minecraftJarProcessors = (ListProperty<ZomboidJarProcessor<?>>) (Object) project.getObjects().listProperty(ZomboidJarProcessor.class);
 		this.minecraftJarProcessors.finalizeValueOnRead();
 
 		//noinspection unchecked
-		this.minecraftJarConfiguration = project.getObjects().property((Class<MinecraftJarConfiguration<?, ?, ?>>) (Class<?>) MinecraftJarConfiguration.class)
+		this.minecraftJarConfiguration = project.getObjects().property((Class<ZomboidJarConfiguration<?, ?, ?>>) (Class<?>) ZomboidJarConfiguration.class)
 				.convention(project.provider(() -> {
 					final LoomGradleExtension extension = LoomGradleExtension.get(project);
-					final MinecraftMetadataProvider metadataProvider = extension.getMetadataProvider();
+					final ZomboidMetadataProvider metadataProvider = extension.getMetadataProvider();
 
 					// if no configuration is selected by the user, attempt to select one
 					// based on the mc version and which sides are present for it
 					if (!metadataProvider.getVersionMeta().hasServer()) {
-						return MinecraftJarConfiguration.CLIENT_ONLY;
+						return ZomboidJarConfiguration.CLIENT_ONLY;
 					} else if (!metadataProvider.getVersionMeta().hasClient()) {
-						return MinecraftJarConfiguration.SERVER_ONLY;
+						return ZomboidJarConfiguration.SERVER_ONLY;
 					} else if (!metadataProvider.getVersionMeta().isLegacyVersion()) {
-						return MinecraftJarConfiguration.MERGED;
+						return ZomboidJarConfiguration.MERGED;
 					} else {
-						return MinecraftJarConfiguration.LEGACY_MERGED;
+						return ZomboidJarConfiguration.LEGACY_MERGED;
 					}
 				}));
 		this.minecraftJarConfiguration.finalizeValueOnRead();
@@ -227,12 +227,12 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	}
 
 	@Override
-	public ListProperty<MinecraftJarProcessor<?>> getMinecraftJarProcessors() {
+	public ListProperty<ZomboidJarProcessor<?>> getMinecraftJarProcessors() {
 		return minecraftJarProcessors;
 	}
 
 	@Override
-	public void addMinecraftJarProcessor(Class<? extends MinecraftJarProcessor<?>> clazz, Object... parameters) {
+	public void addMinecraftJarProcessor(Class<? extends ZomboidJarProcessor<?>> clazz, Object... parameters) {
 		getMinecraftJarProcessors().add(getProject().getObjects().newInstance(clazz, parameters));
 	}
 
@@ -372,7 +372,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	}
 
 	@Override
-	public Property<MinecraftJarConfiguration<?, ?, ?>> getMinecraftJarConfiguration() {
+	public Property<ZomboidJarConfiguration<?, ?, ?>> getMinecraftJarConfiguration() {
 		return minecraftJarConfiguration;
 	}
 
@@ -396,7 +396,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		splitEnvironmentalSourceSet.finalizeValue();
 		minecraftJarConfiguration.finalizeValue();
 
-		MinecraftSourceSets.get(getProject()).evaluateSplit(getProject());
+		ZomboidSourceSets.get(getProject()).evaluateSplit(getProject());
 	}
 
 	@Override

@@ -42,20 +42,20 @@ import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.MinecraftLibraryHelper;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.ZomboidLibraryHelper;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
-public class MinecraftLibraryProvider {
+public class ZomboidLibraryProvider {
 	private static final Platform platform = Platform.CURRENT;
 
 	private final Project project;
-	private final MinecraftProvider minecraftProvider;
+	private final ZomboidProvider minecraftProvider;
 	private final LibraryProcessorManager processorManager;
 
-	public MinecraftLibraryProvider(MinecraftProvider minecraftProvider, Project project) {
+	public ZomboidLibraryProvider(ZomboidProvider minecraftProvider, Project project) {
 		this.project = project;
 		this.minecraftProvider = minecraftProvider;
 		this.processorManager = new LibraryProcessorManager(platform, project.getRepositories(), LoomGradleExtension.get(project).getLibraryProcessors().get(), getEnabledProcessors());
@@ -82,7 +82,7 @@ public class MinecraftLibraryProvider {
 
 	public void provide() {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		final MinecraftJarConfiguration jarConfiguration = extension.getMinecraftJarConfiguration().get();
+		final ZomboidJarConfiguration jarConfiguration = extension.getMinecraftJarConfiguration().get();
 
 		final boolean provideClient = jarConfiguration.supportedEnvironments().contains("client");
 		final boolean provideServer = jarConfiguration.supportedEnvironments().contains("server");
@@ -102,7 +102,7 @@ public class MinecraftLibraryProvider {
 	}
 
 	private void provideClientLibraries() {
-		final List<Library> libraries = MinecraftLibraryHelper.getLibrariesForPlatform(minecraftProvider.getVersionInfo(), platform);
+		final List<Library> libraries = ZomboidLibraryHelper.getLibrariesForPlatform(minecraftProvider.getVersionInfo(), platform);
 		final List<Library> processLibraries = processLibraries(libraries);
 		processLibraries.forEach(this::applyClientLibrary);
 
@@ -114,7 +114,7 @@ public class MinecraftLibraryProvider {
 
 	private void provideServerLibraries() {
 		final BundleMetadata serverBundleMetadata = minecraftProvider.getServerBundleMetadata();
-		final List<Library> libraries = serverBundleMetadata != null ? MinecraftLibraryHelper.getServerLibraries(serverBundleMetadata) : Collections.emptyList();
+		final List<Library> libraries = serverBundleMetadata != null ? ZomboidLibraryHelper.getServerLibraries(serverBundleMetadata) : Collections.emptyList();
 		final List<Library> processLibraries = processLibraries(libraries);
 		processLibraries.forEach(this::applyServerLibrary);
 	}
@@ -126,7 +126,7 @@ public class MinecraftLibraryProvider {
 	private void resolveAllLibraries() {
 		project.getLogger().info("Resolving all libraries for dependency verification metadata generation");
 
-		final List<Library> libraries = MinecraftLibraryHelper.getAllLibraries(minecraftProvider.getVersionInfo());
+		final List<Library> libraries = ZomboidLibraryHelper.getAllLibraries(minecraftProvider.getVersionInfo());
 		Configuration detachedConfiguration = project.getConfigurations().detachedConfiguration(
 				libraries.stream()
 					.map(library -> project.getDependencies().create(library.mavenNotation()))

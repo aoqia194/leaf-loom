@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
 import dev.aoqia.leaf.loom.util.Checksum;
@@ -60,7 +60,7 @@ import net.fabricmc.mappingio.adapter.MappingNsRenamer;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
-public abstract class ModJavadocProcessor implements MinecraftJarProcessor<ModJavadocProcessor.Spec> {
+public abstract class ModJavadocProcessor implements ZomboidJarProcessor<ModJavadocProcessor.Spec> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ModJavadocProcessor.class);
 
 	private final String name;
@@ -95,7 +95,7 @@ public abstract class ModJavadocProcessor implements MinecraftJarProcessor<ModJa
 		return new Spec(Collections.unmodifiableList(javadocs));
 	}
 
-	public record Spec(List<ModJavadoc> javadocs) implements MinecraftJarProcessor.Spec {
+	public record Spec(List<ModJavadoc> javadocs) implements ZomboidJarProcessor.Spec {
 	}
 
 	@Override

@@ -29,7 +29,7 @@ import java.nio.file.Path;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.download.DownloadException;
 
@@ -40,9 +40,9 @@ public record MojangMappingsSpec(boolean nameSyntheticMembers) implements Mappin
 
 	@Override
 	public MojangMappingLayer createLayer(MappingContext context) {
-		final MinecraftVersionMeta versionInfo = context.minecraftProvider().getVersionInfo();
-		final MinecraftVersionMeta.Download clientDownload = versionInfo.download(MANIFEST_CLIENT_MAPPINGS);
-		final MinecraftVersionMeta.Download serverDownload = versionInfo.download(MANIFEST_SERVER_MAPPINGS);
+		final ZomboidVersionMeta versionInfo = context.minecraftProvider().getVersionInfo();
+		final ZomboidVersionMeta.Download clientDownload = versionInfo.download(MANIFEST_CLIENT_MAPPINGS);
+		final ZomboidVersionMeta.Download serverDownload = versionInfo.download(MANIFEST_SERVER_MAPPINGS);
 
 		if (clientDownload == null) {
 			throw new RuntimeException("Failed to find official mojang mappings for " + context.minecraftVersion());

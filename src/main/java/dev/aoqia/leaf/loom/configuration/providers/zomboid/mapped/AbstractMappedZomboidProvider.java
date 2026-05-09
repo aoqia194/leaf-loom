@@ -48,10 +48,10 @@ import dev.aoqia.leaf.loom.configuration.providers.mappings.IntermediaryMappings
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsData;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.AnnotationsApplyVisitor;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.SignatureFixerApplyVisitor;
 import dev.aoqia.leaf.loom.extension.LoomFiles;
 import dev.aoqia.leaf.loom.util.SidedClassVisitor;
@@ -59,14 +59,14 @@ import dev.aoqia.leaf.loom.util.TinyRemapperHelper;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvider> implements MappedMinecraftProvider.ProviderImpl {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMappedMinecraftProvider.class);
+public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> implements MappedZomboidProvider.ProviderImpl {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMappedZomboidProvider.class);
 
 	protected final M minecraftProvider;
 	private final Project project;
 	protected final LoomGradleExtension extension;
 
-	public AbstractMappedMinecraftProvider(Project project, M minecraftProvider) {
+	public AbstractMappedZomboidProvider(Project project, M minecraftProvider) {
 		this.minecraftProvider = minecraftProvider;
 		this.project = project;
 		this.extension = LoomGradleExtension.get(project);
@@ -87,13 +87,13 @@ public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvide
 	}
 
 	// Returns a list of MinecraftJar.Type's that this provider exports to be used as a dependency
-	public List<MinecraftJar.Type> getDependencyTypes() {
+	public List<ZomboidJar.Type> getDependencyTypes() {
 		return Collections.emptyList();
 	}
 
-	public List<MinecraftJar> provide(ProvideContext context) throws Exception {
+	public List<ZomboidJar> provide(ProvideContext context) throws Exception {
 		final List<RemappedJars> remappedJars = getRemappedJars();
-		final List<MinecraftJar> minecraftJars = remappedJars.stream()
+		final List<ZomboidJar> minecraftJars = remappedJars.stream()
 				.map(RemappedJars::outputJar)
 				.toList();
 
@@ -113,10 +113,10 @@ public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvide
 		}
 
 		if (context.applyDependencies()) {
-			final List<MinecraftJar.Type> dependencyTargets = getDependencyTypes();
+			final List<ZomboidJar.Type> dependencyTargets = getDependencyTypes();
 
 			if (!dependencyTargets.isEmpty()) {
-				MinecraftSourceSets.get(getProject()).applyDependencies(
+				ZomboidSourceSets.get(getProject()).applyDependencies(
 						(configuration, type) -> getProject().getDependencies().add(configuration, getDependencyNotation(type)),
 						dependencyTargets
 				);
@@ -127,13 +127,13 @@ public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvide
 	}
 
 	// Create two copies of the remapped jar, the backup jar is used as the input of genSources
-	public static Path getBackupJarPath(MinecraftJar minecraftJar) {
+	public static Path getBackupJarPath(ZomboidJar minecraftJar) {
 		final Path outputJarPath = minecraftJar.getPath();
 		return outputJarPath.resolveSibling(outputJarPath.getFileName() + ".backup");
 	}
 
-	protected void createBackupJars(List<MinecraftJar> minecraftJars) throws IOException {
-		for (MinecraftJar minecraftJar : minecraftJars) {
+	protected void createBackupJars(List<ZomboidJar> minecraftJars) throws IOException {
+		for (ZomboidJar minecraftJar : minecraftJars) {
 			Files.copy(minecraftJar.getPath(), getBackupJarPath(minecraftJar), StandardCopyOption.REPLACE_EXISTING);
 		}
 	}
@@ -145,7 +145,7 @@ public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvide
 	}
 
 	@Override
-	public Path getJar(MinecraftJar.Type type) {
+	public Path getJar(ZomboidJar.Type type) {
 		return getMavenHelper(type).getOutputFile(null);
 	}
 
@@ -168,11 +168,11 @@ public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvide
 
 	public abstract MavenScope getMavenScope();
 
-	public LocalMavenHelper getMavenHelper(MinecraftJar.Type type) {
+	public LocalMavenHelper getMavenHelper(ZomboidJar.Type type) {
 		return new LocalMavenHelper("net.minecraft", getName(type), getVersion(), null, getMavenScope().getRoot(extension));
 	}
 
-	protected String getName(MinecraftJar.Type type) {
+	protected String getName(ZomboidJar.Type type) {
 		final String intermediateName = extension.getIntermediateMappingsProvider().getName();
 
 		var sj = new StringJoiner("-");
@@ -195,7 +195,7 @@ public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvide
 		return "%s-%s".formatted(extension.getMinecraftProvider().minecraftVersion(), extension.getMappingConfiguration().mappingsIdentifier());
 	}
 
-	protected String getDependencyNotation(MinecraftJar.Type type) {
+	protected String getDependencyNotation(ZomboidJar.Type type) {
 		return "net.minecraft:%s:%s".formatted(getName(type), getVersion());
 	}
 
@@ -246,7 +246,7 @@ public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvide
 
 		final AnnotationsData remappedAnnotations = AnnotationsData.getRemappedAnnotations(getTargetNamespace(), mappingConfiguration, getProject(), configContext.serviceFactory(), toM);
 		final Map<String, String> remappedSignatures = SignatureFixerApplyVisitor.getRemappedSignatures(getTargetNamespace() == MappingsNamespace.INTERMEDIARY, mappingConfiguration, getProject(), configContext.serviceFactory(), toM);
-		final MinecraftVersionMeta.JavaVersion javaVersion = minecraftProvider.getVersionInfo().javaVersion();
+		final ZomboidVersionMeta.JavaVersion javaVersion = minecraftProvider.getVersionInfo().javaVersion();
 		final boolean fixRecords = javaVersion != null && javaVersion.majorVersion() >= 16;
 
 		TinyRemapper remapper = TinyRemapperHelper.getTinyRemapper(getProject(), configContext.serviceFactory(), fromM, toM, fixRecords, (builder) -> {
@@ -281,7 +281,7 @@ public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvide
 
 	// Configure the remapper to add the client @Environment annotation to all classes in the client jar.
 	public static void configureSplitRemapper(RemappedJars remappedJars, TinyRemapper.Builder tinyRemapperBuilder) {
-		final MinecraftJar outputJar = remappedJars.outputJar();
+		final ZomboidJar outputJar = remappedJars.outputJar();
 		assert !outputJar.isMerged();
 
 		if (outputJar.includesClient()) {
@@ -306,14 +306,14 @@ public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvide
 	}
 
 	public sealed interface OutputJar permits RemappedJars, SimpleOutputJar {
-		MinecraftJar outputJar();
+		ZomboidJar outputJar();
 
-		default MinecraftJar.Type type() {
+		default ZomboidJar.Type type() {
 			return outputJar().getType();
 		}
 	}
 
-	public record RemappedJars(Path inputJar, MinecraftJar outputJar, MappingsNamespace sourceNamespace, Path... remapClasspath) implements OutputJar {
+	public record RemappedJars(Path inputJar, ZomboidJar outputJar, MappingsNamespace sourceNamespace, Path... remapClasspath) implements OutputJar {
 		public Path outputJarPath() {
 			return outputJar().getPath();
 		}
@@ -323,6 +323,6 @@ public abstract class AbstractMappedMinecraftProvider<M extends MinecraftProvide
 		}
 	}
 
-	public record SimpleOutputJar(MinecraftJar outputJar) implements OutputJar {
+	public record SimpleOutputJar(ZomboidJar outputJar) implements OutputJar {
 	}
 }

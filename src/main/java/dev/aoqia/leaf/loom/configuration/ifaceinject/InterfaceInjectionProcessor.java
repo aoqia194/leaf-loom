@@ -53,7 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
 import dev.aoqia.leaf.loom.util.Constants;
@@ -66,7 +66,7 @@ import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.api.TrRemapper;
 
-public abstract class InterfaceInjectionProcessor implements MinecraftJarProcessor<InterfaceInjectionProcessor.Spec> {
+public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor<InterfaceInjectionProcessor.Spec> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceInjectionProcessor.class);
 
 	private final String name;
@@ -106,7 +106,7 @@ public abstract class InterfaceInjectionProcessor implements MinecraftJarProcess
 		return new Spec(injectedInterfaces, clientOnlyModIds);
 	}
 
-	public record Spec(List<InjectedInterface> injectedInterfaces, Set<String> clientOnlyModIds) implements MinecraftJarProcessor.Spec {
+	public record Spec(List<InjectedInterface> injectedInterfaces, Set<String> clientOnlyModIds) implements ZomboidJarProcessor.Spec {
 	}
 
 	@Override

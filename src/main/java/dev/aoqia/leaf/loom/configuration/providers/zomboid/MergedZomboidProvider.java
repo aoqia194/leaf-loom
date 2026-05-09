@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.ConfigContext;
 
-public final class MergedMinecraftProvider extends MinecraftProvider {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MergedMinecraftProvider.class);
+public final class MergedZomboidProvider extends ZomboidProvider {
+	private static final Logger LOGGER = LoggerFactory.getLogger(MergedZomboidProvider.class);
 
 	private Path minecraftMergedJar;
 
-	public MergedMinecraftProvider(MinecraftMetadataProvider metadataProvider, ConfigContext configContext) {
+	public MergedZomboidProvider(ZomboidMetadataProvider metadataProvider, ConfigContext configContext) {
 		super(metadataProvider, configContext);
 
 		if (isLegacyVersion()) {
@@ -105,7 +105,7 @@ public final class MergedMinecraftProvider extends MinecraftProvider {
 		Objects.requireNonNull(clientJar, "Cannot merge null client jar?");
 		Objects.requireNonNull(serverJar, "Cannot merge null server jar?");
 
-		try (var jarMerger = new MinecraftJarMerger(clientJar, serverJar, mergedJar)) {
+		try (var jarMerger = new ZomboidJarMerger(clientJar, serverJar, mergedJar)) {
 			jarMerger.enableSyntheticParamsOffset();
 			jarMerger.merge();
 		}

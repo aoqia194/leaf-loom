@@ -69,7 +69,7 @@ import dev.aoqia.leaf.loom.configuration.RemapConfigurations;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependency;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependencyFactory;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependencyOptions;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.util.AsyncCache;
 import dev.aoqia.leaf.loom.util.Checksum;
 import dev.aoqia.leaf.loom.util.Constants;
@@ -124,7 +124,7 @@ public class ModConfigurationRemapper {
 				// If our remap configuration entry targets the client source set as well,
 				// let's set up a collector for it too.
 				if (entry.getClientSourceConfigurationName().isPresent()) {
-					final SourceSet clientSourceSet = SourceSetHelper.getSourceSetByName(MinecraftSourceSets.Split.CLIENT_ONLY_SOURCE_SET_NAME, project);
+					final SourceSet clientSourceSet = SourceSetHelper.getSourceSetByName(ZomboidSourceSets.Split.CLIENT_ONLY_SOURCE_SET_NAME, project);
 					final Configuration clientTarget = RemapConfigurations.getOrCreateCollectorConfiguration(project, clientSourceSet, runtime);
 					clientConfigsToRemap.put(sourceCopy, clientTarget);
 				}

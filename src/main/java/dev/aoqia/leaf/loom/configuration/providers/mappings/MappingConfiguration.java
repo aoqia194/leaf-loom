@@ -53,7 +53,7 @@ import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.A
 import dev.aoqia.leaf.loom.configuration.providers.mappings.tiny.MappingsMerger;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.tiny.TinyJarInfo;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.unpick.UnpickMetadata;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.DeletingFileVisitor;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
@@ -92,7 +92,7 @@ public class MappingConfiguration {
 		this.unpickDefinitions = mappingsWorkingDir.resolve("mappings.unpick");
 	}
 
-	public static MappingConfiguration create(Project project, ServiceFactory serviceFactory, DependencyInfo dependency, MinecraftProvider minecraftProvider) {
+	public static MappingConfiguration create(Project project, ServiceFactory serviceFactory, DependencyInfo dependency, ZomboidProvider minecraftProvider) {
 		final String version = dependency.getResolvedVersion();
 		final Path inputJar = dependency.resolveFile().orElseThrow(() -> new RuntimeException("Could not resolve mappings: " + dependency)).toPath();
 		final String mappingsName = StringUtils.removeSuffix(dependency.getDependency().getGroup() + "." + dependency.getDependency().getName(), "-unmerged");
@@ -127,7 +127,7 @@ public class MappingConfiguration {
 		return serviceFactory.get(getMappingsServiceOptions(project));
 	}
 
-	private void setup(Project project, ServiceFactory serviceFactory, MinecraftProvider minecraftProvider, Path inputJar) throws IOException {
+	private void setup(Project project, ServiceFactory serviceFactory, ZomboidProvider minecraftProvider, Path inputJar) throws IOException {
 		if (minecraftProvider.refreshDeps()) {
 			cleanWorkingDirectory(mappingsWorkingDir);
 		}
@@ -175,7 +175,7 @@ public class MappingConfiguration {
 		return isV2 ? "-v2" : "";
 	}
 
-	private void storeMappings(Project project, ServiceFactory serviceFactory, MinecraftProvider minecraftProvider, Path inputJar) throws IOException {
+	private void storeMappings(Project project, ServiceFactory serviceFactory, ZomboidProvider minecraftProvider, Path inputJar) throws IOException {
 		LOGGER.info(":extracting " + inputJar.getFileName());
 
 		try (FileSystemUtil.Delegate delegate = FileSystemUtil.getJarFileSystem(inputJar)) {

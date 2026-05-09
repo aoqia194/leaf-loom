@@ -29,18 +29,18 @@ import java.util.List;
 import org.gradle.api.Project;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.LegacyMergedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.LegacyMergedZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarEnvType;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitZomboidProvider;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public abstract class NamedMinecraftProvider<M extends MinecraftProvider> extends AbstractMappedMinecraftProvider<M> {
-	public NamedMinecraftProvider(Project project, M minecraftProvider) {
+public abstract class NamedZomboidProvider<M extends ZomboidProvider> extends AbstractMappedZomboidProvider<M> {
+	public NamedZomboidProvider(Project project, M minecraftProvider) {
 		super(project, minecraftProvider);
 	}
 
@@ -54,8 +54,8 @@ public abstract class NamedMinecraftProvider<M extends MinecraftProvider> extend
 		return MavenScope.GLOBAL;
 	}
 
-	public static final class MergedImpl extends NamedMinecraftProvider<MergedMinecraftProvider> implements Merged {
-		public MergedImpl(Project project, MergedMinecraftProvider minecraftProvider) {
+	public static final class MergedImpl extends NamedZomboidProvider<MergedZomboidProvider> implements Merged {
+		public MergedImpl(Project project, MergedZomboidProvider minecraftProvider) {
 			super(project, minecraftProvider);
 		}
 
@@ -67,25 +67,25 @@ public abstract class NamedMinecraftProvider<M extends MinecraftProvider> extend
 		}
 
 		@Override
-		public List<MinecraftJar.Type> getDependencyTypes() {
-			return List.of(MinecraftJar.Type.MERGED);
+		public List<ZomboidJar.Type> getDependencyTypes() {
+			return List.of(ZomboidJar.Type.MERGED);
 		}
 	}
 
-	public static final class LegacyMergedImpl extends NamedMinecraftProvider<LegacyMergedMinecraftProvider> implements Merged {
+	public static final class LegacyMergedImpl extends NamedZomboidProvider<LegacyMergedZomboidProvider> implements Merged {
 		private final SingleJarImpl server;
 		private final SingleJarImpl client;
 
-		public LegacyMergedImpl(Project project, LegacyMergedMinecraftProvider minecraftProvider) {
+		public LegacyMergedImpl(Project project, LegacyMergedZomboidProvider minecraftProvider) {
 			super(project, minecraftProvider);
 			server = new SingleJarImpl(project, minecraftProvider.getServerMinecraftProvider(), SingleJarEnvType.SERVER);
 			client = new SingleJarImpl(project, minecraftProvider.getClientMinecraftProvider(), SingleJarEnvType.CLIENT);
 		}
 
 		@Override
-		public List<MinecraftJar> provide(ProvideContext context) throws Exception {
+		public List<ZomboidJar> provide(ProvideContext context) throws Exception {
 			final ProvideContext childContext = context.withApplyDependencies(false);
-			final List<MinecraftJar> minecraftJars = List.of(getMergedJar());
+			final List<ZomboidJar> minecraftJars = List.of(getMergedJar());
 
 			// this check must be done before the client and server impls are provided
 			// because the merging only needs to happen if the remapping step is run
@@ -99,7 +99,7 @@ public abstract class NamedMinecraftProvider<M extends MinecraftProvider> extend
 
 			if (refreshOutputs) {
 				// then merge them
-				MergedMinecraftProvider.mergeJars(
+				MergedZomboidProvider.mergeJars(
 							client.getEnvOnlyJar().toFile(),
 							server.getEnvOnlyJar().toFile(),
 							getMergedJar().toFile()
@@ -108,10 +108,10 @@ public abstract class NamedMinecraftProvider<M extends MinecraftProvider> extend
 				createBackupJars(minecraftJars);
 			}
 
-			getMavenHelper(MinecraftJar.Type.MERGED).savePom();
+			getMavenHelper(ZomboidJar.Type.MERGED).savePom();
 
 			if (context.applyDependencies()) {
-				MinecraftSourceSets.get(getProject()).applyDependencies(
+				ZomboidSourceSets.get(getProject()).applyDependencies(
 						(configuration, type) -> getProject().getDependencies().add(configuration, getDependencyNotation(type)),
 						getDependencyTypes()
 				);
@@ -134,13 +134,13 @@ public abstract class NamedMinecraftProvider<M extends MinecraftProvider> extend
 		}
 
 		@Override
-		public List<MinecraftJar.Type> getDependencyTypes() {
-			return List.of(MinecraftJar.Type.MERGED);
+		public List<ZomboidJar.Type> getDependencyTypes() {
+			return List.of(ZomboidJar.Type.MERGED);
 		}
 	}
 
-	public static final class SplitImpl extends NamedMinecraftProvider<SplitMinecraftProvider> implements Split {
-		public SplitImpl(Project project, SplitMinecraftProvider minecraftProvider) {
+	public static final class SplitImpl extends NamedZomboidProvider<SplitZomboidProvider> implements Split {
+		public SplitImpl(Project project, SplitZomboidProvider minecraftProvider) {
 			super(project, minecraftProvider);
 		}
 
@@ -158,24 +158,24 @@ public abstract class NamedMinecraftProvider<M extends MinecraftProvider> extend
 		}
 
 		@Override
-		public List<MinecraftJar.Type> getDependencyTypes() {
-			return List.of(MinecraftJar.Type.CLIENT_ONLY, MinecraftJar.Type.COMMON);
+		public List<ZomboidJar.Type> getDependencyTypes() {
+			return List.of(ZomboidJar.Type.CLIENT_ONLY, ZomboidJar.Type.COMMON);
 		}
 	}
 
-	public static final class SingleJarImpl extends NamedMinecraftProvider<SingleJarMinecraftProvider> implements SingleJar {
+	public static final class SingleJarImpl extends NamedZomboidProvider<SingleJarZomboidProvider> implements SingleJar {
 		private final SingleJarEnvType env;
 
-		private SingleJarImpl(Project project, SingleJarMinecraftProvider minecraftProvider, SingleJarEnvType env) {
+		private SingleJarImpl(Project project, SingleJarZomboidProvider minecraftProvider, SingleJarEnvType env) {
 			super(project, minecraftProvider);
 			this.env = env;
 		}
 
-		public static SingleJarImpl server(Project project, SingleJarMinecraftProvider minecraftProvider) {
+		public static SingleJarImpl server(Project project, SingleJarZomboidProvider minecraftProvider) {
 			return new SingleJarImpl(project, minecraftProvider, SingleJarEnvType.SERVER);
 		}
 
-		public static SingleJarImpl client(Project project, SingleJarMinecraftProvider minecraftProvider) {
+		public static SingleJarImpl client(Project project, SingleJarZomboidProvider minecraftProvider) {
 			return new SingleJarImpl(project, minecraftProvider, SingleJarEnvType.CLIENT);
 		}
 
@@ -187,7 +187,7 @@ public abstract class NamedMinecraftProvider<M extends MinecraftProvider> extend
 		}
 
 		@Override
-		public List<MinecraftJar.Type> getDependencyTypes() {
+		public List<ZomboidJar.Type> getDependencyTypes() {
 			return List.of(envType());
 		}
 

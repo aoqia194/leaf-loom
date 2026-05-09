@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
 
 // See: https://github.com/JetBrains/intellij-community/blob/a09b1b84ab64a699794c860bc96774766dd38958/plugins/gradle/java/src/util/GradleAttachSourcesProvider.java
 record DownloadSourcesHook(Project project, Task task) {
@@ -78,7 +78,7 @@ record DownloadSourcesHook(Project project, Task task) {
 					continue;
 				}
 
-				final MinecraftJar.Type jarType = getJarType(notation);
+				final ZomboidJar.Type jarType = getJarType(notation);
 
 				if (jarType == null) {
 					LOGGER.debug("init script is trying to download sources for another Minecraft jar ({}) not used by this project ({})", notation, project.getPath());
@@ -113,7 +113,7 @@ record DownloadSourcesHook(Project project, Task task) {
 		return null;
 	}
 
-	private String getGenSourcesTaskName(MinecraftJar.Type jarType) {
+	private String getGenSourcesTaskName(ZomboidJar.Type jarType) {
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
 		return extension.getMinecraftJarConfiguration().get()
 				.createDecompileConfiguration(project)
@@ -122,16 +122,16 @@ record DownloadSourcesHook(Project project, Task task) {
 
 	// Return the jar type, or null when this jar isnt used by the project
 	@Nullable
-	private MinecraftJar.Type getJarType(String name) {
+	private ZomboidJar.Type getJarType(String name) {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		final NamedMinecraftProvider<?> minecraftProvider = extension.getNamedMinecraftProvider();
-		final List<MinecraftJar.Type> dependencyTypes = minecraftProvider.getDependencyTypes();
+		final NamedZomboidProvider<?> minecraftProvider = extension.getNamedMinecraftProvider();
+		final List<ZomboidJar.Type> dependencyTypes = minecraftProvider.getDependencyTypes();
 
 		if (dependencyTypes.isEmpty()) {
 			throw new IllegalStateException();
 		}
 
-		for (MinecraftJar.Type type : dependencyTypes) {
+		for (ZomboidJar.Type type : dependencyTypes) {
 			final LocalMavenHelper mavenHelper = minecraftProvider.getMavenHelper(type).withClassifier("sources");
 
 			if (mavenHelper.getNotation().equals(name)) {

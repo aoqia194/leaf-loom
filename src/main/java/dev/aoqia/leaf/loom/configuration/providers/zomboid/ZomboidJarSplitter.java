@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
 
-public class MinecraftJarSplitter implements AutoCloseable {
+public class ZomboidJarSplitter implements AutoCloseable {
 	private final Path clientInputJar;
 	private final Path serverInputJar;
 
@@ -48,7 +48,7 @@ public class MinecraftJarSplitter implements AutoCloseable {
 	private Set<String> sharedEntries = new HashSet<>();
 	private Set<String> forcedClientEntries = new HashSet<>();
 
-	public MinecraftJarSplitter(Path clientInputJar, Path serverInputJar) {
+	public ZomboidJarSplitter(Path clientInputJar, Path serverInputJar) {
 		this.clientInputJar = Objects.requireNonNull(clientInputJar);
 		this.serverInputJar = Objects.requireNonNull(serverInputJar);
 	}

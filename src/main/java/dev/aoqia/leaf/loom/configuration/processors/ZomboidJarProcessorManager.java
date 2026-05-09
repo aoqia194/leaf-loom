@@ -42,40 +42,40 @@ import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
-import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
 import dev.aoqia.leaf.loom.util.Checksum;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
-public final class MinecraftJarProcessorManager {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MinecraftJarProcessorManager.class);
+public final class ZomboidJarProcessorManager {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ZomboidJarProcessorManager.class);
 
 	private final List<ProcessorEntry<?>> jarProcessors;
 
-	private MinecraftJarProcessorManager(List<ProcessorEntry<?>> jarProcessors) {
+	private ZomboidJarProcessorManager(List<ProcessorEntry<?>> jarProcessors) {
 		this.jarProcessors = Collections.unmodifiableList(jarProcessors);
 	}
 
 	@Nullable
-	public static MinecraftJarProcessorManager create(Project project) {
+	public static ZomboidJarProcessorManager create(Project project) {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		List<MinecraftJarProcessor<?>> processors = new ArrayList<>(extension.getMinecraftJarProcessors().get());
+		List<ZomboidJarProcessor<?>> processors = new ArrayList<>(extension.getMinecraftJarProcessors().get());
 
 		for (JarProcessor legacyProcessor : extension.getGameJarProcessors().get()) {
 			processors.add(project.getObjects().newInstance(LegacyJarProcessorWrapper.class, legacyProcessor));
 		}
 
-		return MinecraftJarProcessorManager.create(processors, SpecContextImpl.create(project));
+		return ZomboidJarProcessorManager.create(processors, SpecContextImpl.create(project));
 	}
 
 	@Nullable
-	public static MinecraftJarProcessorManager create(List<MinecraftJarProcessor<?>> processors, SpecContext context) {
+	public static ZomboidJarProcessorManager create(List<ZomboidJarProcessor<?>> processors, SpecContext context) {
 		List<ProcessorEntry<?>> entries = new ArrayList<>();
 
-		for (MinecraftJarProcessor<?> processor : processors) {
+		for (ZomboidJarProcessor<?> processor : processors) {
 			LOGGER.debug("Building processor spec for {}", processor.getName());
-			MinecraftJarProcessor.Spec spec = processor.buildSpec(context);
+			ZomboidJarProcessor.Spec spec = processor.buildSpec(context);
 
 			if (spec != null) {
 				LOGGER.debug("Adding processor entry for {}", processor.getName());
@@ -88,7 +88,7 @@ public final class MinecraftJarProcessorManager {
 			return null;
 		}
 
-		return new MinecraftJarProcessorManager(entries);
+		return new ZomboidJarProcessorManager(entries);
 	}
 
 	private String getCacheValue() {
@@ -152,10 +152,10 @@ public final class MinecraftJarProcessorManager {
 		return transformed;
 	}
 
-	record ProcessorEntry<S extends MinecraftJarProcessor.Spec>(S spec, MinecraftJarProcessor<S> processor, @Nullable MinecraftJarProcessor.MappingsProcessor<S> mappingsProcessor) {
+	record ProcessorEntry<S extends ZomboidJarProcessor.Spec>(S spec, ZomboidJarProcessor<S> processor, @Nullable ZomboidJarProcessor.MappingsProcessor<S> mappingsProcessor) {
 		@SuppressWarnings("unchecked")
-		ProcessorEntry(MinecraftJarProcessor<?> processor, MinecraftJarProcessor.Spec spec) {
-			this((S) Objects.requireNonNull(spec), (MinecraftJarProcessor<S>) processor, (MinecraftJarProcessor.MappingsProcessor<S>) processor.processMappings());
+		ProcessorEntry(ZomboidJarProcessor<?> processor, ZomboidJarProcessor.Spec spec) {
+			this((S) Objects.requireNonNull(spec), (ZomboidJarProcessor<S>) processor, (ZomboidJarProcessor.MappingsProcessor<S>) processor.processMappings());
 		}
 
 		private void processJar(Path jar, ProcessorContext context) throws IOException {

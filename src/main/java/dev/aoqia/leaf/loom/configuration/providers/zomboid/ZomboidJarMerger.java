@@ -54,7 +54,7 @@ import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import dev.aoqia.leaf.loom.util.SnowmanClassVisitor;
 import dev.aoqia.leaf.loom.util.SyntheticParameterClassVisitor;
 
-public class MinecraftJarMerger implements AutoCloseable {
+public class ZomboidJarMerger implements AutoCloseable {
 	public static class Entry {
 		public final Path path;
 		public final BasicFileAttributes metadata;
@@ -67,7 +67,7 @@ public class MinecraftJarMerger implements AutoCloseable {
 		}
 	}
 
-	private final MinecraftClassMerger classMerger = new MinecraftClassMerger();
+	private final ZomboidClassMerger classMerger = new ZomboidClassMerger();
 	private final FileSystemUtil.Delegate inputClientFs, inputServerFs, outputFs;
 	private final Path inputClient, inputServer;
 	private final Map<String, Entry> entriesClient, entriesServer;
@@ -75,7 +75,7 @@ public class MinecraftJarMerger implements AutoCloseable {
 	private boolean removeSnowmen = false;
 	private boolean offsetSyntheticsParams = false;
 
-	public MinecraftJarMerger(File inputClient, File inputServer, File output) throws IOException {
+	public ZomboidJarMerger(File inputClient, File inputServer, File output) throws IOException {
 		if (output.exists()) {
 			if (!output.delete()) {
 				throw new IOException("Could not delete " + output.getName());
@@ -219,7 +219,7 @@ public class MinecraftJarMerger implements AutoCloseable {
 					ClassVisitor visitor = writer;
 
 					if (side != null) {
-						visitor = new MinecraftClassMerger.SidedClassVisitor(Constants.ASM_VERSION, visitor, side);
+						visitor = new ZomboidClassMerger.SidedClassVisitor(Constants.ASM_VERSION, visitor, side);
 					}
 
 					if (removeSnowmen) {

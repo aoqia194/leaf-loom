@@ -46,14 +46,14 @@ import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
 import dev.aoqia.leaf.loom.api.manifest.VersionsManifestsAPI;
 import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
-import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.remapping.RemapperExtension;
 import dev.aoqia.leaf.loom.api.remapping.RemapperParameters;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.leaf.loom.configuration.processors.JarProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.NoOpIntermediateMappingsProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ManifestLocations;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJarConfiguration;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.DeprecationHelper;
 
@@ -94,9 +94,9 @@ public interface LoomGradleExtensionAPI {
 		getGameJarProcessors().add(processor);
 	}
 
-	ListProperty<MinecraftJarProcessor<?>> getMinecraftJarProcessors();
+	ListProperty<ZomboidJarProcessor<?>> getMinecraftJarProcessors();
 
-	void addMinecraftJarProcessor(Class<? extends MinecraftJarProcessor<?>> clazz, Object... parameters);
+	void addMinecraftJarProcessor(Class<? extends ZomboidJarProcessor<?>> clazz, Object... parameters);
 
 	ConfigurableFileCollection getLog4jConfigs();
 
@@ -239,18 +239,18 @@ public interface LoomGradleExtensionAPI {
 	Property<String> getIntermediaryUrl();
 
 	@ApiStatus.Experimental
-	Property<MinecraftJarConfiguration<?, ?, ?>> getMinecraftJarConfiguration();
+	Property<ZomboidJarConfiguration<?, ?, ?>> getMinecraftJarConfiguration();
 
 	default void serverOnlyMinecraftJar() {
-		getMinecraftJarConfiguration().set(MinecraftJarConfiguration.SERVER_ONLY);
+		getMinecraftJarConfiguration().set(ZomboidJarConfiguration.SERVER_ONLY);
 	}
 
 	default void clientOnlyMinecraftJar() {
-		getMinecraftJarConfiguration().set(MinecraftJarConfiguration.CLIENT_ONLY);
+		getMinecraftJarConfiguration().set(ZomboidJarConfiguration.CLIENT_ONLY);
 	}
 
 	default void splitMinecraftJar() {
-		getMinecraftJarConfiguration().set(MinecraftJarConfiguration.SPLIT);
+		getMinecraftJarConfiguration().set(ZomboidJarConfiguration.SPLIT);
 	}
 
 	void splitEnvironmentSourceSets();

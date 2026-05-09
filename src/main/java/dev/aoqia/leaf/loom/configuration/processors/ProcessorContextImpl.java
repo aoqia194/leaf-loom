@@ -28,15 +28,15 @@ import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.configuration.ConfigContext;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJarConfiguration;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public record ProcessorContextImpl(ConfigContext configContext, MinecraftJar minecraftJar) implements ProcessorContext {
+public record ProcessorContextImpl(ConfigContext configContext, ZomboidJar minecraftJar) implements ProcessorContext {
 	@Override
-	public MinecraftJarConfiguration getJarConfiguration() {
+	public ZomboidJarConfiguration getJarConfiguration() {
 		return configContext.extension().getMinecraftJarConfiguration().get();
 	}
 

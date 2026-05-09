@@ -29,17 +29,17 @@ import java.util.List;
 import org.gradle.api.Project;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.LegacyMergedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.LegacyMergedZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarEnvType;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitZomboidProvider;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public abstract sealed class IntermediaryMinecraftProvider<M extends MinecraftProvider> extends AbstractMappedMinecraftProvider<M> permits IntermediaryMinecraftProvider.MergedImpl, IntermediaryMinecraftProvider.LegacyMergedImpl, IntermediaryMinecraftProvider.SingleJarImpl, IntermediaryMinecraftProvider.SplitImpl {
-	public IntermediaryMinecraftProvider(Project project, M minecraftProvider) {
+public abstract sealed class IntermediaryZomboidProvider<M extends ZomboidProvider> extends AbstractMappedZomboidProvider<M> permits IntermediaryZomboidProvider.MergedImpl, IntermediaryZomboidProvider.LegacyMergedImpl, IntermediaryZomboidProvider.SingleJarImpl, IntermediaryZomboidProvider.SplitImpl {
+	public IntermediaryZomboidProvider(Project project, M minecraftProvider) {
 		super(project, minecraftProvider);
 	}
 
@@ -53,8 +53,8 @@ public abstract sealed class IntermediaryMinecraftProvider<M extends MinecraftPr
 		return MavenScope.GLOBAL;
 	}
 
-	public static final class MergedImpl extends IntermediaryMinecraftProvider<MergedMinecraftProvider> implements Merged {
-		public MergedImpl(Project project, MergedMinecraftProvider minecraftProvider) {
+	public static final class MergedImpl extends IntermediaryZomboidProvider<MergedZomboidProvider> implements Merged {
+		public MergedImpl(Project project, MergedZomboidProvider minecraftProvider) {
 			super(project, minecraftProvider);
 		}
 
@@ -66,19 +66,19 @@ public abstract sealed class IntermediaryMinecraftProvider<M extends MinecraftPr
 		}
 	}
 
-	public static final class LegacyMergedImpl extends IntermediaryMinecraftProvider<LegacyMergedMinecraftProvider> implements Merged {
+	public static final class LegacyMergedImpl extends IntermediaryZomboidProvider<LegacyMergedZomboidProvider> implements Merged {
 		private final SingleJarImpl server;
 		private final SingleJarImpl client;
 
-		public LegacyMergedImpl(Project project, LegacyMergedMinecraftProvider minecraftProvider) {
+		public LegacyMergedImpl(Project project, LegacyMergedZomboidProvider minecraftProvider) {
 			super(project, minecraftProvider);
 			server = new SingleJarImpl(project, minecraftProvider.getServerMinecraftProvider(), SingleJarEnvType.SERVER);
 			client = new SingleJarImpl(project, minecraftProvider.getClientMinecraftProvider(), SingleJarEnvType.CLIENT);
 		}
 
 		@Override
-		public List<MinecraftJar> provide(ProvideContext context) throws Exception {
-			final List<MinecraftJar> minecraftJars = List.of(getMergedJar());
+		public List<ZomboidJar> provide(ProvideContext context) throws Exception {
+			final List<ZomboidJar> minecraftJars = List.of(getMergedJar());
 
 			// this check must be done before the client and server impls are provided
 			// because the merging only needs to happen if the remapping step is run
@@ -92,7 +92,7 @@ public abstract sealed class IntermediaryMinecraftProvider<M extends MinecraftPr
 
 			if (refreshOutputs) {
 				// then merge them
-				MergedMinecraftProvider.mergeJars(
+				MergedZomboidProvider.mergeJars(
 							client.getEnvOnlyJar().toFile(),
 							server.getEnvOnlyJar().toFile(),
 							getMergedJar().toFile()
@@ -118,13 +118,13 @@ public abstract sealed class IntermediaryMinecraftProvider<M extends MinecraftPr
 		}
 
 		@Override
-		public List<MinecraftJar.Type> getDependencyTypes() {
-			return List.of(MinecraftJar.Type.MERGED);
+		public List<ZomboidJar.Type> getDependencyTypes() {
+			return List.of(ZomboidJar.Type.MERGED);
 		}
 	}
 
-	public static final class SplitImpl extends IntermediaryMinecraftProvider<SplitMinecraftProvider> implements Split {
-		public SplitImpl(Project project, SplitMinecraftProvider minecraftProvider) {
+	public static final class SplitImpl extends IntermediaryZomboidProvider<SplitZomboidProvider> implements Split {
+		public SplitImpl(Project project, SplitZomboidProvider minecraftProvider) {
 			super(project, minecraftProvider);
 		}
 
@@ -142,19 +142,19 @@ public abstract sealed class IntermediaryMinecraftProvider<M extends MinecraftPr
 		}
 	}
 
-	public static final class SingleJarImpl extends IntermediaryMinecraftProvider<SingleJarMinecraftProvider> implements SingleJar {
+	public static final class SingleJarImpl extends IntermediaryZomboidProvider<SingleJarZomboidProvider> implements SingleJar {
 		private final SingleJarEnvType env;
 
-		private SingleJarImpl(Project project, SingleJarMinecraftProvider minecraftProvider, SingleJarEnvType env) {
+		private SingleJarImpl(Project project, SingleJarZomboidProvider minecraftProvider, SingleJarEnvType env) {
 			super(project, minecraftProvider);
 			this.env = env;
 		}
 
-		public static SingleJarImpl server(Project project, SingleJarMinecraftProvider minecraftProvider) {
+		public static SingleJarImpl server(Project project, SingleJarZomboidProvider minecraftProvider) {
 			return new SingleJarImpl(project, minecraftProvider, SingleJarEnvType.SERVER);
 		}
 
-		public static SingleJarImpl client(Project project, SingleJarMinecraftProvider minecraftProvider) {
+		public static SingleJarImpl client(Project project, SingleJarZomboidProvider minecraftProvider) {
 			return new SingleJarImpl(project, minecraftProvider, SingleJarEnvType.CLIENT);
 		}
 

@@ -36,24 +36,24 @@ import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public abstract sealed class SingleJarMinecraftProvider extends MinecraftProvider permits SingleJarMinecraftProvider.Server, SingleJarMinecraftProvider.Client {
+public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider permits SingleJarZomboidProvider.Server, SingleJarZomboidProvider.Client {
 	private final MappingsNamespace officialNamespace;
 	private Path minecraftEnvOnlyJar;
 
-	private SingleJarMinecraftProvider(MinecraftMetadataProvider metadataProvider, ConfigContext configContext, MappingsNamespace officialNamespace) {
+	private SingleJarZomboidProvider(ZomboidMetadataProvider metadataProvider, ConfigContext configContext, MappingsNamespace officialNamespace) {
 		super(metadataProvider, configContext);
 		this.officialNamespace = officialNamespace;
 	}
 
-	public static SingleJarMinecraftProvider.Server server(MinecraftMetadataProvider metadataProvider, ConfigContext configContext) {
-		return new SingleJarMinecraftProvider.Server(metadataProvider, configContext, getOfficialNamespace(metadataProvider, true));
+	public static SingleJarZomboidProvider.Server server(ZomboidMetadataProvider metadataProvider, ConfigContext configContext) {
+		return new SingleJarZomboidProvider.Server(metadataProvider, configContext, getOfficialNamespace(metadataProvider, true));
 	}
 
-	public static SingleJarMinecraftProvider.Client client(MinecraftMetadataProvider metadataProvider, ConfigContext configContext) {
-		return new SingleJarMinecraftProvider.Client(metadataProvider, configContext, getOfficialNamespace(metadataProvider, false));
+	public static SingleJarZomboidProvider.Client client(ZomboidMetadataProvider metadataProvider, ConfigContext configContext) {
+		return new SingleJarZomboidProvider.Client(metadataProvider, configContext, getOfficialNamespace(metadataProvider, false));
 	}
 
-	private static MappingsNamespace getOfficialNamespace(MinecraftMetadataProvider metadataProvider, boolean server) {
+	private static MappingsNamespace getOfficialNamespace(ZomboidMetadataProvider metadataProvider, boolean server) {
 		// Some versions before 1.3 don't have a common namespace, so use side specific namespaces.
 		if (metadataProvider.getVersionMeta().isLegacySplitOfficialNamespaceVersion()) {
 			return server ? MappingsNamespace.SERVER_OFFICIAL : MappingsNamespace.CLIENT_OFFICIAL;
@@ -125,10 +125,10 @@ public abstract sealed class SingleJarMinecraftProvider extends MinecraftProvide
 
 	abstract SingleJarEnvType type();
 
-	abstract Path getInputJar(SingleJarMinecraftProvider provider) throws Exception;
+	abstract Path getInputJar(SingleJarZomboidProvider provider) throws Exception;
 
-	public static final class Server extends SingleJarMinecraftProvider {
-		private Server(MinecraftMetadataProvider metadataProvider, ConfigContext configContext, MappingsNamespace officialNamespace) {
+	public static final class Server extends SingleJarZomboidProvider {
+		private Server(ZomboidMetadataProvider metadataProvider, ConfigContext configContext, MappingsNamespace officialNamespace) {
 			super(metadataProvider, configContext, officialNamespace);
 		}
 
@@ -138,7 +138,7 @@ public abstract sealed class SingleJarMinecraftProvider extends MinecraftProvide
 		}
 
 		@Override
-		public Path getInputJar(SingleJarMinecraftProvider provider) {
+		public Path getInputJar(SingleJarZomboidProvider provider) {
 			BundleMetadata serverBundleMetadata = provider.getServerBundleMetadata();
 
 			if (serverBundleMetadata == null) {
@@ -159,8 +159,8 @@ public abstract sealed class SingleJarMinecraftProvider extends MinecraftProvide
 		}
 	}
 
-	public static final class Client extends SingleJarMinecraftProvider {
-		private Client(MinecraftMetadataProvider metadataProvider, ConfigContext configContext, MappingsNamespace officialNamespace) {
+	public static final class Client extends SingleJarZomboidProvider {
+		private Client(ZomboidMetadataProvider metadataProvider, ConfigContext configContext, MappingsNamespace officialNamespace) {
 			super(metadataProvider, configContext, officialNamespace);
 		}
 
@@ -170,7 +170,7 @@ public abstract sealed class SingleJarMinecraftProvider extends MinecraftProvide
 		}
 
 		@Override
-		public Path getInputJar(SingleJarMinecraftProvider provider) throws Exception {
+		public Path getInputJar(SingleJarZomboidProvider provider) throws Exception {
 			return provider.getMinecraftClientJar().toPath();
 		}
 

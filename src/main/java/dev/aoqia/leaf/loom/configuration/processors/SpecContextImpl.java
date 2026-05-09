@@ -45,7 +45,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.util.AsyncCache;
 import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
 import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
@@ -143,7 +143,7 @@ public record SpecContextImpl(
 				projectView,
 				fmjCache,
 				projectView.extension().getRuntimeRemapConfigurations().stream()
-						.filter(settings -> settings.getSourceSet().map(sourceSet -> !sourceSet.getName().equals(MinecraftSourceSets.Split.CLIENT_ONLY_SOURCE_SET_NAME)).get())
+						.filter(settings -> settings.getSourceSet().map(sourceSet -> !sourceSet.getName().equals(ZomboidSourceSets.Split.CLIENT_ONLY_SOURCE_SET_NAME)).get())
 						.filter(settings -> settings.getApplyDependencyTransforms().get()))
 				: null;
 

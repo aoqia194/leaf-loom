@@ -34,25 +34,25 @@ import dev.aoqia.leaf.loom.configuration.ConfigContext;
  * Minecraft versions prior to 1.3 obfuscate the server and client jars differently.
  * The obfuscated jars must be provided separately, and can be merged after remapping.
  */
-public final class LegacyMergedMinecraftProvider extends MinecraftProvider {
-	private final SingleJarMinecraftProvider.Server serverMinecraftProvider;
-	private final SingleJarMinecraftProvider.Client clientMinecraftProvider;
+public final class LegacyMergedZomboidProvider extends ZomboidProvider {
+	private final SingleJarZomboidProvider.Server serverMinecraftProvider;
+	private final SingleJarZomboidProvider.Client clientMinecraftProvider;
 
-	public LegacyMergedMinecraftProvider(MinecraftMetadataProvider metadataProvider, ConfigContext configContext) {
+	public LegacyMergedZomboidProvider(ZomboidMetadataProvider metadataProvider, ConfigContext configContext) {
 		super(metadataProvider, configContext);
-		serverMinecraftProvider = SingleJarMinecraftProvider.server(metadataProvider, configContext);
-		clientMinecraftProvider = SingleJarMinecraftProvider.client(metadataProvider, configContext);
+		serverMinecraftProvider = SingleJarZomboidProvider.server(metadataProvider, configContext);
+		clientMinecraftProvider = SingleJarZomboidProvider.client(metadataProvider, configContext);
 
 		if (!isLegacyVersion()) {
 			throw new RuntimeException("something has gone wrong - legacy-merged jar configuration selected but Minecraft " + metadataProvider.getMinecraftVersion() + " allows merging the obfuscated jars - the merged jar configuration should have been selected!");
 		}
 	}
 
-	public SingleJarMinecraftProvider.Server getServerMinecraftProvider() {
+	public SingleJarZomboidProvider.Server getServerMinecraftProvider() {
 		return serverMinecraftProvider;
 	}
 
-	public SingleJarMinecraftProvider.Client getClientMinecraftProvider() {
+	public SingleJarZomboidProvider.Client getClientMinecraftProvider() {
 		return clientMinecraftProvider;
 	}
 

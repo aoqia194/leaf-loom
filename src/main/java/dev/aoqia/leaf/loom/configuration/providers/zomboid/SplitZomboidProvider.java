@@ -32,11 +32,11 @@ import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
 
-public final class SplitMinecraftProvider extends MinecraftProvider {
+public final class SplitZomboidProvider extends ZomboidProvider {
 	private Path minecraftClientOnlyJar;
 	private Path minecraftCommonJar;
 
-	public SplitMinecraftProvider(MinecraftMetadataProvider metadataProvider, ConfigContext configContext) {
+	public SplitZomboidProvider(ZomboidMetadataProvider metadataProvider, ConfigContext configContext) {
 		super(metadataProvider, configContext);
 	}
 
@@ -77,7 +77,7 @@ public final class SplitMinecraftProvider extends MinecraftProvider {
 		final Path clientJar = getMinecraftClientJar().toPath();
 		final Path serverJar = getMinecraftExtractedServerJar().toPath();
 
-		try (MinecraftJarSplitter jarSplitter = new MinecraftJarSplitter(clientJar, serverJar)) {
+		try (ZomboidJarSplitter jarSplitter = new ZomboidJarSplitter(clientJar, serverJar)) {
 			// Required for loader to compute the version info also useful to have in both jars.
 			jarSplitter.sharedEntry("version.json");
 			jarSplitter.sharedEntry("assets/.mcassetsroot");

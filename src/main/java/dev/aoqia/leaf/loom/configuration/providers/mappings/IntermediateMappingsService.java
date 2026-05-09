@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import dev.aoqia.leaf.loom.util.Lazy;
 import dev.aoqia.leaf.loom.util.service.Service;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
@@ -74,7 +74,7 @@ public final class IntermediateMappingsService extends Service<IntermediateMappi
 		super(options, serviceFactory);
 	}
 
-	public static Provider<Options> createOptions(Project project, MinecraftProvider minecraftProvider) {
+	public static Provider<Options> createOptions(Project project, ZomboidProvider minecraftProvider) {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
 		final IntermediateMappingsProvider intermediateProvider = extension.getIntermediateMappingsProvider();
 		final Path intermediaryTiny = minecraftProvider.file(intermediateProvider.getName() + ".tiny").toPath();
@@ -98,7 +98,7 @@ public final class IntermediateMappingsService extends Service<IntermediateMappi
 		return createOptions(project, minecraftProvider, intermediaryTiny);
 	}
 
-	private static Provider<Options> createOptions(Project project, MinecraftProvider minecraftProvider, Path intermediaryTiny) {
+	private static Provider<Options> createOptions(Project project, ZomboidProvider minecraftProvider, Path intermediaryTiny) {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
 		final IntermediateMappingsProvider intermediateProvider = extension.getIntermediateMappingsProvider();
 		// When merging legacy versions there will be multiple named namespaces, so use intermediary as the common src ns

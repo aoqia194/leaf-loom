@@ -73,8 +73,8 @@ import org.jetbrains.annotations.Nullable;
 import dev.aoqia.leaf.loom.api.decompilers.DecompilationMetadata;
 import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
 import dev.aoqia.leaf.loom.api.decompilers.LoomDecompiler;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.AbstractMappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.AbstractMappedZomboidProvider;
 import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers;
 import dev.aoqia.leaf.loom.decompilers.LineNumberRemapper;
 import dev.aoqia.leaf.loom.decompilers.cache.CachedData;
@@ -106,7 +106,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 	private final DecompilerOptions decompilerOptions;
 
 	/**
-	 * The jar name to decompile, {@link MinecraftJar#getName()}.
+	 * The jar name to decompile, {@link ZomboidJar#getName()}.
 	 */
 	@Input
 	public abstract Property<String> getInputJarName();
@@ -184,11 +184,11 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 		this.decompilerOptions = decompilerOptions;
 
 		getClassesInputJar().setFrom(getInputJarName().map(minecraftJarName -> {
-			final List<MinecraftJar> minecraftJars = getExtension().getNamedMinecraftProvider().getMinecraftJars();
+			final List<ZomboidJar> minecraftJars = getExtension().getNamedMinecraftProvider().getMinecraftJars();
 
-			for (MinecraftJar minecraftJar : minecraftJars) {
+			for (ZomboidJar minecraftJar : minecraftJars) {
 				if (minecraftJar.getName().equals(minecraftJarName)) {
-					final Path backupJarPath = AbstractMappedMinecraftProvider.getBackupJarPath(minecraftJar);
+					final Path backupJarPath = AbstractMappedZomboidProvider.getBackupJarPath(minecraftJar);
 
 					if (Files.notExists(backupJarPath)) {
 						throw new IllegalStateException("Input minecraft jar not found at: " + backupJarPath);
@@ -201,9 +201,9 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 			throw new IllegalStateException("Input minecraft jar not found: " + getInputJarName().get());
 		}));
 		getClassesOutputJar().setFrom(getInputJarName().map(minecraftJarName -> {
-			final List<MinecraftJar> minecraftJars = getExtension().getNamedMinecraftProvider().getMinecraftJars();
+			final List<ZomboidJar> minecraftJars = getExtension().getNamedMinecraftProvider().getMinecraftJars();
 
-			for (MinecraftJar minecraftJar : minecraftJars) {
+			for (ZomboidJar minecraftJar : minecraftJars) {
 				if (minecraftJar.getName().equals(minecraftJarName)) {
 					return minecraftJar.toFile();
 				}

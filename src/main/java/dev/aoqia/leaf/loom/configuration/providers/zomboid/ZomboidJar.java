@@ -28,12 +28,12 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public abstract sealed class MinecraftJar permits MinecraftJar.Client, MinecraftJar.ClientOnly, MinecraftJar.Common, MinecraftJar.Merged, MinecraftJar.Server {
+public abstract sealed class ZomboidJar permits ZomboidJar.Client, ZomboidJar.ClientOnly, ZomboidJar.Common, ZomboidJar.Merged, ZomboidJar.Server {
 	private final Path path;
 	private final boolean merged, client, server;
 	private final Type type;
 
-	protected MinecraftJar(Path path, boolean merged, boolean client, boolean server, Type type) {
+	protected ZomboidJar(Path path, boolean merged, boolean client, boolean server, Type type) {
 		this.path = Objects.requireNonNull(path);
 		this.merged = merged;
 		this.client = client;
@@ -69,61 +69,61 @@ public abstract sealed class MinecraftJar permits MinecraftJar.Client, Minecraft
 		return type;
 	}
 
-	public abstract MinecraftJar forPath(Path path);
+	public abstract ZomboidJar forPath(Path path);
 
-	public static final class Merged extends MinecraftJar {
+	public static final class Merged extends ZomboidJar {
 		public Merged(Path path) {
 			super(path, true, true, true, Type.MERGED);
 		}
 
 		@Override
-		public MinecraftJar forPath(Path path) {
+		public ZomboidJar forPath(Path path) {
 			return new Merged(path);
 		}
 	}
 
-	public static final class Common extends MinecraftJar {
+	public static final class Common extends ZomboidJar {
 		public Common(Path path) {
 			super(path, false, false, true, Type.COMMON);
 		}
 
 		@Override
-		public MinecraftJar forPath(Path path) {
+		public ZomboidJar forPath(Path path) {
 			return new Common(path);
 		}
 	}
 
-	public static final class Server extends MinecraftJar {
+	public static final class Server extends ZomboidJar {
 		public Server(Path path) {
 			super(path, false, false, true, Type.SERVER);
 		}
 
 		@Override
-		public MinecraftJar forPath(Path path) {
+		public ZomboidJar forPath(Path path) {
 			return new Server(path);
 		}
 	}
 
 	// Un-split client jar
-	public static final class Client extends MinecraftJar {
+	public static final class Client extends ZomboidJar {
 		public Client(Path path) {
 			super(path, false, true, false, Type.CLIENT);
 		}
 
 		@Override
-		public MinecraftJar forPath(Path path) {
+		public ZomboidJar forPath(Path path) {
 			return new Client(path);
 		}
 	}
 
 	// Split client jar
-	public static final class ClientOnly extends MinecraftJar {
+	public static final class ClientOnly extends ZomboidJar {
 		public ClientOnly(Path path) {
 			super(path, false, true, false, Type.CLIENT_ONLY);
 		}
 
 		@Override
-		public MinecraftJar forPath(Path path) {
+		public ZomboidJar forPath(Path path) {
 			return new ClientOnly(path);
 		}
 	}

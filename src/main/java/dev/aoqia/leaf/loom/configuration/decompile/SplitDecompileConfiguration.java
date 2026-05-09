@@ -30,26 +30,26 @@ import org.gradle.api.Task;
 import org.gradle.api.tasks.TaskProvider;
 
 import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Strings;
 
-public final class SplitDecompileConfiguration extends DecompileConfiguration<MappedMinecraftProvider.Split> {
-	public SplitDecompileConfiguration(Project project, MappedMinecraftProvider.Split minecraftProvider) {
+public final class SplitDecompileConfiguration extends DecompileConfiguration<MappedZomboidProvider.Split> {
+	public SplitDecompileConfiguration(Project project, MappedZomboidProvider.Split minecraftProvider) {
 		super(project, minecraftProvider);
 	}
 
 	@Override
-	public String getTaskName(MinecraftJar.Type type) {
+	public String getTaskName(ZomboidJar.Type type) {
 		return "gen%sSources".formatted(Strings.capitalize(type.toString()));
 	}
 
 	@Override
 	public void afterEvaluation() {
-		final MinecraftJar commonJar = minecraftProvider.getCommonJar();
-		final MinecraftJar clientOnlyJar = minecraftProvider.getClientOnlyJar();
+		final ZomboidJar commonJar = minecraftProvider.getCommonJar();
+		final ZomboidJar clientOnlyJar = minecraftProvider.getClientOnlyJar();
 
 		final TaskProvider<Task> commonDecompileTask = createDecompileTasks("Common", task -> {
 			task.getInputJarName().set(commonJar.getName());

@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.classtweaker.api.ClassTweaker;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
@@ -48,7 +48,7 @@ import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public class AccessWidenerJarProcessor implements MinecraftJarProcessor<AccessWidenerJarProcessor.Spec> {
+public class AccessWidenerJarProcessor implements ZomboidJarProcessor<AccessWidenerJarProcessor.Spec> {
 	private final String name;
 	private final boolean includeTransitive;
 	private final RegularFileProperty localAccessWidenerProperty;
@@ -101,7 +101,7 @@ public class AccessWidenerJarProcessor implements MinecraftJarProcessor<AccessWi
 		return name;
 	}
 
-	public record Spec(List<AccessWidenerEntry> accessWideners) implements MinecraftJarProcessor.Spec {
+	public record Spec(List<AccessWidenerEntry> accessWideners) implements ZomboidJarProcessor.Spec {
 		List<AccessWidenerEntry> accessWidenersForContext(ProcessorContext context) {
 			return accessWideners.stream()
 					.filter(entry -> isSupported(entry.environment(), context))

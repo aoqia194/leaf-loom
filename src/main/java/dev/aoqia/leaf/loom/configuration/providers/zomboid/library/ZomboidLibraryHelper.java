@@ -33,19 +33,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.util.Platform;
 
 /**
  * Utils to get the Minecraft libraries for a given platform, no processing is applied.
  */
-public class MinecraftLibraryHelper {
+public class ZomboidLibraryHelper {
 	private static final Pattern NATIVES_PATTERN = Pattern.compile("^(?<group>.*)/(.*?)/(?<version>.*)/((?<name>.*?)-(\\k<version>)-)(?<classifier>.*).jar$");
 
-	public static List<Library> getLibrariesForPlatform(MinecraftVersionMeta versionMeta, Platform platform) {
+	public static List<Library> getLibrariesForPlatform(ZomboidVersionMeta versionMeta, Platform platform) {
 		var libraries = new ArrayList<Library>();
 
-		for (MinecraftVersionMeta.Library library : versionMeta.libraries()) {
+		for (ZomboidVersionMeta.Library library : versionMeta.libraries()) {
 			if (!library.isValidForOS(platform)) {
 				continue;
 			}
@@ -62,7 +62,7 @@ public class MinecraftLibraryHelper {
 			}
 
 			if (library.hasNativesForOS(platform)) {
-				final MinecraftVersionMeta.Download download = library.classifierForOS(platform);
+				final ZomboidVersionMeta.Download download = library.classifierForOS(platform);
 
 				if (download != null) {
 					libraries.add(downloadToLibrary(download));
@@ -73,10 +73,10 @@ public class MinecraftLibraryHelper {
 		return Collections.unmodifiableList(libraries);
 	}
 
-	public static List<Library> getAllLibraries(MinecraftVersionMeta versionMeta) {
+	public static List<Library> getAllLibraries(ZomboidVersionMeta versionMeta) {
 		var libraries = new ArrayList<Library>();
 
-		for (MinecraftVersionMeta.Library library : versionMeta.libraries()) {
+		for (ZomboidVersionMeta.Library library : versionMeta.libraries()) {
 			if (library.artifact() != null) {
 				Library mavenLib = Library.fromMaven(library.name(), Library.Target.COMPILE);
 
@@ -88,13 +88,13 @@ public class MinecraftLibraryHelper {
 				libraries.add(mavenLib);
 			}
 
-			Map<String, MinecraftVersionMeta.Download> classifiers = library.downloads().classifiers();
+			Map<String, ZomboidVersionMeta.Download> classifiers = library.downloads().classifiers();
 
 			if (classifiers == null) {
 				continue;
 			}
 
-			for (MinecraftVersionMeta.Download download : classifiers.values()) {
+			for (ZomboidVersionMeta.Download download : classifiers.values()) {
 				libraries.add(downloadToLibrary(download));
 			}
 		}
@@ -102,7 +102,7 @@ public class MinecraftLibraryHelper {
 		return Collections.unmodifiableList(libraries);
 	}
 
-	private static Library downloadToLibrary(MinecraftVersionMeta.Download download) {
+	private static Library downloadToLibrary(ZomboidVersionMeta.Download download) {
 		final String path = download.path();
 		final Matcher matcher = NATIVES_PATTERN.matcher(path);
 

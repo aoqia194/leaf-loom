@@ -35,13 +35,13 @@ import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
-import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public final class TransitiveAccessWidenerMappingsProcessor implements MinecraftJarProcessor.MappingsProcessor<AccessWidenerJarProcessor.Spec> {
+public final class TransitiveAccessWidenerMappingsProcessor implements ZomboidJarProcessor.MappingsProcessor<AccessWidenerJarProcessor.Spec> {
 	public static final TransitiveAccessWidenerMappingsProcessor INSTANCE = new TransitiveAccessWidenerMappingsProcessor();
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TransitiveAccessWidenerMappingsProcessor.class);

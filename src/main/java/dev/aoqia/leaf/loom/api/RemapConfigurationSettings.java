@@ -40,7 +40,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 
 /**
  * A {@link Named} object for configuring "proxy" configurations that remap artifacts.
@@ -142,7 +142,7 @@ public abstract class RemapConfigurationSettings implements Named {
 	}
 
 	private Provider<Boolean> defaultDependencyTransforms() {
-		return getSourceSet().map(sourceSet -> sourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME) || sourceSet.getName().equals(MinecraftSourceSets.Split.CLIENT_ONLY_SOURCE_SET_NAME));
+		return getSourceSet().map(sourceSet -> sourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME) || sourceSet.getName().equals(ZomboidSourceSets.Split.CLIENT_ONLY_SOURCE_SET_NAME));
 	}
 
 	@Override

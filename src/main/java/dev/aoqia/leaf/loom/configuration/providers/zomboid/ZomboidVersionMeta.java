@@ -35,7 +35,7 @@ import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
 
 @SuppressWarnings("unused")
-public record MinecraftVersionMeta(
+public record ZomboidVersionMeta(
 		Object arguments,
 		AssetIndex assetIndex,
 		String assets,

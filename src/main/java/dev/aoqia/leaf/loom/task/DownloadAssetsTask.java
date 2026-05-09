@@ -40,7 +40,7 @@ import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.assets.AssetIndex;
 import dev.aoqia.leaf.loom.util.MirrorUtil;
 import dev.aoqia.leaf.loom.util.download.DownloadExecutor;
@@ -78,7 +78,7 @@ public abstract class DownloadAssetsTask extends AbstractLoomTask {
 
 	@Inject
 	public DownloadAssetsTask() {
-		final MinecraftVersionMeta versionInfo = getExtension().getMinecraftProvider().getVersionInfo();
+		final ZomboidVersionMeta versionInfo = getExtension().getMinecraftProvider().getVersionInfo();
 		final File assetsDir = new File(getExtension().getFiles().getUserCache(), "assets");
 
 		getAssetsDirectory().set(assetsDir);
@@ -126,7 +126,7 @@ public abstract class DownloadAssetsTask extends AbstractLoomTask {
 	}
 
 	private AssetIndex getAssetIndex() throws IOException {
-		final MinecraftVersionMeta.AssetIndex assetIndex = LoomGradlePlugin.GSON.fromJson(getAssetsIndexJson().get(), MinecraftVersionMeta.AssetIndex.class);
+		final ZomboidVersionMeta.AssetIndex assetIndex = LoomGradlePlugin.GSON.fromJson(getAssetsIndexJson().get(), ZomboidVersionMeta.AssetIndex.class);
 		final File indexFile = new File(getAssetsDirectory().get().getAsFile(), "indexes" + File.separator + assetIndex.fabricId(getMinecraftVersion().get()) + ".json");
 
 		final String json = getDownloadFactory().download(assetIndex.url())

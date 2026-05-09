@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.util.Checksum;
 
-public abstract class MinecraftJarVerification {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MinecraftJarVerification.class);
+public abstract class ZomboidJarVerification {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ZomboidJarVerification.class);
 
 	private final String minecraftVersion;
 
@@ -46,7 +46,7 @@ public abstract class MinecraftJarVerification {
 	protected abstract Project getProject();
 
 	@Inject
-	public MinecraftJarVerification(String minecraftVersion) {
+	public ZomboidJarVerification(String minecraftVersion) {
 		this.minecraftVersion = minecraftVersion;
 	}
 

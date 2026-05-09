@@ -32,7 +32,7 @@ import org.gradle.api.artifacts.MinimalExternalModuleDependency;
 import org.gradle.api.logging.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
@@ -48,7 +48,7 @@ public interface MappingContext {
 
 	boolean isUsingIntermediateMappings();
 
-	MinecraftProvider minecraftProvider();
+	ZomboidProvider minecraftProvider();
 
 	default String minecraftVersion() {
 		return minecraftProvider().minecraftVersion();

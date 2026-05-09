@@ -50,11 +50,11 @@ import dev.aoqia.leaf.loom.configuration.providers.mappings.IntermediaryMappings
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingsFactory;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.NoOpIntermediateMappingsProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftMetadataProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidMetadataProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
 import dev.aoqia.leaf.loom.util.download.Download;
 import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
 
@@ -67,11 +67,11 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	private final List<AccessWidenerFile> transitiveAccessWideners = new ArrayList<>();
 
 	private LoomDependencyManager dependencyManager;
-	private MinecraftMetadataProvider metadataProvider;
-	private MinecraftProvider minecraftProvider;
+	private ZomboidMetadataProvider metadataProvider;
+	private ZomboidProvider minecraftProvider;
 	private MappingConfiguration mappingConfiguration;
-	private NamedMinecraftProvider<?> namedMinecraftProvider;
-	private IntermediaryMinecraftProvider<?> intermediaryMinecraftProvider;
+	private NamedZomboidProvider<?> namedMinecraftProvider;
+	private IntermediaryZomboidProvider<?> intermediaryMinecraftProvider;
 	private InstallerData installerData;
 	private boolean refreshDeps;
 	private final ListProperty<LibraryProcessorManager.LibraryProcessorFactory> libraryProcessorFactories;
@@ -139,22 +139,22 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	}
 
 	@Override
-	public MinecraftMetadataProvider getMetadataProvider() {
+	public ZomboidMetadataProvider getMetadataProvider() {
 		return Objects.requireNonNull(metadataProvider, "Cannot get MinecraftMetadataProvider before it has been setup");
 	}
 
 	@Override
-	public void setMetadataProvider(MinecraftMetadataProvider metadataProvider) {
+	public void setMetadataProvider(ZomboidMetadataProvider metadataProvider) {
 		this.metadataProvider = metadataProvider;
 	}
 
 	@Override
-	public MinecraftProvider getMinecraftProvider() {
+	public ZomboidProvider getMinecraftProvider() {
 		return Objects.requireNonNull(minecraftProvider, "Cannot get MinecraftProvider before it has been setup");
 	}
 
 	@Override
-	public void setMinecraftProvider(MinecraftProvider minecraftProvider) {
+	public void setMinecraftProvider(ZomboidProvider minecraftProvider) {
 		this.minecraftProvider = minecraftProvider;
 	}
 
@@ -169,22 +169,22 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	}
 
 	@Override
-	public NamedMinecraftProvider<?> getNamedMinecraftProvider() {
+	public NamedZomboidProvider<?> getNamedMinecraftProvider() {
 		return Objects.requireNonNull(namedMinecraftProvider, "Cannot get NamedMinecraftProvider before it has been setup");
 	}
 
 	@Override
-	public IntermediaryMinecraftProvider<?> getIntermediaryMinecraftProvider() {
+	public IntermediaryZomboidProvider<?> getIntermediaryMinecraftProvider() {
 		return Objects.requireNonNull(intermediaryMinecraftProvider, "Cannot get IntermediaryMinecraftProvider before it has been setup");
 	}
 
 	@Override
-	public void setNamedMinecraftProvider(NamedMinecraftProvider<?> namedMinecraftProvider) {
+	public void setNamedMinecraftProvider(NamedZomboidProvider<?> namedMinecraftProvider) {
 		this.namedMinecraftProvider = namedMinecraftProvider;
 	}
 
 	@Override
-	public void setIntermediaryMinecraftProvider(IntermediaryMinecraftProvider<?> intermediaryMinecraftProvider) {
+	public void setIntermediaryMinecraftProvider(IntermediaryZomboidProvider<?> intermediaryMinecraftProvider) {
 		this.intermediaryMinecraftProvider = intermediaryMinecraftProvider;
 	}
 

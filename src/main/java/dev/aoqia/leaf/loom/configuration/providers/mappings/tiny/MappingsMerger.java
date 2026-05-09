@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.IntermediateMappingsService;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.format.tiny.Tiny2FileReader;
 import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
@@ -49,7 +49,7 @@ import net.fabricmc.mappingio.tree.MemoryMappingTree;
 public final class MappingsMerger {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MappingsMerger.class);
 
-	public static void mergeAndSaveMappings(Path from, Path out, MinecraftProvider minecraftProvider, IntermediateMappingsService intermediateMappingsService) throws IOException {
+	public static void mergeAndSaveMappings(Path from, Path out, ZomboidProvider minecraftProvider, IntermediateMappingsService intermediateMappingsService) throws IOException {
 		long start = System.currentTimeMillis();
 		LOGGER.info(":merging mappings");
 

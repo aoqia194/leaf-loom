@@ -28,10 +28,10 @@ import org.gradle.api.Project;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 
-public abstract class DecompileConfiguration<T extends MappedMinecraftProvider> {
+public abstract class DecompileConfiguration<T extends MappedZomboidProvider> {
 	static final String DEFAULT_DECOMPILER = "Vineflower";
 
 	protected final Project project;
@@ -46,7 +46,7 @@ public abstract class DecompileConfiguration<T extends MappedMinecraftProvider> 
 		this.mappingConfiguration = extension.getMappingConfiguration();
 	}
 
-	public abstract String getTaskName(MinecraftJar.Type type);
+	public abstract String getTaskName(ZomboidJar.Type type);
 
 	public abstract void afterEvaluation();
 }

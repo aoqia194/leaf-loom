@@ -40,12 +40,12 @@ import dev.aoqia.leaf.loom.util.Check;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
-public abstract sealed class MinecraftSourceSets permits MinecraftSourceSets.Single, MinecraftSourceSets.Split {
-	public static MinecraftSourceSets get(Project project) {
+public abstract sealed class ZomboidSourceSets permits ZomboidSourceSets.Single, ZomboidSourceSets.Split {
+	public static ZomboidSourceSets get(Project project) {
 		return LoomGradleExtension.get(project).areEnvironmentSourceSetsSplit() ? Split.INSTANCE : Single.INSTANCE;
 	}
 
-	public abstract void applyDependencies(BiConsumer<String, MinecraftJar.Type> consumer, List<MinecraftJar.Type> targets);
+	public abstract void applyDependencies(BiConsumer<String, ZomboidJar.Type> consumer, List<ZomboidJar.Type> targets);
 
 	public abstract String getSourceSetForEnv(String env);
 
@@ -90,7 +90,7 @@ public abstract sealed class MinecraftSourceSets permits MinecraftSourceSets.Sin
 	/**
 	 * Used when we have a single source set, either with split or merged jars.
 	 */
-	public static final class Single extends MinecraftSourceSets {
+	public static final class Single extends ZomboidSourceSets {
 		private static final ConfigurationName MINECRAFT_NAMED = new ConfigurationName(
 				"minecraftNamed",
 				Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES,
@@ -100,8 +100,8 @@ public abstract sealed class MinecraftSourceSets permits MinecraftSourceSets.Sin
 		private static final Single INSTANCE = new Single();
 
 		@Override
-		public void applyDependencies(BiConsumer<String, MinecraftJar.Type> consumer, List<MinecraftJar.Type> targets) {
-			for (MinecraftJar.Type target : targets) {
+		public void applyDependencies(BiConsumer<String, ZomboidJar.Type> consumer, List<ZomboidJar.Type> targets) {
+			for (ZomboidJar.Type target : targets) {
 				consumer.accept(MINECRAFT_NAMED.compile(), target);
 				consumer.accept(MINECRAFT_NAMED.runtime(), target);
 			}
@@ -132,7 +132,7 @@ public abstract sealed class MinecraftSourceSets permits MinecraftSourceSets.Sin
 	/**
 	 * Used when we have a split client/common source set and split jars.
 	 */
-	public static final class Split extends MinecraftSourceSets {
+	public static final class Split extends ZomboidSourceSets {
 		private static final ConfigurationName MINECRAFT_COMMON_NAMED = new ConfigurationName(
 				"minecraftCommonNamed",
 				Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES,
@@ -150,15 +150,15 @@ public abstract sealed class MinecraftSourceSets permits MinecraftSourceSets.Sin
 		private static final Split INSTANCE = new Split();
 
 		@Override
-		public void applyDependencies(BiConsumer<String, MinecraftJar.Type> consumer, List<MinecraftJar.Type> targets) {
+		public void applyDependencies(BiConsumer<String, ZomboidJar.Type> consumer, List<ZomboidJar.Type> targets) {
 			Check.require(targets.size() == 2);
-			Check.require(targets.contains(MinecraftJar.Type.COMMON));
-			Check.require(targets.contains(MinecraftJar.Type.CLIENT_ONLY));
+			Check.require(targets.contains(ZomboidJar.Type.COMMON));
+			Check.require(targets.contains(ZomboidJar.Type.CLIENT_ONLY));
 
-			consumer.accept(MINECRAFT_COMMON_NAMED.runtime(), MinecraftJar.Type.COMMON);
-			consumer.accept(MINECRAFT_CLIENT_ONLY_NAMED.runtime(), MinecraftJar.Type.CLIENT_ONLY);
-			consumer.accept(MINECRAFT_COMMON_NAMED.compile(), MinecraftJar.Type.COMMON);
-			consumer.accept(MINECRAFT_CLIENT_ONLY_NAMED.compile(), MinecraftJar.Type.CLIENT_ONLY);
+			consumer.accept(MINECRAFT_COMMON_NAMED.runtime(), ZomboidJar.Type.COMMON);
+			consumer.accept(MINECRAFT_CLIENT_ONLY_NAMED.runtime(), ZomboidJar.Type.CLIENT_ONLY);
+			consumer.accept(MINECRAFT_COMMON_NAMED.compile(), ZomboidJar.Type.COMMON);
+			consumer.accept(MINECRAFT_CLIENT_ONLY_NAMED.compile(), ZomboidJar.Type.CLIENT_ONLY);
 		}
 
 		@Override

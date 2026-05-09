@@ -44,7 +44,7 @@ import org.gradle.api.tasks.TaskProvider;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.extension.MixinExtension;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.LoomVersions;
@@ -130,7 +130,7 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
 
 	public void configureMixin() {
 		ConfigurationContainer configs = project.getConfigurations();
-		MinecraftSourceSets minecraftSourceSets = MinecraftSourceSets.get(project);
+		ZomboidSourceSets minecraftSourceSets = ZomboidSourceSets.get(project);
 
 		if (!IdeaUtils.isIdeaSync()) {
 			for (Configuration processorConfig : apConfigurations) {

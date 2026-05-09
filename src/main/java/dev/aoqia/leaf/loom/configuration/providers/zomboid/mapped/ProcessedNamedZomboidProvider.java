@@ -35,33 +35,33 @@ import java.util.stream.Collectors;
 
 import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper;
-import dev.aoqia.leaf.loom.configuration.processors.MinecraftJarProcessorManager;
+import dev.aoqia.leaf.loom.configuration.processors.ZomboidJarProcessorManager;
 import dev.aoqia.leaf.loom.configuration.processors.ProcessorContextImpl;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.LegacyMergedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.LegacyMergedZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarEnvType;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarZomboidProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitZomboidProvider;
 
-public abstract class ProcessedNamedMinecraftProvider<M extends MinecraftProvider, P extends NamedMinecraftProvider<M>> extends NamedMinecraftProvider<M> {
+public abstract class ProcessedNamedZomboidProvider<M extends ZomboidProvider, P extends NamedZomboidProvider<M>> extends NamedZomboidProvider<M> {
 	private final P parentMinecraftProvider;
-	private final MinecraftJarProcessorManager jarProcessorManager;
+	private final ZomboidJarProcessorManager jarProcessorManager;
 
-	public ProcessedNamedMinecraftProvider(P parentMinecraftProvide, MinecraftJarProcessorManager jarProcessorManager) {
+	public ProcessedNamedZomboidProvider(P parentMinecraftProvide, ZomboidJarProcessorManager jarProcessorManager) {
 		super(parentMinecraftProvide.getProject(), parentMinecraftProvide.getMinecraftProvider());
 		this.parentMinecraftProvider = parentMinecraftProvide;
 		this.jarProcessorManager = Objects.requireNonNull(jarProcessorManager);
 	}
 
 	@Override
-	public List<MinecraftJar> provide(ProvideContext context) throws Exception {
-		final List<MinecraftJar> parentMinecraftJars = parentMinecraftProvider.getMinecraftJars();
-		final Map<MinecraftJar, MinecraftJar> minecraftJarOutputMap = parentMinecraftJars.stream()
+	public List<ZomboidJar> provide(ProvideContext context) throws Exception {
+		final List<ZomboidJar> parentMinecraftJars = parentMinecraftProvider.getMinecraftJars();
+		final Map<ZomboidJar, ZomboidJar> minecraftJarOutputMap = parentMinecraftJars.stream()
 				.collect(Collectors.toMap(Function.identity(), this::getProcessedJar));
-		final List<MinecraftJar> minecraftJars = List.copyOf(minecraftJarOutputMap.values());
+		final List<ZomboidJar> minecraftJars = List.copyOf(minecraftJarOutputMap.values());
 
 		parentMinecraftProvider.provide(context.withApplyDependencies(false));
 
@@ -94,10 +94,10 @@ public abstract class ProcessedNamedMinecraftProvider<M extends MinecraftProvide
 		return MavenScope.LOCAL;
 	}
 
-	private void processJars(Map<MinecraftJar, MinecraftJar> minecraftJarMap, ConfigContext configContext) throws IOException {
-		for (Map.Entry<MinecraftJar, MinecraftJar> entry : minecraftJarMap.entrySet()) {
-			final MinecraftJar minecraftJar = entry.getKey();
-			final MinecraftJar outputJar = entry.getValue();
+	private void processJars(Map<ZomboidJar, ZomboidJar> minecraftJarMap, ConfigContext configContext) throws IOException {
+		for (Map.Entry<ZomboidJar, ZomboidJar> entry : minecraftJarMap.entrySet()) {
+			final ZomboidJar minecraftJar = entry.getKey();
+			final ZomboidJar outputJar = entry.getValue();
 			deleteSimilarJars(outputJar.getPath());
 
 			final LocalMavenHelper mavenHelper = getMavenHelper(minecraftJar.getType());
@@ -110,18 +110,18 @@ public abstract class ProcessedNamedMinecraftProvider<M extends MinecraftProvide
 	}
 
 	@Override
-	public List<MinecraftJar.Type> getDependencyTypes() {
+	public List<ZomboidJar.Type> getDependencyTypes() {
 		return parentMinecraftProvider.getDependencyTypes();
 	}
 
 	private void applyDependencies() {
-		final List<MinecraftJar.Type> dependencyTargets = getDependencyTypes();
+		final List<ZomboidJar.Type> dependencyTargets = getDependencyTypes();
 
 		if (dependencyTargets.isEmpty()) {
 			return;
 		}
 
-		MinecraftSourceSets.get(getProject()).applyDependencies(
+		ZomboidSourceSets.get(getProject()).applyDependencies(
 				(configuration, name) -> getProject().getDependencies().add(configuration, getDependencyNotation(name)),
 				dependencyTargets
 		);
@@ -142,13 +142,13 @@ public abstract class ProcessedNamedMinecraftProvider<M extends MinecraftProvide
 	}
 
 	@Override
-	protected String getName(MinecraftJar.Type type) {
+	protected String getName(ZomboidJar.Type type) {
 		// Hash the cache value so that we don't have to process the same JAR multiple times for many projects
 		return "minecraft-%s-%s".formatted(type.toString(), jarProcessorManager.getJarHash());
 	}
 
 	@Override
-	public Path getJar(MinecraftJar.Type type) {
+	public Path getJar(ZomboidJar.Type type) {
 		// Something has gone wrong if this gets called.
 		throw new UnsupportedOperationException();
 	}
@@ -159,7 +159,7 @@ public abstract class ProcessedNamedMinecraftProvider<M extends MinecraftProvide
 	}
 
 	@Override
-	public List<MinecraftJar> getMinecraftJars() {
+	public List<ZomboidJar> getMinecraftJars() {
 		return getParentMinecraftProvider().getMinecraftJars().stream()
 				.map(this::getProcessedJar)
 				.toList();
@@ -169,71 +169,71 @@ public abstract class ProcessedNamedMinecraftProvider<M extends MinecraftProvide
 		return parentMinecraftProvider;
 	}
 
-	private Path getProcessedPath(MinecraftJar minecraftJar) {
+	private Path getProcessedPath(ZomboidJar minecraftJar) {
 		final LocalMavenHelper mavenHelper = getMavenHelper(minecraftJar.getType());
 		return mavenHelper.getOutputFile(null);
 	}
 
-	public MinecraftJar getProcessedJar(MinecraftJar minecraftJar) {
+	public ZomboidJar getProcessedJar(ZomboidJar minecraftJar) {
 		return minecraftJar.forPath(getProcessedPath(minecraftJar));
 	}
 
-	public static final class MergedImpl extends ProcessedNamedMinecraftProvider<MergedMinecraftProvider, NamedMinecraftProvider.MergedImpl> implements Merged {
-		public MergedImpl(NamedMinecraftProvider.MergedImpl parentMinecraftProvide, MinecraftJarProcessorManager jarProcessorManager) {
+	public static final class MergedImpl extends ProcessedNamedZomboidProvider<MergedZomboidProvider, NamedZomboidProvider.MergedImpl> implements Merged {
+		public MergedImpl(NamedZomboidProvider.MergedImpl parentMinecraftProvide, ZomboidJarProcessorManager jarProcessorManager) {
 			super(parentMinecraftProvide, jarProcessorManager);
 		}
 
 		@Override
-		public MinecraftJar getMergedJar() {
+		public ZomboidJar getMergedJar() {
 			return getProcessedJar(getParentMinecraftProvider().getMergedJar());
 		}
 	}
 
-	public static final class LegacyMergedImpl extends ProcessedNamedMinecraftProvider<LegacyMergedMinecraftProvider, NamedMinecraftProvider.LegacyMergedImpl> implements Merged {
-		public LegacyMergedImpl(NamedMinecraftProvider.LegacyMergedImpl parentMinecraftProvider, MinecraftJarProcessorManager jarProcessorManager) {
+	public static final class LegacyMergedImpl extends ProcessedNamedZomboidProvider<LegacyMergedZomboidProvider, NamedZomboidProvider.LegacyMergedImpl> implements Merged {
+		public LegacyMergedImpl(NamedZomboidProvider.LegacyMergedImpl parentMinecraftProvider, ZomboidJarProcessorManager jarProcessorManager) {
 			super(parentMinecraftProvider, jarProcessorManager);
 		}
 
 		@Override
-		public MinecraftJar getMergedJar() {
+		public ZomboidJar getMergedJar() {
 			return getProcessedJar(getParentMinecraftProvider().getMergedJar());
 		}
 	}
 
-	public static final class SplitImpl extends ProcessedNamedMinecraftProvider<SplitMinecraftProvider, NamedMinecraftProvider.SplitImpl> implements Split {
-		public SplitImpl(NamedMinecraftProvider.SplitImpl parentMinecraftProvide, MinecraftJarProcessorManager jarProcessorManager) {
+	public static final class SplitImpl extends ProcessedNamedZomboidProvider<SplitZomboidProvider, NamedZomboidProvider.SplitImpl> implements Split {
+		public SplitImpl(NamedZomboidProvider.SplitImpl parentMinecraftProvide, ZomboidJarProcessorManager jarProcessorManager) {
 			super(parentMinecraftProvide, jarProcessorManager);
 		}
 
 		@Override
-		public MinecraftJar getCommonJar() {
+		public ZomboidJar getCommonJar() {
 			return getProcessedJar(getParentMinecraftProvider().getCommonJar());
 		}
 
 		@Override
-		public MinecraftJar getClientOnlyJar() {
+		public ZomboidJar getClientOnlyJar() {
 			return getProcessedJar(getParentMinecraftProvider().getClientOnlyJar());
 		}
 	}
 
-	public static final class SingleJarImpl extends ProcessedNamedMinecraftProvider<SingleJarMinecraftProvider, NamedMinecraftProvider.SingleJarImpl> implements SingleJar {
+	public static final class SingleJarImpl extends ProcessedNamedZomboidProvider<SingleJarZomboidProvider, NamedZomboidProvider.SingleJarImpl> implements SingleJar {
 		private final SingleJarEnvType env;
 
-		private SingleJarImpl(NamedMinecraftProvider.SingleJarImpl parentMinecraftProvide, MinecraftJarProcessorManager jarProcessorManager, SingleJarEnvType env) {
+		private SingleJarImpl(NamedZomboidProvider.SingleJarImpl parentMinecraftProvide, ZomboidJarProcessorManager jarProcessorManager, SingleJarEnvType env) {
 			super(parentMinecraftProvide, jarProcessorManager);
 			this.env = env;
 		}
 
-		public static ProcessedNamedMinecraftProvider.SingleJarImpl server(NamedMinecraftProvider.SingleJarImpl parentMinecraftProvide, MinecraftJarProcessorManager jarProcessorManager) {
-			return new ProcessedNamedMinecraftProvider.SingleJarImpl(parentMinecraftProvide, jarProcessorManager, SingleJarEnvType.SERVER);
+		public static ProcessedNamedZomboidProvider.SingleJarImpl server(NamedZomboidProvider.SingleJarImpl parentMinecraftProvide, ZomboidJarProcessorManager jarProcessorManager) {
+			return new ProcessedNamedZomboidProvider.SingleJarImpl(parentMinecraftProvide, jarProcessorManager, SingleJarEnvType.SERVER);
 		}
 
-		public static ProcessedNamedMinecraftProvider.SingleJarImpl client(NamedMinecraftProvider.SingleJarImpl parentMinecraftProvide, MinecraftJarProcessorManager jarProcessorManager) {
-			return new ProcessedNamedMinecraftProvider.SingleJarImpl(parentMinecraftProvide, jarProcessorManager, SingleJarEnvType.CLIENT);
+		public static ProcessedNamedZomboidProvider.SingleJarImpl client(NamedZomboidProvider.SingleJarImpl parentMinecraftProvide, ZomboidJarProcessorManager jarProcessorManager) {
+			return new ProcessedNamedZomboidProvider.SingleJarImpl(parentMinecraftProvide, jarProcessorManager, SingleJarEnvType.CLIENT);
 		}
 
 		@Override
-		public MinecraftJar getEnvOnlyJar() {
+		public ZomboidJar getEnvOnlyJar() {
 			return getProcessedJar(getParentMinecraftProvider().getEnvOnlyJar());
 		}
 
