@@ -1,0 +1,42 @@
+name: Release
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/build.yml
+
+  release:
+    name: Release
+    needs: build
+    runs-on: ubuntu-latest
+
+    # Needed for Jreleaser to update CHANGELOG.md
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch Build Output
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: build/
+
+      - name: Deploy
+        run: ./gradlew publish -S
+
+      - name: Release Plugin (Sonatype Maven Central)
+        env:
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE_KEY: ${{ secrets.GPG_PASSPHRASE_KEY }}
+          MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+        run: ./gradlew jreleaserFullRelease -S
