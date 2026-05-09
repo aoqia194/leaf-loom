@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util.gradle;
+package dev.aoqia.leaf.loom.util.gradle;
 
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;

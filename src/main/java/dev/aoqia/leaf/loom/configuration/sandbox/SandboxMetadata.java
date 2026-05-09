@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.sandbox;
+package dev.aoqia.leaf.loom.configuration.sandbox;
 
 import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.ParseException;
 import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.getJsonObject;

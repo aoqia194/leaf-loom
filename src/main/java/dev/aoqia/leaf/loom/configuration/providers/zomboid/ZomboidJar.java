@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.minecraft;
+package dev.aoqia.leaf.loom.configuration.providers.minecraft;
 
 import java.io.File;
 import java.nio.file.Path;

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util.gradle;
+package dev.aoqia.leaf.loom.util.gradle;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

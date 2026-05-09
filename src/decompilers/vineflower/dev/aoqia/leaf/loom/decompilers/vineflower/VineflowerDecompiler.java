@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.decompilers.vineflower;
+package dev.aoqia.leaf.loom.decompilers.vineflower;
 
 import java.nio.file.Path;
 import java.util.HashMap;

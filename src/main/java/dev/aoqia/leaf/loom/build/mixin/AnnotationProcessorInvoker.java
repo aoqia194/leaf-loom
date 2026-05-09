@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.build.mixin;
+package dev.aoqia.leaf.loom.build.mixin;
 
 import java.io.File;
 import java.io.IOException;

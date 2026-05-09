@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.api.mappings.layered.spec;
+package dev.aoqia.leaf.loom.api.mappings.layered.spec;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;

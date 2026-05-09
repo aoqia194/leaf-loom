@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util.fmj.gen;
+package dev.aoqia.leaf.loom.util.fmj.gen;
 
 import java.util.List;
 import java.util.Map;

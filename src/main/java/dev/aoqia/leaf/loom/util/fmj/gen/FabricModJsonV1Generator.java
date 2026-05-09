@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util.fmj.gen;
+package dev.aoqia.leaf.loom.util.fmj.gen;
 
 import static net.fabricmc.loom.util.fmj.gen.GeneratorUtils.add;
 import static net.fabricmc.loom.util.fmj.gen.GeneratorUtils.addArray;

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.processor.classes;
+package dev.aoqia.leaf.loom.test.unit.processor.classes;
 
 public interface DoublePassingGenericInterface<F, S> {
 	default DoublePassingGenericTargetClass.Pair<F, S> doublePassingGenericInjectedMethod() {

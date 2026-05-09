@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.decompilers.cfr;
+package dev.aoqia.leaf.loom.decompilers.cfr;
 
 import java.io.BufferedReader;
 import java.io.IOException;

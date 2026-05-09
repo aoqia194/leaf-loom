@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.api.manifest;
+package dev.aoqia.leaf.loom.api.manifest;
 
 import org.jetbrains.annotations.ApiStatus;
 

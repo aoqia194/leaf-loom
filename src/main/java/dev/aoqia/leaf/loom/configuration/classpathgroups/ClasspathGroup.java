@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.classpathgroups;
+package dev.aoqia.leaf.loom.configuration.classpathgroups;
 
 import java.io.File;
 import java.io.Serializable;

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.decompilers.cache;
+package dev.aoqia.leaf.loom.decompilers.cache;
 
 import java.io.IOException;
 import java.io.InputStream;

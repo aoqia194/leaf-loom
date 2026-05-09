@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings.intermediary;
+package dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary;
 
 import java.io.IOException;
 import java.util.Collections;

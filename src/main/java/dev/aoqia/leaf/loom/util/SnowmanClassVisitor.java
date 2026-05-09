@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util;
+package dev.aoqia.leaf.loom.util;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;

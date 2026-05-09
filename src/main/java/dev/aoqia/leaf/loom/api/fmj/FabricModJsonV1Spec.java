@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.api.fmj;
+package dev.aoqia.leaf.loom.api.fmj;
 
 import javax.inject.Inject;
 

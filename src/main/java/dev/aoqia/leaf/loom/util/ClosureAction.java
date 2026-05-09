@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util;
+package dev.aoqia.leaf.loom.util;
 
 import groovy.lang.Closure;
 import org.gradle.api.Action;

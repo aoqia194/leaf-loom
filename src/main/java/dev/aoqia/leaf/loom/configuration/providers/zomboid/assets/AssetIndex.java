@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.minecraft.assets;
+package dev.aoqia.leaf.loom.configuration.providers.minecraft.assets;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

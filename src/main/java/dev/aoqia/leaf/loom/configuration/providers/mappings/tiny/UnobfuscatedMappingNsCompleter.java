@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings.tiny;
+package dev.aoqia.leaf.loom.configuration.providers.mappings.tiny;
 
 import java.io.IOException;
 import java.util.Arrays;

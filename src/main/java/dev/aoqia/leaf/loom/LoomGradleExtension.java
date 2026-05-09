@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom;
+package dev.aoqia.leaf.loom;
 
 import java.nio.file.Path;
 import java.util.Collection;

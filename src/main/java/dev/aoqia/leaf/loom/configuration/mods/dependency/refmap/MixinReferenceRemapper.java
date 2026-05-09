@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.mods.dependency.refmap;
+package dev.aoqia.leaf.loom.configuration.mods.dependency.refmap;
 
 public interface MixinReferenceRemapper {
 	String remapReference(String mixinClassName, String reference);

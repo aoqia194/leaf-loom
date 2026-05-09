@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util;
+package dev.aoqia.leaf.loom.util;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.sandbox;
+package dev.aoqia.leaf.loom.configuration.sandbox;
 
 import java.nio.file.Path;
 import java.util.Objects;

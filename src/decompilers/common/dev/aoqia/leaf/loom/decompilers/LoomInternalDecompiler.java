@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.decompilers;
+package dev.aoqia.leaf.loom.decompilers;
 
 import java.io.IOException;
 import java.nio.file.Path;

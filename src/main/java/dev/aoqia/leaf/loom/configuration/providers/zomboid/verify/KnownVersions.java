@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.minecraft.verify;
+package dev.aoqia.leaf.loom.configuration.providers.minecraft.verify;
 
 import java.io.IOException;
 import java.io.InputStream;

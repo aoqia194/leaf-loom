@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.decompilers.vineflower;
+package dev.aoqia.leaf.loom.decompilers.vineflower;
 
 import java.io.IOException;
 

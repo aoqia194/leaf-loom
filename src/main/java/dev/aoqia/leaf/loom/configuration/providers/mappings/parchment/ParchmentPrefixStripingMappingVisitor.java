@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings.parchment;
+package dev.aoqia.leaf.loom.configuration.providers.mappings.parchment;
 
 import java.io.IOException;
 import java.util.Locale;

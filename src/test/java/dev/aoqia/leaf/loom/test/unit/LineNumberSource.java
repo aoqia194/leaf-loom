@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit;
+package dev.aoqia.leaf.loom.test.unit;
 
 public class LineNumberSource {
 	public static void main(String[] args) {

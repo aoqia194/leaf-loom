@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.fabricapi;
+package dev.aoqia.leaf.loom.configuration.fabricapi;
 
 import javax.inject.Inject;
 

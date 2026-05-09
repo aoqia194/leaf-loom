@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.mods.extension;
+package dev.aoqia.leaf.loom.configuration.mods.extension;
 
 import java.io.IOException;
 import java.nio.file.Path;

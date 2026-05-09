@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.minecraft.mapped;
+package dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped;
 
 import java.io.File;
 import java.io.IOException;

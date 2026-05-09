@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.mods.dependency;
+package dev.aoqia.leaf.loom.configuration.mods.dependency;
 
 import java.io.IOException;
 import java.io.InputStream;

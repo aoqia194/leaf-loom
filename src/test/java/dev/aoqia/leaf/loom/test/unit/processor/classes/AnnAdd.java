@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.processor.classes;
+package dev.aoqia.leaf.loom.test.unit.processor.classes;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

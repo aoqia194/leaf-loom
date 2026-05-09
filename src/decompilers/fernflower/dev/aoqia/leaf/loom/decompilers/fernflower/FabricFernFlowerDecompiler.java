@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.decompilers.fernflower;
+package dev.aoqia.leaf.loom.decompilers.fernflower;
 
 import java.io.File;
 import java.io.IOException;

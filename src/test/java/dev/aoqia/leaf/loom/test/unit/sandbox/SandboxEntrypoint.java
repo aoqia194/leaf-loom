@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.sandbox;
+package dev.aoqia.leaf.loom.test.unit.sandbox;
 
 public class SandboxEntrypoint {
 	public static void main(String[] args) {

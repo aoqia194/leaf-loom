@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.decompile;
+package dev.aoqia.leaf.loom.configuration.decompile;
 
 import java.util.List;
 

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.task.prod;
+package dev.aoqia.leaf.loom.task.prod;
 
 import java.io.BufferedReader;
 import java.io.File;

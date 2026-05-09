@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings.extras.annotations.validate;
+package dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.validate;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

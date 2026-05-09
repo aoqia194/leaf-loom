@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.minecraft;
+package dev.aoqia.leaf.loom.configuration.providers.minecraft;
 
 import java.util.List;
 import java.util.Map;

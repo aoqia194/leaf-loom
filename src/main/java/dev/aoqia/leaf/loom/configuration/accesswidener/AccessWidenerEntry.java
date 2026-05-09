@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.accesswidener;
+package dev.aoqia.leaf.loom.configuration.accesswidener;
 
 import java.io.IOException;
 

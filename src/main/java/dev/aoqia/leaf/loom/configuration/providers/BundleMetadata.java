@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers;
+package dev.aoqia.leaf.loom.configuration.providers;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

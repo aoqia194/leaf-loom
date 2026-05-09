@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.build.nesting;
+package dev.aoqia.leaf.loom.build.nesting;
 
 import java.io.File;
 import java.io.IOException;

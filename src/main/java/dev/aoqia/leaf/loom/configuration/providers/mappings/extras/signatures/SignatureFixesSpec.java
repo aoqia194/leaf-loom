@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings.extras.signatures;
+package dev.aoqia.leaf.loom.configuration.providers.mappings.extras.signatures;
 
 import org.jetbrains.annotations.ApiStatus;
 

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.processor.classes;
+package dev.aoqia.leaf.loom.test.unit.processor.classes;
 
 public class ClassWithoutAnnotations {
 	public int otherField;

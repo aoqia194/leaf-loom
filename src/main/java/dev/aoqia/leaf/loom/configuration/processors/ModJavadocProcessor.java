@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.processors;
+package dev.aoqia.leaf.loom.configuration.processors;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

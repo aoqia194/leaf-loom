@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.extension;
+package dev.aoqia.leaf.loom.extension;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;

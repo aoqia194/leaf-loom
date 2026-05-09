@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util;
+package dev.aoqia.leaf.loom.util;
 
 public interface Platform {
 	Platform CURRENT = CurrentPlatform.INSTANCE;

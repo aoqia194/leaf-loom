@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.minecraft.verify;
+package dev.aoqia.leaf.loom.configuration.providers.minecraft.verify;
 
 public final class SignatureVerificationFailure extends Exception {
 	public SignatureVerificationFailure(String message) {

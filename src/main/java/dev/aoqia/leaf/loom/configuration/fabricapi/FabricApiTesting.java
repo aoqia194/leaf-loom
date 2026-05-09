@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.fabricapi;
+package dev.aoqia.leaf.loom.configuration.fabricapi;
 
 import java.io.File;
 import java.io.IOException;

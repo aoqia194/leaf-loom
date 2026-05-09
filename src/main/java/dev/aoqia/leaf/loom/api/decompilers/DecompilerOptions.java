@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.api.decompilers;
+package dev.aoqia.leaf.loom.api.decompilers;
 
 import java.io.Serializable;
 import java.util.Map;

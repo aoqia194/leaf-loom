@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.extension;
+package dev.aoqia.leaf.loom.extension;
 
 import java.lang.reflect.Constructor;
 

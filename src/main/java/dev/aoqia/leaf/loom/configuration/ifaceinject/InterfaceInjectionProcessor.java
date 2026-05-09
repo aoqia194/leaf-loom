@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.ifaceinject;
+package dev.aoqia.leaf.loom.configuration.ifaceinject;
 
 import java.io.IOException;
 import java.nio.file.Path;

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.processor.classes;
+package dev.aoqia.leaf.loom.test.unit.processor.classes;
 
 public interface AdvancedGenericInterface<F, S> {
 	default AdvancedGenericTargetClass.Pair<F, S> advancedGenericInjectedMethod() {

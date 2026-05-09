@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings.unpick;
+package dev.aoqia.leaf.loom.configuration.providers.mappings.unpick;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

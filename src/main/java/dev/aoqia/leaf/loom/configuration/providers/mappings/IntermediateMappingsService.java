@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings;
+package dev.aoqia.leaf.loom.configuration.providers.mappings;
 
 import java.io.BufferedReader;
 import java.io.IOException;

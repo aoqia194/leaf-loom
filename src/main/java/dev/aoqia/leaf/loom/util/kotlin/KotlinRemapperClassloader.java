@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util.kotlin;
+package dev.aoqia.leaf.loom.util.kotlin;
 
 import java.net.URL;
 import java.net.URLClassLoader;

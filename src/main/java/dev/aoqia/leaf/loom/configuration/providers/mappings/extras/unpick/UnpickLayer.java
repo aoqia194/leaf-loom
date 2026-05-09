@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings.extras.unpick;
+package dev.aoqia.leaf.loom.configuration.providers.mappings.extras.unpick;
 
 import java.io.IOException;
 import java.nio.file.Files;

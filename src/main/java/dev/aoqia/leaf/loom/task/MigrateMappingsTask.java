@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.task;
+package dev.aoqia.leaf.loom.task;
 
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;

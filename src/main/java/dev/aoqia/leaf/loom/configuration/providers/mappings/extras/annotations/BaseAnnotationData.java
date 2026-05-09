@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.providers.mappings.extras.annotations;
+package dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations;
 
 import java.util.List;
 import java.util.Set;

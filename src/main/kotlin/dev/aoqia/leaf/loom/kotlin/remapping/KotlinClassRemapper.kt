@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.kotlin.remapping
+package dev.aoqia.leaf.loom.kotlin.remapping
 
 import org.objectweb.asm.commons.Remapper
 import kotlin.metadata.ClassName

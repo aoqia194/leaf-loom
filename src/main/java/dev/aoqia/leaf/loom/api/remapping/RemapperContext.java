@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.api.remapping;
+package dev.aoqia.leaf.loom.api.remapping;
 
 import org.objectweb.asm.commons.Remapper;
 

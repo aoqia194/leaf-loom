@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util.download;
+package dev.aoqia.leaf.loom.util.download;
 
 import java.util.ArrayList;
 import java.util.Collections;

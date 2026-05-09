@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.api.mappings.intermediate;
+package dev.aoqia.leaf.loom.api.mappings.intermediate;
 
 import java.io.IOException;
 import java.nio.file.Path;

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.api.fabricapi;
+package dev.aoqia.leaf.loom.api.fabricapi;
 
 import org.gradle.api.Action;
 import org.gradle.api.artifacts.Dependency;

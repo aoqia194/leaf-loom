@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.api.mappings.layered;
+package dev.aoqia.leaf.loom.api.mappings.layered;
 
 import java.nio.file.Path;
 import java.util.function.Supplier;

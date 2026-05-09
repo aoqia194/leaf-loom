@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.task.launch;
+package dev.aoqia.leaf.loom.task.launch;
 
 import java.io.File;
 import java.io.IOException;

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.decompilers;
+package dev.aoqia.leaf.loom.decompilers;
 
 import static java.text.MessageFormat.format;
 

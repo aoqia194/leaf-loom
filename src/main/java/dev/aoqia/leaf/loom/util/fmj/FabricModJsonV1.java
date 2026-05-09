@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.util.fmj;
+package dev.aoqia.leaf.loom.util.fmj;
 
 import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.readString;
 

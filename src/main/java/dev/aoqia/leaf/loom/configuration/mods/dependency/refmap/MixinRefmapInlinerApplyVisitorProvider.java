@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.mods.dependency.refmap;
+package dev.aoqia.leaf.loom.configuration.mods.dependency.refmap;
 
 import java.util.function.Predicate;
 
