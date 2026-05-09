@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors;
+package dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors;
 
 import java.util.List;
 

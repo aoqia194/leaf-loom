@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.configuration.providers.minecraft.verify;
+package dev.aoqia.leaf.loom.configuration.providers.zomboid.verify;
 
 import java.io.IOException;
 import java.nio.file.Path;

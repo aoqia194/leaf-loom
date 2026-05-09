@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.configuration.providers.minecraft.assets;
+package dev.aoqia.leaf.loom.configuration.providers.zomboid.assets;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.configuration.providers.minecraft.library;
+package dev.aoqia.leaf.loom.configuration.providers.zomboid.library;
 
 import java.util.ArrayList;
 import java.util.Collections;

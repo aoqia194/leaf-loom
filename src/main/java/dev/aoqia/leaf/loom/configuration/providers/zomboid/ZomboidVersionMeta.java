@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.configuration.providers.minecraft;
+package dev.aoqia.leaf.loom.configuration.providers.zomboid;
 
 import java.io.File;
 import java.util.List;
