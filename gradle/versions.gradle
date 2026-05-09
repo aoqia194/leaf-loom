@@ -54,15 +54,15 @@ abstract class GenerateVersions extends DefaultTask {
 		Files.createDirectories(packagePath)
 
 		def constants = getVersions().get().collect { entry ->
-				def split = entry.value.split(":")
-				if (split.length != 3) return ""
-				"\tpublic static final ${sourceName} ${toSnakeCase(entry.key)} = new ${sourceName}(\"${split[0]}\", \"${split[1]}\", \"${split[2]}\");"
+			def split = entry.value.split(":")
+			if (split.length != 3) return ""
+			"\tpublic static final ${sourceName} ${toSnakeCase(entry.key)} = new ${sourceName}(\"${split[0]}\", \"${split[1]}\", \"${split[2]}\");"
 		}.findAll { !it.blank }.join("\n")
 
 		def header = headerFile.get().getAsFile().text.replace("\$YEAR", "${LocalDate.now().year}").trim()
 
 		sourcePath.write(
-"""${header}
+				"""${header}
 
 package ${packageName.replace("/", ".")};
 
