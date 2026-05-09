@@ -1,27 +1,30 @@
 [versions]
-spock = "2.3-groovy-3.0"
-junit = "5.13.4"
-javalin = "6.7.0"
-mockito = "5.18.0"
-java-debug = "0.53.1"
-mixin = "0.15.3+mixin.0.8.7"
-bouncycastle = "1.81"
 
+# TODO(aoqia): bouncycastle might not be needed. I forgot why it was removed.
+bouncycastle = "1.81"
+# TODO(aoqia): Change fabric-loader to leaf-loader once loader is setup
+fabric-loader = "0.16.14"
 gradle-latest = "9.1.0"
 gradle-nightly = "9.3.0-20250923005153+0000"
-fabric-loader = "0.16.14"
+java-debug = "0.53.1"
+javalin = "6.7.0"
+junit = "5.13.4"
+mixin = "0.15.3+mixin.0.8.7"
+mockito = "5.18.0"
+spock = "2.3-groovy-3.0"
 
 [libraries]
-spock = { module = "org.spockframework:spock-core", version.ref = "spock" }
-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
-javalin = { module = "io.javalin:javalin", version.ref = "javalin" }
-mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-java-debug = { module = "com.microsoft.java:com.microsoft.java.debug.core", version.ref = "java-debug" }
-mixin = { module = "net.fabricmc:sponge-mixin", version.ref = "mixin" }
+
+bcpkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+bcprov = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+bcutil = { module = "org.bouncycastle:bcutil-jdk18on", version.ref = "bouncycastle" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 gradle-latest = { module = "org.gradle:dummy", version.ref = "gradle-latest" }
 gradle-nightly = { module = "org.gradle:dummy", version.ref = "gradle-nightly" }
-fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
-bcprov = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
-bcpkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
-bcutil = { module = "org.bouncycastle:bcutil-jdk18on", version.ref = "bouncycastle" }
+java-debug = { module = "com.microsoft.java:com.microsoft.java.debug.core", version.ref = "java-debug" }
+javalin = { module = "io.javalin:javalin", version.ref = "javalin" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+mixin = { module = "net.fabricmc:sponge-mixin", version.ref = "mixin" }
+mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+spock = { module = "org.spockframework:spock-core", version.ref = "spock" }
