@@ -24,10 +24,10 @@
 
 package dev.aoqia.leaf.loom.util.fmj.gen;
 
-import static net.fabricmc.loom.util.fmj.gen.GeneratorUtils.add;
-import static net.fabricmc.loom.util.fmj.gen.GeneratorUtils.addArray;
-import static net.fabricmc.loom.util.fmj.gen.GeneratorUtils.addRequired;
-import static net.fabricmc.loom.util.fmj.gen.GeneratorUtils.addStringOrArray;
+import static dev.aoqia.leaf.loom.util.fmj.gen.GeneratorUtils.add;
+import static dev.aoqia.leaf.loom.util.fmj.gen.GeneratorUtils.addArray;
+import static dev.aoqia.leaf.loom.util.fmj.gen.GeneratorUtils.addRequired;
+import static dev.aoqia.leaf.loom.util.fmj.gen.GeneratorUtils.addStringOrArray;
 
 import java.util.List;
 import java.util.Map;

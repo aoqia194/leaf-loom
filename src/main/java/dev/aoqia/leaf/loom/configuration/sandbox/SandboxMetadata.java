@@ -24,10 +24,10 @@
 
 package dev.aoqia.leaf.loom.configuration.sandbox;
 
-import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.ParseException;
-import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.getJsonObject;
-import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.readInt;
-import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.readString;
+import static dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils.ParseException;
+import static dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils.getJsonObject;
+import static dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils.readInt;
+import static dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils.readString;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

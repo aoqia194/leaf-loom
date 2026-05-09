@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.configuration;
 
-import static net.fabricmc.loom.util.Constants.Configurations;
+import static dev.aoqia.leaf.loom.util.Constants.Configurations;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

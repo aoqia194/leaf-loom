@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.util.fmj;
 
-import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.readInt;
+import static dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils.readInt;
 
 import java.io.File;
 import java.io.IOException;

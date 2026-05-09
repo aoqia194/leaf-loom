@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.util.fmj;
 
-import static net.fabricmc.loom.util.fmj.FabricModJsonUtils.readString;
+import static dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils.readString;
 
 import java.util.Collections;
 import java.util.List;

@@ -24,8 +24,8 @@
 
 package dev.aoqia.leaf.loom.configuration.mods;
 
-import static net.fabricmc.loom.configuration.mods.ModConfigurationRemapper.MISSING_GROUP;
-import static net.fabricmc.loom.configuration.mods.ModConfigurationRemapper.replaceIfNullOrEmpty;
+import static dev.aoqia.leaf.loom.configuration.mods.ModConfigurationRemapper.MISSING_GROUP;
+import static dev.aoqia.leaf.loom.configuration.mods.ModConfigurationRemapper.replaceIfNullOrEmpty;
 
 import java.nio.file.Path;
 
