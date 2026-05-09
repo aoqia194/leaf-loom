@@ -1,9 +1,16 @@
 import com.diffplug.spotless.LineEnding
+import groovy.json.JsonOutput
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jreleaser.model.Active
 import org.jreleaser.model.Http
-import java.util.*
+import java.net.URI
+import java.util.Properties
 
+// Project variables
+var groupUrl = rootProject.group.toString().replace(".", "/")
+
+// Environment variables
 val env = System.getenv()!!
 val isCiEnv = env["CI"].toBoolean()
 // TODO(aoqia): Update gpg keys and maven info on the repositories
@@ -228,93 +235,100 @@ tasks.wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-//tasks.downloadGradleSources {
+tasks.register("downloadGradleSources") {
+    description = "Downloads the Gradle API sources next to the API jar." +
+        "May require you to manually attach the sources jar."
     // TODO(aoqia): Implement in Kotlin
 
-//    doLast {
-//        // Awful hack to find the gradle api location
-//        def gradleApiFile = project.configurations.detachedConfiguration(dependencies.gradleApi()).files.stream()
-//            .find {
-//                it.name.startsWith("gradle-api")
-//            }
-//
-//        def gradleApiSources = new File(gradleApiFile.absolutePath.replace(".jar", "-sources.jar"))
-//        def url = "https://services.gradle.org/distributions/gradle-${GradleVersion.current().getVersion()}-src.zip"
-//
-//        gradleApiSources.delete()
-//
-//        println("Downloading (${url}) to (${gradleApiSources})")
-//        gradleApiSources << new URL(url).newInputStream()
-//    }
-//}
+    doLast {
+        // Awful hack to find the gradle api location
+        val gradleApiFile = project.configurations.detachedConfiguration(dependencies.gradleApi()).files.find {
+            it.name.startsWith("gradle-api")
+        }
 
-//tasks.withType<PrintActionsTestName>("printActionsTestName") {}
+        val gradleApiSources = File(gradleApiFile!!.absolutePath.replace(".jar", "-sources.jar"))
+        val url = "https://services.gradle.org/distributions/gradle-${GradleVersion.current().version}-src.zip"
+
+        gradleApiSources.delete()
+
+        println("Downloading (${url}) to (${gradleApiSources})")
+        gradleApiSources.outputStream().use { out ->
+            URI.create(url).toURL().openStream().use { it.copyTo(out) }
+        }
+    }
+}
+
+tasks.named<Test>("test") {
+    description = "Run tests"
+
+    maxHeapSize = "2560m"
+    jvmArgs = listOf("-XX:+HeapDumpOnOutOfMemoryError")
+    useJUnitPlatform()
+
+    // Forward system prop onto tests.
+    val prop = System.getProperty("leaf.${rootProject.name}.test.homeDir")
+    if (prop.isNotEmpty()) {
+        systemProperty("leaf.${rootProject.name}.test.homeDir", prop)
+    }
+
+    if (isCiEnv) {
+        retry {
+            maxRetries = 3
+        }
+    }
+
+    testLogging {
+        // Log everything to the console
+        setEvents(TestLogEvent.values().toList())
+    }
+}
+
+tasks.register<PrintActionsTestName>("printActionsTestName") {
+    description = "Replaces invalid characters in test names for GitHub Actions artifacts."
+}
 
 tasks.register("writeActionsTestMatrix") {
     description = "Outputs a JSON file with a list of all the tests to run."
 
-//    doLast {
-//        val testMatrix: Array<String> = []
-//        val extendedTests = Boolean.parseBoolean(System.getenv('EXTENDED_TESTS') ?: 'false')
-//        file('src/test/groovy/net/fabricmc/loom/test/integration').eachFile {
-//            if (it.name.endsWith("Test.groovy")) {
-//                if (it.name.endsWith("ReproducibleBuildTest.groovy")) {
-//                    // This test gets a special case to run across all os's
-//                    return
-//                }
-//
-//                if (it.name.endsWith("DebugLineNumbersTest.groovy") && !extendedTests) {
-//                    // Known flakey test
-//                    return
-//                }
-//
-//                def className = it.name.replace(".groovy", "")
-//                testMatrix.add("net.fabricmc.loom.test.integration.${className}")
-//            }
-//        }
-//
-//        // Run all the unit tests together
-//        testMatrix.add("net.fabricmc.loom.test.unit.*")
-//
-//        def json = groovy.json.JsonOutput.toJson(testMatrix)
-//        def output = file("build/test_matrix.json")
-//        output.parentFile.mkdir()
-//        output.text = json
-//    }
+    doLast {
+        val testMatrix = mutableListOf<String>()
+        val extendedTests = System.getenv("EXTENDED_TESTS").toBoolean()
+
+        file("src/test/groovy/${groupUrl}/${rootProject.name}/test/integration").listFiles()?.forEach {
+            if (it.name.endsWith("Test.groovy")) {
+                if (it.name.endsWith("ReproducibleBuildTest.groovy")) {
+                    // This test gets a special case to run across all os's
+                    return@forEach
+                }
+
+                if (it.name.endsWith("DebugLineNumbersTest.groovy") && !extendedTests) {
+                    // Known flakey test
+                    return@forEach
+                }
+
+                val className = it.name.replace(".groovy", "")
+                testMatrix.add("${rootProject.group}.${rootProject.name}.test.integration.${className}")
+            }
+        }
+
+        // Run all the unit tests together
+        testMatrix.add("net.fabricmc.loom.test.unit.*")
+
+        val output = file("build/test_matrix.json")
+        output.parentFile.mkdir()
+        output.writeText(JsonOutput.toJson(testMatrix))
+    }
 }
 
-//test {
-//    maxHeapSize = "2560m"
-//    jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
-//    useJUnitPlatform()
-//
-//    // Forward system prop onto tests.
-//    if (System.getProperty("leaf.loom.test.homeDir")) {
-//        systemProperty "leaf.loom.test.homeDir", System.getProperty("leaf.loom.test.homeDir")
-//    }
-//
-//
-//    if (isCiEnv) {
-//        retry {
-//            maxRetries = 3
-//        }
-//    }
-//
-//    testLogging {
-//        // Log everything to the console
-//        setEvents(TestLogEvent.values().toList())
-//    }
-//}
-//
-//// Workaround https://github.com/gradle/gradle/issues/25898
-//tasks.withType(Test).configureEach {
-//    jvmArgs = [
-//        '--add-opens=java.base/java.lang=ALL-UNNAMED',
-//        '--add-opens=java.base/java.util=ALL-UNNAMED',
-//        '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED',
-//        '--add-opens=java.base/java.net=ALL-UNNAMED'
-//    ]
-//}
+// Workaround https://github.com/gradle/gradle/issues/25898
+tasks.withType<Test>().configureEach {
+    jvmArgs = listOf(
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+        "--add-opens=java.base/java.net=ALL-UNNAMED"
+    )
+}
 
 spotless {
     setLineEndings(LineEnding.UNIX)
@@ -370,7 +384,7 @@ spotless {
     }
 }
 
-// TODO(aoqia): Enable and setup codenarc after initial formatting
+// TODO(aoqia): Enable and setup CodeNarc after initial formatting
 // codenarc {
 //     configFile = file("codenarc.groovy")
 // }

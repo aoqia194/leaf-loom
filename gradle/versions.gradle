@@ -16,7 +16,7 @@ generateVersionConstants(
 		"${group.toString().replace(".", "/")}/${project.name}/test/LoomTestVersions"
 )
 
-def generateVersionConstants(def sourceSet, def catalogName, def sourcesName) {
+def generateVersionConstants(def sourceSet, def String catalogName, def sourcesName) {
 	def versionCatalog = extensions.getByType(VersionCatalogsExtension.class).named(catalogName)
 
 	def task = tasks.register("${catalogName}GenerateConstants", GenerateVersions.class) {
