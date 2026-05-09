@@ -29,12 +29,12 @@ import java.util.function.Consumer
 
 import spock.lang.Unroll
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec
-import net.fabricmc.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl
-import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
-import net.fabricmc.loom.util.ZipUtils
-import net.fabricmc.loom.util.download.Download
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl
+import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
+import dev.aoqia.leaf.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.util.download.Download
 
 class FileMappingLayerTest extends LayeredMappingsSpecification {
 	@Unroll

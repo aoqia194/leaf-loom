@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.test.unit.providers
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.minecraft.verify.KnownVersions
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.KnownVersions
 
 class KnownVersionsTest extends Specification {
 	// Just a simple test to make sure we can load the known versions

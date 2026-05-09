@@ -29,10 +29,10 @@ import javax.inject.Inject
 import org.gradle.api.provider.MapProperty
 import org.objectweb.asm.ClassVisitor
 
-import net.fabricmc.loom.api.remapping.RemapperContext
-import net.fabricmc.loom.api.remapping.RemapperExtension
-import net.fabricmc.loom.api.remapping.RemapperParameters
-import net.fabricmc.loom.util.Constants
+import dev.aoqia.leaf.loom.api.remapping.RemapperContext
+import dev.aoqia.leaf.loom.api.remapping.RemapperExtension
+import dev.aoqia.leaf.loom.api.remapping.RemapperParameters
+import dev.aoqia.leaf.loom.util.Constants
 
 class TestRemapperExtension implements RemapperExtension<Params> {
 	final Params parameters

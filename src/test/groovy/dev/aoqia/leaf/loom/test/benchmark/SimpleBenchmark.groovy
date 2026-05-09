@@ -27,8 +27,8 @@ package dev.aoqia.leaf.loom.test.benchmark
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 
-import net.fabricmc.loom.test.LoomTestConstants
-import net.fabricmc.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.leaf.loom.test.LoomTestConstants
+import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 

@@ -30,7 +30,7 @@ import java.nio.file.Path
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import net.fabricmc.loom.configuration.providers.mappings.unpick.UnpickMetadata
+import dev.aoqia.leaf.loom.configuration.providers.mappings.unpick.UnpickMetadata
 
 class UnpickMetadataTest extends Specification {
 	@TempDir

@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.test.unit.layeredmappings
 
-import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
 
 class IntermediaryMappingLayerTest extends LayeredMappingsSpecification {
 	def "Read intermediary mappings" () {

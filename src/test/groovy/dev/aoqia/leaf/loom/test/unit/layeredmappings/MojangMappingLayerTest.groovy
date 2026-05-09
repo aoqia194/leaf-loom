@@ -24,8 +24,8 @@
 
 package dev.aoqia.leaf.loom.test.unit.layeredmappings
 
-import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
-import net.fabricmc.loom.configuration.providers.mappings.mojmap.MojangMappingsSpecBuilderImpl
+import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.mojmap.MojangMappingsSpecBuilderImpl
 
 class MojangMappingLayerTest extends LayeredMappingsSpecification {
 	def "Read mojang mappings with synthetic field names" () {

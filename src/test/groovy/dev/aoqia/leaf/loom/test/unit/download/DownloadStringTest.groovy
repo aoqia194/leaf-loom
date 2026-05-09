@@ -26,8 +26,8 @@ package dev.aoqia.leaf.loom.test.unit.download
 
 import io.javalin.http.HttpStatus
 
-import net.fabricmc.loom.util.download.Download
-import net.fabricmc.loom.util.download.DownloadException
+import dev.aoqia.leaf.loom.util.download.Download
+import dev.aoqia.leaf.loom.util.download.DownloadException
 
 class DownloadStringTest extends DownloadTest {
 	def "String: Download"() {

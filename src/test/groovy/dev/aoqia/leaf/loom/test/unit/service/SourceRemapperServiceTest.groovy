@@ -29,9 +29,9 @@ import java.nio.file.Path
 
 import org.intellij.lang.annotations.Language
 
-import net.fabricmc.loom.task.service.MappingsService
-import net.fabricmc.loom.task.service.SourceRemapperService
-import net.fabricmc.loom.util.DeletingFileVisitor
+import dev.aoqia.leaf.loom.task.service.MappingsService
+import dev.aoqia.leaf.loom.task.service.SourceRemapperService
+import dev.aoqia.leaf.loom.util.DeletingFileVisitor
 
 class SourceRemapperServiceTest extends ServiceTestBase {
 	def "remap sources"() {

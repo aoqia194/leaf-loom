@@ -28,9 +28,9 @@ import java.util.concurrent.TimeUnit
 
 import groovy.transform.Immutable
 
-import net.fabricmc.loom.test.LoomTestVersions
-import net.fabricmc.loom.util.LoomVersions
-import net.fabricmc.loom.util.download.Download
+import dev.aoqia.leaf.loom.test.LoomTestVersions
+import dev.aoqia.leaf.loom.util.LoomVersions
+import dev.aoqia.leaf.loom.util.download.Download
 
 class ServerRunner {
 	static final String LOADER_VERSION = LoomTestVersions.FABRIC_LOADER.version()

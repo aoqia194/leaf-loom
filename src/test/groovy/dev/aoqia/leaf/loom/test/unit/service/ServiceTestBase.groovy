@@ -29,11 +29,11 @@ import org.gradle.api.Project
 import org.mockito.Mockito
 import spock.lang.Specification
 
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.service.ScopedServiceFactory
-import net.fabricmc.loom.util.service.Service
-import net.fabricmc.loom.util.service.ServiceFactory
-import net.fabricmc.loom.util.service.ServiceType
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory
+import dev.aoqia.leaf.loom.util.service.Service
+import dev.aoqia.leaf.loom.util.service.ServiceFactory
+import dev.aoqia.leaf.loom.util.service.ServiceType
 
 @CompileStatic
 abstract class ServiceTestBase extends Specification {

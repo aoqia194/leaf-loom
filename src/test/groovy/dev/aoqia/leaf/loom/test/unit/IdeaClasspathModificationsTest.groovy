@@ -29,8 +29,8 @@ import java.nio.charset.StandardCharsets
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.ide.RunConfig
-import net.fabricmc.loom.configuration.ide.idea.IdeaSyncTask
+import dev.aoqia.leaf.loom.configuration.ide.RunConfig
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaSyncTask
 
 class IdeaClasspathModificationsTest extends Specification {
 

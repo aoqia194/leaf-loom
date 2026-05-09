@@ -32,9 +32,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI
+import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 class TestPlugin implements Plugin<Project> {
 	@Override

@@ -31,8 +31,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
-import net.fabricmc.loom.util.gradle.SourceSetHelper
-import net.fabricmc.loom.util.gradle.SourceSetReference
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper
+import dev.aoqia.leaf.loom.util.gradle.SourceSetReference
 
 class SourceSetHelperTest extends Specification {
 	@Shared

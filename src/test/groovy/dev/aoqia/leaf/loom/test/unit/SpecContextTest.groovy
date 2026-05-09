@@ -36,14 +36,14 @@ import org.gradle.api.artifacts.Configuration
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import net.fabricmc.loom.LoomGradleExtension
-import net.fabricmc.loom.api.RemapConfigurationSettings
-import net.fabricmc.loom.api.fmj.FabricModJsonV1Spec
-import net.fabricmc.loom.configuration.processors.SpecContextImpl
-import net.fabricmc.loom.configuration.processors.SpecContextProjectView
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.ZipUtils
-import net.fabricmc.loom.util.fmj.gen.FabricModJsonV1Generator
+import dev.aoqia.leaf.loom.LoomGradleExtension
+import dev.aoqia.leaf.loom.api.RemapConfigurationSettings
+import dev.aoqia.leaf.loom.api.fmj.FabricModJsonV1Spec
+import dev.aoqia.leaf.loom.configuration.processors.SpecContextImpl
+import dev.aoqia.leaf.loom.configuration.processors.SpecContextProjectView
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.util.fmj.gen.FabricModJsonV1Generator
 
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when

@@ -27,8 +27,8 @@ package dev.aoqia.leaf.loom.test.integration.buildSrc.remapext
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-import net.fabricmc.loom.LoomGradleExtension
-import net.fabricmc.loom.api.remapping.RemapperParameters
+import dev.aoqia.leaf.loom.LoomGradleExtension
+import dev.aoqia.leaf.loom.api.remapping.RemapperParameters
 
 class TestPlugin implements Plugin<Project> {
 	@Override

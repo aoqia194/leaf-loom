@@ -29,9 +29,9 @@ import java.nio.file.Path
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.sandbox.SandboxMetadata
-import net.fabricmc.loom.test.util.PlatformTestUtils
-import net.fabricmc.loom.test.util.ZipTestUtils
+import dev.aoqia.leaf.loom.configuration.sandbox.SandboxMetadata
+import dev.aoqia.leaf.loom.test.util.PlatformTestUtils
+import dev.aoqia.leaf.loom.test.util.ZipTestUtils
 
 class SandboxMetadataTest extends Specification {
 	def "test sandbox metadata"() {

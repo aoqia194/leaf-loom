@@ -32,9 +32,9 @@ import spock.lang.Timeout
 import spock.lang.Unroll
 import spock.util.environment.RestoreSystemProperties
 
-import net.fabricmc.loom.test.LoomTestConstants
-import net.fabricmc.loom.test.util.GradleProjectTestTrait
-import net.fabricmc.loom.util.download.Download
+import dev.aoqia.leaf.loom.test.LoomTestConstants
+import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.leaf.loom.util.download.Download
 
 import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

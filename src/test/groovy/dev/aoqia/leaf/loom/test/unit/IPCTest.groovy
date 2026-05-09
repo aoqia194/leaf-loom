@@ -30,8 +30,8 @@ import java.util.function.Consumer
 import spock.lang.Specification
 import spock.lang.Timeout
 
-import net.fabricmc.loom.util.ipc.IPCClient
-import net.fabricmc.loom.util.ipc.IPCServer
+import dev.aoqia.leaf.loom.util.ipc.IPCClient
+import dev.aoqia.leaf.loom.util.ipc.IPCServer
 
 @Timeout(20)
 class IPCTest extends Specification {

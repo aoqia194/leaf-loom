@@ -27,8 +27,8 @@ package dev.aoqia.leaf.loom.test.integration
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import net.fabricmc.loom.test.util.GradleProjectTestTrait
-import net.fabricmc.loom.util.Constants
+import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.leaf.loom.util.Constants
 
 import static net.fabricmc.loom.test.LoomTestConstants.DEFAULT_GRADLE
 import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS

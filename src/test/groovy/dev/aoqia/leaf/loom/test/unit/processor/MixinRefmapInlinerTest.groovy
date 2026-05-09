@@ -34,8 +34,8 @@ import org.spongepowered.asm.mixin.injection.At
 import org.spongepowered.asm.mixin.injection.Inject
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.mods.dependency.refmap.MixinReferenceRemapper
-import net.fabricmc.loom.configuration.mods.dependency.refmap.MixinRefmapInlinerClassVisitor
+import dev.aoqia.leaf.loom.configuration.mods.dependency.refmap.MixinReferenceRemapper
+import dev.aoqia.leaf.loom.configuration.mods.dependency.refmap.MixinRefmapInlinerClassVisitor
 
 class MixinRefmapInlinerTest extends Specification {
 	static String className = "net/fabricmc/loom/test/unit/processor/MixinRefmapInlinerClassVisitorTest\$ExampleClass"

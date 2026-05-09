@@ -30,7 +30,7 @@ import java.nio.file.Path
 import java.util.jar.Attributes
 import java.util.jar.Manifest
 
-import net.fabricmc.loom.util.FileSystemUtil
+import dev.aoqia.leaf.loom.util.FileSystemUtil
 
 class ZipTestUtils {
 	static Path createZip(Map<String, String> entries, String suffix = ".zip") {

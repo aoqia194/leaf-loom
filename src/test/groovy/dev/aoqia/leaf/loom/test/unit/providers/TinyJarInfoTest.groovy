@@ -31,8 +31,8 @@ import java.util.jar.Manifest
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import net.fabricmc.loom.configuration.providers.mappings.tiny.TinyJarInfo
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.configuration.providers.mappings.tiny.TinyJarInfo
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 class TinyJarInfoTest extends Specification {
 	@TempDir

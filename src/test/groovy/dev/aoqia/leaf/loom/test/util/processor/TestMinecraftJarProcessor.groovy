@@ -28,9 +28,9 @@ import java.nio.file.Path
 
 import groovy.transform.Immutable
 
-import net.fabricmc.loom.api.processor.MinecraftJarProcessor
-import net.fabricmc.loom.api.processor.ProcessorContext
-import net.fabricmc.loom.api.processor.SpecContext
+import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor
+import dev.aoqia.leaf.loom.api.processor.ProcessorContext
+import dev.aoqia.leaf.loom.api.processor.SpecContext
 
 @Immutable
 class TestMinecraftJarProcessor implements MinecraftJarProcessor<Spec> {

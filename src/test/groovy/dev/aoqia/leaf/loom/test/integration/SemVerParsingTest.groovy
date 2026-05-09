@@ -27,8 +27,8 @@ package dev.aoqia.leaf.loom.test.integration
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import net.fabricmc.loom.build.nesting.NestableJarGenerationTask
-import net.fabricmc.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.leaf.loom.build.nesting.NestableJarGenerationTask
+import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 
 class SemVerParsingTest extends Specification implements GradleProjectTestTrait {
 	@Unroll

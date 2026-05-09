@@ -32,11 +32,11 @@ import com.google.gson.JsonObject
 import org.gradle.api.tasks.bundling.ZipEntryCompression
 import spock.lang.Specification
 
-import net.fabricmc.loom.util.Checksum
-import net.fabricmc.loom.util.FileSystemUtil
-import net.fabricmc.loom.util.Pair
-import net.fabricmc.loom.util.ZipReprocessorUtil
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.util.Checksum
+import dev.aoqia.leaf.loom.util.FileSystemUtil
+import dev.aoqia.leaf.loom.util.Pair
+import dev.aoqia.leaf.loom.util.ZipReprocessorUtil
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 class ZipUtilsTest extends Specification {
 	def "pack"() {

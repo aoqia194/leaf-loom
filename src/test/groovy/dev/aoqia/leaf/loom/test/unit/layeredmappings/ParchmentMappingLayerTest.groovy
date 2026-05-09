@@ -24,10 +24,10 @@
 
 package dev.aoqia.leaf.loom.test.unit.layeredmappings
 
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec
-import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
-import net.fabricmc.loom.configuration.providers.mappings.mojmap.MojangMappingsSpec
-import net.fabricmc.loom.configuration.providers.mappings.parchment.ParchmentMappingsSpec
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.mojmap.MojangMappingsSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.parchment.ParchmentMappingsSpec
 
 class ParchmentMappingLayerTest extends LayeredMappingsSpecification {
 	def "Read parchment mappings" () {

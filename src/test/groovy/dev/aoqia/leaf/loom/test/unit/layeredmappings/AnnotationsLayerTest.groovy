@@ -29,7 +29,7 @@ import org.objectweb.asm.Type
 import org.objectweb.asm.tree.AnnotationNode
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.AnnotationsData
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsData
 
 class AnnotationsLayerTest extends Specification {
 	def "read annotations"() {

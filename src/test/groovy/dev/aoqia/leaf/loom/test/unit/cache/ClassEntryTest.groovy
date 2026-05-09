@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.test.unit.cache
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.decompilers.cache.ClassEntry
+import dev.aoqia.leaf.loom.decompilers.cache.ClassEntry
 
 class ClassEntryTest extends Specification {
 	def "valid class entry"() {

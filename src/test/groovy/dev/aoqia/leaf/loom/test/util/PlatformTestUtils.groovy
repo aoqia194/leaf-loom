@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.test.util
 
 import groovy.transform.Immutable
 
-import net.fabricmc.loom.util.Platform
+import dev.aoqia.leaf.loom.util.Platform
 
 @Immutable
 class PlatformTestUtils implements Platform  {

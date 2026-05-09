@@ -26,11 +26,11 @@ package dev.aoqia.leaf.loom.test.unit.providers
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.minecraft.verify.CertificateChain
-import net.fabricmc.loom.configuration.providers.minecraft.verify.CertificateRevocationList
-import net.fabricmc.loom.configuration.providers.minecraft.verify.SignatureVerificationFailure
-import net.fabricmc.loom.test.util.CertificateUtils
-import net.fabricmc.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.CertificateChain
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.CertificateRevocationList
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.SignatureVerificationFailure
+import dev.aoqia.leaf.loom.test.util.CertificateUtils
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
 
 class CertificateRevocationListTest extends Specification {
 	// Test to make sure that the CRL URL is correct for the mojang cert chain

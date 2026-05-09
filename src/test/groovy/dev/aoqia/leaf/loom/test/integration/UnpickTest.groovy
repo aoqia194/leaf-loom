@@ -28,8 +28,8 @@ import java.nio.charset.StandardCharsets
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.test.util.GradleProjectTestTrait
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 import static net.fabricmc.loom.test.LoomTestConstants.*
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

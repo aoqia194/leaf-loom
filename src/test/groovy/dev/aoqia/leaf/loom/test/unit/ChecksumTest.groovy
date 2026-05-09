@@ -27,7 +27,7 @@ package dev.aoqia.leaf.loom.test.unit
 import org.gradle.api.Project
 import spock.lang.Specification
 
-import net.fabricmc.loom.util.Checksum
+import dev.aoqia.leaf.loom.util.Checksum
 
 class ChecksumTest extends Specification {
 	def "project hash"() {

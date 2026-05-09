@@ -26,18 +26,18 @@ package dev.aoqia.leaf.loom.test.util
 
 import java.nio.file.Path
 
-import net.fabricmc.loom.LoomGradlePlugin
-import net.fabricmc.loom.configuration.providers.BundleMetadata
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta
-import net.fabricmc.loom.configuration.providers.minecraft.VersionsManifest
-import net.fabricmc.loom.configuration.providers.minecraft.verify.CertificateChain
-import net.fabricmc.loom.configuration.providers.minecraft.verify.JarVerifier
-import net.fabricmc.loom.configuration.providers.minecraft.verify.KnownVersions
-import net.fabricmc.loom.configuration.providers.minecraft.verify.SignatureVerificationFailure
-import net.fabricmc.loom.util.Checksum
-import net.fabricmc.loom.util.Constants
-import net.fabricmc.loom.util.download.Download
-import net.fabricmc.loom.util.download.DownloadExecutor
+import dev.aoqia.leaf.loom.LoomGradlePlugin
+import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.VersionsManifest
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.CertificateChain
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.JarVerifier
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.KnownVersions
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.SignatureVerificationFailure
+import dev.aoqia.leaf.loom.util.Checksum
+import dev.aoqia.leaf.loom.util.Constants
+import dev.aoqia.leaf.loom.util.download.Download
+import dev.aoqia.leaf.loom.util.download.DownloadExecutor
 
 /**
  * A quick and dirty script to generate the known_versions.json file

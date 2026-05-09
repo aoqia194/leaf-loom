@@ -26,9 +26,9 @@ package dev.aoqia.leaf.loom.test.unit
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.mods.dependency.ModDependencyOptions
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.CacheKey
+import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependencyOptions
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.util.CacheKey
 
 class ModDependencyOptionsTest extends Specification {
 	def "test ModDependencyOptions cache key and json value"() {

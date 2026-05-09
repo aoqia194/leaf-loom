@@ -29,9 +29,9 @@ import com.google.gson.JsonObject
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.fabricmc.loom.util.Constants
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory
-import net.fabricmc.loom.util.fmj.FabricModJsonSource
+import dev.aoqia.leaf.loom.util.Constants
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonSource
 
 class FabricModJsonV0Test extends Specification {
 	// I think this is the old v0 format ¯\_(ツ)_/¯

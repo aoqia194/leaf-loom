@@ -28,10 +28,10 @@ import com.google.gson.JsonSyntaxException
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.fabricmc.loom.util.fmj.FabricModJson
-import net.fabricmc.loom.util.fmj.FabricModJsonSource
-import net.fabricmc.loom.util.fmj.mixin.MixinConfiguration
-import net.fabricmc.loom.util.fmj.mixin.MixinRefmap
+import dev.aoqia.leaf.loom.util.fmj.FabricModJson
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonSource
+import dev.aoqia.leaf.loom.util.fmj.mixin.MixinConfiguration
+import dev.aoqia.leaf.loom.util.fmj.mixin.MixinRefmap
 
 class MixinConfigurationTest extends Specification {
 	def "read refmap from mod"() {

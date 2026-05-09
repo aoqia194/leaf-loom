@@ -41,10 +41,10 @@ import org.jetbrains.annotations.Nullable
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
-import net.fabricmc.loom.LoomGradleExtension
-import net.fabricmc.loom.extension.LoomFiles
-import net.fabricmc.loom.test.LoomTestConstants
-import net.fabricmc.loom.util.download.Download
+import dev.aoqia.leaf.loom.LoomGradleExtension
+import dev.aoqia.leaf.loom.extension.LoomFiles
+import dev.aoqia.leaf.loom.test.LoomTestConstants
+import dev.aoqia.leaf.loom.util.download.Download
 
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.*

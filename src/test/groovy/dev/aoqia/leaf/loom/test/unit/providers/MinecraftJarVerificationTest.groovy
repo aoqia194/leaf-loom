@@ -29,16 +29,16 @@ import java.nio.file.Path
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.LoomGradlePlugin
-import net.fabricmc.loom.configuration.providers.BundleMetadata
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta
-import net.fabricmc.loom.configuration.providers.minecraft.VersionsManifest
-import net.fabricmc.loom.configuration.providers.minecraft.verify.MinecraftJarVerification
-import net.fabricmc.loom.configuration.providers.minecraft.verify.SignatureVerificationFailure
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.Constants
-import net.fabricmc.loom.util.ZipUtils
-import net.fabricmc.loom.util.download.Download
+import dev.aoqia.leaf.loom.LoomGradlePlugin
+import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.VersionsManifest
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.MinecraftJarVerification
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.SignatureVerificationFailure
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.util.Constants
+import dev.aoqia.leaf.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.util.download.Download
 
 class MinecraftJarVerificationTest extends Specification {
 	static Path dir = Path.of(".gradle", "test-files", "jar-verification")

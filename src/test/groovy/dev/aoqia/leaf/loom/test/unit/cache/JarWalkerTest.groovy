@@ -28,9 +28,9 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 import spock.lang.Specification
 
-import net.fabricmc.loom.decompilers.cache.JarWalker
-import net.fabricmc.loom.test.util.ZipTestUtils
-import net.fabricmc.loom.util.FileSystemUtil
+import dev.aoqia.leaf.loom.decompilers.cache.JarWalker
+import dev.aoqia.leaf.loom.test.util.ZipTestUtils
+import dev.aoqia.leaf.loom.util.FileSystemUtil
 
 class JarWalkerTest extends Specification {
 	def "find classes in jar"() {

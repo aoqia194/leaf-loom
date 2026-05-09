@@ -27,7 +27,7 @@ package dev.aoqia.leaf.loom.test.unit
 import groovy.xml.QName
 import spock.lang.Specification
 
-import net.fabricmc.loom.util.GroovyXmlUtil
+import dev.aoqia.leaf.loom.util.GroovyXmlUtil
 
 class GroovyXmlUtilTest extends Specification {
 	def "getOrCreateNode finds existing node"() {

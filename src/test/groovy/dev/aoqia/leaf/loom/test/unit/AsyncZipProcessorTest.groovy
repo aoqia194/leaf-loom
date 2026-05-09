@@ -29,9 +29,9 @@ import java.nio.file.Path
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.test.util.ZipTestUtils
-import net.fabricmc.loom.util.AsyncZipProcessor
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.test.util.ZipTestUtils
+import dev.aoqia.leaf.loom.util.AsyncZipProcessor
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 class AsyncZipProcessorTest extends Specification {
 	def "process async"() {

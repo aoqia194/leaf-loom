@@ -27,10 +27,10 @@ package dev.aoqia.leaf.loom.test.unit
 import java.nio.file.Path
 import java.util.function.Function
 
-import net.fabricmc.loom.configuration.providers.mappings.IntermediaryMappingsProvider
-import net.fabricmc.loom.configuration.providers.mappings.IntermediateMappingsService
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.download.Download
+import dev.aoqia.leaf.loom.configuration.providers.mappings.IntermediaryMappingsProvider
+import dev.aoqia.leaf.loom.configuration.providers.mappings.IntermediateMappingsService
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.util.download.Download
 
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.when

@@ -29,11 +29,11 @@ import java.time.Duration
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta
-import net.fabricmc.loom.configuration.providers.minecraft.VersionsManifest
-import net.fabricmc.loom.test.LoomTestConstants
-import net.fabricmc.loom.util.Constants
-import net.fabricmc.loom.util.download.Download
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.VersionsManifest
+import dev.aoqia.leaf.loom.test.LoomTestConstants
+import dev.aoqia.leaf.loom.util.Constants
+import dev.aoqia.leaf.loom.util.download.Download
 
 class MinecraftTestUtils {
 	private static final File TEST_DIR = new File(LoomTestConstants.TEST_DIR, "minecraft")

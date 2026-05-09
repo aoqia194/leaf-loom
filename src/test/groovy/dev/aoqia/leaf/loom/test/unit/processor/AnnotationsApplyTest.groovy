@@ -37,8 +37,8 @@ import org.objectweb.asm.util.Textifier
 import org.objectweb.asm.util.TraceClassVisitor
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.AnnotationsData
-import net.fabricmc.loom.configuration.providers.minecraft.AnnotationsApplyVisitor
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsData
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.AnnotationsApplyVisitor
 
 class AnnotationsApplyTest extends Specification {
 	def "apply annotations"() {

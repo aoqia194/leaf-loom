@@ -27,7 +27,7 @@ package dev.aoqia.leaf.loom.test.unit
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import net.fabricmc.loom.util.Strings
+import dev.aoqia.leaf.loom.util.Strings
 
 class StringsTest extends Specification {
 	@Unroll

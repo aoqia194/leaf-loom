@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.test.unit.service
 
-import net.fabricmc.loom.task.service.MappingsService
+import dev.aoqia.leaf.loom.task.service.MappingsService
 
 class MappingsServiceTest extends ServiceTestBase {
 	def "get mapping tree"() {

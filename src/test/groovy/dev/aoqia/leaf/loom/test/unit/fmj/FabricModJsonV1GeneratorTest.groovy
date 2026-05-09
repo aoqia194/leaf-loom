@@ -30,9 +30,9 @@ import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
 import net.fabricmc.loader.impl.metadata.ModMetadataParser
-import net.fabricmc.loom.api.fmj.FabricModJsonV1Spec
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.fmj.gen.FabricModJsonV1Generator
+import dev.aoqia.leaf.loom.api.fmj.FabricModJsonV1Spec
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.util.fmj.gen.FabricModJsonV1Generator
 
 class FabricModJsonV1GeneratorTest extends Specification {
 	static Project project = GradleTestUtil.mockProject()

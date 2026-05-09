@@ -24,11 +24,11 @@
 
 package dev.aoqia.leaf.loom.test.unit.service.mocks
 
-import net.fabricmc.loom.task.service.TinyRemapperService
-import net.fabricmc.loom.task.service.TinyRemapperServiceInterface
-import net.fabricmc.loom.util.service.Service
-import net.fabricmc.loom.util.service.ServiceFactory
-import net.fabricmc.loom.util.service.ServiceType
+import dev.aoqia.leaf.loom.task.service.TinyRemapperService
+import dev.aoqia.leaf.loom.task.service.TinyRemapperServiceInterface
+import dev.aoqia.leaf.loom.util.service.Service
+import dev.aoqia.leaf.loom.util.service.ServiceFactory
+import dev.aoqia.leaf.loom.util.service.ServiceType
 
 abstract class MockTinyRemapperService extends Service<TinyRemapperService.Options> implements TinyRemapperServiceInterface {
 	static final ServiceType<TinyRemapperService.Options, MockTinyRemapperService> TYPE = new ServiceType<>(TinyRemapperService.Options.class, MockTinyRemapperService.class)

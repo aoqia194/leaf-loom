@@ -26,10 +26,10 @@ package dev.aoqia.leaf.loom.test.unit.library
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.minecraft.library.Library
-import net.fabricmc.loom.configuration.providers.minecraft.library.MinecraftLibraryHelper
-import net.fabricmc.loom.test.util.MinecraftTestUtils
-import net.fabricmc.loom.test.util.PlatformTestUtils
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.Library
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.MinecraftLibraryHelper
+import dev.aoqia.leaf.loom.test.util.MinecraftTestUtils
+import dev.aoqia.leaf.loom.test.util.PlatformTestUtils
 
 class MinecraftLibraryHelperTest extends Specification {
 	static List<String> VERSIONS = [

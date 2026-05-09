@@ -26,9 +26,9 @@ package dev.aoqia.leaf.loom.test.unit.processor
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.accesswidener.ModAccessWidenerEntry
-import net.fabricmc.loom.util.fmj.FabricModJson
-import net.fabricmc.loom.util.fmj.ModEnvironment
+import dev.aoqia.leaf.loom.configuration.accesswidener.ModAccessWidenerEntry
+import dev.aoqia.leaf.loom.util.fmj.FabricModJson
+import dev.aoqia.leaf.loom.util.fmj.ModEnvironment
 
 class ModAccessWidenerEntryTest extends Specification {
 	def "read local mod"() {

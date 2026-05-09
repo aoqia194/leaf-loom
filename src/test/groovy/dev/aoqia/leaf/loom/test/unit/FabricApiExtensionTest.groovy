@@ -27,8 +27,8 @@ package dev.aoqia.leaf.loom.test.unit
 import org.gradle.api.Project
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.fabricapi.FabricApiVersions
-import net.fabricmc.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.configuration.fabricapi.FabricApiVersions
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
 
 class FabricApiExtensionTest extends Specification {
 	def "get module version"() {

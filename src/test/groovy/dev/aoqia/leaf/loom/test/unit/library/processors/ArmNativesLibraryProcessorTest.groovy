@@ -24,10 +24,10 @@
 
 package dev.aoqia.leaf.loom.test.unit.library.processors
 
-import net.fabricmc.loom.configuration.providers.minecraft.library.Library
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessor
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.ArmNativesLibraryProcessor
-import net.fabricmc.loom.test.util.PlatformTestUtils
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.Library
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessor
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.ArmNativesLibraryProcessor
+import dev.aoqia.leaf.loom.test.util.PlatformTestUtils
 
 class ArmNativesLibraryProcessorTest extends LibraryProcessorTest {
 	def "Apply when adding macOS ARM64 support"() {

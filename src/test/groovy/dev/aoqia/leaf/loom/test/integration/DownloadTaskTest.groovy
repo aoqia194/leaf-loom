@@ -26,8 +26,8 @@ package dev.aoqia.leaf.loom.test.integration
 
 import spock.lang.Unroll
 
-import net.fabricmc.loom.test.unit.download.DownloadTest
-import net.fabricmc.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.leaf.loom.test.unit.download.DownloadTest
+import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 
 import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

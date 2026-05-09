@@ -27,9 +27,9 @@ package dev.aoqia.leaf.loom.test.unit
 import org.gradle.api.tasks.SourceSet
 import spock.lang.Specification
 
-import net.fabricmc.loom.api.RemapConfigurationSettings
-import net.fabricmc.loom.configuration.RemapConfigurations
-import net.fabricmc.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.api.RemapConfigurationSettings
+import dev.aoqia.leaf.loom.configuration.RemapConfigurations
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
 
 class RemapConfigurationsTest extends Specification {
 	private static final RemapConfigurations.ConfigurationOption IMPLEMENTATION_OPTION = new RemapConfigurations.ConfigurationOption(SourceSet.&getImplementationConfigurationName, true, true, RemapConfigurationSettings.PublishingMode.RUNTIME_ONLY)

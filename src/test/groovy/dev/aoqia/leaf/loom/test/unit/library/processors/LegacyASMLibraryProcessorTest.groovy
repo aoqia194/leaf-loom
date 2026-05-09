@@ -24,9 +24,9 @@
 
 package dev.aoqia.leaf.loom.test.unit.library.processors
 
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessor
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.LegacyASMLibraryProcessor
-import net.fabricmc.loom.test.util.PlatformTestUtils
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessor
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.LegacyASMLibraryProcessor
+import dev.aoqia.leaf.loom.test.util.PlatformTestUtils
 
 class LegacyASMLibraryProcessorTest extends LibraryProcessorTest {
 	def "Removes legacy asm-all"() {

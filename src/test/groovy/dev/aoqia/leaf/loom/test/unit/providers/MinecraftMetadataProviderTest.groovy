@@ -29,11 +29,11 @@ import java.nio.file.Path
 
 import org.intellij.lang.annotations.Language
 
-import net.fabricmc.loom.configuration.providers.minecraft.ManifestLocations
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftMetadataProvider
-import net.fabricmc.loom.test.LoomTestConstants
-import net.fabricmc.loom.test.unit.download.DownloadTest
-import net.fabricmc.loom.util.download.Download
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.ManifestLocations
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftMetadataProvider
+import dev.aoqia.leaf.loom.test.LoomTestConstants
+import dev.aoqia.leaf.loom.test.unit.download.DownloadTest
+import dev.aoqia.leaf.loom.util.download.Download
 
 class MinecraftMetadataProviderTest extends DownloadTest {
 	Path testDir

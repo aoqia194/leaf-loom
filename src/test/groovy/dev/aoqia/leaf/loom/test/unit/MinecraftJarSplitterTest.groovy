@@ -26,11 +26,11 @@ package dev.aoqia.leaf.loom.test.unit
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.BundleMetadata
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJarSplitter
-import net.fabricmc.loom.test.LoomTestConstants
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.util.download.Download
+import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJarSplitter
+import dev.aoqia.leaf.loom.test.LoomTestConstants
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.util.download.Download
 
 class MinecraftJarSplitterTest extends Specification {
 	public static final String CLIENT_JAR_URL = "https://launcher.mojang.com/v1/objects/7e46fb47609401970e2818989fa584fd467cd036/client.jar"

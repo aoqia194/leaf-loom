@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.test.unit
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.util.AsyncCache
+import dev.aoqia.leaf.loom.util.AsyncCache
 
 class AsyncCacheTest extends Specification {
 	def "rethrows error"() {

@@ -28,9 +28,9 @@ import groovy.transform.InheritConstructors
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 
-import net.fabricmc.loom.util.service.ScopedServiceFactory
-import net.fabricmc.loom.util.service.Service
-import net.fabricmc.loom.util.service.ServiceType
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory
+import dev.aoqia.leaf.loom.util.service.Service
+import dev.aoqia.leaf.loom.util.service.ServiceType
 
 class ScopedServiceFactoryTest extends ServiceTestBase {
 	def "create service"() {

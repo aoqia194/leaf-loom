@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.test.unit.providers
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftClassMerger
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftClassMerger
 
 import static org.objectweb.asm.Opcodes.ACC_FINAL
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE

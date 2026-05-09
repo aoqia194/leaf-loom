@@ -26,9 +26,9 @@ package dev.aoqia.leaf.loom.test.integration.buildSrc.decompile
 
 import java.nio.file.Path
 
-import net.fabricmc.loom.api.decompilers.DecompilationMetadata
-import net.fabricmc.loom.api.decompilers.LoomDecompiler
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.api.decompilers.DecompilationMetadata
+import dev.aoqia.leaf.loom.api.decompilers.LoomDecompiler
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 class CustomDecompiler implements LoomDecompiler {
 	@Override

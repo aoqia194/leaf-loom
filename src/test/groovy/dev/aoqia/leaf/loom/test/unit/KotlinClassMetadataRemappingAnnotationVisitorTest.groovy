@@ -33,8 +33,8 @@ import org.objectweb.asm.util.Textifier
 import org.objectweb.asm.util.TraceClassVisitor
 import spock.lang.Specification
 
-import net.fabricmc.loom.kotlin.remapping.KotlinMetadataRemappingClassVisitor
-import net.fabricmc.loom.util.TinyRemapperHelper
+import dev.aoqia.leaf.loom.kotlin.remapping.KotlinMetadataRemappingClassVisitor
+import dev.aoqia.leaf.loom.util.TinyRemapperHelper
 import net.fabricmc.mappingio.MappingReader
 import net.fabricmc.mappingio.tree.MemoryMappingTree
 import net.fabricmc.tinyremapper.IMappingProvider

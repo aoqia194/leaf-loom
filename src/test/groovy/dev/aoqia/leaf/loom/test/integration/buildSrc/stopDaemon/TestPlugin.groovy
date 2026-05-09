@@ -55,7 +55,7 @@ import org.gradle.launcher.daemon.server.SynchronizedDispatchConnection
 import org.gradle.launcher.daemon.server.api.DaemonState
 import org.gradle.util.GradleVersion
 
-import net.fabricmc.loom.util.gradle.daemon.DaemonUtils
+import dev.aoqia.leaf.loom.util.gradle.daemon.DaemonUtils
 
 /**
  * An integration test that runs a dummy gradle daemon TCP server, to test the daemon shutdown mechanism.

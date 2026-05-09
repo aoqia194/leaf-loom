@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.test.unit
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.ide.RunConfig
+import dev.aoqia.leaf.loom.configuration.ide.RunConfig
 
 class RunConfigUnitTest extends Specification {
 	def "escape arguments"() {

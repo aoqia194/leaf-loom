@@ -29,9 +29,9 @@ import java.nio.file.Path
 
 import spock.lang.TempDir
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace
-import net.fabricmc.loom.configuration.providers.mappings.IntermediateMappingsService
-import net.fabricmc.loom.configuration.providers.mappings.tiny.MappingsMerger
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace
+import dev.aoqia.leaf.loom.configuration.providers.mappings.IntermediateMappingsService
+import dev.aoqia.leaf.loom.configuration.providers.mappings.tiny.MappingsMerger
 import net.fabricmc.mappingio.MappingReader
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch
 import net.fabricmc.mappingio.tree.MemoryMappingTree

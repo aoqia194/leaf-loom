@@ -30,7 +30,7 @@ import groovy.transform.CompileStatic
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.AnnotationsData
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsData
 import net.fabricmc.tinyremapper.IMappingProvider
 import net.fabricmc.tinyremapper.TinyRemapper
 

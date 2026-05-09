@@ -29,8 +29,8 @@ import spock.lang.Stepwise
 import spock.lang.Unroll
 import spock.util.environment.RestoreSystemProperties
 
-import net.fabricmc.loom.test.util.GradleProjectTestTrait
-import net.fabricmc.loom.test.util.MockMavenServerTrait
+import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.leaf.loom.test.util.MockMavenServerTrait
 
 import static java.lang.System.setProperty
 import static net.fabricmc.loom.test.LoomTestConstants.*

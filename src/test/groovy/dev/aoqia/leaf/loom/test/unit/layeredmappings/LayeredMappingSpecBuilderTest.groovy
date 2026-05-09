@@ -26,14 +26,14 @@ package dev.aoqia.leaf.loom.test.unit.layeredmappings
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.mappings.LayeredMappingSpec
-import net.fabricmc.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl
-import net.fabricmc.loom.configuration.providers.mappings.file.FileMappingsSpec
-import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
-import net.fabricmc.loom.configuration.providers.mappings.mojmap.MojangMappingsSpec
-import net.fabricmc.loom.configuration.providers.mappings.parchment.ParchmentMappingsSpec
-import net.fabricmc.loom.configuration.providers.mappings.utils.MavenFileSpec
-import net.fabricmc.loom.util.ClosureAction
+import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl
+import dev.aoqia.leaf.loom.configuration.providers.mappings.file.FileMappingsSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.mojmap.MojangMappingsSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.parchment.ParchmentMappingsSpec
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.MavenFileSpec
+import dev.aoqia.leaf.loom.util.ClosureAction
 
 class LayeredMappingSpecBuilderTest extends Specification {
 	def "simple mojmap" () {

@@ -26,9 +26,9 @@ package dev.aoqia.leaf.loom.test.unit.providers
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.minecraft.verify.CertificateChain
-import net.fabricmc.loom.configuration.providers.minecraft.verify.SignatureVerificationFailure
-import net.fabricmc.loom.test.util.CertificateUtils
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.CertificateChain
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.SignatureVerificationFailure
+import dev.aoqia.leaf.loom.test.util.CertificateUtils
 
 class CertificateChainTest extends Specification {
 	def "load mojang's cert chain"() {

@@ -28,7 +28,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import spock.lang.Specification
 
-import net.fabricmc.loom.test.util.TestServiceFactory
+import dev.aoqia.leaf.loom.test.util.TestServiceFactory
 
 class TestServiceFactoryTest extends Specification {
 	def "property"() {

@@ -26,10 +26,10 @@ package dev.aoqia.leaf.loom.test.integration.buildSrc.remapext
 
 import org.objectweb.asm.ClassVisitor
 
-import net.fabricmc.loom.api.remapping.RemapperContext
-import net.fabricmc.loom.api.remapping.RemapperExtension
-import net.fabricmc.loom.api.remapping.RemapperParameters
-import net.fabricmc.loom.api.remapping.TinyRemapperExtension
+import dev.aoqia.leaf.loom.api.remapping.RemapperContext
+import dev.aoqia.leaf.loom.api.remapping.RemapperExtension
+import dev.aoqia.leaf.loom.api.remapping.RemapperParameters
+import dev.aoqia.leaf.loom.api.remapping.TinyRemapperExtension
 import net.fabricmc.tinyremapper.TinyRemapper
 
 class TestTinyRemapperExtension implements RemapperExtension<RemapperParameters.None>, TinyRemapperExtension {

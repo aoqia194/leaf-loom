@@ -33,7 +33,7 @@ import org.gradle.api.provider.Property
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
-import net.fabricmc.loom.util.gradle.GradleTypeAdapter
+import dev.aoqia.leaf.loom.util.gradle.GradleTypeAdapter
 
 class GradleTypeAdapterTest extends Specification {
 	def "Property"() {

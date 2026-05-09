@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.test.unit
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.decompilers.ClassLineNumbers
+import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers
 
 class ClassLineNumbersTest extends Specification {
 	def "read linemap"() {

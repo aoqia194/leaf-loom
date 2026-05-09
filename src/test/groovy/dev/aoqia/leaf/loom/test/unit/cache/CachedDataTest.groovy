@@ -32,8 +32,8 @@ import java.nio.file.StandardOpenOption
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import net.fabricmc.loom.decompilers.ClassLineNumbers
-import net.fabricmc.loom.decompilers.cache.CachedData
+import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers
+import dev.aoqia.leaf.loom.decompilers.cache.CachedData
 
 class CachedDataTest extends Specification {
 	@TempDir

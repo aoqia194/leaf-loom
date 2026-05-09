@@ -30,8 +30,8 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import spock.lang.Shared
 
-import net.fabricmc.loom.test.LoomTestConstants
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.test.LoomTestConstants
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 trait GradleProjectTestTrait {
 	@Lazy

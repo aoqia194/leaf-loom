@@ -26,9 +26,9 @@ package dev.aoqia.leaf.loom.test.unit.processor
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.api.processor.SpecContext
-import net.fabricmc.loom.configuration.processors.MinecraftJarProcessorManager
-import net.fabricmc.loom.test.util.processor.TestMinecraftJarProcessor
+import dev.aoqia.leaf.loom.api.processor.SpecContext
+import dev.aoqia.leaf.loom.configuration.processors.MinecraftJarProcessorManager
+import dev.aoqia.leaf.loom.test.util.processor.TestMinecraftJarProcessor
 
 class MinecraftJarProcessorManagerTest extends Specification {
 	def "Cache value matches"() {

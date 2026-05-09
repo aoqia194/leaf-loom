@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.test.unit.layeredmappings
 
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta
 
 interface LayeredMappingsTestConstants {
 	public static final String INTERMEDIARY_1_17_URL = "https://maven.fabricmc.net/net/fabricmc/intermediary/1.17/intermediary-1.17-v2.jar"

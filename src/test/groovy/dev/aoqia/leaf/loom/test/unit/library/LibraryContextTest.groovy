@@ -27,10 +27,10 @@ package dev.aoqia.leaf.loom.test.unit.library
 import org.gradle.api.JavaVersion
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext
-import net.fabricmc.loom.test.util.MinecraftTestUtils
-import net.fabricmc.loom.util.Platform
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryContext
+import dev.aoqia.leaf.loom.test.util.MinecraftTestUtils
+import dev.aoqia.leaf.loom.util.Platform
 
 class LibraryContextTest extends Specification {
 	def "Supports ARM64 macOS"() {

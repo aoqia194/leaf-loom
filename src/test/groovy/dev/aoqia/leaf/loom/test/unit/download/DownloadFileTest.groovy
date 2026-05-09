@@ -33,12 +33,12 @@ import java.time.Instant
 import io.javalin.http.HttpStatus
 import spock.lang.IgnoreIf
 
-import net.fabricmc.loom.util.Checksum
-import net.fabricmc.loom.util.download.Download
-import net.fabricmc.loom.util.download.DownloadException
-import net.fabricmc.loom.util.download.DownloadExecutor
-import net.fabricmc.loom.util.download.DownloadProgressListener
-import net.fabricmc.loom.util.download.DownloadResult
+import dev.aoqia.leaf.loom.util.Checksum
+import dev.aoqia.leaf.loom.util.download.Download
+import dev.aoqia.leaf.loom.util.download.DownloadException
+import dev.aoqia.leaf.loom.util.download.DownloadExecutor
+import dev.aoqia.leaf.loom.util.download.DownloadProgressListener
+import dev.aoqia.leaf.loom.util.download.DownloadResult
 
 class DownloadFileTest extends DownloadTest {
 	@IgnoreIf({ os.windows }) // Requires admin on windows.

@@ -29,7 +29,7 @@ import org.objectweb.asm.TypePath
 import org.objectweb.asm.signature.SignatureReader
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.validate.TypePathCheckerVisitor
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.validate.TypePathCheckerVisitor
 
 class TypePathCheckerVisitorTest extends Specification {
 	def "empty / null TypePath targets the whole type"() {

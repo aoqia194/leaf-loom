@@ -29,7 +29,7 @@ import com.google.gson.JsonObject
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import net.fabricmc.loom.util.fmj.FabricModJsonUtils
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils
 
 class FabricModJsonUtilsTest extends Specification {
 	// Test that the schemaVersion is moved to the first position

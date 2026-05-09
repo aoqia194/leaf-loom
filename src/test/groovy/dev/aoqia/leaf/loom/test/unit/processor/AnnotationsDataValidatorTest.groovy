@@ -30,8 +30,8 @@ import org.objectweb.asm.TypeReference
 import org.objectweb.asm.tree.ClassNode
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.AnnotationsData
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.validate.AnnotationsDataValidator
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsData
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.validate.AnnotationsDataValidator
 
 @SuppressWarnings("JsonStandardCompliance")
 class AnnotationsDataValidatorTest extends Specification {

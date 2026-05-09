@@ -24,12 +24,12 @@
 
 package dev.aoqia.leaf.loom.test.unit.library
 
-import net.fabricmc.loom.configuration.providers.minecraft.library.Library
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessorManager
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.RuntimeLog4jLibraryProcessor
-import net.fabricmc.loom.test.unit.library.processors.LibraryProcessorTest
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.test.util.PlatformTestUtils
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.Library
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessorManager
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.RuntimeLog4jLibraryProcessor
+import dev.aoqia.leaf.loom.test.unit.library.processors.LibraryProcessorTest
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.test.util.PlatformTestUtils
 
 class LibraryProcessorManagerTest extends LibraryProcessorTest {
 	// A test to ensure that we can add macOS ARM64 support on an unsupported version

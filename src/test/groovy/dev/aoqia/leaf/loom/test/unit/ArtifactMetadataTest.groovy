@@ -28,8 +28,8 @@ import java.nio.file.Path
 
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.mods.ArtifactMetadata
-import net.fabricmc.loom.configuration.mods.ArtifactRef
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef
 
 import static net.fabricmc.loom.configuration.mods.ArtifactMetadata.MixinRemapType.MIXIN
 import static net.fabricmc.loom.configuration.mods.ArtifactMetadata.MixinRemapType.STATIC

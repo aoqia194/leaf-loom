@@ -32,8 +32,8 @@ import org.objectweb.asm.tree.MethodNode
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import net.fabricmc.loom.test.util.GradleProjectTestTrait
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

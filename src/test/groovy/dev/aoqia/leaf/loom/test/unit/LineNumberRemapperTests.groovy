@@ -32,11 +32,11 @@ import org.objectweb.asm.Label
 import org.objectweb.asm.MethodVisitor
 import spock.lang.Specification
 
-import net.fabricmc.loom.decompilers.ClassLineNumbers
-import net.fabricmc.loom.decompilers.LineNumberRemapper
-import net.fabricmc.loom.test.util.ZipTestUtils
-import net.fabricmc.loom.util.Constants
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers
+import dev.aoqia.leaf.loom.decompilers.LineNumberRemapper
+import dev.aoqia.leaf.loom.test.util.ZipTestUtils
+import dev.aoqia.leaf.loom.util.Constants
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 class LineNumberRemapperTests extends Specification {
 	def "remapLinenumbers"() {

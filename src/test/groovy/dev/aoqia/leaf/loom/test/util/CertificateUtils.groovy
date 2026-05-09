@@ -45,7 +45,7 @@ import org.bouncycastle.cert.jcajce.JcaX509v2CRLBuilder
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder
 
-import net.fabricmc.loom.configuration.providers.minecraft.verify.CertificateChain
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.CertificateChain
 
 /**
  * Test code, not for production use.

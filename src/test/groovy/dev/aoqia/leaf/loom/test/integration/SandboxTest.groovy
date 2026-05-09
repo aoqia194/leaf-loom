@@ -30,12 +30,12 @@ import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import net.fabricmc.loom.configuration.mods.dependency.LocalMavenHelper
-import net.fabricmc.loom.test.unit.sandbox.SandboxEntrypoint
-import net.fabricmc.loom.test.util.GradleProjectTestTrait
-import net.fabricmc.loom.test.util.ZipTestUtils
-import net.fabricmc.loom.util.Constants
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper
+import dev.aoqia.leaf.loom.test.unit.sandbox.SandboxEntrypoint
+import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import dev.aoqia.leaf.loom.test.util.ZipTestUtils
+import dev.aoqia.leaf.loom.util.Constants
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS

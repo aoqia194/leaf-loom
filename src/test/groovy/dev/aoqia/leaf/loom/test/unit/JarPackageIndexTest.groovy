@@ -30,9 +30,9 @@ import java.nio.file.Path
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import net.fabricmc.loom.util.JarPackageIndex
-import net.fabricmc.loom.util.Pair
-import net.fabricmc.loom.util.ZipUtils
+import dev.aoqia.leaf.loom.util.JarPackageIndex
+import dev.aoqia.leaf.loom.util.Pair
+import dev.aoqia.leaf.loom.util.ZipUtils
 
 class JarPackageIndexTest extends Specification {
 	@TempDir

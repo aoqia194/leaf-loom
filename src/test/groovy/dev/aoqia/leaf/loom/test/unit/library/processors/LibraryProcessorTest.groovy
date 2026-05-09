@@ -27,13 +27,13 @@ package dev.aoqia.leaf.loom.test.unit.library.processors
 import org.gradle.api.JavaVersion
 import spock.lang.Specification
 
-import net.fabricmc.loom.configuration.providers.minecraft.library.Library
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessorManager
-import net.fabricmc.loom.configuration.providers.minecraft.library.MinecraftLibraryHelper
-import net.fabricmc.loom.test.util.GradleTestUtil
-import net.fabricmc.loom.test.util.MinecraftTestUtils
-import net.fabricmc.loom.util.Platform
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.Library
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryContext
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessorManager
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.MinecraftLibraryHelper
+import dev.aoqia.leaf.loom.test.util.GradleTestUtil
+import dev.aoqia.leaf.loom.test.util.MinecraftTestUtils
+import dev.aoqia.leaf.loom.util.Platform
 
 abstract class LibraryProcessorTest extends Specification {
 	def getLibs(String id, Platform platform, JavaVersion javaVersion = JavaVersion.VERSION_17) {
