@@ -24,8 +24,8 @@
 
 package dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
 
 public record IntermediaryMappingsSpec() implements MappingsSpec<IntermediaryMappingLayer> {
 	@Override

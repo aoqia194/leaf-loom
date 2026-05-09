@@ -30,17 +30,17 @@ import java.util.List;
 
 import org.gradle.api.Action;
 
-import net.fabricmc.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
-import net.fabricmc.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
-import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
-import net.fabricmc.loom.api.mappings.layered.spec.MojangMappingsSpecBuilder;
-import net.fabricmc.loom.api.mappings.layered.spec.ParchmentMappingsSpecBuilder;
-import net.fabricmc.loom.configuration.providers.mappings.extras.signatures.SignatureFixesSpec;
-import net.fabricmc.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl;
-import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec;
-import net.fabricmc.loom.configuration.providers.mappings.mojmap.MojangMappingsSpecBuilderImpl;
-import net.fabricmc.loom.configuration.providers.mappings.parchment.ParchmentMappingsSpecBuilderImpl;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.MojangMappingsSpecBuilder;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.ParchmentMappingsSpecBuilder;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.signatures.SignatureFixesSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.mojmap.MojangMappingsSpecBuilderImpl;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.parchment.ParchmentMappingsSpecBuilderImpl;
 
 public class LayeredMappingSpecBuilderImpl implements LayeredMappingSpecBuilder {
 	private final List<MappingsSpec<?>> layers = new LinkedList<>();

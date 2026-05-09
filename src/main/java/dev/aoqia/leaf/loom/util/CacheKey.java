@@ -30,7 +30,7 @@ import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.Internal;
 
-import net.fabricmc.loom.util.gradle.GradleTypeAdapter;
+import dev.aoqia.leaf.loom.util.gradle.GradleTypeAdapter;
 
 /**
  * A simple base class for creating cache keys. Extend this class and create abstract properties to be included in the cache key.

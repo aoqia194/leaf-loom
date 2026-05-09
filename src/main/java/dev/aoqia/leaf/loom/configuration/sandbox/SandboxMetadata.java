@@ -41,8 +41,8 @@ import java.util.Map;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.fabricmc.loom.util.Platform;
-import net.fabricmc.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 
 public sealed interface SandboxMetadata permits SandboxMetadata.V1 {
 	String SANDBOX_METADATA_FILENAME = "fabric-sandbox.json";

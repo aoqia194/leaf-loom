@@ -42,7 +42,7 @@ import org.gradle.api.tasks.OutputFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.util.ExceptionUtil;
+import dev.aoqia.leaf.loom.util.ExceptionUtil;
 
 public abstract class TracyCapture {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TracyCapture.class);

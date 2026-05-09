@@ -44,9 +44,9 @@ import org.gradle.api.tasks.TaskAction;
 
 import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.validator.ClassTweakerValidatingVisitor;
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.util.TinyRemapperLoggerAdapter;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public abstract class ValidateAccessWidenerTask extends DefaultTask {

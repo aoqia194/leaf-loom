@@ -53,8 +53,8 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.util.AttributeHelper;
-import net.fabricmc.loom.util.Checksum;
+import dev.aoqia.leaf.loom.util.AttributeHelper;
+import dev.aoqia.leaf.loom.util.Checksum;
 
 public final class Download {
 	private static final String E_TAG = "ETag";

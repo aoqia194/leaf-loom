@@ -29,7 +29,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Predicate;
 
-import net.fabricmc.loom.configuration.mods.dependency.ModDependency;
+import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependency;
 import net.fabricmc.tinyremapper.InputTag;
 import net.fabricmc.tinyremapper.TinyRemapper;
 

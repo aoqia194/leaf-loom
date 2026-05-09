@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.kotlin.remapping
 
-import net.fabricmc.loom.util.kotlin.KotlinMetadataTinyRemapperExtension
+import dev.aoqia.leaf.loom.util.kotlin.KotlinMetadataTinyRemapperExtension
 import net.fabricmc.tinyremapper.TinyRemapper
 import net.fabricmc.tinyremapper.api.TrClass
 import org.objectweb.asm.ClassVisitor

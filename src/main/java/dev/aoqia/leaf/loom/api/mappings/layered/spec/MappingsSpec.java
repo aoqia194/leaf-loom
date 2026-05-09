@@ -26,8 +26,8 @@ package dev.aoqia.leaf.loom.api.mappings.layered.spec;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
 
 /**
  * A MappingsSpec is an immutable set of data used to create the MappingLayer.

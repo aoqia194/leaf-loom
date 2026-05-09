@@ -57,11 +57,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.configuration.InstallerData;
-import net.fabricmc.loom.task.AbstractLoomTask;
-import net.fabricmc.loom.task.RemapTaskConfiguration;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.configuration.InstallerData;
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.task.RemapTaskConfiguration;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 /**
  * This is the base task for running the game in a "production" like environment. Using intermediary names, and not enabling development only features.

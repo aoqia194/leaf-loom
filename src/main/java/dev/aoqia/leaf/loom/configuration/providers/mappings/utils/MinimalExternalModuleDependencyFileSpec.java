@@ -29,8 +29,8 @@ import java.util.Objects;
 
 import org.gradle.api.artifacts.MinimalExternalModuleDependency;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
 
 public record MinimalExternalModuleDependencyFileSpec(MinimalExternalModuleDependency dependency) implements FileSpec {
 	@Override

@@ -31,7 +31,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-import net.fabricmc.loom.util.IOStringConsumer;
+import dev.aoqia.leaf.loom.util.IOStringConsumer;
 
 public final class IPCClient implements IOStringConsumer, AutoCloseable {
 	private final Path path;

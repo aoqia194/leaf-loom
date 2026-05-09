@@ -46,9 +46,9 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
-import net.fabricmc.loom.extension.LoomGradleExtensionApiImpl;
-import net.fabricmc.loom.util.Checksum;
+import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
+import dev.aoqia.leaf.loom.extension.LoomGradleExtensionApiImpl;
+import dev.aoqia.leaf.loom.util.Checksum;
 
 @ApiStatus.Internal
 public abstract class IntermediaryMappingsProvider extends IntermediateMappingsProviderInternal {

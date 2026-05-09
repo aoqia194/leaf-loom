@@ -37,18 +37,18 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.ConfigContext;
-import net.fabricmc.loom.configuration.providers.BundleMetadata;
-import net.fabricmc.loom.configuration.providers.minecraft.verify.MinecraftJarVerification;
-import net.fabricmc.loom.configuration.providers.minecraft.verify.SignatureVerificationFailure;
-import net.fabricmc.loom.util.Check;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.download.DownloadExecutor;
-import net.fabricmc.loom.util.download.GradleDownloadProgressListener;
-import net.fabricmc.loom.util.gradle.GradleUtils;
-import net.fabricmc.loom.util.gradle.ProgressGroup;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.MinecraftJarVerification;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.verify.SignatureVerificationFailure;
+import dev.aoqia.leaf.loom.util.Check;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.download.DownloadExecutor;
+import dev.aoqia.leaf.loom.util.download.GradleDownloadProgressListener;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.util.gradle.ProgressGroup;
 
 public abstract class MinecraftProvider {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MinecraftProvider.class);

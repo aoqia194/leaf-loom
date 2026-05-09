@@ -40,8 +40,8 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.extension.MixinExtension;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.extension.MixinExtension;
 
 public class KaptApInvoker extends AnnotationProcessorInvoker<JavaCompile> {
 	private final KaptExtension kaptExtension = project.getExtensions().getByType(KaptExtension.class);

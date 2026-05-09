@@ -34,8 +34,8 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.UntrackedTask;
 import org.gradle.api.tasks.options.Option;
 
-import net.fabricmc.loom.task.service.MigrateMappingsService;
-import net.fabricmc.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.leaf.loom.task.service.MigrateMappingsService;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
 @UntrackedTask(because = "Always rerun this task.")
 public abstract class MigrateMappingsTask extends AbstractLoomTask {

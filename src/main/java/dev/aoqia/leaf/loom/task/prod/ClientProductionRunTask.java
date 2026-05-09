@@ -39,8 +39,8 @@ import org.gradle.api.tasks.Optional;
 import org.gradle.process.ExecSpec;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Platform;
 
 /**
  * A task that runs the Minecraft client in a similar way to a production launcher. You must manually register a task of this type to use it.

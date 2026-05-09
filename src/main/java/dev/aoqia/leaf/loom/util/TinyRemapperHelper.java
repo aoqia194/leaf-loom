@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
 
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;

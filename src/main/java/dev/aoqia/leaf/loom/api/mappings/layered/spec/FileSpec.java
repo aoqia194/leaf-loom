@@ -37,12 +37,12 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Provider;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.configuration.providers.mappings.utils.DependencyFileSpec;
-import net.fabricmc.loom.configuration.providers.mappings.utils.LocalFileSpec;
-import net.fabricmc.loom.configuration.providers.mappings.utils.MavenFileSpec;
-import net.fabricmc.loom.configuration.providers.mappings.utils.MinimalExternalModuleDependencyFileSpec;
-import net.fabricmc.loom.configuration.providers.mappings.utils.URLFileSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.DependencyFileSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.LocalFileSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.MavenFileSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.MinimalExternalModuleDependencyFileSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.URLFileSpec;
 
 /**
  * FileSpec should be used in MappingsSpec's that take an input file. The input file can either be a local file or a gradle dep.

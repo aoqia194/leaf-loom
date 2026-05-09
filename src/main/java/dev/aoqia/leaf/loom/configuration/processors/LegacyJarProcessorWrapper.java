@@ -32,9 +32,9 @@ import javax.inject.Inject;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
-import net.fabricmc.loom.api.processor.ProcessorContext;
-import net.fabricmc.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
+import dev.aoqia.leaf.loom.api.processor.SpecContext;
 
 /**
  * Wrapper around the deprecated API.

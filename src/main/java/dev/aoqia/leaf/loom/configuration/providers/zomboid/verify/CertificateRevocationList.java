@@ -42,8 +42,8 @@ import org.gradle.api.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.util.download.DownloadException;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.download.DownloadException;
 
 public record CertificateRevocationList(Collection<X509CRL> crls, boolean downloadFailure) {
 	/**

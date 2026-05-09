@@ -32,8 +32,8 @@ import java.util.Set;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.FileCollectionDependency;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
 
 public record DependencyFileSpec(Dependency dependency) implements FileSpec {
 	@Override

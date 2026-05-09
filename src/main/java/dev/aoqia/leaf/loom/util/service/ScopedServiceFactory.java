@@ -33,7 +33,7 @@ import java.util.Map;
 
 import org.jetbrains.annotations.VisibleForTesting;
 
-import net.fabricmc.loom.util.gradle.GradleTypeAdapter;
+import dev.aoqia.leaf.loom.util.gradle.GradleTypeAdapter;
 
 /**
  * An implementation of {@link ServiceFactory} that creates services scoped to the factory instance.

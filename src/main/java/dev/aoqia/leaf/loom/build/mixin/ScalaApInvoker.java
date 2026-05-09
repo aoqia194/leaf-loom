@@ -34,8 +34,8 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.scala.ScalaCompile;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.extension.MixinExtension;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.extension.MixinExtension;
 
 public class ScalaApInvoker extends AnnotationProcessorInvoker<ScalaCompile> {
 	public ScalaApInvoker(Project project) {

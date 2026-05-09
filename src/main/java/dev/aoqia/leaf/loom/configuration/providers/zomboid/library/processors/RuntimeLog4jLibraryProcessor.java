@@ -27,10 +27,10 @@ package dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import net.fabricmc.loom.configuration.providers.minecraft.library.Library;
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext;
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessor;
-import net.fabricmc.loom.util.Platform;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.Library;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryContext;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessor;
+import dev.aoqia.leaf.loom.util.Platform;
 
 public class RuntimeLog4jLibraryProcessor extends LibraryProcessor {
 	private static final String LOG4J_GROUP = "org.apache.logging.log4j";

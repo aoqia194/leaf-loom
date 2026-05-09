@@ -26,8 +26,8 @@ package dev.aoqia.leaf.loom.task;
 
 import javax.inject.Inject;
 
-import net.fabricmc.loom.configuration.ide.RunConfig;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 
 public abstract class RunGameTask extends AbstractRunTask {
 	@Inject

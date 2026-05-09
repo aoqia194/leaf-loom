@@ -43,8 +43,8 @@ import org.gradle.workers.WorkParameters;
 import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 
-import net.fabricmc.loom.api.fmj.FabricModJsonV1Spec;
-import net.fabricmc.loom.util.fmj.gen.FabricModJsonV1Generator;
+import dev.aoqia.leaf.loom.api.fmj.FabricModJsonV1Spec;
+import dev.aoqia.leaf.loom.util.fmj.gen.FabricModJsonV1Generator;
 
 /**
  * A task that generates a {@code fabric.mod.json} file using the configured {@link FabricModJsonV1Spec} specification.

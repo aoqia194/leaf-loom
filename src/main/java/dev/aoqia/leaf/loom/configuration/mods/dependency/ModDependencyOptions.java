@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.configuration.mods.dependency;
 
 import org.gradle.api.provider.Property;
 
-import net.fabricmc.loom.util.CacheKey;
+import dev.aoqia.leaf.loom.util.CacheKey;
 
 /**
  * Inputs used to process a mod dependency. The output jar is cached based on these properties.

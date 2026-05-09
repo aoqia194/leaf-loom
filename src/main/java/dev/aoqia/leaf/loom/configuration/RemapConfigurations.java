@@ -38,11 +38,11 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.VisibleForTesting;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.RemapConfigurationSettings;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Strings;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Strings;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 public final class RemapConfigurations {
 	private static final List<ConfigurationOption> OPTIONS = List.of(

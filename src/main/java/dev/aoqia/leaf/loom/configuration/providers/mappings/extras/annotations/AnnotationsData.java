@@ -45,10 +45,10 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.TypeAnnotationNode;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.mappings.MappingConfiguration;
-import net.fabricmc.loom.task.service.TinyRemapperService;
-import net.fabricmc.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.leaf.loom.task.service.TinyRemapperService;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public record AnnotationsData(Map<String, ClassAnnotationData> classes, String namespace) {

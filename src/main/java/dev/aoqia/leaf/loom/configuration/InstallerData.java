@@ -35,10 +35,10 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.LoomRepositoryPlugin;
-import net.fabricmc.loom.configuration.ide.idea.IdeaUtils;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomRepositoryPlugin;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public record InstallerData(String version, JsonObject installerJson) {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InstallerData.class);

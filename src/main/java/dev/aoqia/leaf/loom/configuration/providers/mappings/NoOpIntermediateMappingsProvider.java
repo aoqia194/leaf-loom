@@ -31,7 +31,7 @@ import java.nio.file.Path;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
+import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
 
 /**
  * A bit of a hack, creates an empty intermediary mapping file to be used for mc versions without any intermediate mappings.

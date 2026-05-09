@@ -42,12 +42,12 @@ import org.gradle.internal.logging.progress.ProgressLogger;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.slf4j.Logger;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.RemapConfigurationSettings;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.mappings.MappingConfiguration;
-import net.fabricmc.loom.task.service.LorenzMappingService;
-import net.fabricmc.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.leaf.loom.task.service.LorenzMappingService;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 
 public class SourceRemapper {
 	private final Project project;

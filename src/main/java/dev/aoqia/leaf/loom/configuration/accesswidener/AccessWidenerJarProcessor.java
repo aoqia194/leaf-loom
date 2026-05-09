@@ -39,13 +39,13 @@ import org.gradle.api.file.RegularFileProperty;
 import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.classtweaker.api.ClassTweaker;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
-import net.fabricmc.loom.api.processor.ProcessorContext;
-import net.fabricmc.loom.api.processor.SpecContext;
-import net.fabricmc.loom.util.LazyCloseable;
-import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.ModEnvironment;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
+import dev.aoqia.leaf.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.util.LazyCloseable;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public class AccessWidenerJarProcessor implements MinecraftJarProcessor<AccessWidenerJarProcessor.Spec> {

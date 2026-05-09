@@ -27,7 +27,7 @@ package dev.aoqia.leaf.loom.util.gradle;
 import java.io.IOException;
 import java.util.Locale;
 
-import net.fabricmc.loom.util.IOStringConsumer;
+import dev.aoqia.leaf.loom.util.IOStringConsumer;
 
 public record ThreadedSimpleProgressLogger(IOStringConsumer parent) implements IOStringConsumer {
 	@Override

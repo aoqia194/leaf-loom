@@ -26,9 +26,9 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings.extras.signatures;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
-import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
 
 @ApiStatus.Experimental
 public record SignatureFixesSpec(FileSpec fileSpec) implements MappingsSpec<SignatureFixesLayerImpl> {

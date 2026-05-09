@@ -30,8 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.kotlin.remapping.KotlinMetadataTinyRemapperExtensionImpl;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.kotlin.remapping.KotlinMetadataTinyRemapperExtensionImpl;
 
 /**
  * Used to run the Kotlin remapper with a specific version of Kotlin that may not match the kotlin version included with gradle.

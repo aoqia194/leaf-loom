@@ -40,8 +40,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.util.download.DownloadException;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.download.DownloadException;
 
 public abstract class FabricApiVersions {
 	@Inject

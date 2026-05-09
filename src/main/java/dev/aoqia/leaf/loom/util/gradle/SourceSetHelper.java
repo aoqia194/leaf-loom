@@ -52,9 +52,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.xml.sax.InputSource;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.ide.idea.IdeaUtils;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public final class SourceSetHelper {
 	@VisibleForTesting

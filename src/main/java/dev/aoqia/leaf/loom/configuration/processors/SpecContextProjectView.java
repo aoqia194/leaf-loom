@@ -35,12 +35,12 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.attributes.Usage;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.RemapConfigurationSettings;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.FabricModJsonHelpers;
-import net.fabricmc.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonHelpers;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 // Used to abstract out the Gradle API usage to ease unit testing.
 public interface SpecContextProjectView {

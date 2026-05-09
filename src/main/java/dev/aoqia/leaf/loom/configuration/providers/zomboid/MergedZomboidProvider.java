@@ -34,8 +34,8 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
 
 public final class MergedMinecraftProvider extends MinecraftProvider {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MergedMinecraftProvider.class);

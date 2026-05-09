@@ -35,7 +35,7 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
-import net.fabricmc.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 
 public abstract class GenerateLog4jConfigTask extends AbstractLoomTask {
 	@OutputFile

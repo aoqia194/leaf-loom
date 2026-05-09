@@ -26,9 +26,9 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings.file;
 
 import java.util.Objects;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
 
 public class FileMappingsSpecBuilderImpl implements FileMappingsSpecBuilder {
 	/**

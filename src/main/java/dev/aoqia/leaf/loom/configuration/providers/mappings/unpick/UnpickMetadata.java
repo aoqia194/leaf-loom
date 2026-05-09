@@ -32,7 +32,7 @@ import java.nio.file.Path;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
 
 public sealed interface UnpickMetadata permits UnpickMetadata.V1, UnpickMetadata.V2 {
 	String UNPICK_METADATA_PATH = "extras/unpick.json";

@@ -24,13 +24,13 @@
 
 package dev.aoqia.leaf.loom.configuration.processors;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.api.processor.ProcessorContext;
-import net.fabricmc.loom.configuration.ConfigContext;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
-import net.fabricmc.loom.util.LazyCloseable;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
+import dev.aoqia.leaf.loom.util.LazyCloseable;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;
 

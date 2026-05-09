@@ -26,8 +26,8 @@ package dev.aoqia.leaf.loom.configuration;
 
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 
 public record ConfigContextImpl(Project project, ServiceFactory serviceFactory, LoomGradleExtension extension) implements ConfigContext {
 }

@@ -28,11 +28,11 @@ import java.util.List;
 
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
-import net.fabricmc.loom.task.GenerateSourcesTask;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public class SingleJarDecompileConfiguration extends DecompileConfiguration<MappedMinecraftProvider> {
 	public SingleJarDecompileConfiguration(Project project, MappedMinecraftProvider minecraftProvider) {

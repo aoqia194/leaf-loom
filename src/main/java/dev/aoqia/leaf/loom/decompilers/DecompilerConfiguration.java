@@ -37,14 +37,14 @@ import org.gradle.api.artifacts.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.decompilers.DecompilationMetadata;
-import net.fabricmc.loom.api.decompilers.LoomDecompiler;
-import net.fabricmc.loom.decompilers.cfr.LoomCFRDecompiler;
-import net.fabricmc.loom.decompilers.fernflower.FabricFernFlowerDecompiler;
-import net.fabricmc.loom.decompilers.vineflower.VineflowerDecompiler;
-import net.fabricmc.loom.util.LoomVersions;
-import net.fabricmc.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.decompilers.DecompilationMetadata;
+import dev.aoqia.leaf.loom.api.decompilers.LoomDecompiler;
+import dev.aoqia.leaf.loom.decompilers.cfr.LoomCFRDecompiler;
+import dev.aoqia.leaf.loom.decompilers.fernflower.FabricFernFlowerDecompiler;
+import dev.aoqia.leaf.loom.decompilers.vineflower.VineflowerDecompiler;
+import dev.aoqia.leaf.loom.util.LoomVersions;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 
 public abstract class DecompilerConfiguration implements Runnable {
 	@Inject

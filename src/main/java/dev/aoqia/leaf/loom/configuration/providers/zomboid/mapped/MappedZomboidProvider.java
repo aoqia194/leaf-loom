@@ -27,8 +27,8 @@ package dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped;
 import java.nio.file.Path;
 import java.util.List;
 
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar;
-import net.fabricmc.loom.configuration.providers.minecraft.SingleJarEnvType;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.SingleJarEnvType;
 
 public interface MappedMinecraftProvider {
 	default List<Path> getMinecraftJarPaths() {

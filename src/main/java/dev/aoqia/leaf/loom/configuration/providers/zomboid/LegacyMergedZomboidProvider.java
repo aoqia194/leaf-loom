@@ -27,8 +27,8 @@ package dev.aoqia.leaf.loom.configuration.providers.minecraft;
 import java.nio.file.Path;
 import java.util.List;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
 
 /**
  * Minecraft versions prior to 1.3 obfuscate the server and client jars differently.

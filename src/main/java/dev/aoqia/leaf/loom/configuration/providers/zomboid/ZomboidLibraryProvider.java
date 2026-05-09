@@ -37,16 +37,16 @@ import org.gradle.api.artifacts.ExternalModuleDependency;
 import org.gradle.api.artifacts.ModuleDependency;
 import org.gradle.api.provider.Provider;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.providers.BundleMetadata;
-import net.fabricmc.loom.configuration.providers.minecraft.library.Library;
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext;
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessorManager;
-import net.fabricmc.loom.configuration.providers.minecraft.library.MinecraftLibraryHelper;
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.RuntimeLog4jLibraryProcessor;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Platform;
-import net.fabricmc.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.Library;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryContext;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessorManager;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.MinecraftLibraryHelper;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.RuntimeLog4jLibraryProcessor;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 public class MinecraftLibraryProvider {
 	private static final Platform platform = Platform.CURRENT;

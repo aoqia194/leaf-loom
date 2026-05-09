@@ -34,7 +34,7 @@ import java.util.Objects;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import net.fabricmc.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 
 public record AccessWidenerFile(
 		String path,

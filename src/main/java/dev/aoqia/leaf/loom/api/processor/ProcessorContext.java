@@ -24,9 +24,9 @@
 
 package dev.aoqia.leaf.loom.api.processor;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
-import net.fabricmc.loom.util.LazyCloseable;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
+import dev.aoqia.leaf.loom.util.LazyCloseable;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;
 

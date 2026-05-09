@@ -59,11 +59,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.ide.RunConfig;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.task.AbstractLoomTask;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public abstract class IdeaSyncTask extends AbstractLoomTask {
 	private static final Logger LOGGER = LoggerFactory.getLogger(IdeaSyncTask.class);

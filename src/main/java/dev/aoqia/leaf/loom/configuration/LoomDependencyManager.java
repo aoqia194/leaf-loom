@@ -26,10 +26,10 @@ package dev.aoqia.leaf.loom.configuration;
 
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.mods.ModConfigurationRemapper;
-import net.fabricmc.loom.util.SourceRemapper;
-import net.fabricmc.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.mods.ModConfigurationRemapper;
+import dev.aoqia.leaf.loom.util.SourceRemapper;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 
 public class LoomDependencyManager {
 	public void handleDependencies(Project project, ServiceFactory serviceFactory) {

@@ -33,8 +33,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.util.Lazy;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.util.Lazy;
 
 /**
  * The know versions keep track of the versions that are signed using SHA1 or not signature at all.

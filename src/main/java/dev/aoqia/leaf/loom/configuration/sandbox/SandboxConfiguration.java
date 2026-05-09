@@ -37,11 +37,11 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Platform;
-import net.fabricmc.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 /**
  * Allows the user to specify a sandbox maven artifact as a gradle property.

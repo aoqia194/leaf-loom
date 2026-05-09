@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import net.fabricmc.loom.api.ModSettings;
+import dev.aoqia.leaf.loom.api.ModSettings;
 
 public record ClasspathGroup(List<String> paths, List<ExternalClasspathGroup> externalGroups) implements Serializable {
 	public static List<ClasspathGroup> fromModSettings(Set<ModSettings> modSettings) {

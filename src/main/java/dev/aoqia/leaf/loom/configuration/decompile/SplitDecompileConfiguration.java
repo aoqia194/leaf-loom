@@ -29,12 +29,12 @@ import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.tasks.TaskProvider;
 
-import net.fabricmc.loom.api.decompilers.DecompilerOptions;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
-import net.fabricmc.loom.task.GenerateSourcesTask;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Strings;
+import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Strings;
 
 public final class SplitDecompileConfiguration extends DecompileConfiguration<MappedMinecraftProvider.Split> {
 	public SplitDecompileConfiguration(Project project, MappedMinecraftProvider.Split minecraftProvider) {

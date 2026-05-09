@@ -54,8 +54,8 @@ import org.objectweb.asm.tree.InnerClassNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.util.CompletableFutureCollector;
-import net.fabricmc.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.CompletableFutureCollector;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
 
 public final class JarWalker {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JarWalker.class);

@@ -52,12 +52,12 @@ import org.objectweb.asm.tree.TypeAnnotationNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.AnnotationsData;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.ClassAnnotationData;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.GenericAnnotationData;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.MethodAnnotationData;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.TypeAnnotationKey;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsData;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.ClassAnnotationData;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.GenericAnnotationData;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.MethodAnnotationData;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.TypeAnnotationKey;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public abstract class AnnotationsDataValidator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationsDataValidator.class);

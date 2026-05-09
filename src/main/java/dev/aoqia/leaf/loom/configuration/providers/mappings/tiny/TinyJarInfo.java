@@ -33,7 +33,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.jar.Manifest;
 
-import net.fabricmc.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.format.MappingFormat;
 

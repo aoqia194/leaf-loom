@@ -30,7 +30,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Optional;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
 
 /**
  * Represents the settings for game and/or client tests.

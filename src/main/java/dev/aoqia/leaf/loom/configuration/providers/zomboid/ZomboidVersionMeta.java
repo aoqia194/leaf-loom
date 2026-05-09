@@ -31,8 +31,8 @@ import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Platform;
 
 @SuppressWarnings("unused")
 public record MinecraftVersionMeta(

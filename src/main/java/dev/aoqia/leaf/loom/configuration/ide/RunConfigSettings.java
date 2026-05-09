@@ -42,12 +42,12 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftSourceSets;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Platform;
-import net.fabricmc.loom.util.gradle.GradleUtils;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 public abstract class RunConfigSettings implements Named {
 	/**

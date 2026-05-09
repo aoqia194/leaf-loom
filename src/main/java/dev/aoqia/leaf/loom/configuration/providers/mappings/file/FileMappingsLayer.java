@@ -33,15 +33,15 @@ import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.api.mappings.layered.MappingLayer;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.AnnotationsData;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.AnnotationsLayer;
-import net.fabricmc.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
-import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingLayer;
-import net.fabricmc.loom.configuration.providers.mappings.unpick.UnpickMetadata;
-import net.fabricmc.loom.util.FileSystemUtil;
-import net.fabricmc.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsData;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsLayer;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingLayer;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.unpick.UnpickMetadata;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.MappingUtil;
 import net.fabricmc.mappingio.MappingVisitor;

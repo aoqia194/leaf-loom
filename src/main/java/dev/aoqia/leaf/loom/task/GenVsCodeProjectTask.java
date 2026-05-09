@@ -50,11 +50,11 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.configuration.ide.RunConfig;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.gradle.SyncTaskBuildService;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.gradle.SyncTaskBuildService;
 
 // Recommended vscode plugin pack:
 // https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack

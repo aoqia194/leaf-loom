@@ -43,8 +43,8 @@ import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
 
 public class JarSplitter {
 	private static final Attributes.Name MANIFEST_SPLIT_ENV_NAME = new Attributes.Name(Constants.Manifest.SPLIT_ENV);

@@ -39,12 +39,12 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 import org.gradle.jvm.tasks.Jar;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.build.nesting.NestableJarGenerationTask;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.gradle.GradleUtils;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
-import net.fabricmc.loom.util.gradle.SyncTaskBuildService;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.build.nesting.NestableJarGenerationTask;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.util.gradle.SyncTaskBuildService;
 
 public abstract class RemapTaskConfiguration implements Runnable {
 	public static final String REMAP_JAR_TASK_NAME = "remapJar";

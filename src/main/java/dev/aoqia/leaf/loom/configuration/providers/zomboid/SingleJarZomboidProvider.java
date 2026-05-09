@@ -28,10 +28,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.ConfigContext;
-import net.fabricmc.loom.configuration.providers.BundleMetadata;
-import net.fabricmc.loom.util.TinyRemapperLoggerAdapter;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
+import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
 import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;

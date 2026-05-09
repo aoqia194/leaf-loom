@@ -28,7 +28,7 @@ import java.io.File;
 
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
 
 public abstract class LoomFilesBaseImpl implements LoomFiles {
 	protected abstract File getGradleUserHomeDir();

@@ -39,9 +39,9 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 
-import net.fabricmc.loom.util.service.Service;
-import net.fabricmc.loom.util.service.ServiceFactory;
-import net.fabricmc.loom.util.service.ServiceType;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
 
 public final class KotlinClasspathService extends Service<KotlinClasspathService.Options> implements KotlinClasspath {
 	public static ServiceType<Options, KotlinClasspathService> TYPE = new ServiceType<>(Options.class, KotlinClasspathService.class);

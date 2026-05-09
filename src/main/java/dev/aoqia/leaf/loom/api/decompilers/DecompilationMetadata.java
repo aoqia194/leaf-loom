@@ -28,7 +28,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 
-import net.fabricmc.loom.util.IOStringConsumer;
+import dev.aoqia.leaf.loom.util.IOStringConsumer;
 
 public record DecompilationMetadata(int numberOfThreads, Path javaDocs, Collection<Path> libraries, IOStringConsumer logger, Map<String, String> options) {
 }

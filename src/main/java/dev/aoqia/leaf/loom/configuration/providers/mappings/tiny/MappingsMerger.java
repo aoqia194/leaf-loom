@@ -37,9 +37,9 @@ import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.mappings.IntermediateMappingsService;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.IntermediateMappingsService;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftProvider;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.format.tiny.Tiny2FileReader;
 import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;

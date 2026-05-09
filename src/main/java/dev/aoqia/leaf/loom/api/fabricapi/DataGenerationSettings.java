@@ -29,7 +29,7 @@ import java.io.File;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
 
 /**
  * Represents the settings for data generation.

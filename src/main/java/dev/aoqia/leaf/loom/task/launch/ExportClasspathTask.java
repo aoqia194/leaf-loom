@@ -41,9 +41,9 @@ import org.gradle.workers.WorkParameters;
 import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.configuration.classpathgroups.ExternalClasspathGroupDTO;
-import net.fabricmc.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.configuration.classpathgroups.ExternalClasspathGroupDTO;
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 
 public abstract class ExportClasspathTask extends AbstractLoomTask {
 	@Input

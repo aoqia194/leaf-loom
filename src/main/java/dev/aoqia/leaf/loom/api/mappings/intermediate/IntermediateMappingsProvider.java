@@ -32,7 +32,7 @@ import org.gradle.api.Named;
 import org.gradle.api.provider.Property;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.util.download.DownloadBuilder;
+import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
 
 /**
  * A simple API to allow 3rd party plugins.

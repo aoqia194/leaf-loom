@@ -29,7 +29,7 @@ import groovy.lang.DelegatesTo;
 import org.gradle.api.Action;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.util.ClosureAction;
+import dev.aoqia.leaf.loom.util.ClosureAction;
 
 /**
  * Used to configure a layered mapping spec.

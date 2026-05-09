@@ -62,21 +62,21 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.api.RemapConfigurationSettings;
-import net.fabricmc.loom.configuration.RemapConfigurations;
-import net.fabricmc.loom.configuration.mods.dependency.ModDependency;
-import net.fabricmc.loom.configuration.mods.dependency.ModDependencyFactory;
-import net.fabricmc.loom.configuration.mods.dependency.ModDependencyOptions;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftSourceSets;
-import net.fabricmc.loom.util.AsyncCache;
-import net.fabricmc.loom.util.Checksum;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.ExceptionUtil;
-import net.fabricmc.loom.util.SourceRemapper;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
-import net.fabricmc.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
+import dev.aoqia.leaf.loom.configuration.RemapConfigurations;
+import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependency;
+import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependencyFactory;
+import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependencyOptions;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.util.AsyncCache;
+import dev.aoqia.leaf.loom.util.Checksum;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.ExceptionUtil;
+import dev.aoqia.leaf.loom.util.SourceRemapper;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ModConfigurationRemapper {

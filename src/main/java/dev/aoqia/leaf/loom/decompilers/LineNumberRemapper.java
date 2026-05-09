@@ -40,8 +40,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.util.AsyncZipProcessor;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.AsyncZipProcessor;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public record LineNumberRemapper(ClassLineNumbers lineNumbers) {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LineNumberRemapper.class);

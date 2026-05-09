@@ -32,12 +32,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.configuration.mods.ArtifactMetadata;
-import net.fabricmc.loom.configuration.mods.dependency.ModDependency;
-import net.fabricmc.loom.util.ExceptionUtil;
-import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
-import net.fabricmc.loom.util.fmj.mixin.MixinConfiguration;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
+import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependency;
+import dev.aoqia.leaf.loom.util.ExceptionUtil;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.mixin.MixinConfiguration;
 
 public class MixinRefmapInliner {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MixinRefmapInliner.class);

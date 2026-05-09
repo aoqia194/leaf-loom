@@ -35,9 +35,9 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.SourceSet;
 
-import net.fabricmc.loom.util.service.Service;
-import net.fabricmc.loom.util.service.ServiceFactory;
-import net.fabricmc.loom.util.service.ServiceType;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
 
 public abstract class ClientEntriesService<O extends ClientEntriesService.Options> extends Service<O> {
 	public interface Options extends Service.Options {

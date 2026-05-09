@@ -24,8 +24,8 @@
 
 package dev.aoqia.leaf.loom.configuration.providers.mappings.parchment;
 
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
-import net.fabricmc.loom.api.mappings.layered.spec.ParchmentMappingsSpecBuilder;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.ParchmentMappingsSpecBuilder;
 
 public class ParchmentMappingsSpecBuilderImpl implements ParchmentMappingsSpecBuilder {
 	private final FileSpec fileSpec;

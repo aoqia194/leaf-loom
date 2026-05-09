@@ -27,7 +27,7 @@ package dev.aoqia.leaf.loom.api.processor;
 import java.util.List;
 import java.util.stream.Stream;
 
-import net.fabricmc.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
 
 public interface SpecContext {
 	List<FabricModJson> modDependencies();

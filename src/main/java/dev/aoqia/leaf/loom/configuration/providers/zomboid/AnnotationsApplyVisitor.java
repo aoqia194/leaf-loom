@@ -43,12 +43,12 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeAnnotationNode;
 
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.AnnotationsData;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.ClassAnnotationData;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.GenericAnnotationData;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.MethodAnnotationData;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.TypeAnnotationKey;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsData;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.ClassAnnotationData;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.GenericAnnotationData;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.MethodAnnotationData;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.TypeAnnotationKey;
+import dev.aoqia.leaf.loom.util.Constants;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.api.TrClass;
 

@@ -39,7 +39,7 @@ import java.util.jar.JarFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.util.ZipReprocessorUtil;
+import dev.aoqia.leaf.loom.util.ZipReprocessorUtil;
 
 public final class JarVerifier {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JarVerifier.class);

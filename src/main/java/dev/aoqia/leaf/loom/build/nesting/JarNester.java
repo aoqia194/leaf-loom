@@ -38,10 +38,10 @@ import com.google.gson.JsonObject;
 import org.gradle.api.UncheckedIOException;
 import org.slf4j.Logger;
 
-import net.fabricmc.loom.util.Check;
-import net.fabricmc.loom.util.Pair;
-import net.fabricmc.loom.util.ZipUtils;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.Check;
+import dev.aoqia.leaf.loom.util.Pair;
+import dev.aoqia.leaf.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
 
 public class JarNester {
 	public static void nestJars(Collection<File> jars, File modJar, Logger logger) {

@@ -28,8 +28,8 @@ import java.util.Arrays;
 
 import org.gradle.api.JavaVersion;
 
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.util.Platform;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.util.Platform;
 
 public final class LibraryContext {
 	private final MinecraftVersionMeta versionMeta;

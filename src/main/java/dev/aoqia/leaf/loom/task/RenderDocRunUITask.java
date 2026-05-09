@@ -31,7 +31,7 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.TaskAction;
 
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public abstract class RenderDocRunUITask extends DefaultTask {
 	@InputFile

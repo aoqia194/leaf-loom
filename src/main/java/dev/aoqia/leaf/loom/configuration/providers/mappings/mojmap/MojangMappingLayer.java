@@ -36,10 +36,10 @@ import java.util.regex.Pattern;
 import org.gradle.api.logging.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.api.mappings.layered.MappingLayer;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingLayer;
-import net.fabricmc.loom.configuration.providers.mappings.utils.DstNameFilterMappingVisitor;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingLayer;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.DstNameFilterMappingVisitor;
 import net.fabricmc.mappingio.MappingVisitor;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.format.proguard.ProGuardFileReader;

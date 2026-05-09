@@ -34,14 +34,14 @@ import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.api.mappings.layered.MappingLayer;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.AnnotationsData;
-import net.fabricmc.loom.configuration.providers.mappings.extras.annotations.AnnotationsLayer;
-import net.fabricmc.loom.configuration.providers.mappings.extras.signatures.SignatureFixesLayer;
-import net.fabricmc.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsData;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.AnnotationsLayer;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.signatures.SignatureFixesLayer;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.unpick.UnpickLayer;
 import net.fabricmc.mappingio.adapter.MappingNsCompleter;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;

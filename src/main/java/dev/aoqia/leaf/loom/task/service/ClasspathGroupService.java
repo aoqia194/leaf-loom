@@ -44,16 +44,16 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Optional;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.ModSettings;
-import net.fabricmc.loom.configuration.classpathgroups.ClasspathGroup;
-import net.fabricmc.loom.configuration.classpathgroups.ExternalClasspathGroup;
-import net.fabricmc.loom.configuration.classpathgroups.ExternalClasspathGroupDTO;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Lazy;
-import net.fabricmc.loom.util.service.Service;
-import net.fabricmc.loom.util.service.ServiceFactory;
-import net.fabricmc.loom.util.service.ServiceType;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.ModSettings;
+import dev.aoqia.leaf.loom.configuration.classpathgroups.ClasspathGroup;
+import dev.aoqia.leaf.loom.configuration.classpathgroups.ExternalClasspathGroup;
+import dev.aoqia.leaf.loom.configuration.classpathgroups.ExternalClasspathGroupDTO;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Lazy;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
 
 public class ClasspathGroupService extends Service<ClasspathGroupService.Options> {
 	public static ServiceType<Options, ClasspathGroupService> TYPE = new ServiceType<Options, ClasspathGroupService>(Options.class, ClasspathGroupService.class);

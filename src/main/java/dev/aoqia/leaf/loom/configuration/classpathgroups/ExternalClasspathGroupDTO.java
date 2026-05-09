@@ -40,9 +40,9 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
-import net.fabricmc.loom.util.gradle.SourceSetReference;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
 
 /**
  * This object is exported by projects as a json file to be consumed by others to correctly populate the classpath groups.

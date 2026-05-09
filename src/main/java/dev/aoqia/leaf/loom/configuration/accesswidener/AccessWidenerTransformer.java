@@ -38,9 +38,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fabricmc.classtweaker.api.ClassTweaker;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Pair;
-import net.fabricmc.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Pair;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 
 final class AccessWidenerTransformer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccessWidenerTransformer.class);

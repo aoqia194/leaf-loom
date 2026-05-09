@@ -31,9 +31,9 @@ import java.util.List;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.FabricModJsonSource;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonSource;
 
 public record MixinConfiguration(
 		@Nullable MixinRefmap refmap) {

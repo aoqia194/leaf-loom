@@ -33,9 +33,9 @@ import org.objectweb.asm.commons.Remapper;
 import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.api.ClassTweakerWriter;
 import net.fabricmc.classtweaker.visitors.ClassTweakerRemapperVisitor;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
 
 public class AccessWidenerUtils {
 	/**

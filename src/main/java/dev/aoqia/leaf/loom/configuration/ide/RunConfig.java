@@ -51,15 +51,15 @@ import org.gradle.api.artifacts.ResolvedModuleVersion;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.InstallerData;
-import net.fabricmc.loom.configuration.ide.idea.IdeaSyncTask;
-import net.fabricmc.loom.configuration.ide.idea.IdeaUtils;
-import net.fabricmc.loom.configuration.providers.BundleMetadata;
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.gradle.GradleUtils;
-import net.fabricmc.loom.util.gradle.SourceSetReference;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.InstallerData;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaSyncTask;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryContext;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
 
 public class RunConfig {
 	public String configName;

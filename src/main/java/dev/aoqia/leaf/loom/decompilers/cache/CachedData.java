@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.decompilers.ClassLineNumbers;
+import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers;
 
 // Serialised data for a class entry in the cache
 // Uses the RIFF format, allows for appending the line numbers to the end of the file

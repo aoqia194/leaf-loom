@@ -58,7 +58,7 @@ import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Constants;
 import net.fabricmc.tinyremapper.extension.mixin.common.data.Constant;
 
 /**

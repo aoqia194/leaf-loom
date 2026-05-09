@@ -32,7 +32,7 @@ import org.gradle.api.Project;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 
-import net.fabricmc.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
 
 /**
  * Can be used to create a {@link DownloadBuilder} with the correct settings for the project within a task.

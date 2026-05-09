@@ -37,7 +37,7 @@ import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.util.Checksum;
+import dev.aoqia.leaf.loom.util.Checksum;
 
 public interface ArtifactRef {
 	Path path();

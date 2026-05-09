@@ -40,12 +40,12 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.processor.MappingProcessorContext;
-import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
-import net.fabricmc.loom.api.processor.ProcessorContext;
-import net.fabricmc.loom.api.processor.SpecContext;
-import net.fabricmc.loom.util.Checksum;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
+import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
+import dev.aoqia.leaf.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.util.Checksum;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public final class MinecraftJarProcessorManager {

@@ -41,7 +41,7 @@ import java.util.jar.JarOutputStream;
 import org.benf.cfr.reader.api.OutputSinkFactory;
 import org.benf.cfr.reader.api.SinkReturns;
 
-import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
+import dev.aoqia.leaf.loom.decompilers.LoomInternalDecompiler;
 
 public class CFRSinkFactory implements OutputSinkFactory {
 	private final JarOutputStream outputStream;

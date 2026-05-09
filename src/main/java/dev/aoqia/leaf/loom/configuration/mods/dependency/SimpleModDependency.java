@@ -32,8 +32,8 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.configuration.mods.ArtifactMetadata;
-import net.fabricmc.loom.configuration.mods.ArtifactRef;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef;
 
 // Single jar in and out
 public final class SimpleModDependency extends ModDependency {

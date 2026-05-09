@@ -28,16 +28,16 @@ import java.util.List;
 
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.ConfigContext;
-import net.fabricmc.loom.configuration.decompile.DecompileConfiguration;
-import net.fabricmc.loom.configuration.decompile.SingleJarDecompileConfiguration;
-import net.fabricmc.loom.configuration.decompile.SplitDecompileConfiguration;
-import net.fabricmc.loom.configuration.processors.MinecraftJarProcessorManager;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.IntermediaryMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.NamedMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.ProcessedNamedMinecraftProvider;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.configuration.decompile.DecompileConfiguration;
+import dev.aoqia.leaf.loom.configuration.decompile.SingleJarDecompileConfiguration;
+import dev.aoqia.leaf.loom.configuration.decompile.SplitDecompileConfiguration;
+import dev.aoqia.leaf.loom.configuration.processors.MinecraftJarProcessorManager;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.IntermediaryMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.NamedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.ProcessedNamedMinecraftProvider;
 
 public record MinecraftJarConfiguration<
 		M extends MinecraftProvider,

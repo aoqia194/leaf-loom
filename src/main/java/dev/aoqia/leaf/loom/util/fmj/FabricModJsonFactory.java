@@ -44,10 +44,10 @@ import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.util.FileSystemUtil;
-import net.fabricmc.loom.util.ZipUtils;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 public final class FabricModJsonFactory {
 	public static final String FABRIC_MOD_JSON = "fabric.mod.json";

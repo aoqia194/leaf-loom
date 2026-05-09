@@ -42,20 +42,20 @@ import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.api.decompilers.DecompilerOptions;
-import net.fabricmc.loom.api.manifest.VersionsManifestsAPI;
-import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
-import net.fabricmc.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
-import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
-import net.fabricmc.loom.api.remapping.RemapperExtension;
-import net.fabricmc.loom.api.remapping.RemapperParameters;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.configuration.processors.JarProcessor;
-import net.fabricmc.loom.configuration.providers.mappings.NoOpIntermediateMappingsProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.ManifestLocations;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
-import net.fabricmc.loom.task.GenerateSourcesTask;
-import net.fabricmc.loom.util.DeprecationHelper;
+import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
+import dev.aoqia.leaf.loom.api.manifest.VersionsManifestsAPI;
+import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
+import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.api.remapping.RemapperExtension;
+import dev.aoqia.leaf.loom.api.remapping.RemapperParameters;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.configuration.processors.JarProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.NoOpIntermediateMappingsProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.ManifestLocations;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
+import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
+import dev.aoqia.leaf.loom.util.DeprecationHelper;
 
 /**
  * This is the public api available exposed to build scripts.

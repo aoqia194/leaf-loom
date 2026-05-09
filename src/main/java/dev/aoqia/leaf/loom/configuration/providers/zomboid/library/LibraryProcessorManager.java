@@ -33,15 +33,15 @@ import java.util.function.Predicate;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.jetbrains.annotations.VisibleForTesting;
 
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.ArmNativesLibraryProcessor;
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.LWJGL2MavenLibraryProcessor;
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.LWJGL3UpgradeLibraryProcessor;
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.LegacyASMLibraryProcessor;
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.LoomNativeSupportLibraryProcessor;
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.ObjcBridgeUpgradeLibraryProcessor;
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.RiscVNativesLibraryProcessor;
-import net.fabricmc.loom.configuration.providers.minecraft.library.processors.RuntimeLog4jLibraryProcessor;
-import net.fabricmc.loom.util.Platform;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.ArmNativesLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.LWJGL2MavenLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.LWJGL3UpgradeLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.LegacyASMLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.LoomNativeSupportLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.ObjcBridgeUpgradeLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.RiscVNativesLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.RuntimeLog4jLibraryProcessor;
+import dev.aoqia.leaf.loom.util.Platform;
 
 public class LibraryProcessorManager {
 	public static final List<LibraryProcessorFactory> DEFAULT_LIBRARY_PROCESSORS = List.of(

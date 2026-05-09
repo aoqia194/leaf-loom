@@ -28,9 +28,9 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.NotNull;
 
-import net.fabricmc.loom.configuration.LoomConfigurations;
-import net.fabricmc.loom.task.launch.ExportClasspathTask;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.configuration.LoomConfigurations;
+import dev.aoqia.leaf.loom.task.launch.ExportClasspathTask;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public class LoomCompanionGradlePlugin implements Plugin<Project> {
 	public static final String NAME = "net.fabricmc.fabric-loom-companion";

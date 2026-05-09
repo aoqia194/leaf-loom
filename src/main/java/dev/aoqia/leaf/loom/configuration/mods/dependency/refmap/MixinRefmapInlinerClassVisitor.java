@@ -28,7 +28,7 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public class MixinRefmapInlinerClassVisitor extends ClassVisitor {
 	private final MixinReferenceRemapper remapper;

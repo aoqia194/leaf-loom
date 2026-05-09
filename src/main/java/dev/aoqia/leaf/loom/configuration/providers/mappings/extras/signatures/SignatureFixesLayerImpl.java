@@ -30,8 +30,8 @@ import java.util.Map;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.api.mappings.layered.MappingLayer;
-import net.fabricmc.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 import net.fabricmc.mappingio.MappingVisitor;
 
 @ApiStatus.Experimental

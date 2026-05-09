@@ -32,9 +32,9 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.Provider;
 
-import net.fabricmc.loom.LoomCompanionGradlePlugin;
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.LoomCompanionGradlePlugin;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
 
 public final class GradleUtils {
 	private GradleUtils() {

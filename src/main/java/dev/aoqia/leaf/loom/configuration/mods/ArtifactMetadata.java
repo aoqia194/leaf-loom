@@ -40,11 +40,11 @@ import java.util.jar.Manifest;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.configuration.InstallerData;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.FileSystemUtil;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.configuration.InstallerData;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
 
 public record ArtifactMetadata(boolean isFabricMod, RemapRequirements remapRequirements, @Nullable InstallerData installerData, MixinRemapType mixinRemapType, List<String> knownIdyBsms) {
 	private static final String INSTALLER_PATH = "fabric-installer.json";

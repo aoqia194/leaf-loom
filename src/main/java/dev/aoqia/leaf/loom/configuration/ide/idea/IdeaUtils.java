@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.configuration.ide.idea;
 
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.util.gradle.SourceSetReference;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
 
 public class IdeaUtils {
 	public static boolean isIdeaSync() {

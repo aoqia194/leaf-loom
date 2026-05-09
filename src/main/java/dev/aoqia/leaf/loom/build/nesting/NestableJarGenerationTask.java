@@ -58,12 +58,12 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.task.AbstractLoomTask;
-import net.fabricmc.loom.util.Checksum;
-import net.fabricmc.loom.util.DeletingFileVisitor;
-import net.fabricmc.loom.util.ZipReprocessorUtil;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.util.Checksum;
+import dev.aoqia.leaf.loom.util.DeletingFileVisitor;
+import dev.aoqia.leaf.loom.util.ZipReprocessorUtil;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
 
 public abstract class NestableJarGenerationTask extends AbstractLoomTask {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NestableJarGenerationTask.class);

@@ -52,14 +52,14 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl;
-import net.fabricmc.loom.configuration.providers.mappings.LayeredMappingsFactory;
-import net.fabricmc.loom.configuration.providers.mappings.TinyMappingsService;
-import net.fabricmc.loom.util.service.Service;
-import net.fabricmc.loom.util.service.ServiceFactory;
-import net.fabricmc.loom.util.service.ServiceType;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingsFactory;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.TinyMappingsService;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
 import net.fabricmc.lorenztiny.TinyMappingsJoiner;
 
 public class MigrateMappingsService extends Service<MigrateMappingsService.Options> {

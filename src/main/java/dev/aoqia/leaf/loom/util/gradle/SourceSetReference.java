@@ -27,7 +27,7 @@ package dev.aoqia.leaf.loom.util.gradle;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 
-import net.fabricmc.loom.util.Check;
+import dev.aoqia.leaf.loom.util.Check;
 
 /**
  * A reference to a {@link SourceSet} from a {@link Project}.

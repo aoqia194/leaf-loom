@@ -39,15 +39,15 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.SourceSet;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.extension.MixinExtension;
-import net.fabricmc.loom.task.RemapJarTask;
-import net.fabricmc.loom.util.ZipUtils;
-import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
-import net.fabricmc.loom.util.service.Service;
-import net.fabricmc.loom.util.service.ServiceFactory;
-import net.fabricmc.loom.util.service.ServiceType;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.extension.MixinExtension;
+import dev.aoqia.leaf.loom.task.RemapJarTask;
+import dev.aoqia.leaf.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
 
 public class MixinRefmapService extends Service<MixinRefmapService.Options> {
 	public static final ServiceType<Options, MixinRefmapService> TYPE = new ServiceType<>(Options.class, MixinRefmapService.class);

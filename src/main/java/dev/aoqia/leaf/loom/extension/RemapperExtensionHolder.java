@@ -35,10 +35,10 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.commons.Remapper;
 
-import net.fabricmc.loom.api.remapping.RemapperContext;
-import net.fabricmc.loom.api.remapping.RemapperExtension;
-import net.fabricmc.loom.api.remapping.RemapperParameters;
-import net.fabricmc.loom.api.remapping.TinyRemapperExtension;
+import dev.aoqia.leaf.loom.api.remapping.RemapperContext;
+import dev.aoqia.leaf.loom.api.remapping.RemapperExtension;
+import dev.aoqia.leaf.loom.api.remapping.RemapperParameters;
+import dev.aoqia.leaf.loom.api.remapping.TinyRemapperExtension;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.api.TrClass;
 

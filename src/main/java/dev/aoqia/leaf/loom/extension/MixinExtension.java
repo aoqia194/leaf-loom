@@ -43,7 +43,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.api.MixinExtensionAPI;
+import dev.aoqia.leaf.loom.api.MixinExtensionAPI;
 
 /**
  * A gradle extension to configure mixin annotation processor.

@@ -36,7 +36,7 @@ import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.util.Pair;
+import dev.aoqia.leaf.loom.util.Pair;
 
 @ApiStatus.Experimental
 public final class FabricModJsonV2 extends FabricModJson {

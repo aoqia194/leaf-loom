@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.configuration.providers.mappings.mojmap;
 
-import net.fabricmc.loom.api.mappings.layered.spec.MojangMappingsSpecBuilder;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.MojangMappingsSpecBuilder;
 
 public class MojangMappingsSpecBuilderImpl implements MojangMappingsSpecBuilder {
 	private boolean nameSyntheticMembers = false;

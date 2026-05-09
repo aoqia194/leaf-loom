@@ -26,8 +26,8 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings.utils;
 
 import java.nio.file.Path;
 
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
 
 public record MavenFileSpec(String dependencyNotation) implements FileSpec {
 	@Override

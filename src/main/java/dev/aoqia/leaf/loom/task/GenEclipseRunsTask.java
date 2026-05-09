@@ -45,10 +45,10 @@ import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.ide.RunConfig;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public abstract class GenEclipseRunsTask extends AbstractLoomTask {
 	@Nested

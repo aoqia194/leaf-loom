@@ -30,9 +30,9 @@ import org.gradle.api.Action;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
 
-import net.fabricmc.loom.api.fabricapi.DataGenerationSettings;
-import net.fabricmc.loom.api.fabricapi.FabricApiExtension;
-import net.fabricmc.loom.api.fabricapi.GameTestSettings;
+import dev.aoqia.leaf.loom.api.fabricapi.DataGenerationSettings;
+import dev.aoqia.leaf.loom.api.fabricapi.FabricApiExtension;
+import dev.aoqia.leaf.loom.api.fabricapi.GameTestSettings;
 
 public abstract class FabricApiExtensionImpl implements FabricApiExtension {
 	@Inject

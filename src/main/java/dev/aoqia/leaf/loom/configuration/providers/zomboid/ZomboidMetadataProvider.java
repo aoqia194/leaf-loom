@@ -35,13 +35,13 @@ import org.gradle.api.Project;
 import org.gradle.api.provider.Property;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.configuration.ConfigContext;
-import net.fabricmc.loom.configuration.DependencyInfo;
-import net.fabricmc.loom.configuration.providers.minecraft.ManifestLocations.ManifestLocation;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.download.DownloadBuilder;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.configuration.DependencyInfo;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.ManifestLocations.ManifestLocation;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
 
 public final class MinecraftMetadataProvider {
 	private final Options options;

@@ -32,9 +32,9 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.fabricmc.loom.configuration.providers.BundleMetadata;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.util.Platform;
+import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.util.Platform;
 
 /**
  * Utils to get the Minecraft libraries for a given platform, no processing is applied.

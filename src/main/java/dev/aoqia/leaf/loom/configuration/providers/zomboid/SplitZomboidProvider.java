@@ -28,9 +28,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.ConfigContext;
-import net.fabricmc.loom.configuration.providers.BundleMetadata;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
 
 public final class SplitMinecraftProvider extends MinecraftProvider {
 	private Path minecraftClientOnlyJar;

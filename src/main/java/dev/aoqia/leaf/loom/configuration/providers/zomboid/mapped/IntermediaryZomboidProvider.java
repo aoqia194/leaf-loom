@@ -28,14 +28,14 @@ import java.util.List;
 
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.minecraft.LegacyMergedMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.MergedMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.SingleJarEnvType;
-import net.fabricmc.loom.configuration.providers.minecraft.SingleJarMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.SplitMinecraftProvider;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.LegacyMergedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MergedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.SingleJarEnvType;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.SingleJarMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.SplitMinecraftProvider;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public abstract sealed class IntermediaryMinecraftProvider<M extends MinecraftProvider> extends AbstractMappedMinecraftProvider<M> permits IntermediaryMinecraftProvider.MergedImpl, IntermediaryMinecraftProvider.LegacyMergedImpl, IntermediaryMinecraftProvider.SingleJarImpl, IntermediaryMinecraftProvider.SplitImpl {

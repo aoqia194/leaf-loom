@@ -31,7 +31,7 @@ import java.nio.file.Path;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.configuration.providers.mappings.unpick.UnpickMetadata;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.unpick.UnpickMetadata;
 
 @ApiStatus.Experimental
 public interface UnpickLayer {

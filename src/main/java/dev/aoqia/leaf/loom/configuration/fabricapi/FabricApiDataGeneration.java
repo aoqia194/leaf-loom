@@ -38,9 +38,9 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.jvm.tasks.Jar;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.fabricapi.DataGenerationSettings;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.fabricapi.DataGenerationSettings;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 public abstract class FabricApiDataGeneration extends FabricApiAbstractSourceSet {
 	@Inject

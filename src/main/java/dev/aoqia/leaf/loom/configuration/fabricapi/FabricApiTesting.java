@@ -41,13 +41,13 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskContainer;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.fabricapi.GameTestSettings;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.task.AbstractLoomTask;
-import net.fabricmc.loom.task.LoomTasks;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.fabricapi.GameTestSettings;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.task.LoomTasks;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 public abstract class FabricApiTesting extends FabricApiAbstractSourceSet {
 	@Inject

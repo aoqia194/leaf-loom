@@ -27,11 +27,11 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings.mojmap;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.download.DownloadException;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.download.DownloadException;
 
 public record MojangMappingsSpec(boolean nameSyntheticMembers) implements MappingsSpec<MojangMappingLayer> {
 	// Keys in dependency manifest

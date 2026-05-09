@@ -33,8 +33,8 @@ import java.nio.file.Path;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 
-import net.fabricmc.loom.util.ZipUtils;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 /**
  * A mod may be a zip, directory or Gradle {@link SourceSet}

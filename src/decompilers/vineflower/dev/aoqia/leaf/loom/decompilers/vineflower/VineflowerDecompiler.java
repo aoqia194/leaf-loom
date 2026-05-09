@@ -33,7 +33,7 @@ import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 
 import net.fabricmc.fernflower.api.IFabricJavadocProvider;
-import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
+import dev.aoqia.leaf.loom.decompilers.LoomInternalDecompiler;
 
 public final class VineflowerDecompiler implements LoomInternalDecompiler {
 	@Override

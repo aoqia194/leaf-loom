@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
-import net.fabricmc.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.Platform;
 
 public abstract class LibraryProcessor {
 	protected static final Predicate<Library> ALLOW_ALL = library -> true;

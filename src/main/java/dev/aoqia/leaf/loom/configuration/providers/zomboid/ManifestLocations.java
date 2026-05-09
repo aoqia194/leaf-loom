@@ -31,8 +31,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
-import net.fabricmc.loom.api.manifest.VersionsManifestsAPI;
-import net.fabricmc.loom.configuration.providers.minecraft.ManifestLocations.ManifestLocation;
+import dev.aoqia.leaf.loom.api.manifest.VersionsManifestsAPI;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.ManifestLocations.ManifestLocation;
 
 public class ManifestLocations implements VersionsManifestsAPI, Iterable<ManifestLocation> {
 	private final Queue<ManifestLocation> locations = new PriorityQueue<>();

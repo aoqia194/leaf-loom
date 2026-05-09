@@ -47,13 +47,13 @@ import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
-import net.fabricmc.loom.task.AbstractLoomTask;
-import net.fabricmc.loom.task.service.ClasspathGroupService;
-import net.fabricmc.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.task.service.ClasspathGroupService;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
 public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	@Input

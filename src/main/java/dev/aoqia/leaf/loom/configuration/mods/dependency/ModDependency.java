@@ -32,9 +32,9 @@ import org.gradle.api.artifacts.component.ComponentIdentifier;
 import org.gradle.api.internal.artifacts.repositories.resolver.MavenUniqueSnapshotComponentIdentifier;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.mods.ArtifactMetadata;
-import net.fabricmc.loom.configuration.mods.ArtifactRef;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef;
 
 public abstract sealed class ModDependency permits SplitModDependency, SimpleModDependency {
 	private final ArtifactRef artifact;

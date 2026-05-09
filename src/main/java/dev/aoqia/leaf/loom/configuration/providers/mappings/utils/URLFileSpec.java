@@ -32,9 +32,9 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
-import net.fabricmc.loom.util.download.DownloadException;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.leaf.loom.util.download.DownloadException;
 
 public record URLFileSpec(String url) implements FileSpec {
 	private static final Logger LOGGER = LoggerFactory.getLogger(URLFileSpec.class);

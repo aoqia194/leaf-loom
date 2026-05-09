@@ -34,21 +34,21 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 
-import net.fabricmc.loom.api.LoomGradleExtensionAPI;
-import net.fabricmc.loom.api.fabricapi.FabricApiExtension;
-import net.fabricmc.loom.configuration.CompileConfiguration;
-import net.fabricmc.loom.configuration.LoomConfigurations;
-import net.fabricmc.loom.configuration.MavenPublication;
-import net.fabricmc.loom.configuration.fabricapi.FabricApiExtensionImpl;
-import net.fabricmc.loom.configuration.ide.idea.IdeaConfiguration;
-import net.fabricmc.loom.configuration.sandbox.SandboxConfiguration;
-import net.fabricmc.loom.decompilers.DecompilerConfiguration;
-import net.fabricmc.loom.extension.LoomFiles;
-import net.fabricmc.loom.extension.LoomGradleExtensionImpl;
-import net.fabricmc.loom.task.LoomTasks;
-import net.fabricmc.loom.task.RemapTaskConfiguration;
-import net.fabricmc.loom.util.LibraryLocationLogger;
-import net.fabricmc.loom.util.OneDrive;
+import dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI;
+import dev.aoqia.leaf.loom.api.fabricapi.FabricApiExtension;
+import dev.aoqia.leaf.loom.configuration.CompileConfiguration;
+import dev.aoqia.leaf.loom.configuration.LoomConfigurations;
+import dev.aoqia.leaf.loom.configuration.MavenPublication;
+import dev.aoqia.leaf.loom.configuration.fabricapi.FabricApiExtensionImpl;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaConfiguration;
+import dev.aoqia.leaf.loom.configuration.sandbox.SandboxConfiguration;
+import dev.aoqia.leaf.loom.decompilers.DecompilerConfiguration;
+import dev.aoqia.leaf.loom.extension.LoomFiles;
+import dev.aoqia.leaf.loom.extension.LoomGradleExtensionImpl;
+import dev.aoqia.leaf.loom.task.LoomTasks;
+import dev.aoqia.leaf.loom.task.RemapTaskConfiguration;
+import dev.aoqia.leaf.loom.util.LibraryLocationLogger;
+import dev.aoqia.leaf.loom.util.OneDrive;
 
 public class LoomGradlePlugin implements Plugin<PluginAware> {
 	public static final String NAME = "fabric-loom";

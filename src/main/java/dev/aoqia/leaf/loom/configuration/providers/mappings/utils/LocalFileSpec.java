@@ -29,9 +29,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 
-import net.fabricmc.loom.api.mappings.layered.MappingContext;
-import net.fabricmc.loom.api.mappings.layered.spec.FileSpec;
-import net.fabricmc.loom.util.Checksum;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
+import dev.aoqia.leaf.loom.util.Checksum;
 
 public class LocalFileSpec implements FileSpec {
 	private final File file;

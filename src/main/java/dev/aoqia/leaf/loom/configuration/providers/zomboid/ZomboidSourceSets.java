@@ -33,12 +33,12 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.jvm.tasks.Jar;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.RemapConfigurations;
-import net.fabricmc.loom.task.AbstractRemapJarTask;
-import net.fabricmc.loom.util.Check;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.RemapConfigurations;
+import dev.aoqia.leaf.loom.task.AbstractRemapJarTask;
+import dev.aoqia.leaf.loom.util.Check;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 public abstract sealed class MinecraftSourceSets permits MinecraftSourceSets.Single, MinecraftSourceSets.Split {
 	public static MinecraftSourceSets get(Project project) {

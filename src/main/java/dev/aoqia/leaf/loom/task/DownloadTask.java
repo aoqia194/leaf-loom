@@ -42,10 +42,10 @@ import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.util.ExceptionUtil;
-import net.fabricmc.loom.util.download.Download;
-import net.fabricmc.loom.util.download.DownloadBuilder;
-import net.fabricmc.loom.util.download.DownloadException;
+import dev.aoqia.leaf.loom.util.ExceptionUtil;
+import dev.aoqia.leaf.loom.util.download.Download;
+import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
+import dev.aoqia.leaf.loom.util.download.DownloadException;
 
 /**
  * A general purpose task for downloading files from a URL, using the loom {@link Download} utility.

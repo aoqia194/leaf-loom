@@ -39,9 +39,9 @@ import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.task.service.ClientEntriesService;
-import net.fabricmc.loom.task.service.SourceRemapperService;
-import net.fabricmc.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.leaf.loom.task.service.ClientEntriesService;
+import dev.aoqia.leaf.loom.task.service.SourceRemapperService;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
 public abstract class RemapSourcesJarTask extends AbstractRemapJarTask {
 	@Nested

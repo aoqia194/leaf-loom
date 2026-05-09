@@ -45,10 +45,10 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.publish.Publication;
 import org.gradle.api.publish.PublishingExtension;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.util.DeprecationHelper;
-import net.fabricmc.loom.util.GroovyXmlUtil;
-import net.fabricmc.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.DeprecationHelper;
+import dev.aoqia.leaf.loom.util.GroovyXmlUtil;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 public abstract class MavenPublication implements Runnable {
 	// ImmutableMap is needed since it guarantees ordering

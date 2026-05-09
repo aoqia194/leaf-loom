@@ -32,9 +32,9 @@ import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.loom.util.Checksum;
-import net.fabricmc.loom.util.LazyCloseable;
-import net.fabricmc.loom.util.fmj.ModEnvironment;
+import dev.aoqia.leaf.loom.util.Checksum;
+import dev.aoqia.leaf.loom.util.LazyCloseable;
+import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public record LocalAccessWidenerEntry(Path path, String hash) implements AccessWidenerEntry {

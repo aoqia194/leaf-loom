@@ -37,8 +37,8 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Stream;
 
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
 
 public class MinecraftJarSplitter implements AutoCloseable {
 	private final Path clientInputJar;

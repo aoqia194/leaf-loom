@@ -33,18 +33,18 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import net.fabricmc.loom.configuration.ConfigContext;
-import net.fabricmc.loom.configuration.mods.dependency.LocalMavenHelper;
-import net.fabricmc.loom.configuration.processors.MinecraftJarProcessorManager;
-import net.fabricmc.loom.configuration.processors.ProcessorContextImpl;
-import net.fabricmc.loom.configuration.providers.minecraft.LegacyMergedMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.MergedMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftSourceSets;
-import net.fabricmc.loom.configuration.providers.minecraft.SingleJarEnvType;
-import net.fabricmc.loom.configuration.providers.minecraft.SingleJarMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.SplitMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper;
+import dev.aoqia.leaf.loom.configuration.processors.MinecraftJarProcessorManager;
+import dev.aoqia.leaf.loom.configuration.processors.ProcessorContextImpl;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.LegacyMergedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MergedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.SingleJarEnvType;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.SingleJarMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.SplitMinecraftProvider;
 
 public abstract class ProcessedNamedMinecraftProvider<M extends MinecraftProvider, P extends NamedMinecraftProvider<M>> extends NamedMinecraftProvider<M> {
 	private final P parentMinecraftProvider;

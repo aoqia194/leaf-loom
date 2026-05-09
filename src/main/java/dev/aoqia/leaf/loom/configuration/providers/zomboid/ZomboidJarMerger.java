@@ -49,10 +49,10 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.FileSystemUtil;
-import net.fabricmc.loom.util.SnowmanClassVisitor;
-import net.fabricmc.loom.util.SyntheticParameterClassVisitor;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.SnowmanClassVisitor;
+import dev.aoqia.leaf.loom.util.SyntheticParameterClassVisitor;
 
 public class MinecraftJarMerger implements AutoCloseable {
 	public static class Entry {

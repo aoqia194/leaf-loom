@@ -42,14 +42,14 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.RemapConfigurationSettings;
-import net.fabricmc.loom.api.processor.SpecContext;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftSourceSets;
-import net.fabricmc.loom.util.AsyncCache;
-import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
-import net.fabricmc.loom.util.fmj.FabricModJsonHelpers;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
+import dev.aoqia.leaf.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.util.AsyncCache;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonHelpers;
 
 /**
  * @param modDependencies External mods that are depended on

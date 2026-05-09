@@ -30,8 +30,8 @@ import javax.inject.Inject;
 
 import org.gradle.api.tasks.Sync;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public abstract class ExtractNativesTask extends Sync {
 	@Inject

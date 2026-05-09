@@ -34,10 +34,10 @@ import org.gradle.TaskExecutionRequest;
 import org.gradle.api.Project;
 import org.gradle.internal.DefaultTaskExecutionRequest;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.task.LoomTasks;
-import net.fabricmc.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.task.LoomTasks;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 public abstract class IdeaConfiguration implements Runnable {
 	@Inject

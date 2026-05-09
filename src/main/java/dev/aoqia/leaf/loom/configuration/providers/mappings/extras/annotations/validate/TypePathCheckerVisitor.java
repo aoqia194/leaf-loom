@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.TypePath;
 import org.objectweb.asm.signature.SignatureVisitor;
 
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public final class TypePathCheckerVisitor extends SignatureVisitor {
 	private final TypePath path;

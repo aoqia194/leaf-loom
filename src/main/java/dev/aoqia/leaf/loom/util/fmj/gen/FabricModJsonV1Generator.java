@@ -39,8 +39,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.api.fmj.FabricModJsonV1Spec;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.api.fmj.FabricModJsonV1Spec;
 
 // Opposite of https://github.com/FabricMC/fabric-loader/blob/master/src/main/java/net/fabricmc/loader/impl/metadata/V1ModMetadataParser.java
 public final class FabricModJsonV1Generator implements FabricModJsonGenerator<FabricModJsonV1Spec> {

@@ -38,15 +38,15 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.configuration.providers.minecraft.assets.AssetIndex;
-import net.fabricmc.loom.util.MirrorUtil;
-import net.fabricmc.loom.util.download.DownloadExecutor;
-import net.fabricmc.loom.util.download.DownloadFactory;
-import net.fabricmc.loom.util.download.GradleDownloadProgressListener;
-import net.fabricmc.loom.util.gradle.ProgressGroup;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.assets.AssetIndex;
+import dev.aoqia.leaf.loom.util.MirrorUtil;
+import dev.aoqia.leaf.loom.util.download.DownloadExecutor;
+import dev.aoqia.leaf.loom.util.download.DownloadFactory;
+import dev.aoqia.leaf.loom.util.download.GradleDownloadProgressListener;
+import dev.aoqia.leaf.loom.util.gradle.ProgressGroup;
 
 public abstract class DownloadAssetsTask extends AbstractLoomTask {
 	@Input

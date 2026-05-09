@@ -57,16 +57,16 @@ import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.task.service.ClientEntriesService;
-import net.fabricmc.loom.task.service.JarManifestService;
-import net.fabricmc.loom.util.Check;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.ZipReprocessorUtil;
-import net.fabricmc.loom.util.ZipUtils;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
-import net.fabricmc.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.task.service.ClientEntriesService;
+import dev.aoqia.leaf.loom.task.service.JarManifestService;
+import dev.aoqia.leaf.loom.util.Check;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.ZipReprocessorUtil;
+import dev.aoqia.leaf.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
 public abstract class AbstractRemapJarTask extends Jar {
 	@InputFile

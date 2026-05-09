@@ -33,11 +33,11 @@ import org.gradle.api.Project;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.commons.Remapper;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.mappings.MappingConfiguration;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.TinyRemapperHelper;
-import net.fabricmc.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.TinyRemapperHelper;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.api.TrClass;
 

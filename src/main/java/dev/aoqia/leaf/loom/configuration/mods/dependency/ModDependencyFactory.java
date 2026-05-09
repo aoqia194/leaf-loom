@@ -32,11 +32,11 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.mods.ArtifactMetadata;
-import net.fabricmc.loom.configuration.mods.ArtifactRef;
-import net.fabricmc.loom.configuration.mods.JarSplitter;
-import net.fabricmc.loom.util.AttributeHelper;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef;
+import dev.aoqia.leaf.loom.configuration.mods.JarSplitter;
+import dev.aoqia.leaf.loom.util.AttributeHelper;
 
 public class ModDependencyFactory {
 	private static final String TARGET_ATTRIBUTE_KEY = "loom-target";

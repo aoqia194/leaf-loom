@@ -27,8 +27,8 @@ package dev.aoqia.leaf.loom.task;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Internal;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public abstract class AbstractLoomTask extends DefaultTask {
 	public AbstractLoomTask() {

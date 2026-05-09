@@ -38,8 +38,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.decompilers.ClassLineNumbers;
-import net.fabricmc.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.decompilers.ClassLineNumbers;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
 
 public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String baseHash) {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CachedJarProcessor.class);

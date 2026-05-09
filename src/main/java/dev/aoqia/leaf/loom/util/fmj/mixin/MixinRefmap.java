@@ -31,8 +31,8 @@ import java.util.Map;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.util.fmj.FabricModJsonSource;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.util.fmj.FabricModJsonSource;
 
 public record MixinRefmap(
 		String refmapPath,

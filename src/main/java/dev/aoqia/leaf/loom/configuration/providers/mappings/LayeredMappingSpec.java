@@ -27,7 +27,7 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings;
 import java.util.List;
 import java.util.Locale;
 
-import net.fabricmc.loom.api.mappings.layered.spec.MappingsSpec;
+import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
 
 public record LayeredMappingSpec(List<MappingsSpec<?>> layers) {
 	public String getVersion() {

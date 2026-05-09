@@ -45,7 +45,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public class MinecraftClassMerger {
 	private static final String SIDE_DESCRIPTOR = "Lnet/fabricmc/api/EnvType;";

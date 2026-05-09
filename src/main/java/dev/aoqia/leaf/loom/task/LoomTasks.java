@@ -37,18 +37,18 @@ import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.api.tasks.TaskProvider;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.ide.RunConfigSettings;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.task.launch.GenerateDLIConfigTask;
-import net.fabricmc.loom.task.launch.GenerateLog4jConfigTask;
-import net.fabricmc.loom.task.launch.GenerateRemapClasspathTask;
-import net.fabricmc.loom.util.Check;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.LoomVersions;
-import net.fabricmc.loom.util.Platform;
-import net.fabricmc.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.task.launch.GenerateDLIConfigTask;
+import dev.aoqia.leaf.loom.task.launch.GenerateLog4jConfigTask;
+import dev.aoqia.leaf.loom.task.launch.GenerateRemapClasspathTask;
+import dev.aoqia.leaf.loom.util.Check;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.LoomVersions;
+import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 public abstract class LoomTasks implements Runnable {
 	@Inject

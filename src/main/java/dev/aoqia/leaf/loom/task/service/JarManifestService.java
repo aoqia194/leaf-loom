@@ -38,11 +38,11 @@ import org.gradle.api.services.BuildService;
 import org.gradle.api.services.BuildServiceParameters;
 import org.gradle.util.GradleVersion;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.LoomGradlePlugin;
-import net.fabricmc.loom.configuration.InstallerData;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.LoomVersions;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.configuration.InstallerData;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.LoomVersions;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public abstract class JarManifestService implements BuildService<JarManifestService.Params> {

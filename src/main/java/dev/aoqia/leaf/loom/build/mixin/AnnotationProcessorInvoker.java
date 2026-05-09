@@ -42,12 +42,12 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.ide.idea.IdeaUtils;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftSourceSets;
-import net.fabricmc.loom.extension.MixinExtension;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.LoomVersions;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.extension.MixinExtension;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.LoomVersions;
 
 /**
  * Normally javac invokes annotation processors, but when the scala or kapt plugin are installed they will want to invoke

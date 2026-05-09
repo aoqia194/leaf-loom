@@ -36,8 +36,8 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.util.LoomVersions;
-import net.fabricmc.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.LoomVersions;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 
 /**
  * A task that runs the server using the production server launcher. You must manually register a task of this type to use it.

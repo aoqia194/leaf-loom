@@ -43,7 +43,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.FileCollectionDependency;
 
-import net.fabricmc.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 
 public class FileDependencyInfo extends DependencyInfo {
 	protected final Map<String, File> classifierToFile = new HashMap<>();

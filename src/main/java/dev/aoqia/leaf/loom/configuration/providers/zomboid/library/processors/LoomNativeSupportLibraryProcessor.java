@@ -27,11 +27,11 @@ package dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import net.fabricmc.loom.configuration.providers.minecraft.library.Library;
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext;
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessor;
-import net.fabricmc.loom.util.LoomVersions;
-import net.fabricmc.loom.util.Platform;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.Library;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryContext;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessor;
+import dev.aoqia.leaf.loom.util.LoomVersions;
+import dev.aoqia.leaf.loom.util.Platform;
 
 public class LoomNativeSupportLibraryProcessor extends LibraryProcessor {
 	public LoomNativeSupportLibraryProcessor(Platform platform, LibraryContext context) {

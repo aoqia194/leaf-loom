@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.api.mappings.layered.spec;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 
 /**
  * A builder for a file mappings layer.

@@ -32,7 +32,7 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 
-import net.fabricmc.loom.util.Check;
+import dev.aoqia.leaf.loom.util.Check;
 
 public abstract class DecompilerOptions implements Named {
 	/**

@@ -40,7 +40,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
 
 /**
  * A {@link Named} object for configuring "proxy" configurations that remap artifacts.

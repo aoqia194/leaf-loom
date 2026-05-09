@@ -45,7 +45,7 @@ import org.benf.cfr.reader.util.getopt.Options;
 import org.benf.cfr.reader.util.getopt.OptionsImpl;
 import org.benf.cfr.reader.util.output.SinkDumperFactory;
 
-import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
+import dev.aoqia.leaf.loom.decompilers.LoomInternalDecompiler;
 
 public final class LoomCFRDecompiler implements LoomInternalDecompiler {
 	private static final Map<String, String> DECOMPILE_OPTIONS = Map.of(

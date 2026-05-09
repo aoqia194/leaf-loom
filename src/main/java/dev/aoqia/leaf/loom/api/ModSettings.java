@@ -40,10 +40,10 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.LoomCompanionGradlePlugin;
-import net.fabricmc.loom.configuration.classpathgroups.ExternalClasspathGroup;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
-import net.fabricmc.loom.util.gradle.SourceSetReference;
+import dev.aoqia.leaf.loom.LoomCompanionGradlePlugin;
+import dev.aoqia.leaf.loom.configuration.classpathgroups.ExternalClasspathGroup;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
 
 /**
  * A {@link Named} object for setting mod-related values. The {@linkplain Named#getName() name} should match the mod id.

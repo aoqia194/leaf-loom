@@ -44,14 +44,14 @@ import org.gradle.api.tasks.compile.JavaCompile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.task.RemapSourcesJarTask;
-import net.fabricmc.loom.util.DeletingFileVisitor;
-import net.fabricmc.loom.util.FileSystemUtil;
-import net.fabricmc.loom.util.SourceRemapper;
-import net.fabricmc.loom.util.ZipUtils;
-import net.fabricmc.loom.util.service.Service;
-import net.fabricmc.loom.util.service.ServiceFactory;
-import net.fabricmc.loom.util.service.ServiceType;
+import dev.aoqia.leaf.loom.task.RemapSourcesJarTask;
+import dev.aoqia.leaf.loom.util.DeletingFileVisitor;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.SourceRemapper;
+import dev.aoqia.leaf.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
 import net.fabricmc.lorenztiny.TinyMappingsReader;
 
 public final class SourceRemapperService extends Service<SourceRemapperService.Options> {

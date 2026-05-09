@@ -37,9 +37,9 @@ import java.util.Optional;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.util.AttributeHelper;
-import net.fabricmc.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.AttributeHelper;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
 
 public record BundleMetadata(List<Entry> libraries, List<Entry> versions, String mainClass) {
 	private static final String LIBRARIES_LIST_PATH = "META-INF/libraries.list";

@@ -33,8 +33,8 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.extension.MixinExtension;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.extension.MixinExtension;
 
 public class JavaApInvoker extends AnnotationProcessorInvoker<JavaCompile> {
 	public JavaApInvoker(Project project) {

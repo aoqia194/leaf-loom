@@ -33,10 +33,10 @@ import org.slf4j.LoggerFactory;
 
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.api.processor.MappingProcessorContext;
-import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
-import net.fabricmc.loom.util.LazyCloseable;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
+import dev.aoqia.leaf.loom.api.processor.MinecraftJarProcessor;
+import dev.aoqia.leaf.loom.util.LazyCloseable;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;

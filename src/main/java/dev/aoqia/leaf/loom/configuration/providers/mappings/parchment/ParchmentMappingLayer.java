@@ -27,9 +27,9 @@ package dev.aoqia.leaf.loom.configuration.providers.mappings.parchment;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import net.fabricmc.loom.api.mappings.layered.MappingLayer;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 import net.fabricmc.mappingio.MappingVisitor;
 
 public record ParchmentMappingLayer(Path parchmentFile, boolean removePrefix) implements MappingLayer {

@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 
-import net.fabricmc.loom.decompilers.LoomInternalDecompiler;
+import dev.aoqia.leaf.loom.decompilers.LoomInternalDecompiler;
 
 public class FernflowerLogger extends IFernflowerLogger {
 	private final LoomInternalDecompiler.Logger logger;

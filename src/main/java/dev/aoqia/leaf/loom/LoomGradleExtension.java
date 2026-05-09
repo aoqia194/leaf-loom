@@ -34,22 +34,22 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.provider.ListProperty;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.api.LoomGradleExtensionAPI;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.InstallerData;
-import net.fabricmc.loom.configuration.LoomDependencyManager;
-import net.fabricmc.loom.configuration.accesswidener.AccessWidenerFile;
-import net.fabricmc.loom.configuration.providers.mappings.LayeredMappingsFactory;
-import net.fabricmc.loom.configuration.providers.mappings.MappingConfiguration;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftMetadataProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessorManager;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.IntermediaryMinecraftProvider;
-import net.fabricmc.loom.configuration.providers.minecraft.mapped.NamedMinecraftProvider;
-import net.fabricmc.loom.extension.LoomFiles;
-import net.fabricmc.loom.extension.MixinExtension;
-import net.fabricmc.loom.extension.RemapperExtensionHolder;
-import net.fabricmc.loom.util.download.DownloadBuilder;
+import dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.InstallerData;
+import dev.aoqia.leaf.loom.configuration.LoomDependencyManager;
+import dev.aoqia.leaf.loom.configuration.accesswidener.AccessWidenerFile;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingsFactory;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftMetadataProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessorManager;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.IntermediaryMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.NamedMinecraftProvider;
+import dev.aoqia.leaf.loom.extension.LoomFiles;
+import dev.aoqia.leaf.loom.extension.MixinExtension;
+import dev.aoqia.leaf.loom.extension.RemapperExtensionHolder;
+import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
 
 @ApiStatus.Internal
 public interface LoomGradleExtension extends LoomGradleExtensionAPI {

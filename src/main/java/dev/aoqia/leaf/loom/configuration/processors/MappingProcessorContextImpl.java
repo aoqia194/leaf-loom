@@ -24,10 +24,10 @@
 
 package dev.aoqia.leaf.loom.configuration.processors;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.api.processor.MappingProcessorContext;
-import net.fabricmc.loom.configuration.ConfigContext;
-import net.fabricmc.loom.util.LazyCloseable;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
+import dev.aoqia.leaf.loom.configuration.ConfigContext;
+import dev.aoqia.leaf.loom.util.LazyCloseable;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public record MappingProcessorContextImpl(ConfigContext configContext) implements MappingProcessorContext {

@@ -31,7 +31,7 @@ import org.gradle.api.Project;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
+import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
 
 @ApiStatus.Internal
 public abstract class IntermediateMappingsProviderInternal extends IntermediateMappingsProvider {
