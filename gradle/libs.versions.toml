@@ -1,6 +1,5 @@
 [versions]
 
-access-widener = "2.1.0"
 asm = "9.9"
 clazz-tweaker = "0.1.1"
 commons-io = "2.15.1"
@@ -34,7 +33,6 @@ asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 commons-io = { module = "commons-io:commons-io", version.ref = "commons-io" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
-fabric-access-widener = { module = "net.fabricmc:access-widener", version.ref = "access-widener" }
 fabric-clazz-tweaker = { module = "net.fabricmc:class-tweaker", version.ref = "clazz-tweaker" }
 fabric-loom-nativelib = { module = "net.fabricmc:fabric-loom-native", version.ref = "loom-native" }
 fabric-lorenz-tiny = { module = "net.fabricmc:lorenz-tiny", version.ref = "lorenz-tiny" }
