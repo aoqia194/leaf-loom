@@ -5,7 +5,6 @@ asm = "9.9"
 clazz-tweaker = "0.1.1"
 commons-io = "2.15.1"
 gson = "2.10.1"
-guava = "33.0.0-jre"
 kotlin = "2.0.21"
 loom-native = "0.2.0"
 lorenz-tiny = "4.0.2"
@@ -34,7 +33,6 @@ asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 
 commons-io = { module = "commons-io:commons-io", version.ref = "commons-io" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
-guava = { module = "com.google.guava:guava", version.ref = "guava" }
 
 fabric-access-widener = { module = "net.fabricmc:access-widener", version.ref = "access-widener" }
 fabric-clazz-tweaker = { module = "net.fabricmc:class-tweaker", version.ref = "clazz-tweaker" }
