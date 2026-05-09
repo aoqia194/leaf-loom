@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.processor
+package dev.aoqia.leaf.loom.test.unit.processor
 
 import groovy.transform.CompileStatic
 import org.objectweb.asm.ClassReader

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.cache
+package dev.aoqia.leaf.loom.test.unit.cache
 
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes

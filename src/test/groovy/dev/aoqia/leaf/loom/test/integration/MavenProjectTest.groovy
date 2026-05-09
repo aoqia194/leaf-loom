@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.integration
+package dev.aoqia.leaf.loom.test.integration
 
 import spock.lang.Specification
 import spock.lang.Stepwise

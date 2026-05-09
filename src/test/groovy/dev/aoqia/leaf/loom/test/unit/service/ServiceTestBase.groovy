@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.service
+package dev.aoqia.leaf.loom.test.unit.service
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project

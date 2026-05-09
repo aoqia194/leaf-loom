@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.integration.buildSrc.legacyMergedIntermediary
+package dev.aoqia.leaf.loom.test.integration.buildSrc.legacyMergedIntermediary
 
 import java.nio.file.Files
 import java.nio.file.Path

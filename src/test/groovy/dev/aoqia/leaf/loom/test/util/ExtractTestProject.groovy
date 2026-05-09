@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.util
+package dev.aoqia.leaf.loom.test.util
 
 // A helper script to extract the test project from the resources and add the gradle wrapper
 // Useful for testing an intergration test project in a real environment

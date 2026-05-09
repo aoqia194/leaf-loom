@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.service.mocks
+package dev.aoqia.leaf.loom.test.unit.service.mocks
 
 import org.mockito.Answers
 

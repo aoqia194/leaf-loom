@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.fmj
+package dev.aoqia.leaf.loom.test.unit.fmj
 
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.integration.buildSrc.decompile
+package dev.aoqia.leaf.loom.test.integration.buildSrc.decompile
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty

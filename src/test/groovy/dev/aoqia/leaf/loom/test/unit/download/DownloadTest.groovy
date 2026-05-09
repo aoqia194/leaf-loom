@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.download
+package dev.aoqia.leaf.loom.test.unit.download
 
 import io.javalin.Javalin
 import spock.lang.Specification

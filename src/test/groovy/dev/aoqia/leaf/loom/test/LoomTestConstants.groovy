@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test
+package dev.aoqia.leaf.loom.test
 
 import java.lang.management.ManagementFactory
 

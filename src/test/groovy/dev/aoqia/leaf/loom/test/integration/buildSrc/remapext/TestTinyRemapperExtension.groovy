@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.integration.buildSrc.remapext
+package dev.aoqia.leaf.loom.test.integration.buildSrc.remapext
 
 import org.objectweb.asm.ClassVisitor
 

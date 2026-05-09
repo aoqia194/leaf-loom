@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.layeredmappings
+package dev.aoqia.leaf.loom.test.unit.layeredmappings
 
 import net.fabricmc.loom.api.mappings.layered.spec.FileSpec
 import net.fabricmc.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.providers.mappings.unpick
+package dev.aoqia.leaf.loom.test.unit.providers.mappings.unpick
 
 import java.nio.file.Files
 import java.nio.file.Path

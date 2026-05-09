@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.fmj
+package dev.aoqia.leaf.loom.test.unit.fmj
 
 import com.google.gson.JsonSyntaxException
 import org.intellij.lang.annotations.Language

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.layeredmappings
+package dev.aoqia.leaf.loom.test.unit.layeredmappings
 
 import org.intellij.lang.annotations.Language
 import org.objectweb.asm.Type

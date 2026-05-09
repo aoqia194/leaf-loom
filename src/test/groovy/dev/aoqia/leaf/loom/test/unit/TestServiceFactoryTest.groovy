@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit
+package dev.aoqia.leaf.loom.test.unit
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.util.processor
+package dev.aoqia.leaf.loom.test.util.processor
 
 import java.nio.file.Path
 

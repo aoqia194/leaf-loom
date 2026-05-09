@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.kotlin
+package dev.aoqia.leaf.loom.test.unit.kotlin
 
 import kotlin.KotlinVersion
 import org.objectweb.asm.ClassReader

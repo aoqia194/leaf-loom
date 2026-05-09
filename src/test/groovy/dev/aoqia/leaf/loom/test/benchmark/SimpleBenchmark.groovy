@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.benchmark
+package dev.aoqia.leaf.loom.test.benchmark
 
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.library
+package dev.aoqia.leaf.loom.test.unit.library
 
 import org.gradle.api.JavaVersion
 import spock.lang.Specification

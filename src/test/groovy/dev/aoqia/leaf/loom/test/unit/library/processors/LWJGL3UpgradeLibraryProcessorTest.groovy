@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.library.processors
+package dev.aoqia.leaf.loom.test.unit.library.processors
 
 import org.gradle.api.JavaVersion
 

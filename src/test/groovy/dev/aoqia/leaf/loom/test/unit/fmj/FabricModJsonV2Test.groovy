@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.unit.fmj
+package dev.aoqia.leaf.loom.test.unit.fmj
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.integration.buildSrc.stopDaemon
+package dev.aoqia.leaf.loom.test.integration.buildSrc.stopDaemon
 
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture

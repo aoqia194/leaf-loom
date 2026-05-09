@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.test.util
+package dev.aoqia.leaf.loom.test.util
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
