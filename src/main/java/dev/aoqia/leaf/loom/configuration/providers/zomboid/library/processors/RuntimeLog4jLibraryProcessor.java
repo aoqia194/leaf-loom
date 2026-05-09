@@ -27,9 +27,9 @@ package dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.Library;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryContext;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessor;
 import dev.aoqia.leaf.loom.util.Platform;
 
 public class RuntimeLog4jLibraryProcessor extends LibraryProcessor {

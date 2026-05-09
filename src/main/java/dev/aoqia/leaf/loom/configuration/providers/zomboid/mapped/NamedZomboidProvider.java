@@ -29,14 +29,14 @@ import java.util.List;
 import org.gradle.api.Project;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.LegacyMergedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MergedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.SingleJarEnvType;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.SingleJarMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.SplitMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.LegacyMergedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarEnvType;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitMinecraftProvider;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 public abstract class NamedMinecraftProvider<M extends MinecraftProvider> extends AbstractMappedMinecraftProvider<M> {

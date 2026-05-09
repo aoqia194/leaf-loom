@@ -39,7 +39,7 @@ import org.gradle.api.logging.Logger;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
 import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;

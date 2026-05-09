@@ -28,8 +28,8 @@ import org.gradle.api.Project;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedMinecraftProvider;
 
 public abstract class DecompileConfiguration<T extends MappedMinecraftProvider> {
 	static final String DEFAULT_DECOMPILER = "Vineflower";

@@ -45,7 +45,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
 import dev.aoqia.leaf.loom.util.AsyncCache;
 import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
 import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;

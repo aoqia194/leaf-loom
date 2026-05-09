@@ -50,11 +50,11 @@ import dev.aoqia.leaf.loom.configuration.providers.mappings.IntermediaryMappings
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingsFactory;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.NoOpIntermediateMappingsProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftMetadataProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessorManager;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.IntermediaryMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.NamedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftMetadataProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedMinecraftProvider;
 import dev.aoqia.leaf.loom.util.download.Download;
 import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
 

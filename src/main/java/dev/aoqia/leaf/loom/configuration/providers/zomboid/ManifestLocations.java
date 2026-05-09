@@ -32,7 +32,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import dev.aoqia.leaf.loom.api.manifest.VersionsManifestsAPI;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.ManifestLocations.ManifestLocation;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ManifestLocations.ManifestLocation;
 
 public class ManifestLocations implements VersionsManifestsAPI, Iterable<ManifestLocation> {
 	private final Queue<ManifestLocation> locations = new PriorityQueue<>();

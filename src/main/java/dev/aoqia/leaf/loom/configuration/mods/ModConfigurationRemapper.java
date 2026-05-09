@@ -69,7 +69,7 @@ import dev.aoqia.leaf.loom.configuration.RemapConfigurations;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependency;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependencyFactory;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependencyOptions;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
 import dev.aoqia.leaf.loom.util.AsyncCache;
 import dev.aoqia.leaf.loom.util.Checksum;
 import dev.aoqia.leaf.loom.util.Constants;

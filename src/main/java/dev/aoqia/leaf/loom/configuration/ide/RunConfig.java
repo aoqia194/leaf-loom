@@ -56,7 +56,7 @@ import dev.aoqia.leaf.loom.configuration.InstallerData;
 import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaSyncTask;
 import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
 import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryContext;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;

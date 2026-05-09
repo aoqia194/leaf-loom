@@ -49,8 +49,8 @@ import org.gradle.api.tasks.TaskAction;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedMinecraftProvider;
 import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 import dev.aoqia.leaf.loom.task.service.ClasspathGroupService;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;

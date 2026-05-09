@@ -40,8 +40,8 @@ import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.assets.AssetIndex;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.assets.AssetIndex;
 import dev.aoqia.leaf.loom.util.MirrorUtil;
 import dev.aoqia.leaf.loom.util.download.DownloadExecutor;
 import dev.aoqia.leaf.loom.util.download.DownloadFactory;

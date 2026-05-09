@@ -34,10 +34,10 @@ import dev.aoqia.leaf.loom.configuration.decompile.DecompileConfiguration;
 import dev.aoqia.leaf.loom.configuration.decompile.SingleJarDecompileConfiguration;
 import dev.aoqia.leaf.loom.configuration.decompile.SplitDecompileConfiguration;
 import dev.aoqia.leaf.loom.configuration.processors.MinecraftJarProcessorManager;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.IntermediaryMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.NamedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.ProcessedNamedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.ProcessedNamedMinecraftProvider;
 
 public record MinecraftJarConfiguration<
 		M extends MinecraftProvider,

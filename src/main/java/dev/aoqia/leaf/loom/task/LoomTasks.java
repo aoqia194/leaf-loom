@@ -39,8 +39,8 @@ import org.gradle.api.tasks.TaskProvider;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJarConfiguration;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
 import dev.aoqia.leaf.loom.task.launch.GenerateDLIConfigTask;
 import dev.aoqia.leaf.loom.task.launch.GenerateLog4jConfigTask;
 import dev.aoqia.leaf.loom.task.launch.GenerateRemapClasspathTask;

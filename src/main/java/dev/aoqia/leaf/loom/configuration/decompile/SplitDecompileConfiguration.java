@@ -30,8 +30,8 @@ import org.gradle.api.Task;
 import org.gradle.api.tasks.TaskProvider;
 
 import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedMinecraftProvider;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Strings;

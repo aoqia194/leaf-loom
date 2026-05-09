@@ -39,11 +39,11 @@ import org.gradle.api.provider.Provider;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.Library;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryContext;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessorManager;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.MinecraftLibraryHelper;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.RuntimeLog4jLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.MinecraftLibraryHelper;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;

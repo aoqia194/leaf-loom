@@ -29,8 +29,8 @@ import java.util.List;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 
 import dev.aoqia.leaf.loom.LoomRepositoryPlugin;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryContext;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.LibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessor;
 import dev.aoqia.leaf.loom.util.Platform;
 
 /**

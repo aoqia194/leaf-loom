@@ -44,7 +44,7 @@ import org.gradle.api.tasks.TaskProvider;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaUtils;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
 import dev.aoqia.leaf.loom.extension.MixinExtension;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.LoomVersions;

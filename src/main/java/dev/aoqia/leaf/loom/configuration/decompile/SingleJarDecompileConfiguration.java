@@ -29,8 +29,8 @@ import java.util.List;
 import org.gradle.api.Project;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.MappedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedMinecraftProvider;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.Constants;
 

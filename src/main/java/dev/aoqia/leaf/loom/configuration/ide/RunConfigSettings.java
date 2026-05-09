@@ -43,7 +43,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;

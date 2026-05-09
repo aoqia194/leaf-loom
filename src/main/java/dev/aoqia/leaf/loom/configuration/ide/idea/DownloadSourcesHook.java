@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.mapped.NamedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedMinecraftProvider;
 
 // See: https://github.com/JetBrains/intellij-community/blob/a09b1b84ab64a699794c860bc96774766dd38958/plugins/gradle/java/src/util/GradleAttachSourcesProvider.java
 record DownloadSourcesHook(Project project, Task task) {

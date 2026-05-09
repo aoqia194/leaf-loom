@@ -37,14 +37,14 @@ import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper;
 import dev.aoqia.leaf.loom.configuration.processors.MinecraftJarProcessorManager;
 import dev.aoqia.leaf.loom.configuration.processors.ProcessorContextImpl;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.LegacyMergedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MergedMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.SingleJarEnvType;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.SingleJarMinecraftProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.SplitMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.LegacyMergedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJar;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarEnvType;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarMinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitMinecraftProvider;
 
 public abstract class ProcessedNamedMinecraftProvider<M extends MinecraftProvider, P extends NamedMinecraftProvider<M>> extends NamedMinecraftProvider<M> {
 	private final P parentMinecraftProvider;

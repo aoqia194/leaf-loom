@@ -29,7 +29,7 @@ import java.nio.file.Path;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.download.DownloadException;
 

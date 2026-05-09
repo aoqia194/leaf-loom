@@ -33,7 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
 import dev.aoqia.leaf.loom.util.Platform;
 
 /**

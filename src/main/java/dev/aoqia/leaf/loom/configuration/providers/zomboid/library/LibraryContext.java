@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 import org.gradle.api.JavaVersion;
 
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftVersionMeta;
 import dev.aoqia.leaf.loom.util.Platform;
 
 public final class LibraryContext {

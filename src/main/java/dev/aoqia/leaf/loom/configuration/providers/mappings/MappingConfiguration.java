@@ -53,7 +53,7 @@ import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.A
 import dev.aoqia.leaf.loom.configuration.providers.mappings.tiny.MappingsMerger;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.tiny.TinyJarInfo;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.unpick.UnpickMetadata;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.DeletingFileVisitor;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;

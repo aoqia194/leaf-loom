@@ -33,7 +33,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftSourceSets;
 import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
 import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;

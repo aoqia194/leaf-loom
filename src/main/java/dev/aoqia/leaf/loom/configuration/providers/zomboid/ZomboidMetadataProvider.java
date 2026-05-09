@@ -39,7 +39,7 @@ import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.DependencyInfo;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.ManifestLocations.ManifestLocation;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ManifestLocations.ManifestLocation;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
 

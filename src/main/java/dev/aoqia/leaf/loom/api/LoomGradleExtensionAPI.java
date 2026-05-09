@@ -52,8 +52,8 @@ import dev.aoqia.leaf.loom.api.remapping.RemapperParameters;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.leaf.loom.configuration.processors.JarProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.NoOpIntermediateMappingsProvider;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.ManifestLocations;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJarConfiguration;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ManifestLocations;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftJarConfiguration;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.DeprecationHelper;
 

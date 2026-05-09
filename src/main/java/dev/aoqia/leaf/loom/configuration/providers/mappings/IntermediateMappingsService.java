@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftProvider;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.MinecraftProvider;
 import dev.aoqia.leaf.loom.util.Lazy;
 import dev.aoqia.leaf.loom.util.service.Service;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;

@@ -33,14 +33,14 @@ import java.util.function.Predicate;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.jetbrains.annotations.VisibleForTesting;
 
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.ArmNativesLibraryProcessor;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.LWJGL2MavenLibraryProcessor;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.LWJGL3UpgradeLibraryProcessor;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.LegacyASMLibraryProcessor;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.LoomNativeSupportLibraryProcessor;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.ObjcBridgeUpgradeLibraryProcessor;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.RiscVNativesLibraryProcessor;
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.RuntimeLog4jLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.ArmNativesLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LWJGL2MavenLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LWJGL3UpgradeLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LegacyASMLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LoomNativeSupportLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.ObjcBridgeUpgradeLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.RiscVNativesLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor;
 import dev.aoqia.leaf.loom.util.Platform;
 
 public class LibraryProcessorManager {
