@@ -33,7 +33,7 @@ import dev.aoqia.leaf.loom.task.launch.ExportClasspathTask;
 import dev.aoqia.leaf.loom.util.Constants;
 
 public class LoomCompanionGradlePlugin implements Plugin<Project> {
-	public static final String NAME = "net.fabricmc.fabric-loom-companion";
+	public static final String NAME = "dev.aoqia.leaf.loom-companion";
 
 	@Override
 	public void apply(@NotNull Project project) {
