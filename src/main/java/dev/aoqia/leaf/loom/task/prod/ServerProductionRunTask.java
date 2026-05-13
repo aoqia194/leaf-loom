@@ -81,8 +81,8 @@ public abstract non-sealed class ServerProductionRunTask extends AbstractProduct
 		getInstallPropertiesJar().convention(getProject().getLayout().getBuildDirectory().file("server_properties.jar"));
 		getInstallerVersion().convention(LoomVersions.FABRIC_INSTALLER.version());
 
-		getMainClass().convention("net.fabricmc.installer.ServerLauncher");
-		getClasspath().from(detachedConfigurationProvider("net.fabricmc:fabric-installer:%s:server", getInstallerVersion()));
+		getMainClass().convention("dev.aoqia.leaf.installer.ServerLauncher");
+		getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:installer:%s:server", getInstallerVersion()));
 
 		getProgramArgs().add("nogui");
 	}
@@ -92,7 +92,7 @@ public abstract non-sealed class ServerProductionRunTask extends AbstractProduct
 		ZipUtils.add(
 				getInstallPropertiesJar().get().getAsFile().toPath(),
 				"install.properties",
-				"fabric-loader-version=%s\ngame-version=%s".formatted(getLoaderVersion().get(), getMinecraftVersion().get())
+				"leaf-loader-version=%s\ngame-version=%s".formatted(getLoaderVersion().get(), getMinecraftVersion().get())
 		);
 
 		super.run();
