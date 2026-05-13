@@ -48,10 +48,10 @@ import org.slf4j.LoggerFactory;
 import dev.aoqia.leaf.loom.util.Constants;
 
 public class ZomboidClassMerger {
-	private static final String SIDE_DESCRIPTOR = "Lnet/fabricmc/api/EnvType;";
-	private static final String ITF_DESCRIPTOR = "Lnet/fabricmc/api/EnvironmentInterface;";
-	private static final String ITF_LIST_DESCRIPTOR = "Lnet/fabricmc/api/EnvironmentInterfaces;";
-	private static final String SIDED_DESCRIPTOR = "Lnet/fabricmc/api/Environment;";
+	private static final String SIDE_DESCRIPTOR = "Ldev/aoqia/leaf/loader/api/EnvType;";
+	private static final String ITF_DESCRIPTOR = "Ldev/aoqia/leaf/loader/api/EnvironmentInterface;";
+	private static final String ITF_LIST_DESCRIPTOR = "Ldev/aoqia/leaf/loader/api/EnvironmentInterfaces;";
+	private static final String SIDED_DESCRIPTOR = "Ldev/aoqia/leaf/loader/api/Environment;";
 
 	// The permission flags that are allowed to differ between client and server.
 	private static final int PERMISSION_BITS = Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE;

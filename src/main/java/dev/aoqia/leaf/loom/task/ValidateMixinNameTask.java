@@ -65,7 +65,7 @@ import net.fabricmc.tinyremapper.extension.mixin.common.data.Constant;
  * Task to validate mixin names.
  *
  * <pre>{@code
- * task validateMixinNames(type: net.fabricmc.loom.task.ValidateMixinNameTask) {
+ * task validateMixinNames(type: dev.aoqia.leaf.loom.task.ValidateMixinNameTask) {
  * 		source(sourceSets.main.output)
  * 		softFailures = false
  * }

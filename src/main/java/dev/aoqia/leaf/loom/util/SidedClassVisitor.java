@@ -38,8 +38,8 @@ public final class SidedClassVisitor extends ClassVisitor {
 	public static final TinyRemapper.ApplyVisitorProvider CLIENT = (cls, next) -> new SidedClassVisitor("client", next);
 	public static final TinyRemapper.ApplyVisitorProvider SERVER = (cls, next) -> new SidedClassVisitor("server", next);
 
-	private static final String ENVIRONMENT_DESCRIPTOR = "Lnet/fabricmc/api/Environment;";
-	private static final String SIDE_DESCRIPTOR = "Lnet/fabricmc/api/EnvType;";
+	private static final String ENVIRONMENT_DESCRIPTOR = "Ldev/aoqia/leaf/loader/api/Environment;";
+	private static final String SIDE_DESCRIPTOR = "Ldev/aoqia/leaf/loader/api/EnvType;";
 
 	private final String side;
 	private boolean hasExisting = false;
