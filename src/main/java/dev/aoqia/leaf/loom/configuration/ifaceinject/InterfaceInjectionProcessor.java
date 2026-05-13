@@ -60,7 +60,7 @@ import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
 import dev.aoqia.leaf.loom.util.Pair;
 import dev.aoqia.leaf.loom.util.ZipUtils;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.TinyRemapper;
@@ -100,7 +100,7 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
 		}
 
 		Set<String> clientOnlyModIds = context.modDependenciesCompileRuntimeClient().stream()
-				.map(FabricModJson::getId)
+				.map(LeafModJson::getId)
 				.collect(Collectors.toSet());
 
 		return new Spec(injectedInterfaces, clientOnlyModIds);
@@ -225,7 +225,7 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
 	}
 
 	private record InjectedInterface(String modId, String className, String ifaceName, @Nullable String generics) {
-		public static List<InjectedInterface> fromMod(FabricModJson fabricModJson) {
+		public static List<InjectedInterface> fromMod(LeafModJson fabricModJson) {
 			final String modId = fabricModJson.getId();
 			final JsonElement jsonElement = fabricModJson.getCustom(Constants.CustomModJsonKeys.INJECTED_INTERFACE);
 
@@ -263,7 +263,7 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
 			return result;
 		}
 
-		public static List<InjectedInterface> fromMods(List<FabricModJson> fabricModJsons) {
+		public static List<InjectedInterface> fromMods(List<LeafModJson> fabricModJsons) {
 			return fabricModJsons.stream()
 					.map(InjectedInterface::fromMod)
 					.flatMap(List::stream)

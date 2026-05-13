@@ -42,12 +42,12 @@ import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.fabricapi.DataGenerationSettings;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
-public abstract class FabricApiDataGeneration extends FabricApiAbstractSourceSet {
+public abstract class LeafApiDataGeneration extends FabricApiAbstractSourceSet {
 	@Inject
 	protected abstract Project getProject();
 
 	@Inject
-	public FabricApiDataGeneration() {
+	public LeafApiDataGeneration() {
 	}
 
 	@Override

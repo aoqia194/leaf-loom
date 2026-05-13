@@ -29,7 +29,7 @@ import java.io.File;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 
 /**
  * Represents the settings for data generation.
@@ -76,6 +76,6 @@ public interface DataGenerationSettings {
 	 * Sets {@link #getModId()} property based on the {@code id} field defined in the provided file.
 	 */
 	default void modId(File fabricModJsonFile) {
-		getModId().set(FabricModJsonFactory.createFromFile(fabricModJsonFile).getId());
+		getModId().set(LeafModJsonFactory.createFromFile(fabricModJsonFile).getId());
 	}
 }

@@ -40,18 +40,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
-import dev.aoqia.leaf.loom.api.fmj.FabricModJsonV1Spec;
+import dev.aoqia.leaf.loom.api.fmj.LeafModJsonV1Spec;
 
 // Opposite of https://github.com/FabricMC/fabric-loader/blob/master/src/main/java/net/fabricmc/loader/impl/metadata/V1ModMetadataParser.java
-public final class FabricModJsonV1Generator implements FabricModJsonGenerator<FabricModJsonV1Spec> {
+public final class LeafModJsonV1Generator implements LeafModJsonGenerator<LeafModJsonV1Spec> {
 	private static final int VERSION = 1;
 
-	public static final FabricModJsonV1Generator INSTANCE = new FabricModJsonV1Generator();
+	public static final LeafModJsonV1Generator INSTANCE = new LeafModJsonV1Generator();
 
-	private FabricModJsonV1Generator() {
+	private LeafModJsonV1Generator() {
 	}
 
-	public String generate(FabricModJsonV1Spec spec) {
+	public String generate(LeafModJsonV1Spec spec) {
 		Objects.requireNonNull(spec);
 
 		JsonObject fmj = new JsonObject();
@@ -88,7 +88,7 @@ public final class FabricModJsonV1Generator implements FabricModJsonGenerator<Fa
 		return LoomGradlePlugin.GSON.toJson(fmj);
 	}
 
-	private JsonElement generatePerson(FabricModJsonV1Spec.Person person) {
+	private JsonElement generatePerson(LeafModJsonV1Spec.Person person) {
 		if (person.getContactInformation().get().isEmpty()) {
 			return new JsonPrimitive(person.getName().get());
 		}
@@ -100,8 +100,8 @@ public final class FabricModJsonV1Generator implements FabricModJsonGenerator<Fa
 		return json;
 	}
 
-	private JsonObject generateEntrypoints(List<FabricModJsonV1Spec.Entrypoint> entrypoints) {
-		Map<String, List<FabricModJsonV1Spec.Entrypoint>> entrypointsMap = entrypoints.stream()
+	private JsonObject generateEntrypoints(List<LeafModJsonV1Spec.Entrypoint> entrypoints) {
+		Map<String, List<LeafModJsonV1Spec.Entrypoint>> entrypointsMap = entrypoints.stream()
 				.collect(Collectors.groupingBy(entrypoint -> entrypoint.getEntrypoint().get()));
 
 		JsonObject json = new JsonObject();
@@ -109,17 +109,17 @@ public final class FabricModJsonV1Generator implements FabricModJsonGenerator<Fa
 		return json;
 	}
 
-	private JsonArray generateEntrypoint(List<FabricModJsonV1Spec.Entrypoint> entries) {
+	private JsonArray generateEntrypoint(List<LeafModJsonV1Spec.Entrypoint> entries) {
 		JsonArray json = new JsonArray();
 
-		for (FabricModJsonV1Spec.Entrypoint entry : entries) {
+		for (LeafModJsonV1Spec.Entrypoint entry : entries) {
 			json.add(generateEntrypointEntry(entry));
 		}
 
 		return json;
 	}
 
-	private JsonElement generateEntrypointEntry(FabricModJsonV1Spec.Entrypoint entrypoint) {
+	private JsonElement generateEntrypointEntry(LeafModJsonV1Spec.Entrypoint entrypoint) {
 		if (!entrypoint.getAdapter().isPresent()) {
 			return new JsonPrimitive(entrypoint.getValue().get());
 		}
@@ -136,7 +136,7 @@ public final class FabricModJsonV1Generator implements FabricModJsonGenerator<Fa
 		return json;
 	}
 
-	private JsonElement generateMixins(FabricModJsonV1Spec.Mixin mixin) {
+	private JsonElement generateMixins(LeafModJsonV1Spec.Mixin mixin) {
 		if (!mixin.getEnvironment().isPresent()) {
 			return new JsonPrimitive(mixin.getValue().get());
 		}
@@ -147,17 +147,17 @@ public final class FabricModJsonV1Generator implements FabricModJsonGenerator<Fa
 		return json;
 	}
 
-	private JsonObject generateDependencies(List<FabricModJsonV1Spec.Dependency> dependencies) {
+	private JsonObject generateDependencies(List<LeafModJsonV1Spec.Dependency> dependencies) {
 		JsonObject json = new JsonObject();
 
-		for (FabricModJsonV1Spec.Dependency dependency : dependencies) {
+		for (LeafModJsonV1Spec.Dependency dependency : dependencies) {
 			json.add(dependency.getModId().get(), generateDependency(dependency));
 		}
 
 		return json;
 	}
 
-	private JsonElement generateDependency(FabricModJsonV1Spec.Dependency dependency) {
+	private JsonElement generateDependency(LeafModJsonV1Spec.Dependency dependency) {
 		List<String> requirements = dependency.getVersionRequirements().get();
 
 		if (requirements.isEmpty()) {
@@ -177,14 +177,14 @@ public final class FabricModJsonV1Generator implements FabricModJsonGenerator<Fa
 		return json;
 	}
 
-	private JsonElement generateIcon(List<FabricModJsonV1Spec.Icon> icons) {
+	private JsonElement generateIcon(List<LeafModJsonV1Spec.Icon> icons) {
 		if (icons.size() == 1 && !icons.getFirst().getSize().isPresent()) {
 			return new JsonPrimitive(icons.getFirst().getPath().get());
 		}
 
 		JsonObject json = new JsonObject();
 
-		for (FabricModJsonV1Spec.Icon icon : icons) {
+		for (LeafModJsonV1Spec.Icon icon : icons) {
 			String size = String.valueOf(icon.getSize().get());
 			json.addProperty(size, icon.getPath().get());
 		}

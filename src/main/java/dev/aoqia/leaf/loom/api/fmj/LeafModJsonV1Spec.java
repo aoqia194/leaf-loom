@@ -40,7 +40,7 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * <p>This class defines properties of a Fabric mod JSON file via a type-safe DSL.
  */
-public abstract class FabricModJsonV1Spec {
+public abstract class LeafModJsonV1Spec {
 	/**
 	 * The ID of the mod.
 	 * @return A {@link Property} containing a {@link String}  representing the mod ID

@@ -27,13 +27,13 @@ package dev.aoqia.leaf.loom.test.unit
 import org.gradle.api.Project
 import spock.lang.Specification
 
-import dev.aoqia.leaf.loom.configuration.fabricapi.FabricApiVersions
+import dev.aoqia.leaf.loom.configuration.fabricapi.LeafApiVersions
 import dev.aoqia.leaf.loom.test.util.GradleTestUtil
 
 class FabricApiExtensionTest extends Specification {
 	def "get module version"() {
 		when:
-		def fabricApi = new FabricApiVersions() {
+		def fabricApi = new LeafApiVersions() {
 					Project project = GradleTestUtil.mockProject()
 				}
 		def version = fabricApi.moduleVersion(moduleName, apiVersion)
@@ -51,7 +51,7 @@ class FabricApiExtensionTest extends Specification {
 
 	def "unknown module"() {
 		when:
-		def fabricApi = new FabricApiVersions() {
+		def fabricApi = new LeafApiVersions() {
 					Project project = GradleTestUtil.mockProject()
 				}
 		fabricApi.moduleVersion("fabric-api-unknown", apiVersion)

@@ -32,14 +32,14 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonSource;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonSource;
 
 public record MixinConfiguration(
 		@Nullable MixinRefmap refmap) {
 	private static final String REFMAP_KEY = "refmap";
 
-	public static List<MixinConfiguration> fromMod(FabricModJson fabricModJson) throws IOException {
+	public static List<MixinConfiguration> fromMod(LeafModJson fabricModJson) throws IOException {
 		var configs = new ArrayList<MixinConfiguration>();
 
 		for (String configPath : fabricModJson.getMixinConfigurations()) {
@@ -49,7 +49,7 @@ public record MixinConfiguration(
 		return configs;
 	}
 
-	private static MixinConfiguration fromMod(String configPath, FabricModJsonSource modSource) throws IOException {
+	private static MixinConfiguration fromMod(String configPath, LeafModJsonSource modSource) throws IOException {
 		final String mixinConfigJson = new String(modSource.read(configPath));
 		final JsonObject jsonObject = LoomGradlePlugin.GSON.fromJson(mixinConfigJson, JsonObject.class);
 

@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.util.fmj;
 
-import static dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils.readString;
+import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.readString;
 
 import java.util.List;
 import java.util.Map;
@@ -35,11 +35,11 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
-public abstract sealed class FabricModJson permits FabricModJsonV0, FabricModJsonV1, FabricModJsonV2, FabricModJson.Mockable {
+public abstract sealed class LeafModJson permits LeafModJsonV0, LeafModJsonV1, LeafModJsonV2, LeafModJson.Mockable {
 	protected final JsonObject jsonObject;
-	private final FabricModJsonSource source;
+	private final LeafModJsonSource source;
 
-	protected FabricModJson(JsonObject jsonObject, FabricModJsonSource source) {
+	protected LeafModJson(JsonObject jsonObject, LeafModJsonSource source) {
 		this.jsonObject = Objects.requireNonNull(jsonObject);
 		this.source = Objects.requireNonNull(source);
 	}
@@ -61,7 +61,7 @@ public abstract sealed class FabricModJson permits FabricModJsonV0, FabricModJso
 
 	public abstract Map<String, ModEnvironment> getClassTweakers();
 
-	public FabricModJsonSource getSource() {
+	public LeafModJsonSource getSource() {
 		return source;
 	}
 
@@ -76,7 +76,7 @@ public abstract sealed class FabricModJson permits FabricModJsonV0, FabricModJso
 	}
 
 	@VisibleForTesting
-	public abstract non-sealed class Mockable extends FabricModJson {
+	public abstract non-sealed class Mockable extends LeafModJson {
 		private Mockable() {
 			super(null, null);
 			throw new AssertionError();

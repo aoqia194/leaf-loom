@@ -43,18 +43,18 @@ import org.gradle.workers.WorkParameters;
 import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 
-import dev.aoqia.leaf.loom.api.fmj.FabricModJsonV1Spec;
-import dev.aoqia.leaf.loom.util.fmj.gen.FabricModJsonV1Generator;
+import dev.aoqia.leaf.loom.api.fmj.LeafModJsonV1Spec;
+import dev.aoqia.leaf.loom.util.fmj.gen.LeafModJsonV1Generator;
 
 /**
- * A task that generates a {@code fabric.mod.json} file using the configured {@link FabricModJsonV1Spec} specification.
+ * A task that generates a {@code fabric.mod.json} file using the configured {@link LeafModJsonV1Spec} specification.
  */
-public abstract class FabricModJsonV1Task extends AbstractLoomTask {
+public abstract class LeafModJsonV1Task extends AbstractLoomTask {
 	/**
 	 * The fabric.mod.json spec.
 	 */
 	@Nested
-	public abstract Property<FabricModJsonV1Spec> getJson();
+	public abstract Property<LeafModJsonV1Spec> getJson();
 
 	/**
 	 * The output file to write the generated fabric.mod.json to.
@@ -68,8 +68,8 @@ public abstract class FabricModJsonV1Task extends AbstractLoomTask {
 	@Inject
 	protected abstract ObjectFactory getObjectFactory();
 
-	public FabricModJsonV1Task() {
-		getJson().set(getObjectFactory().newInstance(FabricModJsonV1Spec.class));
+	public LeafModJsonV1Task() {
+		getJson().set(getObjectFactory().newInstance(LeafModJsonV1Spec.class));
 	}
 
 	/**
@@ -77,7 +77,7 @@ public abstract class FabricModJsonV1Task extends AbstractLoomTask {
 	 *
 	 * @param action A {@link Action} that configures the spec.
 	 */
-	public void json(Action<FabricModJsonV1Spec> action) {
+	public void json(Action<LeafModJsonV1Spec> action) {
 		action.execute(getJson().get());
 	}
 
@@ -92,7 +92,7 @@ public abstract class FabricModJsonV1Task extends AbstractLoomTask {
 	}
 
 	public interface FabricModJsonV1WorkParameters extends WorkParameters {
-		Property<FabricModJsonV1Spec> getSpec();
+		Property<LeafModJsonV1Spec> getSpec();
 
 		RegularFileProperty getOutputFile();
 	}
@@ -100,10 +100,10 @@ public abstract class FabricModJsonV1Task extends AbstractLoomTask {
 	public abstract static class FabricModJsonV1WorkAction implements WorkAction<FabricModJsonV1WorkParameters> {
 		@Override
 		public void execute() {
-			FabricModJsonV1Spec spec = getParameters().getSpec().get();
+			LeafModJsonV1Spec spec = getParameters().getSpec().get();
 			Path outputPath = getParameters().getOutputFile().get().getAsFile().toPath();
 
-			String json = FabricModJsonV1Generator.INSTANCE.generate(spec);
+			String json = LeafModJsonV1Generator.INSTANCE.generate(spec);
 
 			try {
 				Files.writeString(outputPath, json);

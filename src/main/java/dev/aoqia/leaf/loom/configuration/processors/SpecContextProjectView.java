@@ -38,8 +38,8 @@ import org.gradle.api.attributes.Usage;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
 import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonHelpers;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonHelpers;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 // Used to abstract out the Gradle API usage to ease unit testing.
@@ -51,7 +51,7 @@ public interface SpecContextProjectView {
 
 	Function<RemapConfigurationSettings, Stream<Path>> resolveArtifacts(ArtifactUsage artifactUsage);
 
-	List<FabricModJson> getMods();
+	List<LeafModJson> getMods();
 
 	boolean disableProjectDependantMods();
 
@@ -90,8 +90,8 @@ public interface SpecContextProjectView {
 		}
 
 		@Override
-		public List<FabricModJson> getMods() {
-			return FabricModJsonHelpers.getModsInProject(project);
+		public List<LeafModJson> getMods() {
+			return LeafModJsonHelpers.getModsInProject(project);
 		}
 
 		@Override

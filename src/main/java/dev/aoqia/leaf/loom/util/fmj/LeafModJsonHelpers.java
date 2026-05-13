@@ -37,17 +37,17 @@ import dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 
-public class FabricModJsonHelpers {
+public class LeafModJsonHelpers {
 	/**
 	 * Returns the list of mods provided by either {@link LoomGradleExtensionAPI#getFabricModJsonPath()}
 	 * or {@code fabric.mod.json} in main or client resources.
 	 */
-	public static List<FabricModJson> getModsInProject(Project project) {
+	public static List<LeafModJson> getModsInProject(Project project) {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
 		Provider<File> overrideFile = extension.getFabricModJsonPath().getAsFile();
 
 		if (overrideFile.isPresent()) {
-			return List.of(FabricModJsonFactory.createFromFile(overrideFile.get()));
+			return List.of(LeafModJsonFactory.createFromFile(overrideFile.get()));
 		}
 
 		var sourceSets = new ArrayList<SourceSet>();
@@ -57,7 +57,7 @@ public class FabricModJsonHelpers {
 			sourceSets.add(SourceSetHelper.getSourceSetByName("client", project));
 		}
 
-		final FabricModJson fabricModJson = FabricModJsonFactory.createFromSourceSetsNullable(project, sourceSets.toArray(SourceSet[]::new));
+		final LeafModJson fabricModJson = LeafModJsonFactory.createFromSourceSetsNullable(project, sourceSets.toArray(SourceSet[]::new));
 
 		if (fabricModJson != null) {
 			return List.of(fabricModJson);

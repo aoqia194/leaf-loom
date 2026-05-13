@@ -47,9 +47,9 @@ import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.util.AsyncCache;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonHelpers;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonHelpers;
 
 /**
  * @param modDependencies External mods that are depended on
@@ -57,8 +57,8 @@ import dev.aoqia.leaf.loom.util.fmj.FabricModJsonHelpers;
  * @param compileRuntimeMods Dependent mods found in both the compile and runtime classpath.
  */
 public record SpecContextImpl(
-		List<FabricModJson> modDependencies,
-		List<FabricModJson> localMods,
+		List<LeafModJson> modDependencies,
+		List<LeafModJson> localMods,
 		List<ModHolder> compileRuntimeMods) implements SpecContext {
 	public static SpecContextImpl create(Project project) {
 		return create(new SpecContextProjectView.Impl(project, LoomGradleExtension.get(project)));
@@ -66,7 +66,7 @@ public record SpecContextImpl(
 
 	@VisibleForTesting
 	public static SpecContextImpl create(SpecContextProjectView projectView) {
-		AsyncCache<List<FabricModJson>> fmjCache = new AsyncCache<>();
+		AsyncCache<List<LeafModJson>> fmjCache = new AsyncCache<>();
 		return new SpecContextImpl(
 				getDependentMods(projectView, fmjCache),
 				projectView.getMods(),
@@ -75,15 +75,15 @@ public record SpecContextImpl(
 	}
 
 	// Reruns a list of mods found on both the compile and/or runtime classpaths
-	private static List<FabricModJson> getDependentMods(SpecContextProjectView projectView, AsyncCache<List<FabricModJson>> fmjCache) {
-		var futures = new ArrayList<CompletableFuture<List<FabricModJson>>>();
+	private static List<LeafModJson> getDependentMods(SpecContextProjectView projectView, AsyncCache<List<LeafModJson>> fmjCache) {
+		var futures = new ArrayList<CompletableFuture<List<LeafModJson>>>();
 
 		for (RemapConfigurationSettings entry : projectView.extension().getRemapConfigurations()) {
 			final Set<File> artifacts = entry.getSourceConfiguration().get().resolve();
 
 			for (File artifact : artifacts) {
 				futures.add(fmjCache.get(artifact.toPath().toAbsolutePath().toString(), () -> {
-					return FabricModJsonFactory.createFromZipOptional(artifact.toPath())
+					return LeafModJsonFactory.createFromZipOptional(artifact.toPath())
 							.map(List::of)
 							.orElseGet(List::of);
 				}));
@@ -93,7 +93,7 @@ public record SpecContextImpl(
 		if (!projectView.disableProjectDependantMods()) {
 			// Add all the dependent projects
 			for (Project dependentProject : getDependentProjects(projectView).toList()) {
-				futures.add(fmjCache.get(dependentProject.getPath(), () -> FabricModJsonHelpers.getModsInProject(dependentProject)));
+				futures.add(fmjCache.get(dependentProject.getPath(), () -> LeafModJsonHelpers.getModsInProject(dependentProject)));
 			}
 		}
 
@@ -109,15 +109,15 @@ public record SpecContextImpl(
 	}
 
 	// Returns a list of mods that are on both to compile and runtime classpath
-	private static List<ModHolder> getCompileRuntimeMods(SpecContextProjectView projectView, AsyncCache<List<FabricModJson>> fmjCache) {
+	private static List<ModHolder> getCompileRuntimeMods(SpecContextProjectView projectView, AsyncCache<List<LeafModJson>> fmjCache) {
 		var mods = new ArrayList<>(getCompileRuntimeModsFromRemapConfigs(projectView, fmjCache));
 
 		for (Project dependentProject : getCompileRuntimeProjectDependencies(projectView).toList()) {
-			List<FabricModJson> projectMods = fmjCache.getBlocking(dependentProject.getPath(), () -> {
-				return FabricModJsonHelpers.getModsInProject(dependentProject);
+			List<LeafModJson> projectMods = fmjCache.getBlocking(dependentProject.getPath(), () -> {
+				return LeafModJsonHelpers.getModsInProject(dependentProject);
 			});
 
-			for (FabricModJson mod : projectMods) {
+			for (LeafModJson mod : projectMods) {
 				mods.add(new ModHolder(mod));
 			}
 		}
@@ -126,7 +126,7 @@ public record SpecContextImpl(
 	}
 
 	// Returns a list of jar mods that are found on the compile and runtime remapping configurations
-	private static List<ModHolder> getCompileRuntimeModsFromRemapConfigs(SpecContextProjectView projectView, AsyncCache<List<FabricModJson>> fmjCache) {
+	private static List<ModHolder> getCompileRuntimeModsFromRemapConfigs(SpecContextProjectView projectView, AsyncCache<List<LeafModJson>> fmjCache) {
 		// A set of mod ids from all remap configurations that are considered for dependency transforms.
 		final Set<String> runtimeModIds = getModIds(
 				SpecContextProjectView.ArtifactUsage.RUNTIME,
@@ -147,7 +147,7 @@ public record SpecContextImpl(
 						.filter(settings -> settings.getApplyDependencyTransforms().get()))
 				: null;
 
-		Stream<FabricModJson> compileMods = getMods(
+		Stream<LeafModJson> compileMods = getMods(
 				SpecContextProjectView.ArtifactUsage.COMPILE,
 				projectView,
 				fmjCache,
@@ -159,27 +159,27 @@ public record SpecContextImpl(
 				// We assume that the version used at runtime will be binary compatible with the version used to compile against.
 				// It's not perfect but better than silently not supplying the mod, and this could happen with regular API that you compile against anyway.
 				.filter(fabricModJson -> runtimeModIds.contains(fabricModJson.getId()))
-				.sorted(Comparator.comparing(FabricModJson::getId))
+				.sorted(Comparator.comparing(LeafModJson::getId))
 				.map(fabricModJson -> new ModHolder(fabricModJson, commonRuntimeModIds == null || commonRuntimeModIds.contains(fabricModJson.getId())))
 				.toList();
 	}
 
-	private static Stream<FabricModJson> getMods(SpecContextProjectView.ArtifactUsage artifactUsage, SpecContextProjectView projectView, AsyncCache<List<FabricModJson>> fmjCache, Stream<RemapConfigurationSettings> stream) {
+	private static Stream<LeafModJson> getMods(SpecContextProjectView.ArtifactUsage artifactUsage, SpecContextProjectView projectView, AsyncCache<List<LeafModJson>> fmjCache, Stream<RemapConfigurationSettings> stream) {
 		return stream.flatMap(projectView.resolveArtifacts(artifactUsage))
 				.map(modFromZip(fmjCache))
 				.filter(Objects::nonNull);
 	}
 
-	private static Set<String> getModIds(SpecContextProjectView.ArtifactUsage artifactUsage, SpecContextProjectView projectView, AsyncCache<List<FabricModJson>> fmjCache, Stream<RemapConfigurationSettings> stream) {
+	private static Set<String> getModIds(SpecContextProjectView.ArtifactUsage artifactUsage, SpecContextProjectView projectView, AsyncCache<List<LeafModJson>> fmjCache, Stream<RemapConfigurationSettings> stream) {
 		return getMods(artifactUsage, projectView, fmjCache, stream)
-				.map(FabricModJson::getId)
+				.map(LeafModJson::getId)
 				.collect(Collectors.toSet());
 	}
 
-	private static Function<Path, @Nullable FabricModJson> modFromZip(AsyncCache<List<FabricModJson>> fmjCache) {
+	private static Function<Path, @Nullable LeafModJson> modFromZip(AsyncCache<List<LeafModJson>> fmjCache) {
 		return zipPath -> {
-			final List<FabricModJson> list = fmjCache.getBlocking(zipPath.toAbsolutePath().toString(), () -> {
-				return FabricModJsonFactory.createFromZipOptional(zipPath)
+			final List<LeafModJson> list = fmjCache.getBlocking(zipPath.toAbsolutePath().toString(), () -> {
+				return LeafModJsonFactory.createFromZipOptional(zipPath)
 						.map(List::of)
 						.orElseGet(List::of);
 			});
@@ -201,30 +201,30 @@ public record SpecContextImpl(
 	}
 
 	// Sort to ensure stable caching
-	private static List<FabricModJson> distinctSorted(List<FabricModJson> mods) {
+	private static List<LeafModJson> distinctSorted(List<LeafModJson> mods) {
 		return mods.stream()
 				.distinct()
-				.sorted(Comparator.comparing(FabricModJson::getId))
+				.sorted(Comparator.comparing(LeafModJson::getId))
 				.toList();
 	}
 
 	@Override
-	public List<FabricModJson> modDependenciesCompileRuntime() {
+	public List<LeafModJson> modDependenciesCompileRuntime() {
 		return compileRuntimeMods.stream()
 				.map(ModHolder::mod)
 				.toList();
 	}
 
 	@Override
-	public List<FabricModJson> modDependenciesCompileRuntimeClient() {
+	public List<LeafModJson> modDependenciesCompileRuntimeClient() {
 		return compileRuntimeMods.stream()
 				.filter(modHolder -> !modHolder.common())
 				.map(ModHolder::mod)
 				.toList();
 	}
 
-	private record ModHolder(FabricModJson mod, boolean common) {
-		ModHolder(FabricModJson mod) {
+	private record ModHolder(LeafModJson mod, boolean common) {
+		ModHolder(LeafModJson mod) {
 			this(mod, true);
 		}
 	}

@@ -29,7 +29,7 @@ import com.google.gson.JsonObject
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils
 
 class FabricModJsonUtilsTest extends Specification {
 	// Test that the schemaVersion is moved to the first position
@@ -39,7 +39,7 @@ class FabricModJsonUtilsTest extends Specification {
 		def gson = new GsonBuilder().setPrettyPrinting().create()
 		def json = gson.fromJson(INPUT_FMJ, JsonObject.class)
 		when:
-		def outputJson = FabricModJsonUtils.optimizeFmj(json)
+		def outputJson = LeafModJsonUtils.optimizeFmj(json)
 		def output = gson.toJson(outputJson)
 		then:
 		output == OUTPUT_FMJ

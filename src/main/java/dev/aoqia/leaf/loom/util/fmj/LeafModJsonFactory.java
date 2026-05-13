@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.util.fmj;
 
-import static dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils.readInt;
+import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.readInt;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,16 +49,16 @@ import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import dev.aoqia.leaf.loom.util.ZipUtils;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
-public final class FabricModJsonFactory {
+public final class LeafModJsonFactory {
 	public static final String FABRIC_MOD_JSON = "fabric.mod.json";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FabricModJsonFactory.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(LeafModJsonFactory.class);
 
-	private FabricModJsonFactory() {
+	private LeafModJsonFactory() {
 	}
 
 	@VisibleForTesting
-	public static FabricModJson create(JsonObject jsonObject, FabricModJsonSource source) {
+	public static LeafModJson create(JsonObject jsonObject, LeafModJsonSource source) {
 		int schemaVersion = 0;
 
 		if (jsonObject.has("schemaVersion")) {
@@ -67,16 +67,16 @@ public final class FabricModJsonFactory {
 		}
 
 		return switch (schemaVersion) {
-		case 0 -> new FabricModJsonV0(jsonObject, source);
-		case 1 -> new FabricModJsonV1(jsonObject, source);
-		case 2 -> new FabricModJsonV2(jsonObject, source);
+		case 0 -> new LeafModJsonV0(jsonObject, source);
+		case 1 -> new LeafModJsonV1(jsonObject, source);
+		case 2 -> new LeafModJsonV2(jsonObject, source);
 		default -> throw new UnsupportedOperationException(String.format("This version of fabric-loom doesn't support the newer fabric.mod.json schema version of (%s) Please update fabric-loom to be able to read this.", schemaVersion));
 		};
 	}
 
-	public static FabricModJson createFromZip(Path zipPath) {
+	public static LeafModJson createFromZip(Path zipPath) {
 		try {
-			return create(ZipUtils.unpackGson(zipPath, FABRIC_MOD_JSON, JsonObject.class), new FabricModJsonSource.ZipSource(zipPath));
+			return create(ZipUtils.unpackGson(zipPath, FABRIC_MOD_JSON, JsonObject.class), new LeafModJsonSource.ZipSource(zipPath));
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to read fabric.mod.json file in zip: " + zipPath, e);
 		} catch (JsonSyntaxException e) {
@@ -85,7 +85,7 @@ public final class FabricModJsonFactory {
 	}
 
 	@Nullable
-	public static FabricModJson createFromZipNullable(Path zipPath) {
+	public static LeafModJson createFromZipNullable(Path zipPath) {
 		JsonObject jsonObject;
 
 		try {
@@ -100,20 +100,20 @@ public final class FabricModJsonFactory {
 			return null;
 		}
 
-		return create(jsonObject, new FabricModJsonSource.ZipSource(zipPath));
+		return create(jsonObject, new LeafModJsonSource.ZipSource(zipPath));
 	}
 
-	public static Optional<FabricModJson> createFromZipOptional(Path zipPath) {
+	public static Optional<LeafModJson> createFromZipOptional(Path zipPath) {
 		return Optional.ofNullable(createFromZipNullable(zipPath));
 	}
 
-	public static FabricModJson createFromFile(File file) {
+	public static LeafModJson createFromFile(File file) {
 		JsonObject modJson = readFmjJsonObject(file);
-		return create(modJson, new FabricModJsonSource.DirectorySource(file.toPath().getParent()));
+		return create(modJson, new LeafModJsonSource.DirectorySource(file.toPath().getParent()));
 	}
 
 	@Nullable
-	public static FabricModJson createFromSourceSetsNullable(Project project, SourceSet... sourceSets) {
+	public static LeafModJson createFromSourceSetsNullable(Project project, SourceSet... sourceSets) {
 		File file = SourceSetHelper.findFirstFileInResource(FABRIC_MOD_JSON, project, sourceSets);
 
 		if (file == null) {
@@ -122,7 +122,7 @@ public final class FabricModJsonFactory {
 
 		try {
 			JsonObject modJson = readFmjJsonObject(file);
-			return create(modJson, new FabricModJsonSource.SourceSetSource(project, sourceSets));
+			return create(modJson, new LeafModJsonSource.SourceSetSource(project, sourceSets));
 		} catch (JsonSyntaxException e) {
 			LOGGER.warn("Failed to parse fabric.mod.json: {}", file.getAbsolutePath());
 			return null;

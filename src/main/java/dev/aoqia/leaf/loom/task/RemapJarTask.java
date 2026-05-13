@@ -68,8 +68,8 @@ import dev.aoqia.leaf.loom.util.ExceptionUtil;
 import dev.aoqia.leaf.loom.util.Pair;
 import dev.aoqia.leaf.loom.util.SidedClassVisitor;
 import dev.aoqia.leaf.loom.util.ZipUtils;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
@@ -306,11 +306,11 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
 		}
 
 		private void optimizeFMJ() throws IOException {
-			if (!ZipUtils.contains(outputFile, FabricModJsonFactory.FABRIC_MOD_JSON)) {
+			if (!ZipUtils.contains(outputFile, LeafModJsonFactory.FABRIC_MOD_JSON)) {
 				return;
 			}
 
-			ZipUtils.transformJson(JsonObject.class, outputFile, FabricModJsonFactory.FABRIC_MOD_JSON, FabricModJsonUtils::optimizeFmj);
+			ZipUtils.transformJson(JsonObject.class, outputFile, LeafModJsonFactory.FABRIC_MOD_JSON, LeafModJsonUtils::optimizeFmj);
 		}
 	}
 

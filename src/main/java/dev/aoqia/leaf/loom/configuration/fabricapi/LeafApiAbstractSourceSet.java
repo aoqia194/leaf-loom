@@ -34,8 +34,8 @@ import org.gradle.api.tasks.SourceSetContainer;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 abstract class FabricApiAbstractSourceSet {
@@ -62,7 +62,7 @@ abstract class FabricApiAbstractSourceSet {
 		});
 
 		modId.convention(getProject().provider(() -> {
-			final FabricModJson fabricModJson = FabricModJsonFactory.createFromSourceSetsNullable(getProject(), sourceSet);
+			final LeafModJson fabricModJson = LeafModJsonFactory.createFromSourceSetsNullable(getProject(), sourceSet);
 
 			if (fabricModJson == null) {
 				throw new RuntimeException("Could not find a fabric.mod.json file in the data source set or a value for DataGenerationSettings.getModId()");

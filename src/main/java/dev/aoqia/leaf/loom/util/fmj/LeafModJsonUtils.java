@@ -32,8 +32,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-public final class FabricModJsonUtils {
-	private FabricModJsonUtils() {
+public final class LeafModJsonUtils {
+	private LeafModJsonUtils() {
 	}
 
 	public static String readString(JsonObject jsonObject, String key) {

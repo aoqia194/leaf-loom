@@ -32,7 +32,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonSource;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonSource;
 
 public record MixinRefmap(
 		String refmapPath,
@@ -41,7 +41,7 @@ public record MixinRefmap(
 	private static final String MAPPINGS_KEY = "mappings";
 	private static final String DATA_KEY = "data";
 
-	public static MixinRefmap fromMod(String refmapPath, FabricModJsonSource modSource) throws IOException {
+	public static MixinRefmap fromMod(String refmapPath, LeafModJsonSource modSource) throws IOException {
 		String refmapJson = new String(modSource.read(refmapPath));
 		JsonObject jsonObject = LoomGradlePlugin.GSON.fromJson(refmapJson, JsonObject.class);
 

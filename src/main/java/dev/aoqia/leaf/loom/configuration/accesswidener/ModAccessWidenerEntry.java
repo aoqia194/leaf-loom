@@ -38,15 +38,15 @@ import net.fabricmc.classtweaker.visitors.ClassTweakerRemapperVisitor;
 import net.fabricmc.classtweaker.visitors.TransitiveOnlyFilter;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
 /**
- * {@link AccessWidenerEntry} implementation for a {@link FabricModJson}.
+ * {@link AccessWidenerEntry} implementation for a {@link LeafModJson}.
  */
-public record ModAccessWidenerEntry(FabricModJson mod, String path, ModEnvironment environment, boolean transitiveOnly) implements AccessWidenerEntry {
-	public static List<ModAccessWidenerEntry> readAll(FabricModJson modJson, boolean transitiveOnly) {
+public record ModAccessWidenerEntry(LeafModJson mod, String path, ModEnvironment environment, boolean transitiveOnly) implements AccessWidenerEntry {
+	public static List<ModAccessWidenerEntry> readAll(LeafModJson modJson, boolean transitiveOnly) {
 		var entries = new ArrayList<ModAccessWidenerEntry>();
 
 		for (Map.Entry<String, ModEnvironment> entry : modJson.getClassTweakers().entrySet()) {

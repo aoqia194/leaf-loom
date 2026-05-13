@@ -27,24 +27,24 @@ package dev.aoqia.leaf.loom.api.processor;
 import java.util.List;
 import java.util.stream.Stream;
 
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 
 public interface SpecContext {
-	List<FabricModJson> modDependencies();
+	List<LeafModJson> modDependencies();
 
-	List<FabricModJson> localMods();
+	List<LeafModJson> localMods();
 
 	/**
 	 * Return a set of mods that should be used for transforms, that target EITHER the common or client.
 	 */
-	List<FabricModJson> modDependenciesCompileRuntime();
+	List<LeafModJson> modDependenciesCompileRuntime();
 
 	/**
 	 * Return a set of mods that should be used for transforms, that target ONLY the client.
 	 */
-	List<FabricModJson> modDependenciesCompileRuntimeClient();
+	List<LeafModJson> modDependenciesCompileRuntimeClient();
 
-	default List<FabricModJson> allMods() {
+	default List<LeafModJson> allMods() {
 		return Stream.concat(modDependencies().stream(), localMods().stream()).toList();
 	}
 }

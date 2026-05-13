@@ -31,7 +31,7 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * A gradle extension with specific functionality related to Fabric API.
  */
-public interface FabricApiExtension {
+public interface LeafApiExtension {
 	/**
 	 * Get a {@link Dependency} for a given Fabric API module.
 	 *

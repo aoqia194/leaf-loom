@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import dev.aoqia.leaf.loom.util.Check;
 import dev.aoqia.leaf.loom.util.Pair;
 import dev.aoqia.leaf.loom.util.ZipUtils;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 
 public class JarNester {
 	public static void nestJars(Collection<File> jars, File modJar, Logger logger) {
@@ -50,7 +50,7 @@ public class JarNester {
 			return;
 		}
 
-		Check.require(FabricModJsonFactory.isModJar(modJar), "Cannot nest jars into none mod jar " + modJar.getName());
+		Check.require(LeafModJsonFactory.isModJar(modJar), "Cannot nest jars into none mod jar " + modJar.getName());
 
 		// Ensure deterministic ordering of entries in fabric.mod.json
 		Collection<File> sortedJars = jars.stream().sorted(Comparator.comparing(File::getName)).toList();
@@ -73,7 +73,7 @@ public class JarNester {
 
 				for (File file : sortedJars) {
 					String nestedJarPath = "META-INF/jars/" + file.getName();
-					Check.require(FabricModJsonFactory.isModJar(file), "Cannot nest none mod jar: " + file.getName());
+					Check.require(LeafModJsonFactory.isModJar(file), "Cannot nest none mod jar: " + file.getName());
 
 					for (JsonElement nestedJar : nestedJars) {
 						JsonObject jsonObject = nestedJar.getAsJsonObject();

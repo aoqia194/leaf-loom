@@ -30,9 +30,9 @@ import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
 import net.fabricmc.loader.impl.metadata.ModMetadataParser
-import dev.aoqia.leaf.loom.api.fmj.FabricModJsonV1Spec
+import dev.aoqia.leaf.loom.api.fmj.LeafModJsonV1Spec
 import dev.aoqia.leaf.loom.test.util.GradleTestUtil
-import dev.aoqia.leaf.loom.util.fmj.gen.FabricModJsonV1Generator
+import dev.aoqia.leaf.loom.util.fmj.gen.LeafModJsonV1Generator
 
 class FabricModJsonV1GeneratorTest extends Specification {
 	static Project project = GradleTestUtil.mockProject()
@@ -40,12 +40,12 @@ class FabricModJsonV1GeneratorTest extends Specification {
 
 	def "minimal"() {
 		given:
-		def spec = objectFactory.newInstance(FabricModJsonV1Spec.class)
+		def spec = objectFactory.newInstance(LeafModJsonV1Spec.class)
 		spec.modId.set("examplemod")
 		spec.version.set("1.0.0")
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -64,7 +64,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.licenses.add("MIT")
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -84,7 +84,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.licenses.addAll("MIT", "Apache-2.0")
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -107,7 +107,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.author("Epic Modder")
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -131,7 +131,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		}
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -159,7 +159,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.contributor("Epic Modder")
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -183,7 +183,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		}
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -211,7 +211,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.contactInformation.set(["discord": "epicmodder#1234", "email": "epicmodder@example.com"])
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -234,7 +234,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.provides.set(['oldid', 'veryoldid'])
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -257,7 +257,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.environment.set("client")
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -277,7 +277,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.jars.set(["libs/some-lib.jar"])
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -308,7 +308,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		}
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -343,7 +343,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		}
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -369,7 +369,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.accessWidener.set("mymod.accesswidener")
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -390,7 +390,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.depends("fabric-api", [">=0.14.0", "<0.15.0"])
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -416,7 +416,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.icon("icon.png")
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -437,7 +437,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.icon(128, "icon_128.png")
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -460,7 +460,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.languageAdapters.put("kotlin", "net.fabricmc.loader.api.language.KotlinAdapter")
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -483,7 +483,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.customData.put("examplelist", [1, 2, 3])
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -508,7 +508,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 
 	def "complete"() {
 		given:
-		def spec = objectFactory.newInstance(FabricModJsonV1Spec.class)
+		def spec = objectFactory.newInstance(LeafModJsonV1Spec.class)
 		spec.modId.set("examplemod")
 		spec.version.set("1.0.0")
 		spec.name.set("Example Mod")
@@ -552,7 +552,7 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		spec.customData.put("examplelist", [1, 2, 3])
 
 		when:
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 
 		then:
 		json == j("""
@@ -669,8 +669,8 @@ class FabricModJsonV1GeneratorTest extends Specification {
 		return meta.getSchemaVersion()
 	}
 
-	private static FabricModJsonV1Spec baseSpec() {
-		def spec = objectFactory.newInstance(FabricModJsonV1Spec.class)
+	private static LeafModJsonV1Spec baseSpec() {
+		def spec = objectFactory.newInstance(LeafModJsonV1Spec.class)
 		spec.modId.set("examplemod")
 		spec.version.set("1.0.0")
 		return spec

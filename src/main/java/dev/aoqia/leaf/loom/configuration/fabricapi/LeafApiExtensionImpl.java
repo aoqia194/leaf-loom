@@ -31,21 +31,21 @@ import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
 
 import dev.aoqia.leaf.loom.api.fabricapi.DataGenerationSettings;
-import dev.aoqia.leaf.loom.api.fabricapi.FabricApiExtension;
+import dev.aoqia.leaf.loom.api.fabricapi.LeafApiExtension;
 import dev.aoqia.leaf.loom.api.fabricapi.GameTestSettings;
 
-public abstract class FabricApiExtensionImpl implements FabricApiExtension {
+public abstract class LeafApiExtensionImpl implements LeafApiExtension {
 	@Inject
 	protected abstract ObjectFactory getObjectFactory();
 
-	private final FabricApiVersions versions;
-	private final FabricApiDataGeneration dataGeneration;
-	private final FabricApiTesting testing;
+	private final LeafApiVersions versions;
+	private final LeafApiDataGeneration dataGeneration;
+	private final LeafApiTesting testing;
 
-	public FabricApiExtensionImpl() {
-		versions = getObjectFactory().newInstance(FabricApiVersions.class);
-		dataGeneration = getObjectFactory().newInstance(FabricApiDataGeneration.class);
-		testing = getObjectFactory().newInstance(FabricApiTesting.class);
+	public LeafApiExtensionImpl() {
+		versions = getObjectFactory().newInstance(LeafApiVersions.class);
+		dataGeneration = getObjectFactory().newInstance(LeafApiDataGeneration.class);
+		testing = getObjectFactory().newInstance(LeafApiTesting.class);
 	}
 
 	@Override

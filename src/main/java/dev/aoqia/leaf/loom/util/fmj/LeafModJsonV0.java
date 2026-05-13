@@ -36,8 +36,8 @@ import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.Nullable;
 
 @Deprecated
-public final class FabricModJsonV0 extends FabricModJson {
-	FabricModJsonV0(JsonObject jsonObject, FabricModJsonSource source) {
+public final class LeafModJsonV0 extends LeafModJson {
+	LeafModJsonV0(JsonObject jsonObject, LeafModJsonSource source) {
 		super(jsonObject, source);
 	}
 
@@ -70,13 +70,13 @@ public final class FabricModJsonV0 extends FabricModJson {
 					if (arrayElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
 						mixins.add(jsonPrimitive.getAsString());
 					} else {
-						throw new FabricModJsonUtils.ParseException("Expected entries in mixin %s to be an array of strings", key);
+						throw new LeafModJsonUtils.ParseException("Expected entries in mixin %s to be an array of strings", key);
 					}
 				}
 			} else if (jsonElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
 				mixins.add(jsonPrimitive.getAsString());
 			} else {
-				throw new FabricModJsonUtils.ParseException("Expected mixin %s to be a string or an array of strings", key);
+				throw new LeafModJsonUtils.ParseException("Expected mixin %s to be a string or an array of strings", key);
 			}
 		}
 

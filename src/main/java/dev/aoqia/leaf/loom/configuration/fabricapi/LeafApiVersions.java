@@ -43,7 +43,7 @@ import org.w3c.dom.NodeList;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.util.download.DownloadException;
 
-public abstract class FabricApiVersions {
+public abstract class LeafApiVersions {
 	@Inject
 	protected abstract Project getProject();
 

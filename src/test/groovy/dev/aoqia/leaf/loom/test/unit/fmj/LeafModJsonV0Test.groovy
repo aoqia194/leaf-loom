@@ -30,8 +30,8 @@ import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
 import dev.aoqia.leaf.loom.util.Constants
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonSource
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonSource
 
 class FabricModJsonV0Test extends Specification {
 	// I think this is the old v0 format ¯\_(ツ)_/¯
@@ -57,9 +57,9 @@ class FabricModJsonV0Test extends Specification {
 
 	def "version"() {
 		given:
-		def mockSource = Mock(FabricModJsonSource)
+		def mockSource = Mock(LeafModJsonSource)
 		when:
-		def fmj = FabricModJsonFactory.create(JSON_OBJECT, mockSource)
+		def fmj = LeafModJsonFactory.create(JSON_OBJECT, mockSource)
 		then:
 		fmj.version == 0
 		fmj.modVersion == "1.0.0"
@@ -67,18 +67,18 @@ class FabricModJsonV0Test extends Specification {
 
 	def "id"() {
 		given:
-		def mockSource = Mock(FabricModJsonSource)
+		def mockSource = Mock(LeafModJsonSource)
 		when:
-		def fmj = FabricModJsonFactory.create(JSON_OBJECT, mockSource)
+		def fmj = LeafModJsonFactory.create(JSON_OBJECT, mockSource)
 		then:
 		fmj.id == "example-mod-id"
 	}
 
 	def "mixins"() {
 		given:
-		def mockSource = Mock(FabricModJsonSource)
+		def mockSource = Mock(LeafModJsonSource)
 		when:
-		def fmj = FabricModJsonFactory.create(JSON_OBJECT, mockSource)
+		def fmj = LeafModJsonFactory.create(JSON_OBJECT, mockSource)
 		then:
 		fmj.mixinConfigurations == [
 			"mixins.client.json",
@@ -89,9 +89,9 @@ class FabricModJsonV0Test extends Specification {
 	// Not supported in this version
 	def "injected interfaces"() {
 		given:
-		def mockSource = Mock(FabricModJsonSource)
+		def mockSource = Mock(LeafModJsonSource)
 		when:
-		def fmj = FabricModJsonFactory.create(JSON_OBJECT, mockSource)
+		def fmj = LeafModJsonFactory.create(JSON_OBJECT, mockSource)
 		def jsonObject = fmj.getCustom(Constants.CustomModJsonKeys.INJECTED_INTERFACE)
 		then:
 		jsonObject == null
@@ -100,18 +100,18 @@ class FabricModJsonV0Test extends Specification {
 	// Not supported in this version
 	def "class tweaker"() {
 		given:
-		def mockSource = Mock(FabricModJsonSource)
+		def mockSource = Mock(LeafModJsonSource)
 		when:
-		def fmj = FabricModJsonFactory.create(JSON_OBJECT, mockSource)
+		def fmj = LeafModJsonFactory.create(JSON_OBJECT, mockSource)
 		then:
 		fmj.getClassTweakers() == [:]
 	}
 
 	def "hash code"() {
 		given:
-		def mockSource = Mock(FabricModJsonSource)
+		def mockSource = Mock(LeafModJsonSource)
 		when:
-		def fmj = FabricModJsonFactory.create(JSON_OBJECT, mockSource)
+		def fmj = LeafModJsonFactory.create(JSON_OBJECT, mockSource)
 		then:
 		fmj.hashCode() == 930565976
 	}

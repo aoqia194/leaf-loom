@@ -44,7 +44,7 @@ import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.configuration.InstallerData;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 
 public record ArtifactMetadata(boolean isFabricMod, RemapRequirements remapRequirements, @Nullable InstallerData installerData, MixinRemapType mixinRemapType, List<String> knownIdyBsms) {
 	private static final String INSTALLER_PATH = "fabric-installer.json";
@@ -57,7 +57,7 @@ public record ArtifactMetadata(boolean isFabricMod, RemapRequirements remapRequi
 		List<String> knownIndyBsms = new ArrayList<>();
 
 		try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(artifact.path())) {
-			isFabricMod = FabricModJsonFactory.containsMod(fs);
+			isFabricMod = LeafModJsonFactory.containsMod(fs);
 			final Path manifestPath = fs.getPath(Constants.Manifest.PATH);
 
 			if (Files.exists(manifestPath)) {

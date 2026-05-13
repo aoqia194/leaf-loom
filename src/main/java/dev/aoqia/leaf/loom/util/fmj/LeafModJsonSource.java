@@ -40,24 +40,24 @@ import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
  * A mod may be a zip, directory or Gradle {@link SourceSet}
  * This abstraction allows easily reading a contained file from the mod.
  */
-public interface FabricModJsonSource {
+public interface LeafModJsonSource {
 	byte[] read(String path) throws IOException;
 
-	record ZipSource(Path zipPath) implements FabricModJsonSource {
+	record ZipSource(Path zipPath) implements LeafModJsonSource {
 		@Override
 		public byte[] read(String path) throws IOException {
 			return ZipUtils.unpack(zipPath, path);
 		}
 	}
 
-	record DirectorySource(Path directoryPath) implements FabricModJsonSource {
+	record DirectorySource(Path directoryPath) implements LeafModJsonSource {
 		@Override
 		public byte[] read(String path) throws IOException {
 			return Files.readAllBytes(directoryPath.resolve(path));
 		}
 	}
 
-	record SourceSetSource(Project project, SourceSet... sourceSets) implements FabricModJsonSource {
+	record SourceSetSource(Project project, SourceSet... sourceSets) implements LeafModJsonSource {
 		@Override
 		public byte[] read(String path) throws IOException {
 			return Files.readAllBytes(findFile(path).toPath());

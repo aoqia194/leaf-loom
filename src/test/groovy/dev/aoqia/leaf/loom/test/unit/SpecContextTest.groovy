@@ -38,12 +38,12 @@ import spock.lang.TempDir
 
 import dev.aoqia.leaf.loom.LoomGradleExtension
 import dev.aoqia.leaf.loom.api.RemapConfigurationSettings
-import dev.aoqia.leaf.loom.api.fmj.FabricModJsonV1Spec
+import dev.aoqia.leaf.loom.api.fmj.LeafModJsonV1Spec
 import dev.aoqia.leaf.loom.configuration.processors.SpecContextImpl
 import dev.aoqia.leaf.loom.configuration.processors.SpecContextProjectView
 import dev.aoqia.leaf.loom.test.util.GradleTestUtil
 import dev.aoqia.leaf.loom.util.ZipUtils
-import dev.aoqia.leaf.loom.util.fmj.gen.FabricModJsonV1Generator
+import dev.aoqia.leaf.loom.util.fmj.gen.LeafModJsonV1Generator
 
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
@@ -209,10 +209,10 @@ class SpecContextTest extends Specification {
 	private Path mod(String modId) {
 		def zip = tempDir.resolve("${modId}.zip")
 
-		def spec = project.objects.newInstance(FabricModJsonV1Spec.class)
+		def spec = project.objects.newInstance(LeafModJsonV1Spec.class)
 		spec.modId.set(modId)
 		spec.version.set("1.0.0")
-		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
+		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
 		ZipUtils.add(zip, "fabric.mod.json", json)
 
 		return zip

@@ -43,8 +43,8 @@ import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.extension.MixinExtension;
 import dev.aoqia.leaf.loom.task.RemapJarTask;
 import dev.aoqia.leaf.loom.util.ZipUtils;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 import dev.aoqia.leaf.loom.util.service.Service;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import dev.aoqia.leaf.loom.util.service.ServiceType;
@@ -106,7 +106,7 @@ public class MixinRefmapService extends Service<MixinRefmapService.Options> {
 	}
 
 	public void applyToJar(Path path) throws IOException {
-		final FabricModJson fabricModJson = FabricModJsonFactory.createFromZipNullable(path);
+		final LeafModJson fabricModJson = LeafModJsonFactory.createFromZipNullable(path);
 
 		if (fabricModJson == null) {
 			return;

@@ -50,7 +50,7 @@ import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
 import dev.aoqia.leaf.loom.util.Checksum;
 import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 import net.fabricmc.mappingio.MappedElementKind;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.MappingUtil;
@@ -79,7 +79,7 @@ public abstract class ModJavadocProcessor implements ZomboidJarProcessor<ModJava
 	public @Nullable ModJavadocProcessor.Spec buildSpec(SpecContext context) {
 		List<ModJavadoc> javadocs = new ArrayList<>();
 
-		for (FabricModJson fabricModJson : context.allMods()) {
+		for (LeafModJson fabricModJson : context.allMods()) {
 			ModJavadoc javadoc = ModJavadoc.create(fabricModJson);
 
 			if (javadoc != null) {
@@ -116,7 +116,7 @@ public abstract class ModJavadocProcessor implements ZomboidJarProcessor<ModJava
 
 	public record ModJavadoc(String modId, MemoryMappingTree mappingTree, String mappingsHash) {
 		@Nullable
-		public static ModJavadoc create(FabricModJson fabricModJson) {
+		public static ModJavadoc create(LeafModJson fabricModJson) {
 			final String modId = fabricModJson.getId();
 			final JsonElement customElement = fabricModJson.getCustom(Constants.CustomModJsonKeys.PROVIDED_JAVADOC);
 

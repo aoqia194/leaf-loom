@@ -30,7 +30,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Optional;
 import org.jetbrains.annotations.ApiStatus;
 
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 
 /**
  * Represents the settings for game and/or client tests.
@@ -98,6 +98,6 @@ public interface GameTestSettings {
 	 * Sets {@link #getModId()} property based on the {@code id} field defined in the provided file.
 	 */
 	default void modId(File fabricModJsonFile) {
-		getModId().set(FabricModJsonFactory.createFromFile(fabricModJsonFile).getId());
+		getModId().set(LeafModJsonFactory.createFromFile(fabricModJsonFile).getId());
 	}
 }

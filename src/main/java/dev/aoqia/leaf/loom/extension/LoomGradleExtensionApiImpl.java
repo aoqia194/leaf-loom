@@ -72,8 +72,8 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
 import dev.aoqia.leaf.loom.util.DeprecationHelper;
 import dev.aoqia.leaf.loom.util.MirrorUtil;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonHelpers;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonHelpers;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 /**
@@ -299,7 +299,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 	@Override
 	public String getModVersion() {
-		List<FabricModJson> fabricModJsons = FabricModJsonHelpers.getModsInProject(getProject());
+		List<LeafModJson> fabricModJsons = LeafModJsonHelpers.getModsInProject(getProject());
 
 		if (fabricModJsons.isEmpty()) {
 			throw new RuntimeException("Could not find a fabric.mod.json file in the main sourceset");

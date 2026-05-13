@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.ModDependency;
 import dev.aoqia.leaf.loom.util.ExceptionUtil;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 import dev.aoqia.leaf.loom.util.fmj.mixin.MixinConfiguration;
 
 public class MixinRefmapInliner {
@@ -50,7 +50,7 @@ public class MixinRefmapInliner {
 				continue;
 			}
 
-			FabricModJson fabricModJson = FabricModJsonFactory.createFromZipNullable(mod.getInputFile());
+			LeafModJson fabricModJson = LeafModJsonFactory.createFromZipNullable(mod.getInputFile());
 
 			if (fabricModJson == null) {
 				LOGGER.warn("Failed to read fabric.mod.json from {}", mod.getInputFile());

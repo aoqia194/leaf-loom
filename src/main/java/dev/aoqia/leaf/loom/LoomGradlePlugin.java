@@ -35,11 +35,11 @@ import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 
 import dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI;
-import dev.aoqia.leaf.loom.api.fabricapi.FabricApiExtension;
+import dev.aoqia.leaf.loom.api.fabricapi.LeafApiExtension;
 import dev.aoqia.leaf.loom.configuration.CompileConfiguration;
 import dev.aoqia.leaf.loom.configuration.LoomConfigurations;
 import dev.aoqia.leaf.loom.configuration.MavenPublication;
-import dev.aoqia.leaf.loom.configuration.fabricapi.FabricApiExtensionImpl;
+import dev.aoqia.leaf.loom.configuration.fabricapi.LeafApiExtensionImpl;
 import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaConfiguration;
 import dev.aoqia.leaf.loom.configuration.sandbox.SandboxConfiguration;
 import dev.aoqia.leaf.loom.decompilers.DecompilerConfiguration;
@@ -90,7 +90,7 @@ public class LoomGradlePlugin implements Plugin<PluginAware> {
 
 		// Setup extensions
 		project.getExtensions().create(LoomGradleExtensionAPI.class, "loom", LoomGradleExtensionImpl.class, project, LoomFiles.create(project));
-		project.getExtensions().create(FabricApiExtension.class, "fabricApi", FabricApiExtensionImpl.class);
+		project.getExtensions().create(LeafApiExtension.class, "fabricApi", LeafApiExtensionImpl.class);
 
 		for (Class<? extends Runnable> jobClass : SETUP_JOBS) {
 			project.getObjects().newInstance(jobClass).run();

@@ -27,13 +27,13 @@ package dev.aoqia.leaf.loom.test.unit.processor
 import spock.lang.Specification
 
 import dev.aoqia.leaf.loom.configuration.accesswidener.ModAccessWidenerEntry
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment
 
 class ModAccessWidenerEntryTest extends Specification {
 	def "read local mod"() {
 		given:
-		def mod = Mock(FabricModJson.Mockable)
+		def mod = Mock(LeafModJson.Mockable)
 		mod.getClassTweakers() >> ["test.accesswidener": ModEnvironment.UNIVERSAL]
 		mod.hashCode() >> 0
 

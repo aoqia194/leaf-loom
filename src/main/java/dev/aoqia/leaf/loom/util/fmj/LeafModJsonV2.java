@@ -39,8 +39,8 @@ import org.jetbrains.annotations.Nullable;
 import dev.aoqia.leaf.loom.util.Pair;
 
 @ApiStatus.Experimental
-public final class FabricModJsonV2 extends FabricModJson {
-	FabricModJsonV2(JsonObject jsonObject, FabricModJsonSource source) {
+public final class LeafModJsonV2 extends LeafModJson {
+	LeafModJsonV2(JsonObject jsonObject, LeafModJsonSource source) {
 		super(jsonObject, source);
 	}
 
@@ -52,7 +52,7 @@ public final class FabricModJsonV2 extends FabricModJson {
 	@Override
 	@Nullable
 	public JsonElement getCustom(String key) {
-		return FabricModJsonV1.getCustom(jsonObject, key);
+		return LeafModJsonV1.getCustom(jsonObject, key);
 	}
 
 	@Override
@@ -91,7 +91,7 @@ public final class FabricModJsonV2 extends FabricModJson {
 				values.put(value.left(), value.right());
 			}
 		} else {
-			throw new FabricModJsonUtils.ParseException("Must be a string or array of strings");
+			throw new LeafModJsonUtils.ParseException("Must be a string or array of strings");
 		}
 
 		return values;
@@ -102,10 +102,10 @@ public final class FabricModJsonV2 extends FabricModJson {
 		if (jsonElement instanceof JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
 			return new Pair<>(jsonElement.getAsString(), ModEnvironment.UNIVERSAL);
 		} else if (jsonElement instanceof JsonObject jsonObject) {
-			final String config = FabricModJsonUtils.readString(jsonObject, "config");
+			final String config = LeafModJsonUtils.readString(jsonObject, "config");
 			return new Pair<>(config, getEnvironment(jsonObject));
 		} else {
-			throw new FabricModJsonUtils.ParseException("Must be a string or an object");
+			throw new LeafModJsonUtils.ParseException("Must be a string or an object");
 		}
 	}
 
@@ -116,7 +116,7 @@ public final class FabricModJsonV2 extends FabricModJson {
 		}
 
 		if (!(jsonObject.get("environment") instanceof JsonPrimitive jsonPrimitive) || !jsonPrimitive.isString()) {
-			throw new FabricModJsonUtils.ParseException("Environment must be a string");
+			throw new LeafModJsonUtils.ParseException("Environment must be a string");
 		}
 
 		final String environment = jsonPrimitive.getAsString();
@@ -125,7 +125,7 @@ public final class FabricModJsonV2 extends FabricModJson {
 		case "*" -> ModEnvironment.UNIVERSAL;
 		case "client" -> ModEnvironment.CLIENT;
 		case "server" -> ModEnvironment.SERVER;
-		default -> throw new FabricModJsonUtils.ParseException("Invalid environment type: " + environment);
+		default -> throw new LeafModJsonUtils.ParseException("Invalid environment type: " + environment);
 		};
 	}
 }

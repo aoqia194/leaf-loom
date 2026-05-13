@@ -34,8 +34,8 @@ import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.api.ClassTweakerWriter;
 import net.fabricmc.classtweaker.visitors.ClassTweakerRemapperVisitor;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 
 public class AccessWidenerUtils {
 	/**
@@ -57,11 +57,11 @@ public class AccessWidenerUtils {
 	}
 
 	public static AccessWidenerData readAccessWidenerData(Path inputJar) throws IOException {
-		if (!FabricModJsonFactory.isModJar(inputJar)) {
+		if (!LeafModJsonFactory.isModJar(inputJar)) {
 			return null;
 		}
 
-		final FabricModJson fabricModJson = FabricModJsonFactory.createFromZip(inputJar);
+		final LeafModJson fabricModJson = LeafModJsonFactory.createFromZip(inputJar);
 		final List<String> classTweakers = List.copyOf(fabricModJson.getClassTweakers().keySet());
 
 		if (classTweakers.isEmpty()) {

@@ -24,7 +24,7 @@
 
 package dev.aoqia.leaf.loom.util.fmj;
 
-import static dev.aoqia.leaf.loom.util.fmj.FabricModJsonUtils.readString;
+import static dev.aoqia.leaf.loom.util.fmj.LeafModJsonUtils.readString;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,8 +38,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.Nullable;
 
-public final class FabricModJsonV1 extends FabricModJson {
-	FabricModJsonV1(JsonObject jsonObject, FabricModJsonSource source) {
+public final class LeafModJsonV1 extends LeafModJson {
+	LeafModJsonV1(JsonObject jsonObject, LeafModJsonSource source) {
 		super(jsonObject, source);
 	}
 
@@ -77,7 +77,7 @@ public final class FabricModJsonV1 extends FabricModJson {
 		}
 
 		return StreamSupport.stream(mixinArray.spliterator(), false)
-				.map(FabricModJsonV1::readMixinElement)
+				.map(LeafModJsonV1::readMixinElement)
 				.collect(Collectors.toList());
 	}
 
@@ -87,7 +87,7 @@ public final class FabricModJsonV1 extends FabricModJson {
 		} else if (jsonElement instanceof JsonObject obj) {
 			return obj.get("config").getAsString();
 		} else {
-			throw new FabricModJsonUtils.ParseException("Expected mixin element to be an object or string");
+			throw new LeafModJsonUtils.ParseException("Expected mixin element to be an object or string");
 		}
 	}
 

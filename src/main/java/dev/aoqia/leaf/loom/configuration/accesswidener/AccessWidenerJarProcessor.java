@@ -44,7 +44,7 @@ import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
@@ -84,7 +84,7 @@ public class AccessWidenerJarProcessor implements ZomboidJarProcessor<AccessWide
 		 */
 
 		if (includeTransitive) {
-			for (FabricModJson fabricModJson : context.modDependencies()) {
+			for (LeafModJson fabricModJson : context.modDependencies()) {
 				accessWideners.addAll(ModAccessWidenerEntry.readAll(fabricModJson, true));
 			}
 		}

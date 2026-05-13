@@ -55,7 +55,7 @@ import dev.aoqia.leaf.loom.util.LazyCloseable
 import dev.aoqia.leaf.loom.util.Pair
 import dev.aoqia.leaf.loom.util.TinyRemapperHelper
 import dev.aoqia.leaf.loom.util.ZipUtils
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson
 import net.fabricmc.mappingio.MappingReader
 import net.fabricmc.mappingio.tree.MemoryMappingTree
 import net.fabricmc.tinyremapper.TinyRemapper
@@ -66,7 +66,7 @@ class InterfaceInjectionProcessorTest extends Specification {
 
 	def "interface injection"() {
 		given:
-		def fmj = Mock(FabricModJson.Mockable)
+		def fmj = Mock(LeafModJson.Mockable)
 		fmj.getId() >> "modid"
 		fmj.getCustom(Constants.CustomModJsonKeys.INJECTED_INTERFACE) >> createCustomObject(key, value)
 

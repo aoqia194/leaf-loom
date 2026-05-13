@@ -49,12 +49,12 @@ import dev.aoqia.leaf.loom.task.LoomTasks;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
-public abstract class FabricApiTesting extends FabricApiAbstractSourceSet {
+public abstract class LeafApiTesting extends FabricApiAbstractSourceSet {
 	@Inject
 	protected abstract Project getProject();
 
 	@Inject
-	public FabricApiTesting() {
+	public LeafApiTesting() {
 	}
 
 	@Override

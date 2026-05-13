@@ -28,16 +28,16 @@ import com.google.gson.JsonSyntaxException
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 
-import dev.aoqia.leaf.loom.util.fmj.FabricModJson
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonSource
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonSource
 import dev.aoqia.leaf.loom.util.fmj.mixin.MixinConfiguration
 import dev.aoqia.leaf.loom.util.fmj.mixin.MixinRefmap
 
 class MixinConfigurationTest extends Specification {
 	def "read refmap from mod"() {
 		given:
-		def modSource = Mock(FabricModJsonSource)
-		def mod = Mock(FabricModJson.Mockable)
+		def modSource = Mock(LeafModJsonSource)
+		def mod = Mock(LeafModJson.Mockable)
 		mod.getSource() >> modSource
 		mod.getMixinConfigurations() >> ["test_config.json"]
 		modSource.read("test_config.json") >> '{"refmap": "test_refmap.json"}'.bytes
@@ -63,8 +63,8 @@ class MixinConfigurationTest extends Specification {
 
 	def "read refmap from mod with no refmap"() {
 		given:
-		def modSource = Mock(FabricModJsonSource)
-		def mod = Mock(FabricModJson.Mockable)
+		def modSource = Mock(LeafModJsonSource)
+		def mod = Mock(LeafModJson.Mockable)
 		mod.getSource() >> modSource
 		mod.getMixinConfigurations() >> ["test_config.json"]
 		modSource.read("test_config.json") >> '{}'.bytes
@@ -79,8 +79,8 @@ class MixinConfigurationTest extends Specification {
 
 	def "read refmap from mod with invalid JSON"() {
 		given:
-		def modSource = Mock(FabricModJsonSource)
-		def mod = Mock(FabricModJson.Mockable)
+		def modSource = Mock(LeafModJsonSource)
+		def mod = Mock(LeafModJson.Mockable)
 		mod.getSource() >> modSource
 		mod.getMixinConfigurations() >> ["test_config.json"]
 		modSource.read("test_config.json") >> 'invalid json'.bytes
@@ -94,8 +94,8 @@ class MixinConfigurationTest extends Specification {
 
 	def "read refmap from mod with multiple configurations"() {
 		given:
-		def modSource = Mock(FabricModJsonSource)
-		def mod = Mock(FabricModJson.Mockable)
+		def modSource = Mock(LeafModJsonSource)
+		def mod = Mock(LeafModJson.Mockable)
 		mod.getSource() >> modSource
 		mod.getMixinConfigurations() >> [
 			"config1.json",

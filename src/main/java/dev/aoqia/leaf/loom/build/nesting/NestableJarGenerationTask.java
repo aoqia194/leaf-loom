@@ -63,7 +63,7 @@ import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 import dev.aoqia.leaf.loom.util.Checksum;
 import dev.aoqia.leaf.loom.util.DeletingFileVisitor;
 import dev.aoqia.leaf.loom.util.ZipReprocessorUtil;
-import dev.aoqia.leaf.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 
 public abstract class NestableJarGenerationTask extends AbstractLoomTask {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NestableJarGenerationTask.class);
@@ -221,7 +221,7 @@ public abstract class NestableJarGenerationTask extends AbstractLoomTask {
 			throw new UncheckedIOException("Failed to copy mod file %s".formatted(input), e);
 		}
 
-		if (FabricModJsonFactory.isModJar(input)) {
+		if (LeafModJsonFactory.isModJar(input)) {
 			// Input is a mod, nothing needs to be done.
 			return;
 		}
