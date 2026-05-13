@@ -96,54 +96,54 @@ class InterfaceInjectionProcessorTest extends Specification {
 		where:
 		key | value | target | validator
 		// Simple class with a simple interface
-		"class_1" | "net/fabricmc/loom/test/unit/processor/classes/SimpleInterface" | SimpleTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/fabricmc/loom/test/unit/processor/classes/SimpleInterface"
+		"class_1" | "dev/aoqia/leaf/loom/test/unit/processor/classes/SimpleInterface" | SimpleTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/leaf/loom/test/unit/processor/classes/SimpleInterface"
 			loadedClass.constructors.first().newInstance().injectedMethod() == 123
 		}
 
 		// Inner class with a simple interface
-		"class_1\$class_2" | "net/fabricmc/loom/test/unit/processor/classes/SimpleInterface" | SimpleTargetClass.Inner.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/fabricmc/loom/test/unit/processor/classes/SimpleInterface"
+		"class_1\$class_2" | "dev/aoqia/leaf/loom/test/unit/processor/classes/SimpleInterface" | SimpleTargetClass.Inner.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/leaf/loom/test/unit/processor/classes/SimpleInterface"
 			loadedClass.constructors.first().newInstance().injectedMethod() == 123
 		}
 
 		// Class using interface with generics
-		"class_3" | "net/fabricmc/loom/test/unit/processor/classes/GenericInterface<Ljava/lang/String;>" | GenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/fabricmc/loom/test/unit/processor/classes/GenericInterface"
+		"class_3" | "dev/aoqia/leaf/loom/test/unit/processor/classes/GenericInterface<Ljava/lang/String;>" | GenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/leaf/loom/test/unit/processor/classes/GenericInterface"
 			loadedClass.constructors.first().newInstance().genericInjectedMethod() == null
 		}
 
 		// Class using generics and passing them to interface
-		"class_4" | "net/fabricmc/loom/test/unit/processor/classes/GenericInterface<TT;>" | PassingGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/fabricmc/loom/test/unit/processor/classes/GenericInterface"
+		"class_4" | "dev/aoqia/leaf/loom/test/unit/processor/classes/GenericInterface<TT;>" | PassingGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/leaf/loom/test/unit/processor/classes/GenericInterface"
 			loadedClass.constructors.first().newInstance().genericInjectedMethod() == null
 		}
 
 		// Class having one injected interface with two generics, including one provided by the class
-		"class_5" | "net/fabricmc/loom/test/unit/processor/classes/AdvancedGenericInterface<Ljava/util/function/Predicate<TT;>;Ljava/lang/Integer;>" | AdvancedGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/fabricmc/loom/test/unit/processor/classes/AdvancedGenericInterface"
+		"class_5" | "dev/aoqia/leaf/loom/test/unit/processor/classes/AdvancedGenericInterface<Ljava/util/function/Predicate<TT;>;Ljava/lang/Integer;>" | AdvancedGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/leaf/loom/test/unit/processor/classes/AdvancedGenericInterface"
 			loadedClass.constructors.first().newInstance().advancedGenericInjectedMethod().getClass() == AdvancedGenericTargetClass.Pair.class
 		}
 
 		// Class having two injected interfaces with one generic for each of them, including one provided by the class
-		"class_7" | "net/fabricmc/loom/test/unit/processor/classes/FirstGenericInterface<Ljava/util/function/Predicate<TT;>;>" | DoubleGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/fabricmc/loom/test/unit/processor/classes/FirstGenericInterface"
+		"class_7" | "dev/aoqia/leaf/loom/test/unit/processor/classes/FirstGenericInterface<Ljava/util/function/Predicate<TT;>;>" | DoubleGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/leaf/loom/test/unit/processor/classes/FirstGenericInterface"
 			loadedClass.constructors.first().newInstance().firstGenericInjectedMethod() == null
 		}
-		"class_7" | "net/fabricmc/loom/test/unit/processor/classes/SecondGenericInterface<Ljava/lang/Integer;>" | DoubleGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.last().name == "net/fabricmc/loom/test/unit/processor/classes/SecondGenericInterface"
+		"class_7" | "dev/aoqia/leaf/loom/test/unit/processor/classes/SecondGenericInterface<Ljava/lang/Integer;>" | DoubleGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.last().name == "dev/aoqia/leaf/loom/test/unit/processor/classes/SecondGenericInterface"
 			loadedClass.constructors.last().newInstance().secondGenericInjectedMethod() == null
 		}
 
 		// Self Generic Types + Signature Remapping Check
-		"class_8" | "net/fabricmc/loom/test/unit/processor/classes/SelfGenericInterface<Lclass_7;>" | SelfGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/fabricmc/loom/test/unit/proessor/classes/SelfGenericInterface"
+		"class_8" | "dev/aoqia/leaf/loom/test/unit/processor/classes/SelfGenericInterface<Lclass_7;>" | SelfGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/leaf/loom/test/unit/proessor/classes/SelfGenericInterface"
 			loadedClass.constructors.first().newInstance().selfGenericInjectedMethod() == null
 		}
 
 		// Class using double generics and passing them to the interface
-		"class_9" | "net/fabricmc/loom/test/unit/processor/classes/DoublePassingGenericInterface<TF;TS;>" | DoublePassingGenericTargetClass.class | { Class<?> loadedClass ->
-			loadedClass.interfaces.first().name == "net/fabricmc/loom/test/unit/processor/classes/DoublePassingGenericTargetClass"
+		"class_9" | "dev/aoqia/leaf/loom/test/unit/processor/classes/DoublePassingGenericInterface<TF;TS;>" | DoublePassingGenericTargetClass.class | { Class<?> loadedClass ->
+			loadedClass.interfaces.first().name == "dev/aoqia/leaf/loom/test/unit/processor/classes/DoublePassingGenericTargetClass"
 			loadedClass.constructors.first().newInstance().doublePassingGenericInjectedMethod().getClass() == DoublePassingGenericTargetClass.Pair.class
 		}
 	}
@@ -247,15 +247,15 @@ class InterfaceInjectionProcessorTest extends Specification {
 
 	private static final String MAPPINGS = """
 tiny\t2\t0\tintermediary\tnamed
-c\tclass_1\tnet/fabricmc/loom/test/unit/processor/classes/SimpleTargetClass
-c\tclass_1\$class_2\tnet/fabricmc/loom/test/unit/processor/classes/SimpleTargetClass\$Inner
-c\tclass_3\tnet/fabricmc/loom/test/unit/processor/classes/GenericTargetClass
-c\tclass_4\tnet/fabricmc/loom/test/unit/processor/classes/PassingGenericTargetClass
-c\tclass_5\tnet/fabricmc/loom/test/unit/processor/classes/AdvancedGenericTargetClass
-c\tclass_5\$class_6\tnet/fabricmc/loom/test/unit/processor/classes/AdvancedGenericTargetClass\$Pair
-c\tclass_7\tnet/fabricmc/loom/test/unit/processor/classes/DoubleGenericTargetClass
-c\tclass_8\tnet/fabricmc/loom/test/unit/processor/classes/SelfGenericTargetClass
-c\tclass_9\tnet/fabricmc/loom/test/unit/processor/classes/DoublePassingGenericTargetClass
-c\tclass_9\$class_10\tnet/fabricmc/loom/test/unit/processor/classes/DoublePassingGenericTargetClass\$Pair
+c\tclass_1\tdev/aoqia/leaf/loom/test/unit/processor/classes/SimpleTargetClass
+c\tclass_1\$class_2\tdev/aoqia/leaf/loom/test/unit/processor/classes/SimpleTargetClass\$Inner
+c\tclass_3\tdev/aoqia/leaf/loom/test/unit/processor/classes/GenericTargetClass
+c\tclass_4\tdev/aoqia/leaf/loom/test/unit/processor/classes/PassingGenericTargetClass
+c\tclass_5\tdev/aoqia/leaf/loom/test/unit/processor/classes/AdvancedGenericTargetClass
+c\tclass_5\$class_6\tdev/aoqia/leaf/loom/test/unit/processor/classes/AdvancedGenericTargetClass\$Pair
+c\tclass_7\tdev/aoqia/leaf/loom/test/unit/processor/classes/DoubleGenericTargetClass
+c\tclass_8\tdev/aoqia/leaf/loom/test/unit/processor/classes/SelfGenericTargetClass
+c\tclass_9\tdev/aoqia/leaf/loom/test/unit/processor/classes/DoublePassingGenericTargetClass
+c\tclass_9\$class_10\tdev/aoqia/leaf/loom/test/unit/processor/classes/DoublePassingGenericTargetClass\$Pair
 """.trim()
 }

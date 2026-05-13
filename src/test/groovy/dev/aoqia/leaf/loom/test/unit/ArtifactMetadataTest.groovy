@@ -31,11 +31,11 @@ import spock.lang.Specification
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactRef
 
-import static net.fabricmc.loom.configuration.mods.ArtifactMetadata.MixinRemapType.MIXIN
-import static net.fabricmc.loom.configuration.mods.ArtifactMetadata.MixinRemapType.STATIC
-import static net.fabricmc.loom.configuration.mods.ArtifactMetadata.RemapRequirements.*
-import static net.fabricmc.loom.test.util.ZipTestUtils.createZip
-import static net.fabricmc.loom.test.util.ZipTestUtils.manifest
+import static dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata.MixinRemapType.MIXIN
+import static dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata.MixinRemapType.STATIC
+import static dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata.RemapRequirements.*
+import static dev.aoqia.leaf.loom.test.util.ZipTestUtils.createZip
+import static dev.aoqia.leaf.loom.test.util.ZipTestUtils.manifest
 
 class ArtifactMetadataTest extends Specification {
 	def "is fabric mod"() {

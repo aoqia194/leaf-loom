@@ -29,7 +29,7 @@ import spock.lang.Unroll
 
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 
-import static net.fabricmc.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class OfflineModeTest extends Specification implements GradleProjectTestTrait {

@@ -32,8 +32,8 @@ import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 import dev.aoqia.leaf.loom.util.Checksum
 
 import static java.lang.System.setProperty
-import static net.fabricmc.loom.test.LoomTestConstants.DEFAULT_GRADLE
-import static net.fabricmc.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.DEFAULT_GRADLE
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class ReproducibleBuildTest extends Specification implements GradleProjectTestTrait {

@@ -45,7 +45,7 @@ import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 import dev.aoqia.leaf.loom.util.ZipUtils
 
-import static net.fabricmc.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 @Timeout(value = 30, unit = TimeUnit.MINUTES)

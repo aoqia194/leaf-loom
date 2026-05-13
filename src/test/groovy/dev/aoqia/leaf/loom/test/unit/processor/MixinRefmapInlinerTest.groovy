@@ -38,7 +38,7 @@ import dev.aoqia.leaf.loom.configuration.mods.dependency.refmap.MixinReferenceRe
 import dev.aoqia.leaf.loom.configuration.mods.dependency.refmap.MixinRefmapInlinerClassVisitor
 
 class MixinRefmapInlinerTest extends Specification {
-	static String className = "net/fabricmc/loom/test/unit/processor/MixinRefmapInlinerClassVisitorTest\$ExampleClass"
+	static String className = "dev/aoqia/leaf/loom/test/unit/processor/MixinRefmapInlinerClassVisitorTest\$ExampleClass"
 
 	def "MixinRefmapInlinerClassVisitor"() {
 		given:

@@ -29,7 +29,7 @@ import spock.lang.Unroll
 import dev.aoqia.leaf.loom.test.unit.download.DownloadTest
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 
-import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class DownloadTaskTest extends DownloadTest implements GradleProjectTestTrait {

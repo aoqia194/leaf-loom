@@ -30,8 +30,8 @@ import spock.lang.Unroll
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 import dev.aoqia.leaf.loom.util.Constants
 
-import static net.fabricmc.loom.test.LoomTestConstants.DEFAULT_GRADLE
-import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.DEFAULT_GRADLE
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class LayeredMappingsTest extends Specification implements GradleProjectTestTrait {

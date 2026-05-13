@@ -46,9 +46,9 @@ class AnnotationsApplyTest extends Specification {
 		def annotationData = AnnotationsData.read(new StringReader(ANNOTATIONS_DATA))
 
 		def annotatedNode1 = new ClassNode()
-		def classVisitor1 = new AnnotationsApplyVisitor.AnnotationsApplyClassVisitor(annotatedNode1, annotationData.classes().get('net/fabricmc/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass1'))
+		def classVisitor1 = new AnnotationsApplyVisitor.AnnotationsApplyClassVisitor(annotatedNode1, annotationData.classes().get('dev/aoqia/leaf/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass1'))
 		def annotatedNode2 = new ClassNode()
-		def classVisitor2 = new AnnotationsApplyVisitor.AnnotationsApplyClassVisitor(annotatedNode2, annotationData.classes().get('net/fabricmc/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass2'))
+		def classVisitor2 = new AnnotationsApplyVisitor.AnnotationsApplyClassVisitor(annotatedNode2, annotationData.classes().get('dev/aoqia/leaf/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass2'))
 
 		when:
 		def classReader1 = new ClassReader(getClassBytes(ExampleClass1))
@@ -137,7 +137,7 @@ class AnnotationsApplyTest extends Specification {
 {
 	"version": 1,
 	"classes": {
-		"net/fabricmc/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass1": {
+		"dev/aoqia/leaf/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass1": {
 			"remove": [
 				"org/jetbrains/annotations/ApiStatus$Internal"
 			],
@@ -212,7 +212,7 @@ class AnnotationsApplyTest extends Specification {
 				}
 			}
 		},
-		"net/fabricmc/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass2": {
+		"dev/aoqia/leaf/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass2": {
 			"remove": [
 				"java/lang/Deprecated"
 			],
@@ -229,25 +229,25 @@ class AnnotationsApplyTest extends Specification {
 	private static final String EXPECTED_TEXT1 = '''// class version 52.0 (52)
 // DEPRECATED
 // access flags 0x20021
-public class net/fabricmc/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass1 implements groovy/lang/GroovyObject {
+public class dev/aoqia/leaf/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass1 implements groovy/lang/GroovyObject {
 
   // compiled from: AnnotationsApplyTest.groovy
 
   @Ljava/lang/Deprecated;() // invisible
   // access flags 0x1
-  public INNERCLASS net/fabricmc/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass1 net/fabricmc/loom/test/unit/processor/AnnotationsApplyTest ExampleClass1
+  public INNERCLASS dev/aoqia/leaf/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass1 dev/aoqia/leaf/loom/test/unit/processor/AnnotationsApplyTest ExampleClass1
 }
 '''
 
 	private static final String EXPECTED_TEXT2 = '''// class version 52.0 (52)
 // access flags 0x21
-public class net/fabricmc/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass2 implements groovy/lang/GroovyObject {
+public class dev/aoqia/leaf/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass2 implements groovy/lang/GroovyObject {
 
   // compiled from: AnnotationsApplyTest.groovy
 
   @Lorg/jetbrains/annotations/ApiStatus$Internal;() // invisible
   // access flags 0x1
-  public INNERCLASS net/fabricmc/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass2 net/fabricmc/loom/test/unit/processor/AnnotationsApplyTest ExampleClass2
+  public INNERCLASS dev/aoqia/leaf/loom/test/unit/processor/AnnotationsApplyTest$ExampleClass2 dev/aoqia/leaf/loom/test/unit/processor/AnnotationsApplyTest ExampleClass2
 }
 '''
 

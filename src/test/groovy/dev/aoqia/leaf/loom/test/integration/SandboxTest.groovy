@@ -37,7 +37,7 @@ import dev.aoqia.leaf.loom.test.util.ZipTestUtils
 import dev.aoqia.leaf.loom.util.Constants
 import dev.aoqia.leaf.loom.util.ZipUtils
 
-import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class SandboxTest extends Specification implements GradleProjectTestTrait {
@@ -77,7 +77,7 @@ class SandboxTest extends Specification implements GradleProjectTestTrait {
 
 	static Path createDummySandboxJar() {
 		def zip = ZipTestUtils.createZip(["fabric-sandbox.json": METADATA_JSON], ".jar")
-		ZipUtils.add(zip, "net/fabricmc/loom/test/unit/sandbox/SandboxEntrypoint.class", getClassBytes(SandboxEntrypoint.class))
+		ZipUtils.add(zip, "dev/aoqia/leaf/loom/test/unit/sandbox/SandboxEntrypoint.class", getClassBytes(SandboxEntrypoint.class))
 		return zip
 	}
 

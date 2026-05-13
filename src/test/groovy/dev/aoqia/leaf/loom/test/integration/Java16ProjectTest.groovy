@@ -29,7 +29,7 @@ import spock.lang.Unroll
 
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 
-import static net.fabricmc.loom.test.LoomTestConstants.*
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.*
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class Java16ProjectTest extends Specification implements GradleProjectTestTrait {

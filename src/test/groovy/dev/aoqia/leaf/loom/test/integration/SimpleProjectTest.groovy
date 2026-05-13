@@ -37,8 +37,8 @@ import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 import dev.aoqia.leaf.loom.test.util.ServerRunner
 import dev.aoqia.leaf.loom.util.ZipUtils
 
-import static net.fabricmc.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
-import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 @Timeout(value = 20, unit = TimeUnit.MINUTES)

@@ -42,7 +42,7 @@ class AnnotationsDataRemapTest extends Specification {
 
 		def remapper = TinyRemapper.newRemapper()
 				.withMappings { mappings ->
-					mappings.acceptClass('net/fabricmc/loom/test/unit/layeredmappings/AnnotationsDataRemapTest$Foo', 'mapped/pkg/FooMapped')
+					mappings.acceptClass('dev/aoqia/leaf/loom/test/unit/layeredmappings/AnnotationsDataRemapTest$Foo', 'mapped/pkg/FooMapped')
 					mappings.acceptClass('pkg/Bar', 'mapped/pkg/BarMapped')
 
 					mappings.acceptClass('pkg/Annotation1', 'mapped/pkg/Annotation1Mapped')
@@ -58,8 +58,8 @@ class AnnotationsDataRemapTest extends Specification {
 
 					mappings.acceptClass('baz', 'mapped/baz')
 
-					mappings.acceptField(new IMappingProvider.Member('net/fabricmc/loom/test/unit/layeredmappings/AnnotationsDataRemapTest$Foo', 'bar', 'Lnet/fabricmc/loom/test/unit/layeredmappings/AnnotationsDataRemapTest$Foo;'), 'barRenamed')
-					mappings.acceptMethod(new IMappingProvider.Member('net/fabricmc/loom/test/unit/layeredmappings/AnnotationsDataRemapTest$Foo', 'bar', '()V'), 'barMethodRenamed')
+					mappings.acceptField(new IMappingProvider.Member('dev/aoqia/leaf/loom/test/unit/layeredmappings/AnnotationsDataRemapTest$Foo', 'bar', 'Ldev/aoqia/leaf/loom/test/unit/layeredmappings/AnnotationsDataRemapTest$Foo;'), 'barRenamed')
+					mappings.acceptMethod(new IMappingProvider.Member('dev/aoqia/leaf/loom/test/unit/layeredmappings/AnnotationsDataRemapTest$Foo', 'bar', '()V'), 'barMethodRenamed')
 				}
 				.build()
 
@@ -91,7 +91,7 @@ class AnnotationsDataRemapTest extends Specification {
 {
 	"version": 1,
 	"classes": {
-		"net/fabricmc/loom/test/unit/layeredmappings/AnnotationsDataRemapTest${'$'}Foo": {
+		"dev/aoqia/leaf/loom/test/unit/layeredmappings/AnnotationsDataRemapTest${'$'}Foo": {
 			"remove": [
 				"pkg/Annotation1",
 				"pkg/Annotation2",
@@ -145,7 +145,7 @@ class AnnotationsDataRemapTest extends Specification {
 				}
 			],
 			"fields": {
-				"bar:Lnet/fabricmc/loom/test/unit/layeredmappings/AnnotationsDataRemapTest${'$'}Foo;": {
+				"bar:Ldev/aoqia/leaf/loom/test/unit/layeredmappings/AnnotationsDataRemapTest${'$'}Foo;": {
 					"remove": [
 						"pkg/Annotation8"
 					]

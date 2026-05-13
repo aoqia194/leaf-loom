@@ -35,7 +35,7 @@ import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.annotations.v
 
 @SuppressWarnings("JsonStandardCompliance")
 class AnnotationsDataValidatorTest extends Specification {
-	private static final String TEST_CLASSES_PACKAGE_INTERNAL = "net/fabricmc/loom/test/unit/processor/classes/"
+	private static final String TEST_CLASSES_PACKAGE_INTERNAL = "dev/aoqia/leaf/loom/test/unit/processor/classes/"
 
 	private static String internalName(String simpleName) {
 		return TEST_CLASSES_PACKAGE_INTERNAL + simpleName
@@ -385,7 +385,7 @@ class AnnotationsDataValidatorTest extends Specification {
                 }
             }
         },
-        "net/fabricmc/loom/test/unit/processor/classes/NonExistentClass": {
+        "dev/aoqia/leaf/loom/test/unit/processor/classes/NonExistentClass": {
             "add": [
                 {"desc": "L${annAddInternal};"}
             ]
@@ -403,7 +403,7 @@ class AnnotationsDataValidatorTest extends Specification {
 		String expectedFieldErr = "No such target field: ${classInternal}.noSuchField:I"
 		String expectedMethodErr = "No such target method: ${classInternal}.noSuchMethod()V"
 		String expectedParamErr = "Invalid parameter index: 5 for method: ${classInternal}.otherMethod()V"
-		String expectedClassNotFound = "No such target class: net/fabricmc/loom/test/unit/processor/classes/NonExistentClass"
+		String expectedClassNotFound = "No such target class: dev/aoqia/leaf/loom/test/unit/processor/classes/NonExistentClass"
 
 		when:
 		boolean ok = validator.checkData(data)

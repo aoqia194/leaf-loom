@@ -310,8 +310,8 @@ trait GradleProjectTestTrait {
                 rootProject.name='loom-test-plugin'
             '''
 
-			def sourceSrc = new File("src/test/groovy/net/fabricmc/loom/test/integration/buildSrc/" + name)
-			def targetSrc = new File(buildSrcDir, "src/main/groovy/net/fabricmc/loom/test/integration/buildSrc/" + name)
+			def sourceSrc = new File("src/test/groovy/dev/aoqia/leaf/loom/test/integration/buildSrc/" + name)
+			def targetSrc = new File(buildSrcDir, "src/main/groovy/dev/aoqia/leaf/loom/test/integration/buildSrc/" + name)
 
 			FileUtils.copyDirectory(sourceSrc, targetSrc)
 

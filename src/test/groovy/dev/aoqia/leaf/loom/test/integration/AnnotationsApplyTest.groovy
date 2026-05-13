@@ -35,7 +35,7 @@ import spock.lang.Unroll
 import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
 import dev.aoqia.leaf.loom.util.ZipUtils
 
-import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static dev.aoqia.leaf.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class AnnotationsApplyTest extends Specification implements GradleProjectTestTrait {
