@@ -64,6 +64,7 @@ public class JarNester {
 				}
 			}).collect(Collectors.toList()));
 
+            // TODO(leaf): Support leaf.mod.json
 			int count = ZipUtils.transformJson(JsonObject.class, modJar.toPath(), Stream.of(new Pair<>("fabric.mod.json", json -> {
 				JsonArray nestedJars = json.getAsJsonArray("jars");
 

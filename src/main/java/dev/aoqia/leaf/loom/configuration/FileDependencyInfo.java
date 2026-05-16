@@ -102,12 +102,13 @@ public class FileDependencyInfo extends DependencyInfo {
 			byte[] modJson;
 
 			try {
+                // TODO(leaf): Make compatible with leaf.mod.json
 				if ("jar".equals(getExtension(root)) && (modJson = ZipUtils.unpackNullable(root.toPath(), "fabric.mod.json")) != null) {
 					//It's a Fabric mod, see how much we can extract out
 					JsonObject json = new Gson().fromJson(new String(modJson, StandardCharsets.UTF_8), JsonObject.class);
 
 					if (json == null || !json.has("id") || !json.has("version")) {
-						throw new IllegalArgumentException("Invalid Fabric mod jar: " + root + " (malformed json: " + json + ')');
+						throw new IllegalArgumentException("Invalid Leaf mod jar: " + root + " (malformed json: " + json + ')');
 					}
 
 					if (json.has("name")) { //Go for the name field if it's got one

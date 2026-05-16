@@ -39,7 +39,7 @@ import net.fabricmc.mappingio.format.MappingFormat;
 
 public record TinyJarInfo(boolean v2, Optional<String> minecraftVersionId) {
 	private static final String MANIFEST_PATH = "META-INF/MANIFEST.MF";
-	private static final String MANIFEST_VERSION_ID_ATTRIBUTE = "Minecraft-Version-Id";
+	private static final String MANIFEST_VERSION_ID_ATTRIBUTE = "Leaf-Version-Id";
 
 	public static TinyJarInfo get(Path jar) {
 		try (FileSystemUtil.Delegate delegate = FileSystemUtil.getJarFileSystem(jar)) {

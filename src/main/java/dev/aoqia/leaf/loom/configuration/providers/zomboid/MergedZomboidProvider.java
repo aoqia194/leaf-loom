@@ -46,7 +46,7 @@ public final class MergedZomboidProvider extends ZomboidProvider {
 		super(metadataProvider, configContext);
 
 		if (isLegacyVersion()) {
-			throw new RuntimeException("something has gone wrong - merged jar configuration selected but Minecraft " + metadataProvider.getMinecraftVersion() + " does not allow merging the obfuscated jars - the legacy-merged jar configuration should have been selected!");
+			throw new RuntimeException("something has gone wrong - merged jar configuration selected but Minecraft " + metadataProvider.getZomboidVersion() + " does not allow merging the obfuscated jars - the legacy-merged jar configuration should have been selected!");
 		}
 	}
 
@@ -57,7 +57,7 @@ public final class MergedZomboidProvider extends ZomboidProvider {
 	}
 
 	@Override
-	public List<Path> getMinecraftJars() {
+	public List<Path> getZomboidJars() {
 		return List.of(minecraftMergedJar);
 	}
 
@@ -78,8 +78,8 @@ public final class MergedZomboidProvider extends ZomboidProvider {
 			try {
 				mergeJars();
 			} catch (Throwable e) {
-				Files.deleteIfExists(getMinecraftClientJar().toPath());
-				Files.deleteIfExists(getMinecraftServerJar().toPath());
+				Files.deleteIfExists(getZomboidClientJar().toPath());
+				Files.deleteIfExists(getZomboidServerJar().toPath());
 				Files.deleteIfExists(minecraftMergedJar);
 
 				getProject().getLogger().error("Could not merge JARs! Deleting source JARs - please re-run the command and move on.", e);
@@ -89,12 +89,8 @@ public final class MergedZomboidProvider extends ZomboidProvider {
 	}
 
 	private void mergeJars() throws IOException {
-		File minecraftClientJar = getMinecraftClientJar();
-		File minecraftServerJar = getMinecraftServerJar();
-
-		if (getServerBundleMetadata() != null) {
-			minecraftServerJar = getMinecraftExtractedServerJar();
-		}
+		File minecraftClientJar = getZomboidClientJar();
+		File minecraftServerJar = getZomboidServerJar();
 
 		mergeJars(minecraftClientJar, minecraftServerJar, minecraftMergedJar.toFile());
 	}

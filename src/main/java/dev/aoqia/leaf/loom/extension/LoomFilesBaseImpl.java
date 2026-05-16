@@ -46,7 +46,7 @@ public abstract class LoomFilesBaseImpl implements LoomFiles {
 
 	@Override
 	public File getUserCache() {
-		return createFile(getGradleUserHomeDir(), "caches" + File.separator + "fabric-loom");
+		return createFile(getGradleUserHomeDir(), "caches" + File.separator + "leaf-loom");
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public abstract class LoomFilesBaseImpl implements LoomFiles {
 
 	@Override
 	public File getNativesDirectory(Project project) {
-		return createFile(getRootProjectPersistentCache(), "natives/" + LoomGradleExtension.get(project).getMinecraftProvider().minecraftVersion());
+		return createFile(getRootProjectPersistentCache(), "natives/" + LoomGradleExtension.get(project).getZomboidProvider().zomboidVersion());
 	}
 
 	@Override
@@ -90,13 +90,13 @@ public abstract class LoomFilesBaseImpl implements LoomFiles {
 	}
 
 	@Override
-	public File getGlobalMinecraftRepo() {
-		return new File(getUserCache(), "minecraftMaven");
+	public File getGlobalZomboidRepo() {
+		return new File(getUserCache(), "zomboidMaven");
 	}
 
 	@Override
-	public File getLocalMinecraftRepo() {
-		return new File(getRootProjectPersistentCache(), "minecraftMaven");
+	public File getLocalZomboidRepo() {
+		return new File(getRootProjectPersistentCache(), "zomboidMaven");
 	}
 
 	@Override

@@ -183,7 +183,7 @@ public class ModProcessor {
 
 		final TinyRemapper remapper = builder.build();
 
-		remapper.readClassPath(extension.getMinecraftJars(MappingsNamespace.INTERMEDIARY).toArray(Path[]::new));
+		remapper.readClassPath(extension.getZomboidJars(MappingsNamespace.INTERMEDIARY).toArray(Path[]::new));
 
 		final Map<ModDependency, OutputConsumerPath> outputConsumerMap = new HashMap<>();
 		final Map<ModDependency, Pair<byte[], String>> accessWidenerMap = new HashMap<>();

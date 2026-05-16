@@ -52,12 +52,12 @@ public class ZomboidLibraryProvider {
 	private static final Platform platform = Platform.CURRENT;
 
 	private final Project project;
-	private final ZomboidProvider minecraftProvider;
+	private final ZomboidProvider zomboidProvider;
 	private final LibraryProcessorManager processorManager;
 
-	public ZomboidLibraryProvider(ZomboidProvider minecraftProvider, Project project) {
+	public ZomboidLibraryProvider(ZomboidProvider zomboidProvider, Project project) {
 		this.project = project;
-		this.minecraftProvider = minecraftProvider;
+		this.zomboidProvider = zomboidProvider;
 		this.processorManager = new LibraryProcessorManager(platform, project.getRepositories(), LoomGradleExtension.get(project).getLibraryProcessors().get(), getEnabledProcessors());
 	}
 
@@ -82,7 +82,7 @@ public class ZomboidLibraryProvider {
 
 	public void provide() {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		final ZomboidJarConfiguration jarConfiguration = extension.getMinecraftJarConfiguration().get();
+		final ZomboidJarConfiguration jarConfiguration = extension.getZomboidJarConfiguration().get();
 
 		final boolean provideClient = jarConfiguration.supportedEnvironments().contains("client");
 		final boolean provideServer = jarConfiguration.supportedEnvironments().contains("server");
@@ -102,19 +102,20 @@ public class ZomboidLibraryProvider {
 	}
 
 	private void provideClientLibraries() {
-		final List<Library> libraries = ZomboidLibraryHelper.getLibrariesForPlatform(minecraftProvider.getVersionInfo(), platform);
+		final List<Library> libraries = ZomboidLibraryHelper.getLibrariesForPlatform(zomboidProvider.getVersionInfo(), platform);
 		final List<Library> processLibraries = processLibraries(libraries);
 		processLibraries.forEach(this::applyClientLibrary);
 
 		// After Minecraft 1.19-pre1 the natives should be on the runtime classpath.
-		if (!minecraftProvider.getVersionInfo().hasNativesToExtract()) {
-			project.getConfigurations().named(Constants.Configurations.MINECRAFT_RUNTIME_LIBRARIES, configuration -> configuration.extendsFrom(project.getConfigurations().getByName(Constants.Configurations.MINECRAFT_NATIVES)));
+		if (!zomboidProvider.getVersionInfo().hasNativesToExtract()) {
+			project.getConfigurations().named(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES, configuration -> configuration.extendsFrom(project.getConfigurations().getByName(Constants.Configurations.ZOMBOID_NATIVES)));
 		}
 	}
 
 	private void provideServerLibraries() {
-		final BundleMetadata serverBundleMetadata = minecraftProvider.getServerBundleMetadata();
-		final List<Library> libraries = serverBundleMetadata != null ? ZomboidLibraryHelper.getServerLibraries(serverBundleMetadata) : Collections.emptyList();
+//		final BundleMetadata serverBundleMetadata = zomboidProvider.getServerBundleMetadata();
+//		final List<Library> libraries = serverBundleMetadata != null ? ZomboidLibraryHelper.getServerLibraries(serverBundleMetadata) : Collections.emptyList();
+		final List<Library> libraries = Collections.emptyList();
 		final List<Library> processLibraries = processLibraries(libraries);
 		processLibraries.forEach(this::applyServerLibrary);
 	}
@@ -126,7 +127,7 @@ public class ZomboidLibraryProvider {
 	private void resolveAllLibraries() {
 		project.getLogger().info("Resolving all libraries for dependency verification metadata generation");
 
-		final List<Library> libraries = ZomboidLibraryHelper.getAllLibraries(minecraftProvider.getVersionInfo());
+		final List<Library> libraries = ZomboidLibraryHelper.getAllLibraries(zomboidProvider.getVersionInfo());
 		Configuration detachedConfiguration = project.getConfigurations().detachedConfiguration(
 				libraries.stream()
 					.map(library -> project.getDependencies().create(library.mavenNotation()))
@@ -136,7 +137,7 @@ public class ZomboidLibraryProvider {
 	}
 
 	private List<Library> processLibraries(List<Library> libraries) {
-		final LibraryContext libraryContext = new LibraryContext(minecraftProvider.getVersionInfo(), getTargetRuntimeJavaVersion());
+		final LibraryContext libraryContext = new LibraryContext(zomboidProvider.getVersionInfo(), getTargetRuntimeJavaVersion());
 		return processorManager.processLibraries(libraries, libraryContext);
 	}
 
@@ -146,7 +147,7 @@ public class ZomboidLibraryProvider {
 		if (property != null) {
 			// This is very much a last ditch effort to allow users to set the runtime java version
 			// It's not recommended and will likely cause support confusion if it has been changed without good reason.
-			project.getLogger().warn("Runtime java compatibility version has manually been set to: %s".formatted(property));
+			project.getLogger().warn("Runtime java compatibility version has manually been set to: {}", property);
 			return JavaVersion.toVersion(property);
 		}
 
@@ -155,17 +156,17 @@ public class ZomboidLibraryProvider {
 
 	private void applyClientLibrary(Library library) {
 		switch (library.target()) {
-		case COMPILE -> addLibrary(Constants.Configurations.MINECRAFT_CLIENT_COMPILE_LIBRARIES, library);
-		case RUNTIME -> addLibrary(Constants.Configurations.MINECRAFT_CLIENT_RUNTIME_LIBRARIES, library);
-		case NATIVES -> addLibrary(Constants.Configurations.MINECRAFT_NATIVES, library);
+		case COMPILE -> addLibrary(Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES, library);
+		case RUNTIME -> addLibrary(Constants.Configurations.ZOMBOID_CLIENT_RUNTIME_LIBRARIES, library);
+		case NATIVES -> addLibrary(Constants.Configurations.ZOMBOID_NATIVES, library);
 		case LOCAL_MOD -> applyLocalModLibrary(library);
 		}
 	}
 
 	private void applyServerLibrary(Library library) {
 		switch (library.target()) {
-		case COMPILE -> addLibrary(Constants.Configurations.MINECRAFT_SERVER_COMPILE_LIBRARIES, library);
-		case RUNTIME -> addLibrary(Constants.Configurations.MINECRAFT_SERVER_RUNTIME_LIBRARIES, library);
+		case COMPILE -> addLibrary(Constants.Configurations.ZOMBOID_SERVER_COMPILE_LIBRARIES, library);
+		case RUNTIME -> addLibrary(Constants.Configurations.ZOMBOID_SERVER_RUNTIME_LIBRARIES, library);
 		case LOCAL_MOD -> applyLocalModLibrary(library);
 		default -> throw new IllegalStateException("Target not supported for server library: %s".formatted(library));
 		}

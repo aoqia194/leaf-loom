@@ -95,7 +95,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	protected final Property<IntermediateMappingsProvider> intermediateMappingsProvider;
 	private final Property<Boolean> runtimeOnlyLog4j;
 	private final Property<Boolean> splitModDependencies;
-	private final Property<ZomboidJarConfiguration<?, ?, ?>> minecraftJarConfiguration;
+	private final Property<ZomboidJarConfiguration<?, ?, ?>> zomboidJarConfiguration;
 	private final Property<Boolean> splitEnvironmentalSourceSet;
 	private final InterfaceInjectionExtensionAPI interfaceInjectionExtension;
 
@@ -103,7 +103,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	private final NamedDomainObjectContainer<DecompilerOptions> decompilers;
 	private final NamedDomainObjectContainer<ModSettings> mods;
 	private final NamedDomainObjectList<RemapConfigurationSettings> remapConfigurations;
-	private final ListProperty<ZomboidJarProcessor<?>> minecraftJarProcessors;
+	private final ListProperty<ZomboidJarProcessor<?>> zomboidJarProcessors;
 	protected final ListProperty<RemapperExtensionHolder> remapperExtensions;
 
 	// A common mistake with layered mappings is to call the wrong `officialMojangMappings` method, use this to keep track of when we are building a layered mapping spec.
@@ -120,8 +120,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		this.accessWidener = project.getObjects().fileProperty();
 		this.fabricModJsonPath = project.getObjects().fileProperty();
 		this.versionsManifests = new ManifestLocations();
-		this.versionsManifests.add("mojang", MirrorUtil.getVersionManifests(project), -2);
-		this.versionsManifests.add("fabric_experimental", MirrorUtil.getExperimentalVersions(project), -1);
+		this.versionsManifests.add("zomboid", MirrorUtil.getClientVersionManifests(project), -2);
+//		this.versionsManifests.add("fabric_experimental", MirrorUtil.getExperimentalVersions(project), -1);
 		this.customMetadata = project.getObjects().property(String.class);
 		this.knownIndyBsms = project.getObjects().setProperty(String.class).convention(Set.of(
 				"java/lang/invoke/StringConcatFactory",
@@ -149,17 +149,18 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		this.mods = project.getObjects().domainObjectContainer(ModSettings.class);
 		this.remapConfigurations = project.getObjects().namedDomainObjectList(RemapConfigurationSettings.class);
 		//noinspection unchecked
-		this.minecraftJarProcessors = (ListProperty<ZomboidJarProcessor<?>>) (Object) project.getObjects().listProperty(ZomboidJarProcessor.class);
-		this.minecraftJarProcessors.finalizeValueOnRead();
+		this.zomboidJarProcessors = (ListProperty<ZomboidJarProcessor<?>>) (Object) project.getObjects().listProperty(ZomboidJarProcessor.class);
+		this.zomboidJarProcessors.finalizeValueOnRead();
 
 		//noinspection unchecked
-		this.minecraftJarConfiguration = project.getObjects().property((Class<ZomboidJarConfiguration<?, ?, ?>>) (Class<?>) ZomboidJarConfiguration.class)
+		this.zomboidJarConfiguration = project.getObjects().property((Class<ZomboidJarConfiguration<?, ?, ?>>) (Class<?>) ZomboidJarConfiguration.class)
 				.convention(project.provider(() -> {
 					final LoomGradleExtension extension = LoomGradleExtension.get(project);
 					final ZomboidMetadataProvider metadataProvider = extension.getMetadataProvider();
 
 					// if no configuration is selected by the user, attempt to select one
 					// based on the mc version and which sides are present for it
+                    // TODO(leaf): Always select the most reasonable one for PZ
 					if (!metadataProvider.getVersionMeta().hasServer()) {
 						return ZomboidJarConfiguration.CLIENT_ONLY;
 					} else if (!metadataProvider.getVersionMeta().hasClient()) {
@@ -170,7 +171,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 						return ZomboidJarConfiguration.LEGACY_MERGED;
 					}
 				}));
-		this.minecraftJarConfiguration.finalizeValueOnRead();
+		this.zomboidJarConfiguration.finalizeValueOnRead();
 
 		this.accessWidener.finalizeValueOnRead();
 		this.getGameJarProcessors().finalizeValueOnRead();
@@ -207,7 +208,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	}
 
 	@Override
-	public RegularFileProperty getFabricModJsonPath() {
+	public RegularFileProperty getLeafModJsonPath() {
 		return fabricModJsonPath;
 	}
 
@@ -227,22 +228,13 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	}
 
 	@Override
-	public ListProperty<ZomboidJarProcessor<?>> getMinecraftJarProcessors() {
-		return minecraftJarProcessors;
+	public ListProperty<ZomboidJarProcessor<?>> getZomboidJarProcessors() {
+		return zomboidJarProcessors;
 	}
 
 	@Override
-	public void addMinecraftJarProcessor(Class<? extends ZomboidJarProcessor<?>> clazz, Object... parameters) {
-		getMinecraftJarProcessors().add(getProject().getObjects().newInstance(clazz, parameters));
-	}
-
-	@Override
-	public Dependency officialMojangMappings() {
-		if (layeredSpecBuilderScope.get()) {
-			throw new IllegalStateException("Use `officialMojangMappings()` when configuring layered mappings, not the extension method `loom.officialMojangMappings()`");
-		}
-
-		return layered(LayeredMappingSpecBuilder::officialMojangMappings);
+	public void addZomboidJarProcessor(Class<? extends ZomboidJarProcessor<?>> clazz, Object... parameters) {
+		getZomboidJarProcessors().add(getProject().getObjects().newInstance(clazz, parameters));
 	}
 
 	@Override
@@ -288,7 +280,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	}
 
 	@Override
-	public Property<String> getCustomMinecraftMetadata() {
+	public Property<String> getCustomZomboidMetadata() {
 		return customMetadata;
 	}
 
@@ -372,8 +364,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	}
 
 	@Override
-	public Property<ZomboidJarConfiguration<?, ?, ?>> getMinecraftJarConfiguration() {
-		return minecraftJarConfiguration;
+	public Property<ZomboidJarConfiguration<?, ?, ?>> getZomboidJarConfiguration() {
+		return zomboidJarConfiguration;
 	}
 
 	@Override
@@ -388,13 +380,13 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 	@Override
 	public void splitEnvironmentSourceSets() {
-		splitMinecraftJar();
+		splitZomboidJar();
 
 		splitEnvironmentalSourceSet.set(true);
 
 		// We need to lock these values, as we setup the new source sets right away.
 		splitEnvironmentalSourceSet.finalizeValue();
-		minecraftJarConfiguration.finalizeValue();
+		zomboidJarConfiguration.finalizeValue();
 
 		ZomboidSourceSets.get(getProject()).evaluateSplit(getProject());
 	}
@@ -461,14 +453,14 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	}
 
 	@Override
-	public Provider<String> getMinecraftVersion() {
-		return getProject().provider(() -> LoomGradleExtension.get(getProject()).getMinecraftProvider().minecraftVersion());
+	public Provider<String> getZomboidVersion() {
+		return getProject().provider(() -> LoomGradleExtension.get(getProject()).getZomboidProvider().zomboidVersion());
 	}
 
 	@Override
-	public FileCollection getNamedMinecraftJars() {
+	public FileCollection getNamedZomboidJars() {
 		final ConfigurableFileCollection jars = getProject().getObjects().fileCollection();
-		jars.from(getProject().provider(() -> LoomGradleExtension.get(getProject()).getMinecraftJars(MappingsNamespace.NAMED)));
+		jars.from(getProject().provider(() -> LoomGradleExtension.get(getProject()).getZomboidJars(MappingsNamespace.NAMED)));
 		return jars;
 	}
 

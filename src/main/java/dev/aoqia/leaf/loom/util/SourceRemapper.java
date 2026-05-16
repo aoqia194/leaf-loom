@@ -182,11 +182,11 @@ public class SourceRemapper {
 			}
 		}
 
-		for (Path intermediaryJar : extension.getMinecraftJars(MappingsNamespace.INTERMEDIARY)) {
+		for (Path intermediaryJar : extension.getZomboidJars(MappingsNamespace.INTERMEDIARY)) {
 			mercury.getClassPath().add(intermediaryJar);
 		}
 
-		for (Path intermediaryJar : extension.getMinecraftJars(MappingsNamespace.NAMED)) {
+		for (Path intermediaryJar : extension.getZomboidJars(MappingsNamespace.NAMED)) {
 			mercury.getClassPath().add(intermediaryJar);
 		}
 
@@ -224,7 +224,7 @@ public class SourceRemapper {
 
 		final List<Path> classPath = new ArrayList<>();
 
-		for (File file : project.getConfigurations().getByName(Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES).getFiles()) {
+		for (File file : project.getConfigurations().getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES).getFiles()) {
 			classPath.add(file.toPath());
 		}
 

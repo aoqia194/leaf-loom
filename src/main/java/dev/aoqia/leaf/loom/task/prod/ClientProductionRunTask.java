@@ -86,21 +86,21 @@ public abstract non-sealed class ClientProductionRunTask extends AbstractProduct
 				.orElse(false)
 		);
 
-		getAssetsIndex().set(getExtension().getMinecraftVersion()
+		getAssetsIndex().set(getExtension().getZomboidVersion()
 				.map(minecraftVersion -> getExtension()
-						.getMinecraftProvider()
+						.getZomboidProvider()
 						.getVersionInfo()
 						.assetIndex()
-						.fabricId(minecraftVersion)
+						.leafId(minecraftVersion)
 				)
 		);
 		getAssetsDir().set(new File(getExtension().getFiles().getUserCache(), "assets"));
 		getMainClass().convention("dev.aoqia.leaf.loader.impl.launch.knot.KnotClient");
 
-		getClasspath().from(getExtension().getMinecraftProvider().getMinecraftClientJar());
+		getClasspath().from(getExtension().getZomboidProvider().getZomboidClientJar());
 		getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:loader:%s", getProjectLoaderVersion()));
-		getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:intermediary:%s", getExtension().getMinecraftVersion()));
-		getClasspath().from(getProject().getConfigurations().named(Constants.Configurations.MINECRAFT_TEST_CLIENT_RUNTIME_LIBRARIES));
+		getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:intermediary:%s", getExtension().getZomboidVersion()));
+		getClasspath().from(getProject().getConfigurations().named(Constants.Configurations.ZOMBOID_TEST_CLIENT_RUNTIME_LIBRARIES));
 
 		dependsOn("downloadAssets");
 	}

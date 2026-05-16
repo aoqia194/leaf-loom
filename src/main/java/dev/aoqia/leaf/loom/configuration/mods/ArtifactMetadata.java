@@ -46,8 +46,8 @@ import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 
-public record ArtifactMetadata(boolean isFabricMod, RemapRequirements remapRequirements, @Nullable InstallerData installerData, MixinRemapType mixinRemapType, List<String> knownIdyBsms) {
-	private static final String INSTALLER_PATH = "fabric-installer.json";
+public record ArtifactMetadata(boolean isLeafMod, RemapRequirements remapRequirements, @Nullable InstallerData installerData, MixinRemapType mixinRemapType, List<String> knownIdyBsms) {
+	private static final String INSTALLER_PATH = "leaf-installer.json";
 
 	public static ArtifactMetadata create(ArtifactRef artifact, String currentLoomVersion) throws IOException {
 		boolean isFabricMod;
@@ -69,7 +69,7 @@ public record ArtifactMetadata(boolean isFabricMod, RemapRequirements remapRequi
 				final String knownIndyBsmsValue = mainAttributes.getValue(Constants.Manifest.KNOWN_IDY_BSMS);
 
 				if (remapValue != null) {
-					// Support opting into and out of remapping with "Fabric-Loom-Remap" manifest entry
+					// Support opting into and out of remapping with "Leaf-Loom-Remap" manifest entry
 					remapRequirements = Boolean.parseBoolean(remapValue) ? RemapRequirements.OPT_IN : RemapRequirements.OPT_OUT;
 				}
 
@@ -131,7 +131,7 @@ public record ArtifactMetadata(boolean isFabricMod, RemapRequirements remapRequi
 	}
 
 	public enum RemapRequirements {
-		DEFAULT(ArtifactMetadata::isFabricMod),
+		DEFAULT(ArtifactMetadata::isLeafMod),
 		OPT_IN(true),
 		OPT_OUT(false);
 

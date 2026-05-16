@@ -62,12 +62,12 @@ import net.fabricmc.tinyremapper.TinyRemapper;
 public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> implements MappedZomboidProvider.ProviderImpl {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMappedZomboidProvider.class);
 
-	protected final M minecraftProvider;
+	protected final M zomboidProvider;
 	private final Project project;
 	protected final LoomGradleExtension extension;
 
-	public AbstractMappedZomboidProvider(Project project, M minecraftProvider) {
-		this.minecraftProvider = minecraftProvider;
+	public AbstractMappedZomboidProvider(Project project, M zomboidProvider) {
+		this.zomboidProvider = zomboidProvider;
 		this.project = project;
 		this.extension = LoomGradleExtension.get(project);
 	}
@@ -108,7 +108,7 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 			} catch (Throwable t) {
 				cleanOutputs(remappedJars);
 
-				throw new RuntimeException("Failed to remap minecraft", t);
+				throw new RuntimeException("Failed to remap zomboid", t);
 			}
 		}
 
@@ -151,9 +151,9 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 
 	public enum MavenScope {
 		// Output files will be stored per project
-		LOCAL(LoomFiles::getLocalMinecraftRepo),
+		LOCAL(LoomFiles::getLocalZomboidRepo),
 		// Output files will be stored globally
-		GLOBAL(LoomFiles::getGlobalMinecraftRepo);
+		GLOBAL(LoomFiles::getGlobalZomboidRepo);
 
 		private final Function<LoomFiles, File> fileFunction;
 
@@ -169,14 +169,14 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 	public abstract MavenScope getMavenScope();
 
 	public LocalMavenHelper getMavenHelper(ZomboidJar.Type type) {
-		return new LocalMavenHelper("net.minecraft", getName(type), getVersion(), null, getMavenScope().getRoot(extension));
+		return new LocalMavenHelper("com.theindiestone", getName(type), getVersion(), null, getMavenScope().getRoot(extension));
 	}
 
 	protected String getName(ZomboidJar.Type type) {
 		final String intermediateName = extension.getIntermediateMappingsProvider().getName();
 
 		var sj = new StringJoiner("-");
-		sj.add("minecraft");
+		sj.add("zomboid");
 		sj.add(type.toString());
 
 		// Include the intermediate mapping name if it's not the default intermediary
@@ -192,11 +192,11 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 	}
 
 	protected String getVersion() {
-		return "%s-%s".formatted(extension.getMinecraftProvider().minecraftVersion(), extension.getMappingConfiguration().mappingsIdentifier());
+		return "%s-%s".formatted(extension.getZomboidProvider().zomboidVersion(), extension.getMappingConfiguration().mappingsIdentifier());
 	}
 
 	protected String getDependencyNotation(ZomboidJar.Type type) {
-		return "net.minecraft:%s:%s".formatted(getName(type), getVersion());
+		return "com.theindiestone:%s:%s".formatted(getName(type), getVersion());
 	}
 
 	protected boolean shouldRefreshOutputs(ProvideContext context) {
@@ -246,7 +246,7 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 
 		final AnnotationsData remappedAnnotations = AnnotationsData.getRemappedAnnotations(getTargetNamespace(), mappingConfiguration, getProject(), configContext.serviceFactory(), toM);
 		final Map<String, String> remappedSignatures = SignatureFixerApplyVisitor.getRemappedSignatures(getTargetNamespace() == MappingsNamespace.INTERMEDIARY, mappingConfiguration, getProject(), configContext.serviceFactory(), toM);
-		final ZomboidVersionMeta.JavaVersion javaVersion = minecraftProvider.getVersionInfo().javaVersion();
+		final ZomboidVersionMeta.JavaVersion javaVersion = zomboidProvider.getVersionInfo().javaVersion();
 		final boolean fixRecords = javaVersion != null && javaVersion.majorVersion() >= 16;
 
 		TinyRemapper remapper = TinyRemapperHelper.getTinyRemapper(getProject(), configContext.serviceFactory(), fromM, toM, fixRecords, (builder) -> {
@@ -301,8 +301,8 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 		return project;
 	}
 
-	public M getMinecraftProvider() {
-		return minecraftProvider;
+	public M getZomboidProvider() {
+		return zomboidProvider;
 	}
 
 	public sealed interface OutputJar permits RemappedJars, SimpleOutputJar {

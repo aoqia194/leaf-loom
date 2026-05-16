@@ -184,7 +184,7 @@ public abstract class NestableJarGenerationTask extends AbstractLoomTask {
 		jsonObject.addProperty("name", metadata.name());
 
 		JsonObject custom = new JsonObject();
-		custom.addProperty("fabric-loom:generated", true);
+		custom.addProperty("leaf-loom:generated", true);
 		jsonObject.add("custom", custom);
 
 		return LoomGradlePlugin.GSON.toJson(jsonObject);
@@ -226,6 +226,7 @@ public abstract class NestableJarGenerationTask extends AbstractLoomTask {
 			return;
 		}
 
+        // TODO(leaf): Support leaf.mod.json
 		try {
 			ZipReprocessorUtil.appendZipEntry(output.toPath(), "fabric.mod.json", modJsonFile.getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {

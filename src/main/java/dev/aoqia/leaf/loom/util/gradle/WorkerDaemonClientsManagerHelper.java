@@ -36,7 +36,7 @@ import org.gradle.workers.internal.DaemonForkOptions;
 import org.gradle.workers.internal.WorkerDaemonClientsManager;
 
 public class WorkerDaemonClientsManagerHelper {
-	public static final String MARKER_PROP = "fabric.loom.decompile.worker";
+	public static final String MARKER_PROP = "leaf.loom.decompile.worker";
 
 	public static boolean stopIdleJVM(WorkerDaemonClientsManager manager, String jvmMarkerValue) {
 		AtomicBoolean stopped = new AtomicBoolean(false);

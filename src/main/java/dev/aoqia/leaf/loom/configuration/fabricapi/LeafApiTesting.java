@@ -124,7 +124,7 @@ public abstract class LeafApiTesting extends FabricApiAbstractSourceSet {
 
 			if (settings.getClearRunDirectory().get()) {
 				var deleteGameTestRunDir = tasks.register("deleteGameTestRunDir", Delete.class, task -> {
-					task.setGroup(Constants.TaskGroup.FABRIC);
+					task.setGroup(Constants.TaskGroup.LEAF);
 					task.delete(clientGameTest.getRunDir());
 				});
 

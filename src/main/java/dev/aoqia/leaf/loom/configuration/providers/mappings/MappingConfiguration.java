@@ -92,25 +92,26 @@ public class MappingConfiguration {
 		this.unpickDefinitions = mappingsWorkingDir.resolve("mappings.unpick");
 	}
 
-	public static MappingConfiguration create(Project project, ServiceFactory serviceFactory, DependencyInfo dependency, ZomboidProvider minecraftProvider) {
+	public static MappingConfiguration create(Project project, ServiceFactory serviceFactory, DependencyInfo dependency, ZomboidProvider zomboidProvider) {
 		final String version = dependency.getResolvedVersion();
 		final Path inputJar = dependency.resolveFile().orElseThrow(() -> new RuntimeException("Could not resolve mappings: " + dependency)).toPath();
 		final String mappingsName = StringUtils.removeSuffix(dependency.getDependency().getGroup() + "." + dependency.getDependency().getName(), "-unmerged");
 
 		final TinyJarInfo jarInfo = TinyJarInfo.get(inputJar);
 		jarInfo.minecraftVersionId().ifPresent(id -> {
-			if (!minecraftProvider.minecraftVersion().equals(id)) {
-				LOGGER.warn("The mappings (%s) were not built for Minecraft version %s, proceed with caution.".formatted(dependency.getDepString(), minecraftProvider.minecraftVersion()));
+			if (!zomboidProvider.zomboidVersion().equals(id)) {
+				LOGGER.warn("The mappings ({}) were not built for PZ version {}, proceed with caution.",
+                    dependency.getDepString(), zomboidProvider.zomboidVersion());
 			}
 		});
 
-		final String mappingsIdentifier = createMappingsIdentifier(mappingsName, version, getMappingsClassifier(dependency, jarInfo.v2()), minecraftProvider.minecraftVersion());
-		final Path workingDir = minecraftProvider.dir(mappingsIdentifier).toPath();
+		final String mappingsIdentifier = createMappingsIdentifier(mappingsName, version, getMappingsClassifier(dependency, jarInfo.v2()), zomboidProvider.zomboidVersion());
+		final Path workingDir = zomboidProvider.dir(mappingsIdentifier).toPath();
 
 		var mappingProvider = new MappingConfiguration(mappingsIdentifier, workingDir);
 
 		try {
-			mappingProvider.setup(project, serviceFactory, minecraftProvider, inputJar);
+			mappingProvider.setup(project, serviceFactory, zomboidProvider, inputJar);
 		} catch (IOException e) {
 			cleanWorkingDirectory(workingDir);
 			throw new UncheckedIOException("Failed to setup mappings: " + dependency.getDepString(), e);
@@ -189,7 +190,7 @@ public class MappingConfiguration {
 
 			MappingsMerger.mergeAndSaveMappings(baseTinyMappings, tinyMappings, minecraftProvider, intermediateMappingsService);
 		} else {
-			final List<Path> minecraftJars = minecraftProvider.getMinecraftJars();
+			final List<Path> minecraftJars = minecraftProvider.getZomboidJars();
 
 			if (minecraftJars.size() != 1) {
 				throw new UnsupportedOperationException("V1 mappings only support single jar minecraft providers");

@@ -94,8 +94,8 @@ public class MigrateMappingsService extends Service<MigrateMappingsService.Optio
 		ConfigurableFileCollection classpath = project.getObjects().fileCollection();
 		classpath.from(project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME));
 		// Question: why are both of these needed?
-		classpath.from(extension.getMinecraftJars(MappingsNamespace.INTERMEDIARY));
-		classpath.from(extension.getMinecraftJars(MappingsNamespace.NAMED));
+		classpath.from(extension.getZomboidJars(MappingsNamespace.INTERMEDIARY));
+		classpath.from(extension.getZomboidJars(MappingsNamespace.NAMED));
 
 		return TYPE.create(project, (o) -> {
 			FileCollection targetMappingsFile = getTargetMappingsFile(project, targetMappings.get());
@@ -160,23 +160,12 @@ public class MigrateMappingsService extends Service<MigrateMappingsService.Optio
 		}
 
 		try {
-			if (mappings.startsWith("net.minecraft:mappings:")) {
-				if (!mappings.endsWith(":" + LoomGradleExtension.get(project).getMinecraftProvider().minecraftVersion())) {
-					throw new UnsupportedOperationException("Migrating Mojang mappings is currently only supported for the specified minecraft version");
-				}
-
-				LayeredMappingsFactory dep = new LayeredMappingsFactory(LayeredMappingSpecBuilderImpl.buildOfficialMojangMappings());
-				return project.files(dep.resolve(project).toFile());
-			} else {
-				Dependency dependency = project.getDependencies().create(mappings);
-				return project.getConfigurations().detachedConfiguration(dependency);
-			}
+            Dependency dependency = project.getDependencies().create(mappings);
+            return project.getConfigurations().detachedConfiguration(dependency);
 		} catch (IllegalDependencyNotation ignored) {
 			LOGGER.info("Could not locate mappings, presuming V2 Yarn");
 			String mavenNotation = "net.fabricmc:yarn:%s:v2".formatted(mappings);
 			return project.getConfigurations().detachedConfiguration(project.getDependencies().create(mavenNotation));
-		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to resolve mappings", e);
 		}
 	}
 }

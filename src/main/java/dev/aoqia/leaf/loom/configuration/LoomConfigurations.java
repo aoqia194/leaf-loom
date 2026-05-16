@@ -66,32 +66,35 @@ public abstract class LoomConfigurations implements Runnable {
 		register(Constants.Configurations.MOD_COMPILE_CLASSPATH, Role.RESOLVABLE);
 		registerNonTransitive(Constants.Configurations.MOD_COMPILE_CLASSPATH_MAPPED, Role.RESOLVABLE);
 
-		// Set up the Minecraft compile configurations.
-		var minecraftClientCompile = registerNonTransitive(Constants.Configurations.MINECRAFT_CLIENT_COMPILE_LIBRARIES, Role.RESOLVABLE);
-		var minecraftServerCompile = registerNonTransitive(Constants.Configurations.MINECRAFT_SERVER_COMPILE_LIBRARIES, Role.RESOLVABLE);
-		var minecraftCompile = registerNonTransitive(Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES, Role.RESOLVABLE);
-		minecraftCompile.configure(configuration -> {
-			configuration.extendsFrom(minecraftClientCompile.get());
-			configuration.extendsFrom(minecraftServerCompile.get());
+		// Set up the compile configurations.
+		var clientCompile = registerNonTransitive(Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES, Role.RESOLVABLE);
+		var serverCompile = registerNonTransitive(Constants.Configurations.ZOMBOID_SERVER_COMPILE_LIBRARIES, Role.RESOLVABLE);
+		var zomboidCompile = registerNonTransitive(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES, Role.RESOLVABLE);
+		zomboidCompile.configure(configuration -> {
+			configuration.extendsFrom(clientCompile.get());
+			configuration.extendsFrom(serverCompile.get());
 		});
 
-		// Set up the minecraft runtime configurations, this extends from the compile configurations.
-		var minecraftClientRuntime = registerNonTransitive(Constants.Configurations.MINECRAFT_CLIENT_RUNTIME_LIBRARIES, Role.RESOLVABLE);
-		var minecraftServerRuntime = registerNonTransitive(Constants.Configurations.MINECRAFT_SERVER_RUNTIME_LIBRARIES, Role.RESOLVABLE);
+		// Set up the runtime configurations, this extends from the compile configurations.
+		var zomboidClientRuntime = registerNonTransitive(Constants.Configurations.ZOMBOID_CLIENT_RUNTIME_LIBRARIES, Role.RESOLVABLE);
+		var zomboidServerRuntime = registerNonTransitive(Constants.Configurations.ZOMBOID_SERVER_RUNTIME_LIBRARIES, Role.RESOLVABLE);
 
 		// Runtime extends from compile
-		minecraftClientRuntime.configure(configuration -> configuration.extendsFrom(minecraftClientCompile.get()));
-		minecraftServerRuntime.configure(configuration -> configuration.extendsFrom(minecraftServerCompile.get()));
+		zomboidClientRuntime.configure(configuration -> configuration.extendsFrom(clientCompile.get()));
+		zomboidServerRuntime.configure(configuration -> configuration.extendsFrom(serverCompile.get()));
 
-		registerNonTransitive(Constants.Configurations.MINECRAFT_RUNTIME_LIBRARIES, Role.RESOLVABLE).configure(minecraftRuntime -> {
-			minecraftRuntime.extendsFrom(minecraftClientRuntime.get());
-			minecraftRuntime.extendsFrom(minecraftServerRuntime.get());
+		registerNonTransitive(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES, Role.RESOLVABLE).configure(runtime -> {
+			runtime.extendsFrom(zomboidClientRuntime.get());
+			runtime.extendsFrom(zomboidServerRuntime.get());
 		});
 
-		registerNonTransitive(Constants.Configurations.MINECRAFT_NATIVES, Role.RESOLVABLE);
+		registerNonTransitive(Constants.Configurations.ZOMBOID_NATIVES, Role.RESOLVABLE);
+        // TODO(leaf): Register game libraries to configuration here
+//		registerNonTransitive(Constants.Configurations.ZOMBOID_LIBRARIES, Role.RESOLVABLE);
+
 		registerNonTransitive(Constants.Configurations.LOADER_DEPENDENCIES, Role.RESOLVABLE);
 
-		registerNonTransitive(Constants.Configurations.MINECRAFT, Role.NONE);
+		registerNonTransitive(Constants.Configurations.ZOMBOID, Role.NONE);
 
 		Provider<Configuration> include = register(Constants.Configurations.INCLUDE, Role.NONE);
 		register(Constants.Configurations.INCLUDE_INTERNAL, Role.RESOLVABLE).configure(configuration -> {
@@ -145,7 +148,7 @@ public abstract class LoomConfigurations implements Runnable {
 		extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.MAPPINGS_FINAL);
 		extendsFrom(JavaPlugin.TEST_RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.MAPPINGS_FINAL);
 
-		extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.MINECRAFT_RUNTIME_LIBRARIES);
+		extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES);
 
 		// Add the dev time dependencies
 		getDependencies().add(Constants.Configurations.LOOM_DEVELOPMENT_DEPENDENCIES, LoomVersions.DEV_LAUNCH_INJECTOR.mavenNotation());
@@ -153,10 +156,10 @@ public abstract class LoomConfigurations implements Runnable {
 		getDependencies().add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, LoomVersions.JETBRAINS_ANNOTATIONS.mavenNotation());
 		getDependencies().add(JavaPlugin.TEST_COMPILE_ONLY_CONFIGURATION_NAME, LoomVersions.JETBRAINS_ANNOTATIONS.mavenNotation());
 
-		register(Constants.Configurations.MINECRAFT_TEST_CLIENT_RUNTIME_LIBRARIES, Role.RESOLVABLE);
-		extendsFrom(Constants.Configurations.MINECRAFT_TEST_CLIENT_RUNTIME_LIBRARIES, Constants.Configurations.MINECRAFT_NATIVES);
-		extendsFrom(Constants.Configurations.MINECRAFT_TEST_CLIENT_RUNTIME_LIBRARIES, Constants.Configurations.MINECRAFT_CLIENT_RUNTIME_LIBRARIES);
-		extendsFrom(Constants.Configurations.MINECRAFT_TEST_CLIENT_RUNTIME_LIBRARIES, Constants.Configurations.LOADER_DEPENDENCIES);
+		register(Constants.Configurations.ZOMBOID_TEST_CLIENT_RUNTIME_LIBRARIES, Role.RESOLVABLE);
+		extendsFrom(Constants.Configurations.ZOMBOID_TEST_CLIENT_RUNTIME_LIBRARIES, Constants.Configurations.ZOMBOID_NATIVES);
+		extendsFrom(Constants.Configurations.ZOMBOID_TEST_CLIENT_RUNTIME_LIBRARIES, Constants.Configurations.ZOMBOID_CLIENT_RUNTIME_LIBRARIES);
+		extendsFrom(Constants.Configurations.ZOMBOID_TEST_CLIENT_RUNTIME_LIBRARIES, Constants.Configurations.LOADER_DEPENDENCIES);
 
 		register(Constants.Configurations.PRODUCTION_RUNTIME_MODS, Role.RESOLVABLE);
 	}

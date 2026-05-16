@@ -54,13 +54,13 @@ public abstract class GenerateRemapClasspathTask extends AbstractLoomTask {
 	public GenerateRemapClasspathTask() {
 		final ConfigurationContainer configurations = getProject().getConfigurations();
 
-		getRemapClasspath().from(configurations.named(Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES));
+		getRemapClasspath().from(configurations.named(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
 		getExtension().getRuntimeRemapConfigurations().stream()
 				.map(RemapConfigurationSettings::getName)
 				.map(configurations::named)
 				.forEach(getRemapClasspath()::from);
 
-		for (Path minecraftJar : getExtension().getMinecraftJars(MappingsNamespace.INTERMEDIARY)) {
+		for (Path minecraftJar : getExtension().getZomboidJars(MappingsNamespace.INTERMEDIARY)) {
 			getRemapClasspath().from(minecraftJar.toFile());
 		}
 

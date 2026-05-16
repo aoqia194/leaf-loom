@@ -37,7 +37,7 @@ import net.fabricmc.tinyremapper.TinyRemapper;
 public record ProcessorContextImpl(ConfigContext configContext, ZomboidJar minecraftJar) implements ProcessorContext {
 	@Override
 	public ZomboidJarConfiguration getJarConfiguration() {
-		return configContext.extension().getMinecraftJarConfiguration().get();
+		return configContext.extension().getZomboidJarConfiguration().get();
 	}
 
 	@Override

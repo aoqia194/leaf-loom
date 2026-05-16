@@ -36,19 +36,13 @@ import dev.aoqia.leaf.loom.util.Platform;
 
 @SuppressWarnings("unused")
 public record ZomboidVersionMeta(
-		Object arguments,
 		AssetIndex assetIndex,
-		String assets,
-		int complianceLevel,
 		Map<String, Download> downloads,
 		String id,
 		List<Library> libraries,
-		Object logging,
 		String mainClass,
-		int minimumLauncherVersion,
 		String releaseTime,
 		String time,
-		String type,
 		@Nullable JavaVersion javaVersion
 ) {
 	private static Map<Platform.OperatingSystem, String> OS_NAMES = Map.of(
@@ -57,20 +51,15 @@ public record ZomboidVersionMeta(
 			Platform.OperatingSystem.LINUX, "linux"
 	);
 
-	public Download download(String key) {
-		return downloads().get(key);
-	}
-
 	public boolean isVersionOrNewer(String releaseTime) {
 		return this.releaseTime().compareTo(releaseTime) >= 0;
 	}
 
 	/**
-	 * Returns true if the version was released before 1.3.
-	 * This means that the client and server can't be merged normally due to different obfuscation
-	 * or one of the environments missing.
+	 * Returns true if the version was released before 41.78.*
 	 */
 	public boolean isLegacyVersion() {
+        // TODO(leaf): Change to 41.78.*
 		return !isVersionOrNewer(Constants.RELEASE_TIME_1_3);
 	}
 
@@ -97,11 +86,12 @@ public record ZomboidVersionMeta(
 	}
 
 	public boolean hasNativesToExtract() {
-		return libraries.stream().anyMatch(Library::hasNatives);
+//		return libraries.stream().anyMatch(Library::hasNatives);
+        return false;
 	}
 
 	public record AssetIndex(String id, long totalSize, String path, String sha1, long size, String url) {
-		public String fabricId(String version) {
+		public String leafId(String version) {
 			return id.equals(version) ? version : version + "-" + id;
 		}
 	}

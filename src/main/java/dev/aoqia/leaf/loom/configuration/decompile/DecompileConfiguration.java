@@ -35,13 +35,13 @@ public abstract class DecompileConfiguration<T extends MappedZomboidProvider> {
 	static final String DEFAULT_DECOMPILER = "Vineflower";
 
 	protected final Project project;
-	protected final T minecraftProvider;
+	protected final T zomboidProvider;
 	protected final LoomGradleExtension extension;
 	protected final MappingConfiguration mappingConfiguration;
 
-	public DecompileConfiguration(Project project, T minecraftProvider) {
+	public DecompileConfiguration(Project project, T zomboidProvider) {
 		this.project = project;
-		this.minecraftProvider = minecraftProvider;
+		this.zomboidProvider = zomboidProvider;
 		this.extension = LoomGradleExtension.get(project);
 		this.mappingConfiguration = extension.getMappingConfiguration();
 	}

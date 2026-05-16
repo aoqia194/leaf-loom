@@ -56,24 +56,21 @@ public final class ZomboidMetadataProvider {
 	}
 
 	public static ZomboidMetadataProvider create(ConfigContext configContext) {
-		final String minecraftVersion = resolveMinecraftVersion(configContext.project());
+		final String version = resolveZomboidVersion(configContext.project());
 
 		return new ZomboidMetadataProvider(
-				ZomboidMetadataProvider.Options.create(
-						minecraftVersion,
-						configContext.project()
-				),
-				configContext.extension()::download
+            ZomboidMetadataProvider.Options.create(version, configContext.project()),
+            configContext.extension()::download
 		);
 	}
 
-	private static String resolveMinecraftVersion(Project project) {
-		final DependencyInfo dependency = DependencyInfo.create(project, Constants.Configurations.MINECRAFT);
+	private static String resolveZomboidVersion(Project project) {
+		final DependencyInfo dependency = DependencyInfo.create(project, Constants.Configurations.ZOMBOID);
 		return dependency.getDependency().getVersion();
 	}
 
-	public String getMinecraftVersion() {
-		return options.minecraftVersion();
+	public String getZomboidVersion() {
+		return options.zomboidVersion();
 	}
 
 	public ZomboidVersionMeta getVersionMeta() {
@@ -96,7 +93,7 @@ public final class ZomboidMetadataProvider {
 		// Custom URL always takes priority
 		if (options.customManifestUrl() != null) {
 			VersionsManifest.Version customVersion = new VersionsManifest.Version();
-			customVersion.id = options.minecraftVersion();
+			customVersion.id = options.zomboidVersion();
 			customVersion.url = options.customManifestUrl();
 			return new ManifestEntryLocation(null, customVersion);
 		}
@@ -121,7 +118,7 @@ public final class ZomboidMetadataProvider {
 			}
 		}
 
-		throw new RuntimeException("Failed to find minecraft version: " + options.minecraftVersion());
+		throw new RuntimeException("Failed to find Zomboid version: " + options.zomboidVersion());
 	}
 
 	private ManifestEntryLocation getManifestEntry(ManifestLocation location, boolean forceDownload) throws IOException {
@@ -136,7 +133,7 @@ public final class ZomboidMetadataProvider {
 		final Path cacheFile = location.cacheFile(options.userCache());
 		final String versionManifest = builder.downloadString(cacheFile);
 		final VersionsManifest manifest = LoomGradlePlugin.GSON.fromJson(versionManifest, VersionsManifest.class);
-		final VersionsManifest.Version version = manifest.getVersion(options.minecraftVersion());
+		final VersionsManifest.Version version = manifest.getVersion(options.zomboidVersion());
 
 		if (version != null) {
 			return new ManifestEntryLocation(location, version);
@@ -163,28 +160,28 @@ public final class ZomboidMetadataProvider {
 	private String getVersionMetaFileName() {
 		// custom version metadata
 		if (versionEntry.manifest == null) {
-			return "minecraft_info_" + Integer.toHexString(versionEntry.entry.url.hashCode()) + ".json";
+			return "zomboid_info_" + Integer.toHexString(versionEntry.entry.url.hashCode()) + ".json";
 		}
 
 		// metadata url taken from versions manifest
-		return versionEntry.manifest.name() + "_minecraft_info.json";
+		return versionEntry.manifest.name() + "_zomboid_info.json";
 	}
 
-	public record Options(String minecraftVersion,
+	public record Options(String zomboidVersion,
 					ManifestLocations versionsManifests,
 					@Nullable String customManifestUrl,
 					Path userCache,
 					Path workingDir) {
-		public static Options create(String minecraftVersion, Project project) {
+		public static Options create(String version, Project project) {
 			final LoomGradleExtension extension = LoomGradleExtension.get(project);
 			final Path userCache = extension.getFiles().getUserCache().toPath();
-			final Path workingDir = ZomboidProvider.minecraftWorkingDirectory(project, minecraftVersion).toPath();
+			final Path workingDir = ZomboidProvider.zomboidWorkingDirectory(project, version).toPath();
 
 			final ManifestLocations manifestLocations = extension.getVersionsManifests();
-			final Property<String> customMetaUrl = extension.getCustomMinecraftMetadata();
+			final Property<String> customMetaUrl = extension.getCustomZomboidMetadata();
 
 			return new Options(
-					minecraftVersion,
+					version,
 					manifestLocations,
 					customMetaUrl.getOrNull(),
 					userCache,

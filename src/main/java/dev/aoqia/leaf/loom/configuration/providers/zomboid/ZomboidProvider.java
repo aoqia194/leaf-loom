@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import dev.aoqia.leaf.loom.util.MirrorUtil;
+
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Nullable;
@@ -55,13 +57,8 @@ public abstract class ZomboidProvider {
 
 	private final ZomboidMetadataProvider metadataProvider;
 
-	private File minecraftClientJar;
-	// Note this will be the boostrap jar starting with 21w39a
-	private File minecraftServerJar;
-	// The extracted server jar from the boostrap, only exists in >=21w39a
-	private File minecraftExtractedServerJar;
-	@Nullable
-	private BundleMetadata serverBundleMetadata;
+	private File zomboidClientJar;
+	private File zomboidServerJar;
 
 	private final ConfigContext configContext;
 
@@ -88,23 +85,18 @@ public abstract class ZomboidProvider {
 			final JavaVersion requiredJavaVersion = JavaVersion.toVersion(requiredMajorJavaVersion);
 
 			if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
-				throw new IllegalStateException("Minecraft " + minecraftVersion() + " requires Java " + requiredJavaVersion + " but Gradle is using " + JavaVersion.current());
+				throw new IllegalStateException("Zomboid %s requires Java %s but Gradle is using %s"
+                    .formatted(zomboidVersion(), requiredJavaVersion, JavaVersion.current()));
 			}
 		}
 
-		boolean didDownload = downloadJars();
+        setup(getProject());
 
-		if (provideServer()) {
-			serverBundleMetadata = BundleMetadata.fromJar(minecraftServerJar.toPath());
-
-			if (serverBundleMetadata != null) {
-				extractBundledServerJar();
-			}
-		}
-
-		if (didDownload) {
-			verifyJars();
-		}
+        if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DISABLE_GAME_VERIFICATION)) {
+            LOGGER.info("Skipping game verification!");
+        } else {
+            verifyFiles();
+        }
 
 		final ZomboidLibraryProvider libraryProvider = new ZomboidLibraryProvider(this, configContext.project());
 		libraryProvider.provide();
@@ -112,97 +104,50 @@ public abstract class ZomboidProvider {
 
 	protected void initFiles() {
 		if (provideClient()) {
-			minecraftClientJar = file("minecraft-client.jar");
+			zomboidClientJar = file("zomboid-client.jar");
 		}
 
 		if (provideServer()) {
-			minecraftServerJar = file("minecraft-server.jar");
-			minecraftExtractedServerJar = file("minecraft-extracted_server.jar");
+			zomboidServerJar = file("zomboid-server.jar");
 		}
 	}
 
+    private void setup(Project project) {
+//        if (provideClient()) {
+//            // Add discovered files to compile libraries (which also adds to runtime)
+//            final Path gameInstallPath = MirrorUtil.getClientGamePath(project);
+//            project.getDependencies().add(Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES,
+//                project.files(libsPath));
+//        }
+    }
+
+    private void verifyFiles() {
+
+    }
+
 	private void verifyJars() throws IOException, SignatureVerificationFailure {
-		if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DISABLE_MINECRAFT_VERIFICATION)) {
-			LOGGER.info("Skipping Minecraft jar verification!");
+		if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DISABLE_GAME_VERIFICATION)) {
+			LOGGER.info("Skipping game jar verification!");
 			return;
 		}
 
-		LOGGER.info("Verifying Minecraft jars");
+		LOGGER.info("Verifying Zomboid jars");
 
-		ZomboidJarVerification verification = getProject().getObjects().newInstance(ZomboidJarVerification.class, minecraftVersion());
+		ZomboidJarVerification verification = getProject().getObjects().newInstance(ZomboidJarVerification.class, zomboidVersion());
 
 		if (provideClient()) {
-			verification.verifyClientJar(minecraftClientJar.toPath());
+			verification.verifyClientJar(zomboidClientJar.toPath());
 		}
 
 		if (provideServer()) {
-			if (serverBundleMetadata == null) {
-				verification.verifyServerJar(minecraftServerJar.toPath());
-			} else {
-				verification.verifyServerJar(getMinecraftExtractedServerJar().toPath());
-			}
+            verification.verifyServerJar(zomboidServerJar.toPath());
 		}
 
 		LOGGER.info("Jar verification complete");
 	}
 
-	// Returns true when a file was downloaded
-	private boolean downloadJars() throws IOException {
-		AtomicBoolean didDownload = new AtomicBoolean(false);
-
-		try (ProgressGroup progressGroup = new ProgressGroup(getProject(), "Download Minecraft jars");
-				DownloadExecutor executor = new DownloadExecutor(2)) {
-			if (provideClient()) {
-				final ZomboidVersionMeta.Download client = getVersionInfo().download("client");
-				getExtension().download(client.url())
-						.sha1(client.sha1())
-						.progress(new GradleDownloadProgressListener("Minecraft client", progressGroup::createProgressLogger))
-						.downloadPathAsync(minecraftClientJar.toPath(), executor)
-						.thenAccept(downloadResult -> {
-							if (downloadResult.didDownload()) {
-								didDownload.set(true);
-							}
-						});
-			}
-
-			if (provideServer()) {
-				final ZomboidVersionMeta.Download server = getVersionInfo().download("server");
-				getExtension().download(server.url())
-						.sha1(server.sha1())
-						.progress(new GradleDownloadProgressListener("Minecraft server", progressGroup::createProgressLogger))
-						.downloadPathAsync(minecraftServerJar.toPath(), executor)
-						.thenAccept(downloadResult -> {
-							if (downloadResult.didDownload()) {
-								didDownload.set(true);
-							}
-						});
-			}
-		}
-
-		if (didDownload.get()) {
-			LOGGER.info("Downloaded new Minecraft jars");
-			return true;
-		}
-
-		LOGGER.info("Using cached Minecraft jars");
-		return false;
-	}
-
-	private void extractBundledServerJar() throws IOException {
-		Check.require(provideServer(), "Not configured to provide server jar");
-		Objects.requireNonNull(getServerBundleMetadata(), "Cannot bundled mc jar from none bundled server jar");
-
-		LOGGER.info(":Extracting server jar from bootstrap");
-
-		if (getServerBundleMetadata().versions().size() != 1) {
-			throw new UnsupportedOperationException("Expected only 1 version in META-INF/versions.list, but got %d".formatted(getServerBundleMetadata().versions().size()));
-		}
-
-		getServerBundleMetadata().versions().get(0).unpackEntry(minecraftServerJar.toPath(), getMinecraftExtractedServerJar().toPath(), configContext.project());
-	}
-
 	public File workingDir() {
-		return minecraftWorkingDirectory(configContext.project(), minecraftVersion());
+		return zomboidWorkingDirectory(configContext.project(), zomboidVersion());
 	}
 
 	public File dir(String path) {
@@ -219,26 +164,19 @@ public abstract class ZomboidProvider {
 		return file(path).toPath();
 	}
 
-	public File getMinecraftClientJar() {
+	public File getZomboidClientJar() {
 		Check.require(provideClient(), "Not configured to provide client jar");
-		return minecraftClientJar;
-	}
-
-	// May be null on older versions
-	@Nullable
-	public File getMinecraftExtractedServerJar() {
-		Check.require(provideServer(), "Not configured to provide server jar");
-		return minecraftExtractedServerJar;
+		return zomboidClientJar;
 	}
 
 	// This may be the server bundler jar on newer versions prob not what you want.
-	public File getMinecraftServerJar() {
+	public File getZomboidServerJar() {
 		Check.require(provideServer(), "Not configured to provide server jar");
-		return minecraftServerJar;
+		return zomboidServerJar;
 	}
 
-	public String minecraftVersion() {
-		return Objects.requireNonNull(metadataProvider, "Metadata provider not setup").getMinecraftVersion();
+	public String zomboidVersion() {
+		return Objects.requireNonNull(metadataProvider, "Metadata provider not setup").getZomboidVersion();
 	}
 
 	public ZomboidVersionMeta getVersionInfo() {
@@ -246,7 +184,7 @@ public abstract class ZomboidProvider {
 	}
 
 	/**
-	 * @return true if the minecraft version is older than 1.3.
+	 * @return true if the game version is older than 41.78.*
 	 */
 	public boolean isLegacyVersion() {
 		return getVersionInfo().isLegacyVersion();
@@ -260,12 +198,7 @@ public abstract class ZomboidProvider {
 		return getVersionInfo().isLegacySplitOfficialNamespaceVersion();
 	}
 
-	@Nullable
-	public BundleMetadata getServerBundleMetadata() {
-		return serverBundleMetadata;
-	}
-
-	public abstract List<Path> getMinecraftJars();
+	public abstract List<Path> getZomboidJars();
 
 	public abstract MappingsNamespace getOfficialNamespace();
 
@@ -281,7 +214,7 @@ public abstract class ZomboidProvider {
 		return getExtension().refreshDeps();
 	}
 
-	public static File minecraftWorkingDirectory(Project project, String version) {
+	public static File zomboidWorkingDirectory(Project project, String version) {
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
 		File workingDir = new File(extension.getFiles().getUserCache(), version);
 		workingDir.mkdirs();

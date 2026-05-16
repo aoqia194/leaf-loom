@@ -39,12 +39,12 @@ import dev.aoqia.leaf.loom.LoomGradleExtension;
 
 public class LeafModJsonHelpers {
 	/**
-	 * Returns the list of mods provided by either {@link LoomGradleExtensionAPI#getFabricModJsonPath()}
+	 * Returns the list of mods provided by either {@link LoomGradleExtensionAPI#getLeafModJsonPath()}
 	 * or {@code fabric.mod.json} in main or client resources.
 	 */
 	public static List<LeafModJson> getModsInProject(Project project) {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		Provider<File> overrideFile = extension.getFabricModJsonPath().getAsFile();
+		Provider<File> overrideFile = extension.getLeafModJsonPath().getAsFile();
 
 		if (overrideFile.isPresent()) {
 			return List.of(LeafModJsonFactory.createFromFile(overrideFile.get()));

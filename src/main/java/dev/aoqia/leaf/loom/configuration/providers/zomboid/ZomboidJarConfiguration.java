@@ -43,10 +43,10 @@ public record ZomboidJarConfiguration<
 		M extends ZomboidProvider,
 		N extends NamedZomboidProvider<M>,
 		Q extends MappedZomboidProvider>(
-				MinecraftProviderFactory<M> minecraftProviderFactory,
-				IntermediaryMinecraftProviderFactory<M> intermediaryMinecraftProviderFactory,
-				NamedMinecraftProviderFactory<M> namedMinecraftProviderFactory,
-				ProcessedNamedMinecraftProviderFactory<M, N> processedNamedMinecraftProviderFactory,
+				ZomboidProviderFactory<M> zomboidProviderFactory,
+				IntermediaryZomboidProviderFactory<M> intermediaryZomboidProviderFactory,
+				NamedZomboidProviderFactory<M> namedZomboidProviderFactory,
+				ProcessedNamedZomboidProviderFactory<M, N> processedNamedZomboidProviderFactory,
 				DecompileConfigurationFactory<Q> decompileConfigurationFactory,
 				List<String> supportedEnvironments) {
 	public static final ZomboidJarConfiguration<
@@ -105,56 +105,56 @@ public record ZomboidJarConfiguration<
 				List.of("client", "server")
 			);
 
-	public ZomboidProvider createMinecraftProvider(ZomboidMetadataProvider metadataProvider, ConfigContext context) {
-		return minecraftProviderFactory.create(metadataProvider, context);
+	public ZomboidProvider createZomboidProvider(ZomboidMetadataProvider metadataProvider, ConfigContext context) {
+		return zomboidProviderFactory.create(metadataProvider, context);
 	}
 
-	public IntermediaryZomboidProvider<M> createIntermediaryMinecraftProvider(Project project) {
-		return intermediaryMinecraftProviderFactory.create(project, getMinecraftProvider(project));
+	public IntermediaryZomboidProvider<M> createIntermediaryZomboidProvider(Project project) {
+		return intermediaryZomboidProviderFactory.create(project, getZomboidProvider(project));
 	}
 
-	public NamedZomboidProvider<M> createNamedMinecraftProvider(Project project) {
-		return namedMinecraftProviderFactory.create(project, getMinecraftProvider(project));
+	public NamedZomboidProvider<M> createNamedZomboidProvider(Project project) {
+		return namedZomboidProviderFactory.create(project, getZomboidProvider(project));
 	}
 
-	public ProcessedNamedZomboidProvider<M, N> createProcessedNamedMinecraftProvider(NamedZomboidProvider<?> namedMinecraftProvider, ZomboidJarProcessorManager jarProcessorManager) {
-		return processedNamedMinecraftProviderFactory.create((N) namedMinecraftProvider, jarProcessorManager);
+	public ProcessedNamedZomboidProvider<M, N> createProcessedNamedZomboidProvider(NamedZomboidProvider<?> provider, ZomboidJarProcessorManager jarProcessorManager) {
+		return processedNamedZomboidProviderFactory.create((N) provider, jarProcessorManager);
 	}
 
 	public DecompileConfiguration<Q> createDecompileConfiguration(Project project) {
-		return decompileConfigurationFactory.create(project, getMappedMinecraftProvider(project));
+		return decompileConfigurationFactory.create(project, getMappedZomboidProvider(project));
 	}
 
-	private M getMinecraftProvider(Project project) {
+	private M getZomboidProvider(Project project) {
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
 		//noinspection unchecked
-		return (M) extension.getMinecraftProvider();
+		return (M) extension.getZomboidProvider();
 	}
 
-	private Q getMappedMinecraftProvider(Project project) {
+	private Q getMappedZomboidProvider(Project project) {
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
 		//noinspection unchecked
-		return (Q) extension.getNamedMinecraftProvider();
+		return (Q) extension.getNamedZomboidProvider();
 	}
 
 	// Factory interfaces:
-	private interface MinecraftProviderFactory<M extends ZomboidProvider> {
+	private interface ZomboidProviderFactory<M extends ZomboidProvider> {
 		M create(ZomboidMetadataProvider metadataProvider, ConfigContext configContext);
 	}
 
-	private interface IntermediaryMinecraftProviderFactory<M extends ZomboidProvider> {
-		IntermediaryZomboidProvider<M> create(Project project, M minecraftProvider);
+	private interface IntermediaryZomboidProviderFactory<M extends ZomboidProvider> {
+		IntermediaryZomboidProvider<M> create(Project project, M provider);
 	}
 
-	private interface NamedMinecraftProviderFactory<M extends ZomboidProvider> {
-		NamedZomboidProvider<M> create(Project project, M minecraftProvider);
+	private interface NamedZomboidProviderFactory<M extends ZomboidProvider> {
+		NamedZomboidProvider<M> create(Project project, M provider);
 	}
 
-	private interface ProcessedNamedMinecraftProviderFactory<M extends ZomboidProvider, N extends NamedZomboidProvider<M>> {
-		ProcessedNamedZomboidProvider<M, N> create(N namedMinecraftProvider, ZomboidJarProcessorManager jarProcessorManager);
+	private interface ProcessedNamedZomboidProviderFactory<M extends ZomboidProvider, N extends NamedZomboidProvider<M>> {
+		ProcessedNamedZomboidProvider<M, N> create(N provider, ZomboidJarProcessorManager jarProcessorManager);
 	}
 
 	private interface DecompileConfigurationFactory<M extends MappedZomboidProvider> {
-		DecompileConfiguration<M> create(Project project, M minecraftProvider);
+		DecompileConfiguration<M> create(Project project, M provider);
 	}
 }

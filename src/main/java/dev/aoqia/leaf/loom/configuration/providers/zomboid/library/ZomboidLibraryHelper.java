@@ -37,7 +37,7 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.util.Platform;
 
 /**
- * Utils to get the Minecraft libraries for a given platform, no processing is applied.
+ * Utils to get the libraries for a given platform, no processing is applied.
  */
 public class ZomboidLibraryHelper {
 	private static final Pattern NATIVES_PATTERN = Pattern.compile("^(?<group>.*)/(.*?)/(?<version>.*)/((?<name>.*?)-(\\k<version>)-)(?<classifier>.*).jar$");

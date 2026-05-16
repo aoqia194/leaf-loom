@@ -38,6 +38,8 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
+import dev.aoqia.leaf.loom.util.Constants;
+
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
@@ -82,7 +84,7 @@ import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 
 public abstract class CompileConfiguration implements Runnable {
-	private static final String LOCK_PROPERTY_KEY = "fabric.loom.internal.global.lock";
+	private static final String LOCK_PROPERTY_KEY = "leaf.loom.internal.global.lock";
 
 	@Inject
 	protected abstract Project getProject();
@@ -117,23 +119,30 @@ public abstract class CompileConfiguration implements Runnable {
 				// Setting up loom across Gradle projects is not thread safe, synchronize it here to ensure that multiple projects cannot use it.
 				// There is no easy way around this, as we want to use the same global cache for downloaded or generated files.
 				synchronized (getGlobalLockObject()) {
-					setupMinecraft(configContext);
+					setupZomboid(configContext);
 				}
 
-				LoomDependencyManager dependencyManager = new LoomDependencyManager();
-				extension.setDependencyManager(dependencyManager);
-				dependencyManager.handleDependencies(getProject(), serviceFactory);
+                // NOTE(leaf): If we only want to provide jars, don't setup mixin or other tasks!
+                if (!GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
+                    LoomDependencyManager dependencyManager = new LoomDependencyManager();
+                    extension.setDependencyManager(dependencyManager);
+                    dependencyManager.handleDependencies(getProject(), serviceFactory);
+                }
 			} catch (Exception e) {
 				ExceptionUtil.processException(e, DaemonUtils.Context.fromProject(getProject()));
 				disownLock();
-				throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to setup Minecraft", e);
+				throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to setup Zomboid", e);
 			}
 
 			releaseLock();
 			extension.setRefreshDeps(previousRefreshDeps);
 
-			MixinExtension mixin = LoomGradleExtension.get(getProject()).getMixin();
+            // NOTE(leaf): If we only want to provide jars, don't setup mixin or other tasks!
+            if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
+                return;
+            }
 
+			MixinExtension mixin = LoomGradleExtension.get(getProject()).getMixin();
 			if (mixin.getUseLegacyMixinAp().get()) {
 				setupMixinAp(mixin);
 			}
@@ -155,23 +164,28 @@ public abstract class CompileConfiguration implements Runnable {
 
 		if (getProject().getPluginManager().hasPlugin("org.jetbrains.kotlin.kapt")) {
 			// If loom is applied after kapt, then kapt will use the AP arguments too early for loom to pass the arguments we need for mixin.
-			throw new IllegalArgumentException("fabric-loom must be applied BEFORE kapt in the plugins { } block.");
+			throw new IllegalArgumentException("Loom must be applied BEFORE kapt in the plugins { } block.");
 		}
 	}
 
-	private void setupMinecraft(ConfigContext configContext) throws Exception {
+	private void setupZomboid(ConfigContext configContext) throws Exception {
 		final Project project = configContext.project();
 		final LoomGradleExtension extension = configContext.extension();
 
 		final ZomboidMetadataProvider metadataProvider = ZomboidMetadataProvider.create(configContext);
 		extension.setMetadataProvider(metadataProvider);
 
-		var jarConfiguration = extension.getMinecraftJarConfiguration().get();
+		var jarConfiguration = extension.getZomboidJarConfiguration().get();
 
-		// Provide the vanilla mc jars
-		final ZomboidProvider minecraftProvider = jarConfiguration.createMinecraftProvider(metadataProvider, configContext);
-		extension.setMinecraftProvider(minecraftProvider);
-		minecraftProvider.provide();
+		// Provide the zomboid jars
+		final ZomboidProvider zomboidProvider = jarConfiguration.createZomboidProvider(metadataProvider, configContext);
+		extension.setZomboidProvider(zomboidProvider);
+		zomboidProvider.provide();
+
+        // NOTE(leaf): If we only want to provide jars, don't setup anything else!
+        if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
+            return;
+        }
 
 		// Realise the dependencies without actually resolving them, this forces any lazy providers to be created, populating the layered mapping factories.
 		project.getConfigurations().getByName(Configurations.MAPPINGS).getDependencies().toArray();
@@ -181,45 +195,45 @@ public abstract class CompileConfiguration implements Runnable {
 
 		// Resolve the mapping files from the configuration
 		final DependencyInfo mappingsDep = DependencyInfo.create(getProject(), Configurations.MAPPINGS);
-		final MappingConfiguration mappingConfiguration = MappingConfiguration.create(getProject(), configContext.serviceFactory(), mappingsDep, minecraftProvider);
+		final MappingConfiguration mappingConfiguration = MappingConfiguration.create(getProject(), configContext.serviceFactory(), mappingsDep, zomboidProvider);
 		extension.setMappingConfiguration(mappingConfiguration);
 		mappingConfiguration.applyToProject(getProject(), mappingsDep);
 
-		// Provide the remapped mc jars
-		final IntermediaryZomboidProvider<?> intermediaryMinecraftProvider = jarConfiguration.createIntermediaryMinecraftProvider(project);
-		NamedZomboidProvider<?> namedMinecraftProvider = jarConfiguration.createNamedMinecraftProvider(project);
+		// Provide the remapped jars
+		final IntermediaryZomboidProvider<?> intermediaryZomboidProvider = jarConfiguration.createIntermediaryZomboidProvider(project);
+		NamedZomboidProvider<?> namedZomboidProvider = jarConfiguration.createNamedZomboidProvider(project);
 
 		registerGameProcessors(configContext);
-		ZomboidJarProcessorManager minecraftJarProcessorManager = ZomboidJarProcessorManager.create(getProject());
+		ZomboidJarProcessorManager zomboidJarProcessorManager = ZomboidJarProcessorManager.create(getProject());
 
-		if (minecraftJarProcessorManager != null) {
+		if (zomboidJarProcessorManager != null) {
 			// Wrap the named MC provider for one that will provide the processed jars
-			namedMinecraftProvider = jarConfiguration.createProcessedNamedMinecraftProvider(namedMinecraftProvider, minecraftJarProcessorManager);
+			namedZomboidProvider = jarConfiguration.createProcessedNamedZomboidProvider(namedZomboidProvider, zomboidJarProcessorManager);
 		}
 
 		final var provideContext = new AbstractMappedZomboidProvider.ProvideContext(true, extension.refreshDeps(), configContext);
 
-		extension.setIntermediaryMinecraftProvider(intermediaryMinecraftProvider);
-		intermediaryMinecraftProvider.provide(provideContext);
+		extension.setIntermediaryZomboidProvider(intermediaryZomboidProvider);
+		intermediaryZomboidProvider.provide(provideContext);
 
-		extension.setNamedMinecraftProvider(namedMinecraftProvider);
-		namedMinecraftProvider.provide(provideContext);
+		extension.setNamedZomboidProvider(namedZomboidProvider);
+		namedZomboidProvider.provide(provideContext);
 	}
 
 	private void registerGameProcessors(ConfigContext configContext) {
 		final LoomGradleExtension extension = configContext.extension();
 
 		final boolean enableTransitiveAccessWideners = extension.getEnableTransitiveAccessWideners().get();
-		extension.addMinecraftJarProcessor(AccessWidenerJarProcessor.class, "fabric-loom:access-widener", enableTransitiveAccessWideners, extension.getAccessWidenerPath());
+		extension.addZomboidJarProcessor(AccessWidenerJarProcessor.class, "loom:access-widener", enableTransitiveAccessWideners, extension.getAccessWidenerPath());
 
 		if (extension.getEnableModProvidedJavadoc().get()) {
-			extension.addMinecraftJarProcessor(ModJavadocProcessor.class, "fabric-loom:mod-javadoc");
+			extension.addZomboidJarProcessor(ModJavadocProcessor.class, "loom:mod-javadoc");
 		}
 
 		final InterfaceInjectionExtensionAPI interfaceInjection = extension.getInterfaceInjection();
 
 		if (interfaceInjection.isEnabled()) {
-			extension.addMinecraftJarProcessor(InterfaceInjectionProcessor.class, "fabric-loom:interface-inject", interfaceInjection.getEnableDependencyInterfaceInjection().get());
+			extension.addZomboidJarProcessor(InterfaceInjectionProcessor.class, "loom:interface-inject", interfaceInjection.getEnableDependencyInterfaceInjection().get());
 		}
 	}
 
@@ -254,7 +268,7 @@ public abstract class CompileConfiguration implements Runnable {
 	private void configureDecompileTasks(ConfigContext configContext) {
 		final LoomGradleExtension extension = configContext.extension();
 
-		extension.getMinecraftJarConfiguration().get()
+		extension.getZomboidJarConfiguration().get()
 				.createDecompileConfiguration(getProject())
 				.afterEvaluation();
 	}
@@ -276,7 +290,7 @@ public abstract class CompileConfiguration implements Runnable {
 						ClasspathGroupService classpathGroupService = serviceFactory.get(options);
 
 						if (classpathGroupService.hasGroups()) {
-							test.systemProperty("fabric.classPathGroups", classpathGroupService.getClasspathGroupsPropertyValue());
+							test.systemProperty("leaf.classPathGroups", classpathGroupService.getClasspathGroupsPropertyValue());
 						}
 					} catch (IOException e) {
 						throw new UncheckedIOException("Failed to get classpath groups", e);

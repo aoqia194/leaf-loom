@@ -30,6 +30,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
+import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
@@ -78,7 +80,7 @@ public class GradleMappingContext implements MappingContext {
 	public Supplier<MemoryMappingTree> intermediaryTree() {
 		return () -> {
 			try (var serviceFactory = new ScopedServiceFactory()) {
-				IntermediateMappingsService intermediateMappingsService = serviceFactory.get(IntermediateMappingsService.createOptions(project, minecraftProvider()));
+				IntermediateMappingsService intermediateMappingsService = serviceFactory.get(IntermediateMappingsService.createOptions(project, zomboidProvider()));
 				return intermediateMappingsService.getMemoryMappingTree();
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
@@ -92,19 +94,24 @@ public class GradleMappingContext implements MappingContext {
 	}
 
 	@Override
-	public ZomboidProvider minecraftProvider() {
-		return extension.getMinecraftProvider();
+	public ZomboidProvider zomboidProvider() {
+		return extension.getZomboidProvider();
 	}
 
 	@Override
 	public Path workingDirectory(String name) {
-		return new File(minecraftProvider().dir("layered/working_dir/" + workingDirName), name).toPath();
+		return new File(zomboidProvider().dir("layered/working_dir/" + workingDirName), name).toPath();
 	}
 
 	@Override
 	public Logger getLogger() {
 		return project.getLogger();
 	}
+
+    @Override
+    public CopyGameFileBuilder copyGameFile(String url) {
+        return extension.copyGameFile(url);
+    }
 
 	@Override
 	public DownloadBuilder download(String url) {

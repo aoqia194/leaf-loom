@@ -66,6 +66,7 @@ public class RunConfig {
 	public String eclipseProjectName;
 	public String ideaModuleName;
 	public String mainClass;
+    public String workingDir;
 	public String runDirIdeaUrl;
 	public String runDir;
 	public String environment;
@@ -79,7 +80,7 @@ public class RunConfig {
 	// Turns camelCase/PascalCase into Capital Case
 	// caseConversionExample -> Case Conversion Example
 	private static String capitalizeCamelCaseName(String name) {
-		if (name.length() == 0) {
+		if (name.isEmpty()) {
 			return "";
 		}
 
@@ -88,8 +89,9 @@ public class RunConfig {
 
 	public static RunConfig runConfig(Project project, RunConfigSettings settings) {
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
-		LibraryContext context = new LibraryContext(extension.getMinecraftProvider().getVersionInfo(), JavaVersion.current());
+		LibraryContext context = new LibraryContext(extension.getZomboidProvider().getVersionInfo(), JavaVersion.current());
 
+        // TODO(leaf): Does this get properly detected???
 		if (settings.getEnvironment().equals("client") && context.usesLWJGL3()) {
 			settings.startFirstThread();
 		}
@@ -118,11 +120,12 @@ public class RunConfig {
 				configName += capitalizeCamelCaseName(srcName) + " ";
 			}
 
-			configName += "Minecraft " + capitalizeCamelCaseName(name);
+			configName += "Zomboid " + capitalizeCamelCaseName(name);
 		}
 
 		Objects.requireNonNull(environment, "No environment set for run config");
 
+        String workingDir = extension.getZomboidProvider().workingDir().toString();
 		String runDir = settings.getRunDir();
 
 		if (runDir == null) {
@@ -140,9 +143,18 @@ public class RunConfig {
 		runConfig.mainClass = settings.devLaunchMainClass().get();
 		runConfig.vmArgs.add("-Dfabric.dli.config=" + encodeEscaped(extension.getFiles().getDevLauncherConfig().getAbsolutePath()));
 		runConfig.vmArgs.add("-Dfabric.dli.env=" + environment.toLowerCase());
+
+        // Let the loader find the project's runDir
+        runConfig.vmArgs.add("-Dleaf.runDir=" + runDir);
+        // To prevent the log file from creating in workingDir
+        runConfig.vmArgs.add("-Dleaf.log.file=" + Path.of(runDir).resolve("leafloader.log"));
+        // Tell java where to look for game natives and libs.
+        runConfig.vmArgs.add("-Djava.library.path=" + workingDir);
+
 		runConfig.eclipseProjectName = project.getExtensions().getByType(EclipseModel.class).getProject().getName();
 		runConfig.ideaModuleName = IdeaUtils.getIdeaModuleName(new SourceSetReference(sourceSet, project));
-		runConfig.runDirIdeaUrl = "file://$PROJECT_DIR$/" + runDir;
+		runConfig.runDirIdeaUrl = "file://" + workingDir;
+        runConfig.workingDir = workingDir;
 		runConfig.runDir = runDir;
 		runConfig.sourceSet = sourceSet;
 		runConfig.environment = environment;
@@ -253,15 +265,8 @@ public class RunConfig {
 			return Collections.emptyList();
 		}
 
-		final BundleMetadata bundleMetadata = LoomGradleExtension.get(project).getMinecraftProvider().getServerBundleMetadata();
-
-		if (bundleMetadata == null) {
-			// Legacy version
-			return Collections.emptyList();
-		}
-
-		final Set<ResolvedArtifact> clientLibraries = getArtifacts(project, Constants.Configurations.MINECRAFT_CLIENT_RUNTIME_LIBRARIES);
-		final Set<ResolvedArtifact> serverLibraries = getArtifacts(project, Constants.Configurations.MINECRAFT_SERVER_RUNTIME_LIBRARIES);
+		final Set<ResolvedArtifact> clientLibraries = getArtifacts(project, Constants.Configurations.ZOMBOID_CLIENT_RUNTIME_LIBRARIES);
+		final Set<ResolvedArtifact> serverLibraries = getArtifacts(project, Constants.Configurations.ZOMBOID_SERVER_RUNTIME_LIBRARIES);
 		final List<String> clientOnlyLibraries = new LinkedList<>();
 
 		for (ResolvedArtifact library : clientLibraries) {

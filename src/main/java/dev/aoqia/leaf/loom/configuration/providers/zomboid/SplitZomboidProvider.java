@@ -33,8 +33,8 @@ import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
 
 public final class SplitZomboidProvider extends ZomboidProvider {
-	private Path minecraftClientOnlyJar;
-	private Path minecraftCommonJar;
+	private Path zomboidClientOnlyJar;
+	private Path zomboidCommonJar;
 
 	public SplitZomboidProvider(ZomboidMetadataProvider metadataProvider, ConfigContext configContext) {
 		super(metadataProvider, configContext);
@@ -44,13 +44,13 @@ public final class SplitZomboidProvider extends ZomboidProvider {
 	protected void initFiles() {
 		super.initFiles();
 
-		minecraftClientOnlyJar = path("minecraft-client-only.jar");
-		minecraftCommonJar = path("minecraft-common.jar");
+		zomboidClientOnlyJar = path("zomboid-client-only.jar");
+		zomboidCommonJar = path("zomboid-common.jar");
 	}
 
 	@Override
-	public List<Path> getMinecraftJars() {
-		return List.of(minecraftClientOnlyJar, minecraftCommonJar);
+	public List<Path> getZomboidJars() {
+		return List.of(zomboidClientOnlyJar, zomboidCommonJar);
 	}
 
 	@Override
@@ -62,41 +62,34 @@ public final class SplitZomboidProvider extends ZomboidProvider {
 	public void provide() throws Exception {
 		super.provide();
 
-		boolean requiresRefresh = getExtension().refreshDeps() || Files.notExists(minecraftClientOnlyJar) || Files.notExists(minecraftCommonJar);
+		boolean requiresRefresh = getExtension().refreshDeps() || Files.notExists(zomboidClientOnlyJar) || Files.notExists(zomboidCommonJar);
 
 		if (!requiresRefresh) {
 			return;
 		}
 
-		BundleMetadata serverBundleMetadata = getServerBundleMetadata();
+        // NOTE(leaf): this is all commented out because idk if we can even provide split jar provider for the client
+        throw new UnsupportedOperationException("Only PZ versions using a bundled server jar can be split, please use a merged jar setup for this version of zomboid");
 
-		if (serverBundleMetadata == null) {
-			throw new UnsupportedOperationException("Only Minecraft versions using a bundled server jar can be split, please use a merged jar setup for this version of minecraft");
-		}
-
-		final Path clientJar = getMinecraftClientJar().toPath();
-		final Path serverJar = getMinecraftExtractedServerJar().toPath();
-
-		try (ZomboidJarSplitter jarSplitter = new ZomboidJarSplitter(clientJar, serverJar)) {
-			// Required for loader to compute the version info also useful to have in both jars.
-			jarSplitter.sharedEntry("version.json");
-			jarSplitter.sharedEntry("assets/.mcassetsroot");
-			jarSplitter.sharedEntry("assets/minecraft/lang/en_us.json");
-
-			jarSplitter.split(minecraftClientOnlyJar, minecraftCommonJar);
-		} catch (Exception e) {
-			Files.deleteIfExists(minecraftClientOnlyJar);
-			Files.deleteIfExists(minecraftCommonJar);
-
-			throw new RuntimeException("Failed to split minecraft", e);
-		}
+//		final Path clientJar = getZomboidClientJar().toPath();
+//		final Path serverJar = getZomboidServerJar().toPath();
+//
+//		try (ZomboidJarSplitter jarSplitter = new ZomboidJarSplitter(clientJar, serverJar)) {
+//            // NOTE(leaf): Removed keeping files that store game version here
+//			jarSplitter.split(zomboidClientOnlyJar, zomboidCommonJar);
+//		} catch (Exception e) {
+//			Files.deleteIfExists(zomboidClientOnlyJar);
+//			Files.deleteIfExists(zomboidCommonJar);
+//
+//			throw new RuntimeException("Failed to split zomboid", e);
+//		}
 	}
 
-	public Path getMinecraftClientOnlyJar() {
-		return minecraftClientOnlyJar;
+	public Path getZomboidClientOnlyJar() {
+		return zomboidClientOnlyJar;
 	}
 
-	public Path getMinecraftCommonJar() {
-		return minecraftCommonJar;
+	public Path getZomboidCommonJar() {
+		return zomboidCommonJar;
 	}
 }

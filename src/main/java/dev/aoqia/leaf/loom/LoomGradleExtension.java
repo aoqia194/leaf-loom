@@ -28,6 +28,8 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
+import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
+
 import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
@@ -73,31 +75,31 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 
 	void setMetadataProvider(ZomboidMetadataProvider metadataProvider);
 
-	ZomboidProvider getMinecraftProvider();
+	ZomboidProvider getZomboidProvider();
 
-	void setMinecraftProvider(ZomboidProvider minecraftProvider);
+	void setZomboidProvider(ZomboidProvider zomboidProvider);
 
 	MappingConfiguration getMappingConfiguration();
 
 	void setMappingConfiguration(MappingConfiguration mappingConfiguration);
 
-	NamedZomboidProvider<?> getNamedMinecraftProvider();
+	NamedZomboidProvider<?> getNamedZomboidProvider();
 
-	IntermediaryZomboidProvider<?> getIntermediaryMinecraftProvider();
+	IntermediaryZomboidProvider<?> getIntermediaryZomboidProvider();
 
-	void setNamedMinecraftProvider(NamedZomboidProvider<?> namedMinecraftProvider);
+	void setNamedZomboidProvider(NamedZomboidProvider<?> provider);
 
-	void setIntermediaryMinecraftProvider(IntermediaryZomboidProvider<?> intermediaryMinecraftProvider);
+	void setIntermediaryZomboidProvider(IntermediaryZomboidProvider<?> provider);
 
-	default List<Path> getMinecraftJars(MappingsNamespace mappingsNamespace) {
+	default List<Path> getZomboidJars(MappingsNamespace mappingsNamespace) {
 		return switch (mappingsNamespace) {
-		case NAMED -> getNamedMinecraftProvider().getMinecraftJarPaths();
-		case INTERMEDIARY -> getIntermediaryMinecraftProvider().getMinecraftJarPaths();
-		case OFFICIAL, CLIENT_OFFICIAL, SERVER_OFFICIAL -> getMinecraftProvider().getMinecraftJars();
+		case NAMED -> getNamedZomboidProvider().getZomboidJarPaths();
+		case INTERMEDIARY -> getIntermediaryZomboidProvider().getZomboidJarPaths();
+		case OFFICIAL, CLIENT_OFFICIAL, SERVER_OFFICIAL -> getZomboidProvider().getZomboidJars();
 		};
 	}
 
-	FileCollection getMinecraftJarsCollection(MappingsNamespace mappingsNamespace);
+	FileCollection getZomboidJarsCollection(MappingsNamespace mappingsNamespace);
 
 	@Override
 	MixinExtension getMixin();
@@ -107,6 +109,8 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 	void addTransitiveAccessWideners(List<AccessWidenerFile> accessWidenerFiles);
 
 	DownloadBuilder download(String url);
+
+	CopyGameFileBuilder copyGameFile(String path);
 
 	boolean refreshDeps();
 

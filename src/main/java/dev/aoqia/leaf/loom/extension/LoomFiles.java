@@ -47,7 +47,7 @@ public interface LoomFiles {
 	File getDefaultLog4jConfigFile();
 	File getDevLauncherConfig();
 	File getRemapClasspathFile();
-	File getGlobalMinecraftRepo();
-	File getLocalMinecraftRepo();
+	File getGlobalZomboidRepo();
+	File getLocalZomboidRepo();
 	File getDecompileCache(String version);
 }

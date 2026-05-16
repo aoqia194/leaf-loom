@@ -118,7 +118,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 	protected abstract ConfigurableFileCollection getClasspath();
 
 	@InputFiles
-	protected abstract ConfigurableFileCollection getMinecraftCompileLibraries();
+	protected abstract ConfigurableFileCollection getZomboidCompileLibraries();
 
 	@OutputFile
 	public abstract RegularFileProperty getSourcesOutputJar();
@@ -183,39 +183,39 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 	public GenerateSourcesTask(DecompilerOptions decompilerOptions) {
 		this.decompilerOptions = decompilerOptions;
 
-		getClassesInputJar().setFrom(getInputJarName().map(minecraftJarName -> {
-			final List<ZomboidJar> minecraftJars = getExtension().getNamedMinecraftProvider().getMinecraftJars();
+		getClassesInputJar().setFrom(getInputJarName().map(zomboidJarName -> {
+			final List<ZomboidJar> zomboidJars = getExtension().getNamedZomboidProvider().getZomboidJars();
 
-			for (ZomboidJar minecraftJar : minecraftJars) {
-				if (minecraftJar.getName().equals(minecraftJarName)) {
-					final Path backupJarPath = AbstractMappedZomboidProvider.getBackupJarPath(minecraftJar);
+			for (ZomboidJar zomboidJar : zomboidJars) {
+				if (zomboidJar.getName().equals(zomboidJarName)) {
+					final Path backupJarPath = AbstractMappedZomboidProvider.getBackupJarPath(zomboidJar);
 
 					if (Files.notExists(backupJarPath)) {
-						throw new IllegalStateException("Input minecraft jar not found at: " + backupJarPath);
+						throw new IllegalStateException("Input game jar not found at: " + backupJarPath);
 					}
 
 					return backupJarPath.toFile();
 				}
 			}
 
-			throw new IllegalStateException("Input minecraft jar not found: " + getInputJarName().get());
+			throw new IllegalStateException("Input zomboid jar not found: " + getInputJarName().get());
 		}));
-		getClassesOutputJar().setFrom(getInputJarName().map(minecraftJarName -> {
-			final List<ZomboidJar> minecraftJars = getExtension().getNamedMinecraftProvider().getMinecraftJars();
+		getClassesOutputJar().setFrom(getInputJarName().map(zomobidJarName -> {
+			final List<ZomboidJar> zomboidJars = getExtension().getNamedZomboidProvider().getZomboidJars();
 
-			for (ZomboidJar minecraftJar : minecraftJars) {
-				if (minecraftJar.getName().equals(minecraftJarName)) {
-					return minecraftJar.toFile();
+			for (ZomboidJar zomboidJar : zomboidJars) {
+				if (zomboidJar.getName().equals(zomobidJarName)) {
+					return zomboidJar.toFile();
 				}
 			}
 
-			throw new IllegalStateException("Input minecraft jar not found: " + getInputJarName().get());
+			throw new IllegalStateException("Input zomboid jar not found: " + getInputJarName().get());
 		}));
 
 		getClasspath().from(decompilerOptions.getClasspath()).finalizeValueOnRead();
 		dependsOn(decompilerOptions.getClasspath().getBuiltBy());
 
-		getMinecraftCompileLibraries().from(getProject().getConfigurations().getByName(Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES));
+		getZomboidCompileLibraries().from(getProject().getConfigurations().getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
 		getDecompileCacheFile().set(getExtension().getFiles().getDecompileCache(CACHE_VERSION));
 
 		getUseCache().convention(true);
@@ -448,7 +448,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 		final Path ipcPath = Files.createTempFile("loom", "ipc");
 		Files.deleteIfExists(ipcPath);
 
-		try (ThreadedProgressLoggerConsumer loggerConsumer = new ThreadedProgressLoggerConsumer(getLogger(), getProgressLoggerFactory(), decompilerOptions.getName(), "Decompiling minecraft sources");
+		try (ThreadedProgressLoggerConsumer loggerConsumer = new ThreadedProgressLoggerConsumer(getLogger(), getProgressLoggerFactory(), decompilerOptions.getName(), "Decompiling PZ sources");
 				IPCServer logReceiver = new IPCServer(ipcPath, loggerConsumer)) {
 			doWork(logReceiver, inputJar, outputJar, lineMapFile, existingJar);
 		} catch (InterruptedException e) {
@@ -490,7 +490,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 				params.getIPCPath().set(ipcServer.getPath().toFile());
 			}
 
-			params.getClassPath().setFrom(getMinecraftCompileLibraries());
+			params.getClassPath().setFrom(getZomboidCompileLibraries());
 
 			if (existingClasses != null) {
 				params.getClassPath().from(existingClasses);
@@ -529,7 +529,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
 	private boolean useProcessIsolation() {
 		// Useful if you want to debug the decompiler, make sure you run gradle with enough memory.
-		return !Boolean.getBoolean("fabric.loom.genSources.debug");
+		return !Boolean.getBoolean("leaf.loom.genSources.debug");
 	}
 
 	private boolean usingUnpick() {

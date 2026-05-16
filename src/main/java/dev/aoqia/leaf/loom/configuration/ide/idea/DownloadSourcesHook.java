@@ -115,7 +115,7 @@ record DownloadSourcesHook(Project project, Task task) {
 
 	private String getGenSourcesTaskName(ZomboidJar.Type jarType) {
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
-		return extension.getMinecraftJarConfiguration().get()
+		return extension.getZomboidJarConfiguration().get()
 				.createDecompileConfiguration(project)
 				.getTaskName(jarType);
 	}
@@ -124,7 +124,7 @@ record DownloadSourcesHook(Project project, Task task) {
 	@Nullable
 	private ZomboidJar.Type getJarType(String name) {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		final NamedZomboidProvider<?> minecraftProvider = extension.getNamedMinecraftProvider();
+		final NamedZomboidProvider<?> minecraftProvider = extension.getNamedZomboidProvider();
 		final List<ZomboidJar.Type> dependencyTypes = minecraftProvider.getDependencyTypes();
 
 		if (dependencyTypes.isEmpty()) {

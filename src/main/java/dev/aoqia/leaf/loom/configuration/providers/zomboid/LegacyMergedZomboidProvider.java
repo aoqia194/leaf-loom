@@ -44,15 +44,15 @@ public final class LegacyMergedZomboidProvider extends ZomboidProvider {
 		clientMinecraftProvider = SingleJarZomboidProvider.client(metadataProvider, configContext);
 
 		if (!isLegacyVersion()) {
-			throw new RuntimeException("something has gone wrong - legacy-merged jar configuration selected but Minecraft " + metadataProvider.getMinecraftVersion() + " allows merging the obfuscated jars - the merged jar configuration should have been selected!");
+			throw new RuntimeException("something has gone wrong - legacy-merged jar configuration selected but Minecraft " + metadataProvider.getZomboidVersion() + " allows merging the obfuscated jars - the merged jar configuration should have been selected!");
 		}
 	}
 
-	public SingleJarZomboidProvider.Server getServerMinecraftProvider() {
+	public SingleJarZomboidProvider.Server getServerZomboidProvider() {
 		return serverMinecraftProvider;
 	}
 
-	public SingleJarZomboidProvider.Client getClientMinecraftProvider() {
+	public SingleJarZomboidProvider.Client getClientZomboidProvider() {
 		return clientMinecraftProvider;
 	}
 
@@ -67,10 +67,10 @@ public final class LegacyMergedZomboidProvider extends ZomboidProvider {
 	}
 
 	@Override
-	public List<Path> getMinecraftJars() {
+	public List<Path> getZomboidJars() {
 		return List.of(
-			serverMinecraftProvider.getMinecraftEnvOnlyJar(),
-			clientMinecraftProvider.getMinecraftEnvOnlyJar()
+			serverMinecraftProvider.getZomboidEnvOnlyJar(),
+			clientMinecraftProvider.getZomboidEnvOnlyJar()
 		);
 	}
 

@@ -34,8 +34,6 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.ArmNativesLibraryProcessor;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LWJGL2MavenLibraryProcessor;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LWJGL3UpgradeLibraryProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LegacyASMLibraryProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.LoomNativeSupportLibraryProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.ObjcBridgeUpgradeLibraryProcessor;
@@ -49,8 +47,6 @@ public class LibraryProcessorManager {
 			RiscVNativesLibraryProcessor::new,
 			LegacyASMLibraryProcessor::new,
 			LoomNativeSupportLibraryProcessor::new,
-			LWJGL2MavenLibraryProcessor::new,
-			LWJGL3UpgradeLibraryProcessor::new,
 			ObjcBridgeUpgradeLibraryProcessor::new,
 			RuntimeLog4jLibraryProcessor::new
 	);

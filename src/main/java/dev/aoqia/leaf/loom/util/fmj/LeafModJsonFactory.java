@@ -50,7 +50,7 @@ import dev.aoqia.leaf.loom.util.ZipUtils;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 public final class LeafModJsonFactory {
-	public static final String FABRIC_MOD_JSON = "fabric.mod.json";
+	public static final String LEAF_MOD_JSON = "leaf.mod.json";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LeafModJsonFactory.class);
 
@@ -70,13 +70,13 @@ public final class LeafModJsonFactory {
 		case 0 -> new LeafModJsonV0(jsonObject, source);
 		case 1 -> new LeafModJsonV1(jsonObject, source);
 		case 2 -> new LeafModJsonV2(jsonObject, source);
-		default -> throw new UnsupportedOperationException(String.format("This version of fabric-loom doesn't support the newer fabric.mod.json schema version of (%s) Please update fabric-loom to be able to read this.", schemaVersion));
+		default -> throw new UnsupportedOperationException(String.format("This version of loom doesn't support the newer leaf.mod.json schema version of (%s) Please update loom to be able to read this.", schemaVersion));
 		};
 	}
 
 	public static LeafModJson createFromZip(Path zipPath) {
 		try {
-			return create(ZipUtils.unpackGson(zipPath, FABRIC_MOD_JSON, JsonObject.class), new LeafModJsonSource.ZipSource(zipPath));
+			return create(ZipUtils.unpackGson(zipPath, LEAF_MOD_JSON, JsonObject.class), new LeafModJsonSource.ZipSource(zipPath));
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to read fabric.mod.json file in zip: " + zipPath, e);
 		} catch (JsonSyntaxException e) {
@@ -89,7 +89,7 @@ public final class LeafModJsonFactory {
 		JsonObject jsonObject;
 
 		try {
-			jsonObject = ZipUtils.unpackGsonNullable(zipPath, FABRIC_MOD_JSON, JsonObject.class);
+			jsonObject = ZipUtils.unpackGsonNullable(zipPath, LEAF_MOD_JSON, JsonObject.class);
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to read zip: " + zipPath, e);
 		} catch (JsonSyntaxException e) {
@@ -114,7 +114,7 @@ public final class LeafModJsonFactory {
 
 	@Nullable
 	public static LeafModJson createFromSourceSetsNullable(Project project, SourceSet... sourceSets) {
-		File file = SourceSetHelper.findFirstFileInResource(FABRIC_MOD_JSON, project, sourceSets);
+		File file = SourceSetHelper.findFirstFileInResource(LEAF_MOD_JSON, project, sourceSets);
 
 		if (file == null) {
 			return null;
@@ -124,7 +124,7 @@ public final class LeafModJsonFactory {
 			JsonObject modJson = readFmjJsonObject(file);
 			return create(modJson, new LeafModJsonSource.SourceSetSource(project, sourceSets));
 		} catch (JsonSyntaxException e) {
-			LOGGER.warn("Failed to parse fabric.mod.json: {}", file.getAbsolutePath());
+			LOGGER.warn("Failed to parse leaf.mod.json: {}", file.getAbsolutePath());
 			return null;
 		}
 	}
@@ -135,7 +135,7 @@ public final class LeafModJsonFactory {
 
 			if (modJson == null) {
 				// fromJson returns null if the file is empty
-				LOGGER.warn("Failed to parse empty fabric.mod.json: {}", file.getAbsolutePath());
+				LOGGER.warn("Failed to parse empty leaf.mod.json: {}", file.getAbsolutePath());
 			}
 
 			return modJson;
@@ -149,10 +149,10 @@ public final class LeafModJsonFactory {
 	}
 
 	public static boolean isModJar(Path input) {
-		return ZipUtils.contains(input, FABRIC_MOD_JSON);
+		return ZipUtils.contains(input, LEAF_MOD_JSON);
 	}
 
 	public static boolean containsMod(FileSystemUtil.Delegate fs) {
-		return Files.exists(fs.getPath(FABRIC_MOD_JSON));
+		return Files.exists(fs.getPath(LEAF_MOD_JSON));
 	}
 }

@@ -77,7 +77,7 @@ public abstract non-sealed class ServerProductionRunTask extends AbstractProduct
 	@Inject
 	public ServerProductionRunTask() {
 		getLoaderVersion().convention(getProjectLoaderVersion());
-		getMinecraftVersion().convention(getExtension().getMinecraftVersion());
+		getMinecraftVersion().convention(getExtension().getZomboidVersion());
 		getInstallPropertiesJar().convention(getProject().getLayout().getBuildDirectory().file("server_properties.jar"));
 		getInstallerVersion().convention(LoomVersions.FABRIC_INSTALLER.version());
 

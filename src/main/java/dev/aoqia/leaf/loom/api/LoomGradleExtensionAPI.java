@@ -80,7 +80,7 @@ public interface LoomGradleExtensionAPI {
 	 *     resources directory (usually {@code build/resources/main}).
 	 * </p>
 	 */
-	RegularFileProperty getFabricModJsonPath();
+	RegularFileProperty getLeafModJsonPath();
 
 	NamedDomainObjectContainer<DecompilerOptions> getDecompilerOptions();
 
@@ -94,13 +94,11 @@ public interface LoomGradleExtensionAPI {
 		getGameJarProcessors().add(processor);
 	}
 
-	ListProperty<ZomboidJarProcessor<?>> getMinecraftJarProcessors();
+	ListProperty<ZomboidJarProcessor<?>> getZomboidJarProcessors();
 
-	void addMinecraftJarProcessor(Class<? extends ZomboidJarProcessor<?>> clazz, Object... parameters);
+	void addZomboidJarProcessor(Class<? extends ZomboidJarProcessor<?>> clazz, Object... parameters);
 
 	ConfigurableFileCollection getLog4jConfigs();
-
-	Dependency officialMojangMappings();
 
 	Dependency layered(Action<LayeredMappingSpecBuilder> action);
 
@@ -159,14 +157,14 @@ public interface LoomGradleExtensionAPI {
 	ManifestLocations getVersionsManifests();
 
 	/**
-	 * @deprecated use {@linkplain #getCustomMinecraftMetadata} instead
+	 * @deprecated use {@linkplain #getCustomZomboidMetadata} instead
 	 */
 	@Deprecated
-	default Property<String> getCustomMinecraftManifest() {
-		return getCustomMinecraftMetadata();
+	default Property<String> getCustomZomboidManifest() {
+		return getCustomZomboidMetadata();
 	}
 
-	Property<String> getCustomMinecraftMetadata();
+	Property<String> getCustomZomboidMetadata();
 
 	SetProperty<String> getKnownIndyBsms();
 
@@ -232,25 +230,25 @@ public interface LoomGradleExtensionAPI {
 	GenerateSourcesTask getDecompileTask(DecompilerOptions options, boolean client);
 
 	/**
-	 * Use "%1$s" as a placeholder for the minecraft version.
+	 * Use "%1$s" as a placeholder for the game version.
 	 *
 	 * @return the intermediary url template
 	 */
 	Property<String> getIntermediaryUrl();
 
 	@ApiStatus.Experimental
-	Property<ZomboidJarConfiguration<?, ?, ?>> getMinecraftJarConfiguration();
+	Property<ZomboidJarConfiguration<?, ?, ?>> getZomboidJarConfiguration();
 
-	default void serverOnlyMinecraftJar() {
-		getMinecraftJarConfiguration().set(ZomboidJarConfiguration.SERVER_ONLY);
+	default void serverOnlyZomboidJar() {
+		getZomboidJarConfiguration().set(ZomboidJarConfiguration.SERVER_ONLY);
 	}
 
-	default void clientOnlyMinecraftJar() {
-		getMinecraftJarConfiguration().set(ZomboidJarConfiguration.CLIENT_ONLY);
+	default void clientOnlyZomboidJar() {
+		getZomboidJarConfiguration().set(ZomboidJarConfiguration.CLIENT_ONLY);
 	}
 
-	default void splitMinecraftJar() {
-		getMinecraftJarConfiguration().set(ZomboidJarConfiguration.SPLIT);
+	default void splitZomboidJar() {
+		getZomboidJarConfiguration().set(ZomboidJarConfiguration.SPLIT);
 	}
 
 	void splitEnvironmentSourceSets();
@@ -264,12 +262,12 @@ public interface LoomGradleExtensionAPI {
 	<T extends RemapperParameters> void addRemapperExtension(Class<? extends RemapperExtension<T>> remapperExtensionClass, Class<T> parametersClass, Action<T> parameterAction);
 
 	/**
-	 * @return The minecraft version, as a {@link Provider}.
+	 * @return The zomboid version, as a {@link Provider}.
 	 */
-	Provider<String> getMinecraftVersion();
+	Provider<String> getZomboidVersion();
 
 	/**
-	 * @return A lazily evaluated {@link FileCollection} containing the named minecraft jars.
+	 * @return A lazily evaluated {@link FileCollection} containing the named zomboid jars.
 	 */
-	FileCollection getNamedMinecraftJars();
+	FileCollection getNamedZomboidJars();
 }

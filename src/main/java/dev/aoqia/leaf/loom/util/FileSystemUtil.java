@@ -27,8 +27,11 @@ package dev.aoqia.leaf.loom.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystemNotFoundException;
@@ -138,6 +141,20 @@ public final class FileSystemUtil {
 			throw new RuntimeException("can't convert path "+path+" to uri", e);
 		}
 	}
+
+    public static boolean isFileLocked(File file) {
+        try (RandomAccessFile raf = new RandomAccessFile(file, "rw"); FileChannel channel = raf.getChannel()) {
+            FileLock lock = channel.tryLock();
+            if (lock != null) {
+                lock.release();
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return true;
+        }
+    }
 
 	public static class UnrecoverableZipException extends RuntimeException {
 		public UnrecoverableZipException(String message, Throwable cause) {

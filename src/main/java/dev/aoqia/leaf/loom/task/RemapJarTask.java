@@ -306,11 +306,11 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
 		}
 
 		private void optimizeFMJ() throws IOException {
-			if (!ZipUtils.contains(outputFile, LeafModJsonFactory.FABRIC_MOD_JSON)) {
+			if (!ZipUtils.contains(outputFile, LeafModJsonFactory.LEAF_MOD_JSON)) {
 				return;
 			}
 
-			ZipUtils.transformJson(JsonObject.class, outputFile, LeafModJsonFactory.FABRIC_MOD_JSON, LeafModJsonUtils::optimizeFmj);
+			ZipUtils.transformJson(JsonObject.class, outputFile, LeafModJsonFactory.LEAF_MOD_JSON, LeafModJsonUtils::optimizeFmj);
 		}
 	}
 

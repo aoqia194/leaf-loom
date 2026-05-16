@@ -48,6 +48,7 @@ public record AccessWidenerFile(
 		byte[] modJsonBytes;
 
 		try {
+            // TODO(leaf): Make compatible with leaf.mod.json
 			modJsonBytes = ZipUtils.unpackNullable(modJarPath, "fabric.mod.json");
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to read access-widener file from: " + modJarPath.toAbsolutePath(), e);

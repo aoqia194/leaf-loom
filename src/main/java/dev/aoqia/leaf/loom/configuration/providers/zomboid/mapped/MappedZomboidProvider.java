@@ -31,11 +31,11 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarEnvType;
 
 public interface MappedZomboidProvider {
-	default List<Path> getMinecraftJarPaths() {
-		return getMinecraftJars().stream().map(ZomboidJar::getPath).toList();
+	default List<Path> getZomboidJarPaths() {
+		return getZomboidJars().stream().map(ZomboidJar::getPath).toList();
 	}
 
-	List<ZomboidJar> getMinecraftJars();
+	List<ZomboidJar> getZomboidJars();
 
 	interface ProviderImpl extends MappedZomboidProvider {
 		Path getJar(ZomboidJar.Type type);
@@ -47,7 +47,7 @@ public interface MappedZomboidProvider {
 		}
 
 		@Override
-		default List<ZomboidJar> getMinecraftJars() {
+		default List<ZomboidJar> getZomboidJars() {
 			return List.of(getMergedJar());
 		}
 	}
@@ -62,7 +62,7 @@ public interface MappedZomboidProvider {
 		}
 
 		@Override
-		default List<ZomboidJar> getMinecraftJars() {
+		default List<ZomboidJar> getZomboidJars() {
 			return List.of(getCommonJar(), getClientOnlyJar());
 		}
 	}
@@ -79,7 +79,7 @@ public interface MappedZomboidProvider {
 		}
 
 		@Override
-		default List<ZomboidJar> getMinecraftJars() {
+		default List<ZomboidJar> getZomboidJars() {
 			return List.of(getEnvOnlyJar());
 		}
 	}

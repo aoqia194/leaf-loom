@@ -73,7 +73,7 @@ public final class SourceSetHelper {
 	 * Returns true when the provided project contains the {@link SourceSet}.
 	 */
 	public static boolean isSourceSetOfProject(SourceSet sourceSet, Project project) {
-		if (System.getProperty("fabric-loom.unit.testing") != null) return true;
+		if (System.getProperty("loom.unit.testing") != null) return true;
 
 		return getSourceSets(project).stream()
 				.anyMatch(test -> test == sourceSet); // Ensure we have an identical reference

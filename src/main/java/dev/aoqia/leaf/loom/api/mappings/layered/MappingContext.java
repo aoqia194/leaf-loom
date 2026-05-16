@@ -27,6 +27,8 @@ package dev.aoqia.leaf.loom.api.mappings.layered;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
+import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
+
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.MinimalExternalModuleDependency;
 import org.gradle.api.logging.Logger;
@@ -48,10 +50,10 @@ public interface MappingContext {
 
 	boolean isUsingIntermediateMappings();
 
-	ZomboidProvider minecraftProvider();
+	ZomboidProvider zomboidProvider();
 
-	default String minecraftVersion() {
-		return minecraftProvider().minecraftVersion();
+	default String zomboidVersion() {
+		return zomboidProvider().zomboidVersion();
 	}
 
 	/**
@@ -60,6 +62,8 @@ public interface MappingContext {
 	Path workingDirectory(String name);
 
 	Logger getLogger();
+
+	CopyGameFileBuilder copyGameFile(String url);
 
 	DownloadBuilder download(String url);
 

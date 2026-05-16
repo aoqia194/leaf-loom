@@ -37,8 +37,8 @@ import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Strings;
 
 public final class SplitDecompileConfiguration extends DecompileConfiguration<MappedZomboidProvider.Split> {
-	public SplitDecompileConfiguration(Project project, MappedZomboidProvider.Split minecraftProvider) {
-		super(project, minecraftProvider);
+	public SplitDecompileConfiguration(Project project, MappedZomboidProvider.Split zomboidProvider) {
+		super(project, zomboidProvider);
 	}
 
 	@Override
@@ -48,8 +48,8 @@ public final class SplitDecompileConfiguration extends DecompileConfiguration<Ma
 
 	@Override
 	public void afterEvaluation() {
-		final ZomboidJar commonJar = minecraftProvider.getCommonJar();
-		final ZomboidJar clientOnlyJar = minecraftProvider.getClientOnlyJar();
+		final ZomboidJar commonJar = zomboidProvider.getCommonJar();
+		final ZomboidJar clientOnlyJar = zomboidProvider.getClientOnlyJar();
 
 		final TaskProvider<Task> commonDecompileTask = createDecompileTasks("Common", task -> {
 			task.getInputJarName().set(commonJar.getName());
@@ -75,8 +75,8 @@ public final class SplitDecompileConfiguration extends DecompileConfiguration<Ma
 			});
 
 			project.getTasks().register("genSourcesWith" + decompilerName, task -> {
-				task.setDescription("Decompile minecraft using %s.".formatted(decompilerName));
-				task.setGroup(Constants.TaskGroup.FABRIC);
+				task.setDescription("Decompile PZ using %s.".formatted(decompilerName));
+				task.setGroup(Constants.TaskGroup.LEAF);
 
 				task.dependsOn(commonTask);
 				task.dependsOn(clientOnlyTask);
@@ -84,8 +84,8 @@ public final class SplitDecompileConfiguration extends DecompileConfiguration<Ma
 		}
 
 		project.getTasks().register("genSources", task -> {
-			task.setDescription("Decompile minecraft using the default decompiler.");
-			task.setGroup(Constants.TaskGroup.FABRIC);
+			task.setDescription("Decompile PZ using the default decompiler.");
+			task.setGroup(Constants.TaskGroup.LEAF);
 
 			task.dependsOn(commonDecompileTask);
 			task.dependsOn(clientOnlyDecompileTask);
@@ -100,14 +100,14 @@ public final class SplitDecompileConfiguration extends DecompileConfiguration<Ma
 			project.getTasks().register(taskName, GenerateSourcesTask.class, options).configure(task -> {
 				configureAction.execute(task);
 				task.dependsOn(project.getTasks().named("validateAccessWidener"));
-				task.setDescription("Decompile minecraft using %s.".formatted(decompilerName));
-				task.setGroup(Constants.TaskGroup.FABRIC);
+				task.setDescription("Decompile PZ using %s.".formatted(decompilerName));
+				task.setGroup(Constants.TaskGroup.LEAF);
 			});
 		});
 
 		return project.getTasks().register("gen%sSources".formatted(name), task -> {
-			task.setDescription("Decompile minecraft (%s) using the default decompiler.".formatted(name));
-			task.setGroup(Constants.TaskGroup.FABRIC);
+			task.setDescription("Decompile PZ (%s) using the default decompiler.".formatted(name));
+			task.setGroup(Constants.TaskGroup.LEAF);
 
 			task.dependsOn(project.getTasks().named("gen%sSourcesWith%s".formatted(name, DecompileConfiguration.DEFAULT_DECOMPILER)));
 		});

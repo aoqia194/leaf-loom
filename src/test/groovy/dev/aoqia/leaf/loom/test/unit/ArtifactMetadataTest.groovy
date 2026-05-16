@@ -44,7 +44,7 @@ class ArtifactMetadataTest extends Specification {
 		when:
 		def metadata = createMetadata(zip)
 		then:
-		isMod == metadata.isFabricMod()
+		isMod == metadata.isLeafMod()
 		where:
 		isMod 		| entries
 		false       | ["hello.json": "{}"] 		// None Mod jar

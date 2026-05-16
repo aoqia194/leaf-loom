@@ -168,11 +168,11 @@ abstract class LayeredMappingsSpecification extends Specification implements Lay
 		@Override
 		Supplier<MemoryMappingTree> intermediaryTree() {
 			return {
-				def path = LoomTestConstants.TEST_DIR.toPath().resolve("intermediary").resolve(Objects.requireNonNull(minecraftVersion()) + ".tiny")
+				def path = LoomTestConstants.TEST_DIR.toPath().resolve("intermediary").resolve(Objects.requireNonNull(zomboidVersion()) + ".tiny")
 
 				if (!Files.exists(path)) {
 					Files.createDirectories(path.parent)
-					def provider = LoomMocks.intermediaryMappingsProviderMock(minecraftVersion(), intermediaryUrl)
+					def provider = LoomMocks.intermediaryMappingsProviderMock(zomboidVersion(), intermediaryUrl)
 					provider.provide(path, null)
 				}
 
@@ -186,7 +186,7 @@ abstract class LayeredMappingsSpecification extends Specification implements Lay
 		}
 
 		@Override
-		MinecraftProvider minecraftProvider() {
+		MinecraftProvider zomboidProvider() {
 			return mockMinecraftProvider
 		}
 

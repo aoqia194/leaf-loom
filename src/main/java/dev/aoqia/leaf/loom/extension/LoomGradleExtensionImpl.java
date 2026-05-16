@@ -34,6 +34,9 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFile;
+import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
+
 import org.gradle.api.Project;
 import org.gradle.api.configuration.BuildFeatures;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -68,10 +71,10 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 
 	private LoomDependencyManager dependencyManager;
 	private ZomboidMetadataProvider metadataProvider;
-	private ZomboidProvider minecraftProvider;
+	private ZomboidProvider zomboidProvider;
 	private MappingConfiguration mappingConfiguration;
-	private NamedZomboidProvider<?> namedMinecraftProvider;
-	private IntermediaryZomboidProvider<?> intermediaryMinecraftProvider;
+	private NamedZomboidProvider<?> namedZomboidProvider;
+	private IntermediaryZomboidProvider<?> intermediaryZomboidProvider;
 	private InstallerData installerData;
 	private boolean refreshDeps;
 	private final ListProperty<LibraryProcessorManager.LibraryProcessorFactory> libraryProcessorFactories;
@@ -140,7 +143,7 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 
 	@Override
 	public ZomboidMetadataProvider getMetadataProvider() {
-		return Objects.requireNonNull(metadataProvider, "Cannot get MinecraftMetadataProvider before it has been setup");
+		return Objects.requireNonNull(metadataProvider, "Cannot get ZomboidMetadataProvider before it has been setup");
 	}
 
 	@Override
@@ -149,13 +152,13 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	}
 
 	@Override
-	public ZomboidProvider getMinecraftProvider() {
-		return Objects.requireNonNull(minecraftProvider, "Cannot get MinecraftProvider before it has been setup");
+	public ZomboidProvider getZomboidProvider() {
+		return Objects.requireNonNull(zomboidProvider, "Cannot get ZomboidProvider before it has been setup");
 	}
 
 	@Override
-	public void setMinecraftProvider(ZomboidProvider minecraftProvider) {
-		this.minecraftProvider = minecraftProvider;
+	public void setZomboidProvider(ZomboidProvider provider) {
+		this.zomboidProvider = provider;
 	}
 
 	@Override
@@ -169,23 +172,23 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	}
 
 	@Override
-	public NamedZomboidProvider<?> getNamedMinecraftProvider() {
-		return Objects.requireNonNull(namedMinecraftProvider, "Cannot get NamedMinecraftProvider before it has been setup");
+	public NamedZomboidProvider<?> getNamedZomboidProvider() {
+		return Objects.requireNonNull(namedZomboidProvider, "Cannot get NamedZomboidProvider before it has been setup");
 	}
 
 	@Override
-	public IntermediaryZomboidProvider<?> getIntermediaryMinecraftProvider() {
-		return Objects.requireNonNull(intermediaryMinecraftProvider, "Cannot get IntermediaryMinecraftProvider before it has been setup");
+	public IntermediaryZomboidProvider<?> getIntermediaryZomboidProvider() {
+		return Objects.requireNonNull(intermediaryZomboidProvider, "Cannot get IntermediaryZomboidProvider before it has been setup");
 	}
 
 	@Override
-	public void setNamedMinecraftProvider(NamedZomboidProvider<?> namedMinecraftProvider) {
-		this.namedMinecraftProvider = namedMinecraftProvider;
+	public void setNamedZomboidProvider(NamedZomboidProvider<?> provider) {
+		this.namedZomboidProvider = provider;
 	}
 
 	@Override
-	public void setIntermediaryMinecraftProvider(IntermediaryZomboidProvider<?> intermediaryMinecraftProvider) {
-		this.intermediaryMinecraftProvider = intermediaryMinecraftProvider;
+	public void setIntermediaryZomboidProvider(IntermediaryZomboidProvider<?> provider) {
+		this.intermediaryZomboidProvider = provider;
 	}
 
 	@Override
@@ -194,10 +197,10 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	}
 
 	@Override
-	public FileCollection getMinecraftJarsCollection(MappingsNamespace mappingsNamespace) {
+	public FileCollection getZomboidJarsCollection(MappingsNamespace mappingsNamespace) {
 		return getProject().files(
 			getProject().provider(() ->
-				getProject().files(getMinecraftJars(mappingsNamespace).stream().map(Path::toFile).toList())
+				getProject().files(getZomboidJars(mappingsNamespace).stream().map(Path::toFile).toList())
 			)
 		);
 	}
@@ -252,6 +255,17 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 		return builder;
 	}
 
+    @Override
+    public CopyGameFileBuilder copyGameFile(String url) {
+        CopyGameFileBuilder builder = CopyGameFile.create(Path.of(url));
+
+        if (manualRefreshDeps()) {
+            builder.forced();
+        }
+
+        return builder;
+    }
+
 	private boolean manualRefreshDeps() {
 		return project.getGradle().getStartParameter().isRefreshDependencies() || Boolean.getBoolean("loom.refresh");
 	}
@@ -284,13 +298,13 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 
 	@Override
 	protected <T extends IntermediateMappingsProvider> void configureIntermediateMappingsProviderInternal(T provider) {
-		provider.getMinecraftVersion().set(getProject().provider(() -> getMinecraftProvider().minecraftVersion()));
+		provider.getMinecraftVersion().set(getProject().provider(() -> getZomboidProvider().zomboidVersion()));
 		provider.getMinecraftVersion().disallowChanges();
 
 		provider.getDownloader().set(this::download);
 		provider.getDownloader().disallowChanges();
 
-		provider.getUseSplitOfficialNamespaces().set(getProject().provider(() -> getMinecraftProvider().isLegacySplitOfficialNamespaceVersion()));
+		provider.getUseSplitOfficialNamespaces().set(getProject().provider(() -> getZomboidProvider().isLegacySplitOfficialNamespaceVersion()));
 		provider.getUseSplitOfficialNamespaces().disallowChanges();
 	}
 

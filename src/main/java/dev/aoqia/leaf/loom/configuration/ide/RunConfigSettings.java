@@ -153,7 +153,7 @@ public abstract class RunConfigSettings implements Named {
 			return SourceSetHelper.getSourceSetByName(sourceSetName, p);
 		});
 
-		runDir("run");
+		setRunDir(project.getProjectDir().toPath().resolve("run").toString());
 	}
 
 	public Project getProject() {
@@ -321,17 +321,11 @@ public abstract class RunConfigSettings implements Named {
 	}
 
 	/**
-	 * Removes the {@code nogui} argument for the server configuration. By default {@code nogui} is specified, this is
-	 * a convenient way to remove it if wanted.
-	 */
-	public void serverWithGui() {
-		programArgs.removeIf("nogui"::equals);
-	}
-
-	/**
 	 * Configure run config with the default client options.
 	 */
 	public void client() {
+        property("zomboid.steam", "0");
+
 		environment("client");
 		defaultMainClass(Constants.Knot.KNOT_CLIENT);
 
@@ -345,7 +339,8 @@ public abstract class RunConfigSettings implements Named {
 	 * Configure run config with the default server options.
 	 */
 	public void server() {
-		programArg("nogui");
+		property("zomboid.steam", "0");
+
 		environment("server");
 		defaultMainClass(Constants.Knot.KNOT_SERVER);
 	}

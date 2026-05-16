@@ -61,7 +61,7 @@ public abstract sealed class IntermediaryZomboidProvider<M extends ZomboidProvid
 		@Override
 		public List<RemappedJars> getRemappedJars() {
 			return List.of(
-				new RemappedJars(minecraftProvider.getMergedJar(), getMergedJar(), minecraftProvider.getOfficialNamespace())
+				new RemappedJars(zomboidProvider.getMergedJar(), getMergedJar(), zomboidProvider.getOfficialNamespace())
 			);
 		}
 	}
@@ -72,8 +72,8 @@ public abstract sealed class IntermediaryZomboidProvider<M extends ZomboidProvid
 
 		public LegacyMergedImpl(Project project, LegacyMergedZomboidProvider minecraftProvider) {
 			super(project, minecraftProvider);
-			server = new SingleJarImpl(project, minecraftProvider.getServerMinecraftProvider(), SingleJarEnvType.SERVER);
-			client = new SingleJarImpl(project, minecraftProvider.getClientMinecraftProvider(), SingleJarEnvType.CLIENT);
+			server = new SingleJarImpl(project, minecraftProvider.getServerZomboidProvider(), SingleJarEnvType.SERVER);
+			client = new SingleJarImpl(project, minecraftProvider.getClientZomboidProvider(), SingleJarEnvType.CLIENT);
 		}
 
 		@Override
@@ -131,8 +131,8 @@ public abstract sealed class IntermediaryZomboidProvider<M extends ZomboidProvid
 		@Override
 		public List<RemappedJars> getRemappedJars() {
 			return List.of(
-				new RemappedJars(minecraftProvider.getMinecraftCommonJar(), getCommonJar(), minecraftProvider.getOfficialNamespace()),
-				new RemappedJars(minecraftProvider.getMinecraftClientOnlyJar(), getClientOnlyJar(), minecraftProvider.getOfficialNamespace(), minecraftProvider.getMinecraftCommonJar())
+				new RemappedJars(zomboidProvider.getZomboidCommonJar(), getCommonJar(), zomboidProvider.getOfficialNamespace()),
+				new RemappedJars(zomboidProvider.getZomboidClientOnlyJar(), getClientOnlyJar(), zomboidProvider.getOfficialNamespace(), zomboidProvider.getZomboidCommonJar())
 			);
 		}
 
@@ -161,7 +161,7 @@ public abstract sealed class IntermediaryZomboidProvider<M extends ZomboidProvid
 		@Override
 		public List<RemappedJars> getRemappedJars() {
 			return List.of(
-				new RemappedJars(minecraftProvider.getMinecraftEnvOnlyJar(), getEnvOnlyJar(), minecraftProvider.getOfficialNamespace())
+				new RemappedJars(zomboidProvider.getZomboidEnvOnlyJar(), getEnvOnlyJar(), zomboidProvider.getOfficialNamespace())
 			);
 		}
 

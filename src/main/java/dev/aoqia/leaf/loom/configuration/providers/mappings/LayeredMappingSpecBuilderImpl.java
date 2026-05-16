@@ -34,13 +34,9 @@ import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
-import dev.aoqia.leaf.loom.api.mappings.layered.spec.MojangMappingsSpecBuilder;
-import dev.aoqia.leaf.loom.api.mappings.layered.spec.ParchmentMappingsSpecBuilder;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.extras.signatures.SignatureFixesSpec;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.mojmap.MojangMappingsSpecBuilderImpl;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.parchment.ParchmentMappingsSpecBuilderImpl;
 
 public class LayeredMappingSpecBuilderImpl implements LayeredMappingSpecBuilder {
 	private final List<MappingsSpec<?>> layers = new LinkedList<>();
@@ -49,20 +45,6 @@ public class LayeredMappingSpecBuilderImpl implements LayeredMappingSpecBuilder 
 	public LayeredMappingSpecBuilder addLayer(MappingsSpec<?> mappingSpec) {
 		layers.add(mappingSpec);
 		return this;
-	}
-
-	@Override
-	public LayeredMappingSpecBuilder officialMojangMappings(Action<MojangMappingsSpecBuilder> action) {
-		MojangMappingsSpecBuilderImpl builder = MojangMappingsSpecBuilderImpl.builder();
-		action.execute(builder);
-		return addLayer(builder.build());
-	}
-
-	@Override
-	public LayeredMappingSpecBuilder parchment(Object object, Action<ParchmentMappingsSpecBuilder> action) {
-		ParchmentMappingsSpecBuilderImpl builder = ParchmentMappingsSpecBuilderImpl.builder(FileSpec.create(object));
-		action.execute(builder);
-		return addLayer(builder.build());
 	}
 
 	@Override
@@ -84,11 +66,5 @@ public class LayeredMappingSpecBuilderImpl implements LayeredMappingSpecBuilder 
 		builtLayers.addAll(layers);
 
 		return new LayeredMappingSpec(Collections.unmodifiableList(builtLayers));
-	}
-
-	public static LayeredMappingSpec buildOfficialMojangMappings() {
-		var builder = new LayeredMappingSpecBuilderImpl();
-		builder.officialMojangMappings();
-		return builder.build();
 	}
 }

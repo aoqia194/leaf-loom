@@ -99,8 +99,8 @@ public class TinyRemapperService extends Service<TinyRemapperService.Options> im
 			final ConfigurationContainer configurations = project.getConfigurations();
 			final boolean legacyMixin = extension.getMixin().getUseLegacyMixinAp().get();
 			final FileCollection classpath = remapJarTask.getClasspath()
-					.minus(configurations.getByName(Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES))
-					.minus(configurations.getByName(Constants.Configurations.MINECRAFT_RUNTIME_LIBRARIES));
+					.minus(configurations.getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES))
+					.minus(configurations.getByName(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES));
 
 			options.getFrom().set(remapJarTask.getSourceNamespace());
 			options.getTo().set(remapJarTask.getTargetNamespace());
@@ -138,10 +138,10 @@ public class TinyRemapperService extends Service<TinyRemapperService.Options> im
 		final ConfigurationContainer configurations = project.getConfigurations();
 
 		if (from.get().equals(MappingsNamespace.INTERMEDIARY.toString())) {
-			ConfigurableFileCollection files = project.files(extension.getMinecraftJars(MappingsNamespace.INTERMEDIARY));
+			ConfigurableFileCollection files = project.files(extension.getZomboidJars(MappingsNamespace.INTERMEDIARY));
 
 			if (classpathLibraries == ClasspathLibraries.INCLUDE) {
-				files = files.from(configurations.getByName(Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES));
+				files = files.from(configurations.getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
 			}
 
 			return files;
@@ -152,8 +152,8 @@ public class TinyRemapperService extends Service<TinyRemapperService.Options> im
 		}
 
 		return configurations.getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME)
-				.minus(configurations.getByName(Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES))
-				.minus(configurations.getByName(Constants.Configurations.MINECRAFT_RUNTIME_LIBRARIES));
+				.minus(configurations.getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES))
+				.minus(configurations.getByName(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES));
 	}
 
 	public enum ClasspathLibraries {

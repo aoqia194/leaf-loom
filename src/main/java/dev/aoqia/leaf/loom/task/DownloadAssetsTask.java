@@ -78,7 +78,11 @@ public abstract class DownloadAssetsTask extends AbstractLoomTask {
 
 	@Inject
 	public DownloadAssetsTask() {
-		final ZomboidVersionMeta versionInfo = getExtension().getMinecraftProvider().getVersionInfo();
+        if (true) {
+            throw new RuntimeException("DownloadAssetsTask should never be initialised!");
+        }
+
+		final ZomboidVersionMeta versionInfo = getExtension().getZomboidProvider().getVersionInfo();
 		final File assetsDir = new File(getExtension().getFiles().getUserCache(), "assets");
 
 		getAssetsDirectory().set(assetsDir);
@@ -87,19 +91,20 @@ public abstract class DownloadAssetsTask extends AbstractLoomTask {
 		getMinecraftVersion().set(versionInfo.id());
 		getMinecraftVersion().finalizeValue();
 
-		if (versionInfo.assets().equals("legacy")) {
-			getLegacyResourcesDirectory().set(new File(assetsDir, "/legacy/" + versionInfo.id()));
-		} else {
-			// pre-1.6 resources
-			RunConfigSettings client = getExtension().getRunConfigs().findByName("client");
-			String runDir = client != null ? client.getRunDir() : "run";
-			getLegacyResourcesDirectory().set(new File(getProject().getProjectDir(), runDir + "/resources"));
-		}
-
-		getResourcesBaseUrl().set(MirrorUtil.getResourcesBase(getProject()));
+        // NOTE(leaf): Commented out because this task shouldn't ever be ran!
+//		if (versionInfo.assets().equals("legacy")) {
+//			getLegacyResourcesDirectory().set(new File(assetsDir, "/legacy/" + versionInfo.id()));
+//		} else {
+//			// pre-1.6 resources
+//			RunConfigSettings client = getExtension().getRunConfigs().findByName("client");
+//			String runDir = client != null ? client.getRunDir() : "run";
+//			getLegacyResourcesDirectory().set(new File(getProject().getProjectDir(), runDir + "/resources"));
+//		}
+//
+//		getResourcesBaseUrl().set(MirrorUtil.getResourcesBase(getProject()));
 		getResourcesBaseUrl().finalizeValue();
 
-		getAssetsIndexJson().set(LoomGradlePlugin.GSON.toJson(getExtension().getMinecraftProvider().getVersionInfo().assetIndex()));
+		getAssetsIndexJson().set(LoomGradlePlugin.GSON.toJson(getExtension().getZomboidProvider().getVersionInfo().assetIndex()));
 
 		getAssetsHash().finalizeValue();
 		getAssetsDirectory().finalizeValueOnRead();
@@ -127,7 +132,7 @@ public abstract class DownloadAssetsTask extends AbstractLoomTask {
 
 	private AssetIndex getAssetIndex() throws IOException {
 		final ZomboidVersionMeta.AssetIndex assetIndex = LoomGradlePlugin.GSON.fromJson(getAssetsIndexJson().get(), ZomboidVersionMeta.AssetIndex.class);
-		final File indexFile = new File(getAssetsDirectory().get().getAsFile(), "indexes" + File.separator + assetIndex.fabricId(getMinecraftVersion().get()) + ".json");
+		final File indexFile = new File(getAssetsDirectory().get().getAsFile(), "indexes" + File.separator + assetIndex.leafId(getMinecraftVersion().get()) + ".json");
 
 		final String json = getDownloadFactory().download(assetIndex.url())
 				.sha1(assetIndex.sha1())

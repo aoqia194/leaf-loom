@@ -79,7 +79,7 @@ public record LayeredMappingsFactory(LayeredMappingSpec spec) {
 	private void evaluate(ConfigContext configContext) throws IOException {
 		LOGGER.info("Evaluating layer mapping: {}", mavenNotation());
 
-		final Path mavenRepoDir = configContext.extension().getFiles().getGlobalMinecraftRepo().toPath();
+		final Path mavenRepoDir = configContext.extension().getFiles().getGlobalZomboidRepo().toPath();
 		final LocalMavenHelper maven = new LocalMavenHelper(GROUP, MODULE, spec().getVersion(), null, mavenRepoDir);
 		final Path jar = resolve(configContext.project());
 		maven.copyToMaven(jar, null);
@@ -88,7 +88,7 @@ public record LayeredMappingsFactory(LayeredMappingSpec spec) {
 	public Path resolve(Project project) throws IOException {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
 		final MappingContext mappingContext = new GradleMappingContext(project, spec.getVersion().replace("+", "_").replace(".", "_"));
-		final Path mappingsDir = mappingContext.minecraftProvider().dir("layered").toPath();
+		final Path mappingsDir = mappingContext.zomboidProvider().dir("layered").toPath();
 		final Path mappingsZip = mappingsDir.resolve(String.format("%s.%s-%s.jar", GROUP, MODULE, spec.getVersion()));
 
 		if (Files.exists(mappingsZip) && !mappingContext.refreshDeps()) {

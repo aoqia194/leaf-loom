@@ -27,19 +27,36 @@ package dev.aoqia.leaf.loom.util;
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Opcodes;
 
+import java.nio.file.Path;
+
 public class Constants {
-	public static final String LIBRARIES_BASE = "https://libraries.minecraft.net/";
-	public static final String RESOURCES_BASE = "https://resources.download.minecraft.net/";
-	public static final String VERSION_MANIFESTS = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
-	public static final String EXPERIMENTAL_VERSIONS = "https://maven.fabricmc.net/net/minecraft/experimental_versions.json";
+    public static final String INDEX_MANIFEST_PATH = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/indexes";
+    public static final String VERSION_MANIFESTS = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests";
+
 	public static final String FABRIC_REPOSITORY = "https://maven.fabricmc.net/";
 
 	public static final int ASM_VERSION = Opcodes.ASM9;
 	public static final String RELEASE_TIME_1_3 = "2012-07-25T22:00:00+00:00";
 	public static final String RELEASE_TIME_BETA_1_0 = "2010-12-19T22:00:00+00:00";
 
+    public static final String GAME_FOLDER = "ProjectZomboid";
+
 	private Constants() {
 	}
+
+    public static Path getDefaultSteamLibraryPath() {
+        if (Platform.CURRENT.getOperatingSystem().isMacOS()) {
+            return Path.of(System.getProperty("user.home"), "Library", "Application Support", "Steam");
+        } else if (Platform.CURRENT.getOperatingSystem().isLinux()) {
+            return Path.of(System.getProperty("user.home"), ".steam", "steam");
+        }
+
+        return Path.of("C:\\", "Program Files (x86)", "Steam");
+    }
+
+    public static Path getDefaultGamePath() {
+        return getDefaultSteamLibraryPath().resolve("steamapps").resolve("common").resolve(GAME_FOLDER);
+    }
 
 	/**
 	 * Constants related to configurations.
@@ -49,27 +66,27 @@ public class Constants {
 		public static final String MOD_COMPILE_CLASSPATH_MAPPED = "modCompileClasspathMapped";
 		public static final String INCLUDE = "include";
 		public static final String INCLUDE_INTERNAL = "includeInternal";
-		public static final String MINECRAFT = "minecraft";
 
-		public static final String MINECRAFT_COMPILE_LIBRARIES = "minecraftLibraries";
-		public static final String MINECRAFT_RUNTIME_LIBRARIES = "minecraftRuntimeLibraries";
+		public static final String ZOMBOID = "zomboid";
+		public static final String ZOMBOID_COMPILE_LIBRARIES = "zomboidLibraries";
+		public static final String ZOMBOID_RUNTIME_LIBRARIES = "zomboidRuntimeLibraries";
 
 		/**
 		 * These configurations contain the minecraft client libraries.
 		 */
-		public static final String MINECRAFT_CLIENT_COMPILE_LIBRARIES = "minecraftClientLibraries";
-		public static final String MINECRAFT_CLIENT_RUNTIME_LIBRARIES = "minecraftClientRuntimeLibraries";
+		public static final String ZOMBOID_CLIENT_COMPILE_LIBRARIES = "zomboidClientLibraries";
+		public static final String ZOMBOID_CLIENT_RUNTIME_LIBRARIES = "zomboidClientRuntimeLibraries";
 
 		/**
 		 * The server specific configurations will be empty when using a legacy (pre 21w38a server jar)
-		 * find the client only dependencies on the "minecraftLibraries" config.
+		 * find the client only dependencies on the "zomboidLibraries" config.
 		 */
-		public static final String MINECRAFT_SERVER_COMPILE_LIBRARIES = "minecraftServerLibraries";
-		public static final String MINECRAFT_SERVER_RUNTIME_LIBRARIES = "minecraftServerRuntimeLibraries";
+		public static final String ZOMBOID_SERVER_COMPILE_LIBRARIES = "zomboidServerLibraries";
+		public static final String ZOMBOID_SERVER_RUNTIME_LIBRARIES = "zomboidServerRuntimeLibraries";
 		/**
 		 * Before Minecraft 1.19-pre1 this contains libraries that need to be extracted otherwise this goes on the runtime classpath.
 		 */
-		public static final String MINECRAFT_NATIVES = "minecraftNatives";
+		public static final String ZOMBOID_NATIVES = "zomboidNatives";
 		public static final String MAPPINGS = "mappings";
 		public static final String MAPPINGS_FINAL = "mappingsFinal";
 		public static final String LOADER_DEPENDENCIES = "loaderLibraries";
@@ -85,7 +102,7 @@ public class Constants {
 		/**
 		 * The configuration that contains the Minecraft client and loader runtime libraries, as used by the production run tasks.
 		 */
-		public static final String MINECRAFT_TEST_CLIENT_RUNTIME_LIBRARIES = "minecraftTestClientRuntimeLibraries";
+		public static final String ZOMBOID_TEST_CLIENT_RUNTIME_LIBRARIES = "zomboidTestClientRuntimeLibraries";
 		/**
 		 * Mods to be used by {@link dev.aoqia.leaf.loom.task.prod.AbstractProductionRunTask} tasks by default.
 		 */
@@ -112,15 +129,15 @@ public class Constants {
 	}
 
 	public static final class Knot {
-		public static final String KNOT_CLIENT = "net.fabricmc.loader.launch.knot.KnotClient";
-		public static final String KNOT_SERVER = "net.fabricmc.loader.launch.knot.KnotServer";
+		public static final String KNOT_CLIENT = "dev.aoqia.leaf.loader.launch.knot.KnotClient";
+		public static final String KNOT_SERVER = "dev.aoqia.leaf.loader.launch.knot.KnotServer";
 
 		private Knot() {
 		}
 	}
 
 	public static final class TaskGroup {
-		public static final String FABRIC = "fabric";
+		public static final String LEAF = "leaf";
 		public static final String IDE = "ide";
 
 		private TaskGroup() {
@@ -141,51 +158,63 @@ public class Constants {
 	}
 
 	public static final class Properties {
-		public static final String DONT_REMAP = "fabric.loom.dontRemap";
-		public static final String DISABLE_REMAPPED_VARIANTS = "fabric.loom.disableRemappedVariants";
-		public static final String DISABLE_PROJECT_DEPENDENT_MODS = "fabric.loom.disableProjectDependentMods";
-		public static final String LIBRARY_PROCESSORS = "fabric.loom.libraryProcessors";
+		public static final String DONT_REMAP = "leaf.loom.dontRemap";
+		public static final String DISABLE_REMAPPED_VARIANTS = "leaf.loom.disableRemappedVariants";
+		public static final String DISABLE_PROJECT_DEPENDENT_MODS = "leaf.loom.disableProjectDependentMods";
+		public static final String LIBRARY_PROCESSORS = "leaf.loom.libraryProcessors";
 		@ApiStatus.Experimental
-		public static final String SANDBOX = "fabric.loom.experimental.sandbox";
+		public static final String SANDBOX = "leaf.loom.experimental.sandbox";
 		/**
 		 * When set the version of java that will be assumed that the game will run on, this defaults to the current java version.
 		 * Only set this when you have a good reason to do so, the default should be fine for almost all cases.
 		 */
-		public static final String RUNTIME_JAVA_COMPATIBILITY_VERSION = "fabric.loom.runtimeJavaCompatibilityVersion";
-		public static final String DECOMPILE_CACHE_MAX_FILES = "fabric.loom.decompileCacheMaxFiles";
-		public static final String DECOMPILE_CACHE_MAX_AGE = "fabric.loom.decompileCacheMaxAge";
+		public static final String RUNTIME_JAVA_COMPATIBILITY_VERSION = "leaf.loom.runtimeJavaCompatibilityVersion";
+		public static final String DECOMPILE_CACHE_MAX_FILES = "leaf.loom.decompileCacheMaxFiles";
+		public static final String DECOMPILE_CACHE_MAX_AGE = "leaf.loom.decompileCacheMaxAge";
 		/**
-		 * Skip the signature verification of the Minecraft jar after downloading it.
+		 * Skip the signature verification of the jar and game resources after copying.
 		 */
-		public static final String DISABLE_MINECRAFT_VERIFICATION = "fabric.loom.disableMinecraftVerification";
+		public static final String DISABLE_GAME_VERIFICATION = "leaf.loom.disableGameVerification";
 		/**
 		 * When using the MojangMappingLayer this will remove names for non root methods by using the intermediary mappings.
 		 */
-		public static final String DROP_NON_INTERMEDIATE_ROOT_METHODS = "fabric.loom.dropNonIntermediateRootMethods";
+		public static final String DROP_NON_INTERMEDIATE_ROOT_METHODS = "leaf.loom.dropNonIntermediateRootMethods";
 		/**
 		 * Set to true in all {@link dev.aoqia.leaf.loom.task.RenderDocRunTask} can be used to determine at runtime if running with loom's renderdoc setup.
 		 */
-		public static final String RENDER_DOC = "fabric.loom.renderdoc.enabled";
+		public static final String RENDER_DOC = "leaf.loom.renderdoc.enabled";
+        /**
+         * Is the host platform in a CI/CD environment?
+         */
+        public static final String IS_CI =  "leaf.loom.ci";
+        /**
+         * Skip setting up mixin and decompile/test tasks, and only set up the game provider jars.
+         */
+        public static final String ONLY_PROVIDE_JARS = "leaf.loom.onlyProvideJars";
+        /*
+         * If true, loom will not validate the game files against their hashes.
+         */
+        public static final String IGNORE_GAME_VALIDATION = "leaf.loom.ignoreGameValidation";
 	}
 
 	public static final class Manifest {
 		public static final String PATH = "META-INF/MANIFEST.MF";
 
-		public static final String REMAP_KEY = "Fabric-Loom-Remap";
-		public static final String MIXIN_REMAP_TYPE = "Fabric-Loom-Mixin-Remap-Type";
-		public static final String MAPPING_NAMESPACE = "Fabric-Mapping-Namespace";
-		public static final String SPLIT_ENV = "Fabric-Loom-Split-Environment";
-		public static final String SPLIT_ENV_NAME = "Fabric-Loom-Split-Environment-Name";
-		public static final String CLIENT_ENTRIES = "Fabric-Loom-Client-Only-Entries";
-		public static final String JAR_TYPE = "Fabric-Jar-Type";
-		public static final String GRADLE_VERSION = "Fabric-Gradle-Version";
-		public static final String LOOM_VERSION = "Fabric-Loom-Version";
-		public static final String MIXIN_COMPILE_EXTENSIONS_VERSION = "Fabric-Mixin-Compile-Extensions-Version";
-		public static final String MINECRAFT_VERSION = "Fabric-Minecraft-Version";
-		public static final String TINY_REMAPPER_VERSION = "Fabric-Tiny-Remapper-Version";
-		public static final String FABRIC_LOADER_VERSION = "Fabric-Loader-Version";
-		public static final String MIXIN_VERSION = "Fabric-Mixin-Version";
-		public static final String MIXIN_GROUP = "Fabric-Mixin-Group";
-		public static final String KNOWN_IDY_BSMS = "Fabric-Loom-Known-Indy-BSMS";
+		public static final String REMAP_KEY = "Leaf-Loom-Remap";
+		public static final String MIXIN_REMAP_TYPE = "Leaf-Loom-Mixin-Remap-Type";
+		public static final String MAPPING_NAMESPACE = "Leaf-Mapping-Namespace";
+		public static final String SPLIT_ENV = "Leaf-Loom-Split-Environment";
+		public static final String SPLIT_ENV_NAME = "Leaf-Loom-Split-Environment-Name";
+		public static final String CLIENT_ENTRIES = "Leaf-Loom-Client-Only-Entries";
+		public static final String JAR_TYPE = "Leaf-Jar-Type";
+		public static final String GRADLE_VERSION = "Leaf-Gradle-Version";
+		public static final String LOOM_VERSION = "Leaf-Loom-Version";
+		public static final String MIXIN_COMPILE_EXTENSIONS_VERSION = "Leaf-Mixin-Compile-Extensions-Version";
+		public static final String ZOMBOID_VERSION = "Leaf-Zomboid-Version";
+		public static final String TINY_REMAPPER_VERSION = "Leaf-Tiny-Remapper-Version";
+		public static final String LEAF_LOADER_VERSION = "Leaf-Loader-Version";
+		public static final String MIXIN_VERSION = "Leaf-Mixin-Version";
+		public static final String MIXIN_GROUP = "Leaf-Mixin-Group";
+		public static final String KNOWN_IDY_BSMS = "Leaf-Loom-Known-Indy-BSMS";
 	}
 }

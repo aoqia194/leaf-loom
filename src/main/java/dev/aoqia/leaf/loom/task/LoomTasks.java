@@ -50,7 +50,12 @@ import dev.aoqia.leaf.loom.util.LoomVersions;
 import dev.aoqia.leaf.loom.util.Platform;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class LoomTasks implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoomTasks.class);
+
 	@Inject
 	protected abstract Project getProject();
 
@@ -59,6 +64,12 @@ public abstract class LoomTasks implements Runnable {
 
 	@Override
 	public void run() {
+        // NOTE(leaf): If only provide jars then dont setup tasks or anything else.
+        // TODO(leaf): Is this even needed here anymore?
+//        if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
+//            return;
+//        }
+
 		getTasks().register("migrateMappings", MigrateMappingsTask.class, t -> {
 			t.setDescription("Migrates mappings to a new version.");
 		});
@@ -84,12 +95,12 @@ public abstract class LoomTasks implements Runnable {
 			task.dependsOn(getTasks().named("generateLog4jConfig"));
 			task.dependsOn(getTasks().named("generateRemapClasspath"));
 
-			task.setDescription("Setup the required files to launch Minecraft");
-			task.setGroup(Constants.TaskGroup.FABRIC);
+			task.setDescription("Setup the required files to launch Zomboid");
+			task.setGroup(Constants.TaskGroup.LEAF);
 		});
 
 		TaskProvider<ValidateAccessWidenerTask> validateAccessWidener = getTasks().register("validateAccessWidener", ValidateAccessWidenerTask.class, t -> {
-			t.setDescription("Validate all the rules in the access widener against the Minecraft jar");
+			t.setDescription("Validate all the rules in the access widener against the Zomboid jar");
 			t.setGroup("verification");
 		});
 
@@ -102,15 +113,16 @@ public abstract class LoomTasks implements Runnable {
 		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
 			LoomGradleExtension extension = LoomGradleExtension.get(getProject());
 
-			if (extension.getMinecraftJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY) {
+			if (extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY) {
 				// Server only, nothing more to do.
 				return;
 			}
 
-			final ZomboidVersionMeta versionInfo = extension.getMinecraftProvider().getVersionInfo();
+			final ZomboidVersionMeta versionInfo = extension.getZomboidProvider().getVersionInfo();
 
 			if (versionInfo == null) {
 				// Something has gone wrong, don't register the task.
+                LOGGER.error("Version info is null in LoomTasks#run");
 				return;
 			}
 
@@ -175,8 +187,8 @@ public abstract class LoomTasks implements Runnable {
 		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
 			String taskName;
 
-			boolean serverOnly = extension.getMinecraftJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY;
-			boolean clientOnly = extension.getMinecraftJarConfiguration().get() == ZomboidJarConfiguration.CLIENT_ONLY;
+			boolean serverOnly = extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY;
+			boolean clientOnly = extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.CLIENT_ONLY;
 
 			if (serverOnly) {
 				// Server only, remove the client run config
@@ -206,14 +218,14 @@ public abstract class LoomTasks implements Runnable {
 		final String executableExt = operatingSystem.isWindows() ? ".exe" : "";
 
 		var downloadRenderDoc = getTasks().register("downloadRenderDoc", DownloadTask.class, task -> {
-			task.setGroup(Constants.TaskGroup.FABRIC);
+			task.setGroup(Constants.TaskGroup.LEAF);
 
 			task.getUrl().set(renderDocUrl);
 			task.getOutput().set(getProject().getLayout().getBuildDirectory().file(renderDocFilename));
 		});
 
 		var extractRenderDoc = getTasks().register("extractRenderDoc", Sync.class, task -> {
-			task.setGroup(Constants.TaskGroup.FABRIC);
+			task.setGroup(Constants.TaskGroup.LEAF);
 
 			if (operatingSystem.isWindows()) {
 				task.from(getProject().zipTree(downloadRenderDoc.map(DownloadTask::getOutput)));
@@ -244,32 +256,27 @@ public abstract class LoomTasks implements Runnable {
 	}
 
 	private static void registerClientSetupTasks(TaskContainer tasks, boolean extractNatives) {
-		tasks.register("downloadAssets", DownloadAssetsTask.class, t -> {
-			t.setDescription("Downloads required game assets for Minecraft.");
-		});
-
 		if (extractNatives) {
 			tasks.register("extractNatives", ExtractNativesTask.class, t -> {
-				t.setDescription("Extracts the Minecraft platform specific natives.");
+				t.setDescription("Extracts the platform specific natives.");
 			});
 		}
 
 		tasks.register("configureClientLaunch", task -> {
-			task.dependsOn(tasks.named("downloadAssets"));
 			task.dependsOn(tasks.named("configureLaunch"));
 
 			if (extractNatives) {
 				task.dependsOn(tasks.named("extractNatives"));
 			}
 
-			task.setDescription("Setup the required files to launch the Minecraft client");
-			task.setGroup(Constants.TaskGroup.FABRIC);
+			task.setDescription("Setup the required files to launch the Zomboid client");
+			task.setGroup(Constants.TaskGroup.LEAF);
 		});
 	}
 
 	public static Provider<Task> getIDELaunchConfigureTaskName(Project project) {
 		return project.provider(() -> {
-			final ZomboidJarConfiguration jarConfiguration = LoomGradleExtension.get(project).getMinecraftJarConfiguration().get();
+			final ZomboidJarConfiguration jarConfiguration = LoomGradleExtension.get(project).getZomboidJarConfiguration().get();
 			final String name = jarConfiguration == ZomboidJarConfiguration.SERVER_ONLY ? "configureLaunch" : "configureClientLaunch";
 			return project.getTasks().getByName(name);
 		});

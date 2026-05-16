@@ -80,7 +80,7 @@ public abstract class AbstractRunTask extends JavaExec {
 
 	public AbstractRunTask(Function<Project, RunConfig> configProvider) {
 		super();
-		setGroup(Constants.TaskGroup.FABRIC);
+		setGroup(Constants.TaskGroup.LEAF);
 
 		final Provider<RunConfig> config = getProject().provider(() -> configProvider.apply(getProject()));
 
@@ -94,7 +94,7 @@ public abstract class AbstractRunTask extends JavaExec {
 		getMainClass().set(config.map(runConfig -> runConfig.mainClass));
 		getJvmArguments().addAll(getProject().provider(this::getGameJvmArgs));
 
-		getInternalRunDir().set(config.map(runConfig -> runConfig.runDir));
+		getInternalRunDir().set(config.map(runConfig -> runConfig.workingDir));
 		getInternalEnvironmentVars().set(config.map(runConfig -> runConfig.environmentVariables));
 		getInternalJvmArgs().set(config.map(runConfig -> runConfig.vmArgs));
 		getUseArgFile().set(getProject().provider(this::canUseArgFile));
@@ -131,6 +131,21 @@ public abstract class AbstractRunTask extends JavaExec {
 			// The classpath is passed normally, so pass the full classpath to the super JavaExec.
 			super.setClasspath(getInternalClasspath());
 		}
+
+        // NOTE(leaf): The game doesn't like us setting the working directory anywhere.
+        // It requires the working directory to be the folder containing game assets/natives.
+        // We can get around this by setting workingDir to assets folder, then setting cachedir/etc as runDir.
+        // TODO(leaf): Implement
+
+//        this.setWorkingDir(getInternalRunDir().get());
+//
+//        // Ensure that the run dir was created.
+//        try {
+//            LOGGER.debug("Creating run dir with path {}", getGameRunDir().get());
+//            Files.createDirectories(Path.of(getGameRunDir().get()));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
 		setWorkingDir(new File(getProjectDir().get(), getInternalRunDir().get()));
 		environment(getInternalEnvironmentVars().get());

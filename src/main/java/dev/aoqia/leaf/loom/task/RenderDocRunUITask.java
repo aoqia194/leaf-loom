@@ -38,7 +38,7 @@ public abstract class RenderDocRunUITask extends DefaultTask {
 	public abstract RegularFileProperty getRenderDocExecutable();
 
 	public RenderDocRunUITask() {
-		setGroup(Constants.TaskGroup.FABRIC);
+		setGroup(Constants.TaskGroup.LEAF);
 	}
 
 	@TaskAction

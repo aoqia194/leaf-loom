@@ -51,7 +51,7 @@ import dev.aoqia.leaf.loom.util.LibraryLocationLogger;
 import dev.aoqia.leaf.loom.util.OneDrive;
 
 public class LoomGradlePlugin implements Plugin<PluginAware> {
-	public static final String NAME = "fabric-loom";
+	public static final String NAME = "loom";
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final String LOOM_VERSION = Objects.requireNonNullElse(LoomGradlePlugin.class.getPackage().getImplementationVersion(), "0.0.0+unknown");
 
@@ -79,7 +79,7 @@ public class LoomGradlePlugin implements Plugin<PluginAware> {
 	}
 
 	private void apply(Project project) {
-		project.getLogger().lifecycle("Fabric Loom: " + LOOM_VERSION);
+		project.getLogger().lifecycle("Leaf Loom: " + LOOM_VERSION);
 
 		LibraryLocationLogger.logLibraryVersions();
 		OneDrive.verify(project);
@@ -90,7 +90,8 @@ public class LoomGradlePlugin implements Plugin<PluginAware> {
 
 		// Setup extensions
 		project.getExtensions().create(LoomGradleExtensionAPI.class, "loom", LoomGradleExtensionImpl.class, project, LoomFiles.create(project));
-		project.getExtensions().create(LeafApiExtension.class, "fabricApi", LeafApiExtensionImpl.class);
+		// NOTE(leaf): Disable leaf API
+		// project.getExtensions().create(LeafApiExtension.class, "fabricApi", LeafApiExtensionImpl.class);
 
 		for (Class<? extends Runnable> jobClass : SETUP_JOBS) {
 			project.getObjects().newInstance(jobClass).run();

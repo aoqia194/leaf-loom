@@ -26,42 +26,58 @@ package dev.aoqia.leaf.loom.util;
 
 import org.gradle.api.plugins.ExtensionAware;
 
+import java.nio.file.Path;
+
 public class MirrorUtil {
-	public static String getLibrariesBase(ExtensionAware aware) {
-		if (aware.getExtensions().getExtraProperties().has("loom_libraries_base")) {
-			return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_libraries_base"));
+    public static Path getGamePath(ExtensionAware aware) {
+        final var ext = aware.getExtensions().getExtraProperties();
+        if (ext.has("loom_game_path")) {
+            return Path.of(String.valueOf(ext.get("loom_game_path")));
+        }
+
+        final var envVar = System.getenv("LEAF_GAME_PATH");
+        if (envVar != null) {
+            return Path.of(envVar);
+        }
+
+        return Constants.getDefaultGamePath();
+    }
+
+	public static String getClientVersionManifests(ExtensionAware aware) {
+        final var ext = aware.getExtensions().getExtraProperties();
+		if (ext.has("loom_client_version_manifests")) {
+			return String.valueOf(ext.get("loom_version_manifests"));
 		}
 
-		return Constants.LIBRARIES_BASE;
+		return String.format("%s/client/%s/version_manifest.json", Constants.VERSION_MANIFESTS, getOsStringForUrl());
 	}
 
-	public static String getResourcesBase(ExtensionAware aware) {
-		if (aware.getExtensions().getExtraProperties().has("loom_resources_base")) {
-			return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_resources_base"));
+    public static String getServerVersionManifests(ExtensionAware aware) {
+        final var ext = aware.getExtensions().getExtraProperties();
+		if (ext.has("loom_server_version_manifests")) {
+			return String.valueOf(ext.get("loom_version_manifests"));
 		}
 
-		return Constants.RESOURCES_BASE;
+		return String.format("%s/server/%s/version_manifest.json", Constants.VERSION_MANIFESTS, getOsStringForUrl());
 	}
 
-	public static String getVersionManifests(ExtensionAware aware) {
-		if (aware.getExtensions().getExtraProperties().has("loom_version_manifests")) {
-			return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_version_manifests"));
-		}
+    public static String getOsStringForUrl() throws RuntimeException {
+        final Platform.OperatingSystem os = Platform.CURRENT.getOperatingSystem();
+        if (os.isWindows()) {
+            return "win";
+        } else if (os.isMacOS()) {
+            return "mac";
+        } else if (os.isLinux()) {
+            return "linux";
+        }
 
-		return Constants.VERSION_MANIFESTS;
-	}
-
-	public static String getExperimentalVersions(ExtensionAware aware) {
-		if (aware.getExtensions().getExtraProperties().has("loom_experimental_versions")) {
-			return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_experimental_versions"));
-		}
-
-		return Constants.EXPERIMENTAL_VERSIONS;
-	}
+        throw new RuntimeException("Unsupported operating system: " + os);
+    }
 
 	public static String getFabricRepository(ExtensionAware aware) {
-		if (aware.getExtensions().getExtraProperties().has("loom_fabric_repository")) {
-			return String.valueOf(aware.getExtensions().getExtraProperties().get("loom_fabric_repository"));
+        final var ext = aware.getExtensions().getExtraProperties();
+		if (ext.has("loom_fabric_repository")) {
+			return String.valueOf(ext.get("loom_fabric_repository"));
 		}
 
 		return Constants.FABRIC_REPOSITORY;

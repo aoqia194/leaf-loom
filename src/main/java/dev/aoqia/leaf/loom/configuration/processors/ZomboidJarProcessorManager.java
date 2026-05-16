@@ -60,7 +60,7 @@ public final class ZomboidJarProcessorManager {
 	@Nullable
 	public static ZomboidJarProcessorManager create(Project project) {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
-		List<ZomboidJarProcessor<?>> processors = new ArrayList<>(extension.getMinecraftJarProcessors().get());
+		List<ZomboidJarProcessor<?>> processors = new ArrayList<>(extension.getZomboidJarProcessors().get());
 
 		for (JarProcessor legacyProcessor : extension.getGameJarProcessors().get()) {
 			processors.add(project.getObjects().newInstance(LegacyJarProcessorWrapper.class, legacyProcessor));

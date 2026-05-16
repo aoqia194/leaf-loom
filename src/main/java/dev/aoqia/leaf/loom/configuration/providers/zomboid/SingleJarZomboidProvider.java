@@ -38,7 +38,7 @@ import net.fabricmc.tinyremapper.TinyRemapper;
 
 public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider permits SingleJarZomboidProvider.Server, SingleJarZomboidProvider.Client {
 	private final MappingsNamespace officialNamespace;
-	private Path minecraftEnvOnlyJar;
+	private Path zomboidEnvOnlyJar;
 
 	private SingleJarZomboidProvider(ZomboidMetadataProvider metadataProvider, ConfigContext configContext, MappingsNamespace officialNamespace) {
 		super(metadataProvider, configContext);
@@ -66,12 +66,12 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider pe
 	protected void initFiles() {
 		super.initFiles();
 
-		minecraftEnvOnlyJar = path("minecraft-%s-only.jar".formatted(type()));
+		zomboidEnvOnlyJar = path("zomboid-%s-only.jar".formatted(type()));
 	}
 
 	@Override
-	public List<Path> getMinecraftJars() {
-		return List.of(minecraftEnvOnlyJar);
+	public List<Path> getZomboidJars() {
+		return List.of(zomboidEnvOnlyJar);
 	}
 
 	@Override
@@ -79,11 +79,11 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider pe
 		super.provide();
 
 		// Server only JARs are supported on any version, client only JARs are pretty much useless after 1.3.
-		if (provideClient() && !isLegacyVersion()) {
-			getProject().getLogger().warn("Using `clientOnlyMinecraftJar()` is not recommended for Minecraft versions 1.3 or newer.");
+		if (provideServer() && !isLegacyVersion()) {
+			getProject().getLogger().warn("Using `serverOnlyZomboidJar()` is not recommended for PZ versions 41.78.16 or newer.");
 		}
 
-		boolean requiresRefresh = getExtension().refreshDeps() || Files.notExists(minecraftEnvOnlyJar);
+		boolean requiresRefresh = getExtension().refreshDeps() || Files.notExists(zomboidEnvOnlyJar);
 
 		if (!requiresRefresh) {
 			return;
@@ -96,16 +96,16 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider pe
 		try {
 			remapper = TinyRemapper.newRemapper(TinyRemapperLoggerAdapter.INSTANCE).build();
 
-			Files.deleteIfExists(minecraftEnvOnlyJar);
+			Files.deleteIfExists(zomboidEnvOnlyJar);
 
 			// Pass through tiny remapper to fix the meta-inf
-			try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(minecraftEnvOnlyJar).build()) {
+			try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(zomboidEnvOnlyJar).build()) {
 				outputConsumer.addNonClassFiles(inputJar, NonClassCopyMode.FIX_META_INF, remapper);
 				remapper.readInputs(inputJar);
 				remapper.apply(outputConsumer);
 			}
 		} catch (Exception e) {
-			Files.deleteIfExists(minecraftEnvOnlyJar);
+			Files.deleteIfExists(zomboidEnvOnlyJar);
 			throw new RuntimeException("Failed to process %s only jar".formatted(type()), e);
 		} finally {
 			if (remapper != null) {
@@ -114,8 +114,8 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider pe
 		}
 	}
 
-	public Path getMinecraftEnvOnlyJar() {
-		return minecraftEnvOnlyJar;
+	public Path getZomboidEnvOnlyJar() {
+		return zomboidEnvOnlyJar;
 	}
 
 	@Override
@@ -139,13 +139,7 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider pe
 
 		@Override
 		public Path getInputJar(SingleJarZomboidProvider provider) {
-			BundleMetadata serverBundleMetadata = provider.getServerBundleMetadata();
-
-			if (serverBundleMetadata == null) {
-				return provider.getMinecraftServerJar().toPath();
-			}
-
-			return provider.getMinecraftExtractedServerJar().toPath();
+            return provider.getZomboidServerJar().toPath();
 		}
 
 		@Override
@@ -171,7 +165,7 @@ public abstract sealed class SingleJarZomboidProvider extends ZomboidProvider pe
 
 		@Override
 		public Path getInputJar(SingleJarZomboidProvider provider) throws Exception {
-			return provider.getMinecraftClientJar().toPath();
+			return provider.getZomboidClientJar().toPath();
 		}
 
 		@Override

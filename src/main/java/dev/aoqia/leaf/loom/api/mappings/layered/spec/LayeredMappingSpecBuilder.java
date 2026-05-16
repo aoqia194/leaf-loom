@@ -42,37 +42,6 @@ public interface LayeredMappingSpecBuilder {
 	LayeredMappingSpecBuilder addLayer(MappingsSpec<?> mappingSpec);
 
 	/**
-	 * Add a layer that uses the official mappings provided by Mojang with the default decompilerOptions.
-	 */
-	default LayeredMappingSpecBuilder officialMojangMappings() {
-		return officialMojangMappings(builder -> { });
-	}
-
-	/**
-	 * Configure and add a layer that uses the official mappings provided by Mojang.
-	 */
-	@SuppressWarnings("rawtypes")
-	default LayeredMappingSpecBuilder officialMojangMappings(@DelegatesTo(value = MojangMappingsSpecBuilder.class, strategy = Closure.DELEGATE_FIRST) Closure closure) {
-		return officialMojangMappings(new ClosureAction<>(closure));
-	}
-
-	/**
-	 * Configure and add a layer that uses the official mappings provided by Mojang.
-	 */
-	LayeredMappingSpecBuilder officialMojangMappings(Action<MojangMappingsSpecBuilder> action);
-
-	default LayeredMappingSpecBuilder parchment(Object object) {
-		return parchment(object, parchmentMappingsSpecBuilder -> parchmentMappingsSpecBuilder.setRemovePrefix(true));
-	}
-
-	@SuppressWarnings("rawtypes")
-	default LayeredMappingSpecBuilder parchment(Object object, @DelegatesTo(value = ParchmentMappingsSpecBuilder.class, strategy = Closure.DELEGATE_FIRST) Closure closure) {
-		return parchment(object, new ClosureAction<>(closure));
-	}
-
-	LayeredMappingSpecBuilder parchment(Object object, Action<ParchmentMappingsSpecBuilder> action);
-
-	/**
 	 * Add a signatureFix layer. Reads the @extras/record_signatures.json" file in a jar file such as yarn.
 	 */
 	@ApiStatus.Experimental

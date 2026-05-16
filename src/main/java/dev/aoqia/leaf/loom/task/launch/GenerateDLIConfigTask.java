@@ -83,9 +83,6 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	protected abstract Property<String> getCommonGameJarPath();
 
 	@Input
-	protected abstract Property<String> getAssetsDirectoryPath();
-
-	@Input
 	protected abstract Property<String> getNativesDirectoryPath();
 
 	@InputFile
@@ -98,8 +95,8 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	protected abstract Property<ClasspathGroupService.Options> getClasspathGroupOptions();
 
 	public GenerateDLIConfigTask() {
-		getVersionInfoJson().set(LoomGradlePlugin.GSON.toJson(getExtension().getMinecraftProvider().getVersionInfo()));
-		getMinecraftVersion().set(getExtension().getMinecraftProvider().minecraftVersion());
+		getVersionInfoJson().set(LoomGradlePlugin.GSON.toJson(getExtension().getZomboidProvider().getVersionInfo()));
+		getMinecraftVersion().set(getExtension().getZomboidProvider().zomboidVersion());
 		getSplitSourceSets().set(getExtension().areEnvironmentSourceSetsSplit());
 		getANSISupportedIDE().set(ansiSupportedIde(getProject()));
 		getPlainConsole().set(getProject().getGradle().getStartParameter().getConsoleOutput() == ConsoleOutput.Plain);
@@ -112,7 +109,6 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 			getCommonGameJarPath().set(getGameJarPath("common"));
 		}
 
-		getAssetsDirectoryPath().set(new File(getExtension().getFiles().getUserCache(), "assets").getAbsolutePath());
 		getNativesDirectoryPath().set(getExtension().getFiles().getNativesDirectory(getProject()).getAbsolutePath());
 		getDevLauncherConfig().set(getExtension().getFiles().getDevLauncherConfig());
 	}
@@ -120,22 +116,70 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	@TaskAction
 	public void run() throws IOException {
 		final ZomboidVersionMeta versionInfo = LoomGradlePlugin.GSON.fromJson(getVersionInfoJson().get(), ZomboidVersionMeta.class);
-		File assetsDirectory = new File(getAssetsDirectoryPath().get());
-
-		if (versionInfo.assets().equals("legacy")) {
-			assetsDirectory = new File(assetsDirectory, "/legacy/" + versionInfo.id());
-		}
 
 		final LaunchConfig launchConfig = new LaunchConfig()
-				.property("fabric.development", "true")
-				.property("fabric.remapClasspathFile", getRemapClasspathFile().get().getAsFile().getAbsolutePath())
+				.property("leaf.development", "true")
+				.property("leaf.remapClasspathFile", getRemapClasspathFile().get().getAsFile().getAbsolutePath())
 				.property("log4j.configurationFile", getLog4jConfigPaths().get())
-				.property("log4j2.formatMsgNoLookups", "true")
+				.property("log4j2.formatMsgNoLookups", "true");
 
-				.argument("client", "--assetIndex")
-				.argument("client", versionInfo.assetIndex().fabricId(getMinecraftVersion().get()))
-				.argument("client", "--assetsDir")
-				.argument("client", assetsDirectory.getAbsolutePath());
+        // TODO(leaf): Add any jvm args from the versionInfo manifest
+
+//        for (final var arg : versionInfo.arguments().jvm()) {
+//            if (arg.isJsonPrimitive()) {
+//                String str = arg.getAsJsonPrimitive().getAsString();
+//                String key = str.subSequence(2, str.indexOf('=')).toString();
+//                String value = str.subSequence(str.indexOf('=') + 1, str.length()).toString();
+//
+//                // Skip this because we set it in the runconfig's jvm args.
+//                if (key.startsWith("java.library.path")) {
+//                    continue;
+//                }
+//
+//                launchConfig.property(key, value);
+//            } else if (arg.isJsonObject()) {
+//                final var argument = LoomGradlePlugin.GSON.fromJson(arg, ZomboidVersionMeta.Argument.class);
+//                final var argumentRules = argument.rules();
+//                final var argumentValue = argument.value();
+//
+//                boolean allowed = false;
+//                for (final var rule : argumentRules) {
+//                    if (rule.isAllowed() && rule.appliesToOS(Platform.CURRENT)) {
+//                        allowed = true;
+//                    }
+//                }
+//
+//                if (!allowed) {
+//                    continue;
+//                }
+//
+//                HashMap<String, String> props = new HashMap<>();
+//                if (argumentValue.isJsonPrimitive()) {
+//                    final String str = argumentValue.getAsJsonPrimitive().getAsString();
+//                    final String key = str.subSequence(2, str.indexOf('=')).toString();
+//                    final String value = str.subSequence(str.indexOf('=') + 1, str.length()).toString();
+//                    props.put(key, value);
+//                } else if (argumentValue.isJsonArray()) {
+//                    final var arguments = argumentValue.getAsJsonArray();
+//                    for (final var e : arguments) {
+//                        final String str = e.getAsString();
+//                        final String key = str.subSequence(2, str.indexOf('=')).toString();
+//                        final String value = str.subSequence(str.indexOf('=') + 1, str.length()).toString();
+//                        props.put(key, value);
+//                    }
+//                } else {
+//                    throw new IllegalStateException(
+//                        "values in ZomboidVersionMeta json wasn't a string or list of strings."
+//                    );
+//                }
+//
+//                // Skip this because we set it in the runconfig's jvm args.
+//                props.remove("java.library.path");
+//                props.forEach(launchConfig::property);
+//            } else {
+//                throw new IllegalStateException("arg in ZomboidVersionMeta json wasn't a string or object.");
+//            }
+//        }
 
 		if (versionInfo.hasNativesToExtract()) {
 			String nativesPath = getNativesDirectoryPath().get();
@@ -146,21 +190,21 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 		}
 
 		if (getSplitSourceSets().get()) {
-			launchConfig.property("client", "fabric.gameJarPath.client", getClientGameJarPath().get());
-			launchConfig.property("fabric.gameJarPath", getCommonGameJarPath().get());
+			launchConfig.property("client", "leaf.gameJarPath.client", getClientGameJarPath().get());
+			launchConfig.property("leaf.gameJarPath", getCommonGameJarPath().get());
 		}
 
 		try (ScopedServiceFactory serviceFactory = new ScopedServiceFactory()) {
 			ClasspathGroupService classpathGroupService = serviceFactory.get(getClasspathGroupOptions());
 
 			if (classpathGroupService.hasGroups()) {
-				launchConfig.property("fabric.classPathGroups", classpathGroupService.getClasspathGroupsPropertyValue());
+				launchConfig.property("leaf.classPathGroups", classpathGroupService.getClasspathGroupsPropertyValue());
 			}
 		}
 
 		//Enable ansi by default for idea and vscode when gradle is not ran with plain console.
 		if (getANSISupportedIDE().get() && !getPlainConsole().get()) {
-			launchConfig.property("fabric.log.disableAnsi", "false");
+			launchConfig.property("leaf.log.disableAnsi", "false");
 		}
 
 		Files.writeString(getDevLauncherConfig().getAsFile().get().toPath(), launchConfig.asString(), StandardCharsets.UTF_8);
@@ -173,7 +217,7 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	}
 
 	private String getGameJarPath(String env) {
-		MappedZomboidProvider.Split split = (MappedZomboidProvider.Split) getExtension().getNamedMinecraftProvider();
+		MappedZomboidProvider.Split split = (MappedZomboidProvider.Split) getExtension().getNamedZomboidProvider();
 
 		return switch (env) {
 		case "client" -> split.getClientOnlyJar().getPath().toAbsolutePath().toString();
