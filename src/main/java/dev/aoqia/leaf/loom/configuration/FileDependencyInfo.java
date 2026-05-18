@@ -103,7 +103,7 @@ public class FileDependencyInfo extends DependencyInfo {
 
 			try {
                 // TODO(leaf): Make compatible with leaf.mod.json
-				if ("jar".equals(getExtension(root)) && (modJson = ZipUtils.unpackNullable(root.toPath(), "fabric.mod.json")) != null) {
+				if ("jar".equals(getExtension(root)) && (modJson = ZipUtils.unpackNullable(root.toPath(), "leaf.mod.json")) != null) {
 					//It's a Fabric mod, see how much we can extract out
 					JsonObject json = new Gson().fromJson(new String(modJson, StandardCharsets.UTF_8), JsonObject.class);
 

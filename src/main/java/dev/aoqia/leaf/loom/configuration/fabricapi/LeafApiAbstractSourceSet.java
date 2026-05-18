@@ -65,7 +65,7 @@ abstract class FabricApiAbstractSourceSet {
 			final LeafModJson fabricModJson = LeafModJsonFactory.createFromSourceSetsNullable(getProject(), sourceSet);
 
 			if (fabricModJson == null) {
-				throw new RuntimeException("Could not find a fabric.mod.json file in the data source set or a value for DataGenerationSettings.getModId()");
+				throw new RuntimeException("Could not find a leaf.mod.json file in the data source set or a value for DataGenerationSettings.getModId()");
 			}
 
 			return fabricModJson.getId();

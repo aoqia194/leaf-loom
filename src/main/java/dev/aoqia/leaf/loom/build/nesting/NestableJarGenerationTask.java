@@ -98,7 +98,7 @@ public abstract class NestableJarGenerationTask extends AbstractLoomTask {
 		getJars().forEach(file -> {
 			File targetFile = getOutputDirectory().file(file.getName()).get().getAsFile();
 			targetFile.delete();
-			String fabricModJson = Objects.requireNonNull(fabricModJsons.get(file.getName()), "Could not generate fabric.mod.json for included dependency "+file.getName());
+			String fabricModJson = Objects.requireNonNull(fabricModJsons.get(file.getName()), "Could not generate leaf.mod.json for included dependency "+file.getName());
 			makeNestableJar(file, targetFile, fabricModJson);
 		});
 	}
@@ -228,7 +228,7 @@ public abstract class NestableJarGenerationTask extends AbstractLoomTask {
 
         // TODO(leaf): Support leaf.mod.json
 		try {
-			ZipReprocessorUtil.appendZipEntry(output.toPath(), "fabric.mod.json", modJsonFile.getBytes(StandardCharsets.UTF_8));
+			ZipReprocessorUtil.appendZipEntry(output.toPath(), "leaf.mod.json", modJsonFile.getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to add dummy mod while including %s".formatted(input), e);
 		}

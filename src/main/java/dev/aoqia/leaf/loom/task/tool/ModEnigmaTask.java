@@ -111,7 +111,7 @@ public abstract class ModEnigmaTask extends AbstractLoomTask {
 			reporter.throwing(new RuntimeException("Mapping file " + mappingFile + " doesn't exist"), MAPPINGS_MISSING_PROBLEM,
 					spec -> spec
 							.fileLocation(mappingFile.toString())
-							.solution("Create the missing mapping file. Remember to add it to the fabric.mod.json if needed!"));
+							.solution("Create the missing mapping file. Remember to add it to the leaf.mod.json if needed!"));
 		}
 
 		getExecOperations().javaexec(spec -> {

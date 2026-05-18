@@ -108,7 +108,7 @@ public abstract class LeafModJsonV1Task extends AbstractLoomTask {
 			try {
 				Files.writeString(outputPath, json);
 			} catch (IOException e) {
-				throw new UncheckedIOException("Failed to write fabric.mod.json", e);
+				throw new UncheckedIOException("Failed to write leaf.mod.json", e);
 			}
 		}
 	}

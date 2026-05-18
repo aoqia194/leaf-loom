@@ -127,7 +127,7 @@ public class ModProcessor {
 	private void stripNestedJars(Path path) {
 		// Strip out all contained jar info as we dont want loader to try and load the jars contained in dev.
 		try {
-			ZipUtils.transformJson(JsonObject.class, path, Map.of("fabric.mod.json", json -> {
+			ZipUtils.transformJson(JsonObject.class, path, Map.of("leaf.mod.json", json -> {
 				json.remove("jars");
 				return json;
 			}));

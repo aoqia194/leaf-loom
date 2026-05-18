@@ -49,7 +49,7 @@ public record AccessWidenerFile(
 
 		try {
             // TODO(leaf): Make compatible with leaf.mod.json
-			modJsonBytes = ZipUtils.unpackNullable(modJarPath, "fabric.mod.json");
+			modJsonBytes = ZipUtils.unpackNullable(modJarPath, "leaf.mod.json");
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to read access-widener file from: " + modJarPath.toAbsolutePath(), e);
 		}
@@ -72,7 +72,7 @@ public record AccessWidenerFile(
 		try {
 			content = ZipUtils.unpack(modJarPath, awPath);
 		} catch (IOException e) {
-			throw new UncheckedIOException("Could not find access widener file (%s) defined in the fabric.mod.json file of %s".formatted(awPath, modJarPath.toAbsolutePath()), e);
+			throw new UncheckedIOException("Could not find access widener file (%s) defined in the leaf.mod.json file of %s".formatted(awPath, modJarPath.toAbsolutePath()), e);
 		}
 
 		return new AccessWidenerFile(

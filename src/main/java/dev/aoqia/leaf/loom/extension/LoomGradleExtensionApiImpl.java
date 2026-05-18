@@ -294,7 +294,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		List<LeafModJson> fabricModJsons = LeafModJsonHelpers.getModsInProject(getProject());
 
 		if (fabricModJsons.isEmpty()) {
-			throw new RuntimeException("Could not find a fabric.mod.json file in the main sourceset");
+			throw new RuntimeException("Could not find a leaf.mod.json file in the main sourceset");
 		}
 
 		return fabricModJsons.getFirst().getModVersion();

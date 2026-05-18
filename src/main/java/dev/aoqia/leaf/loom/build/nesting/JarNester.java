@@ -65,7 +65,7 @@ public class JarNester {
 			}).collect(Collectors.toList()));
 
             // TODO(leaf): Support leaf.mod.json
-			int count = ZipUtils.transformJson(JsonObject.class, modJar.toPath(), Stream.of(new Pair<>("fabric.mod.json", json -> {
+			int count = ZipUtils.transformJson(JsonObject.class, modJar.toPath(), Stream.of(new Pair<>("leaf.mod.json", json -> {
 				JsonArray nestedJars = json.getAsJsonArray("jars");
 
 				if (nestedJars == null || !json.has("jars")) {
@@ -96,7 +96,7 @@ public class JarNester {
 				return json;
 			})));
 
-			Check.require(count > 0, "Failed to transform fabric.mod.json");
+			Check.require(count > 0, "Failed to transform leaf.mod.json");
 		} catch (IOException e) {
 			throw new java.io.UncheckedIOException("Failed to nest jars into " + modJar.getName(), e);
 		}

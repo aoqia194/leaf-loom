@@ -53,7 +53,7 @@ public class MixinRefmapInliner {
 			LeafModJson fabricModJson = LeafModJsonFactory.createFromZipNullable(mod.getInputFile());
 
 			if (fabricModJson == null) {
-				LOGGER.warn("Failed to read fabric.mod.json from {}", mod.getInputFile());
+				LOGGER.warn("Failed to read leaf.mod.json from {}", mod.getInputFile());
 				continue;
 			}
 
