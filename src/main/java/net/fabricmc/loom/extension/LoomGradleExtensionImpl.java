@@ -34,24 +34,19 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.configuration.BuildFeatures;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.TaskProvider;
-import org.gradle.jvm.tasks.Jar;
 
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.LoomNoRemapGradlePlugin;
 import net.fabricmc.loom.api.mappings.intermediate.IntermediateMappingsProvider;
 import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.loom.configuration.InstallerData;
-import net.fabricmc.loom.configuration.IncludeConfigurations;
 import net.fabricmc.loom.configuration.LoomDependencyManager;
 import net.fabricmc.loom.configuration.accesswidener.AccessWidenerFile;
 import net.fabricmc.loom.configuration.mods.ArtifactMetadata;
@@ -63,8 +58,6 @@ import net.fabricmc.loom.configuration.providers.minecraft.MinecraftProvider;
 import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryProcessorManager;
 import net.fabricmc.loom.configuration.providers.minecraft.mapped.IntermediaryMinecraftProvider;
 import net.fabricmc.loom.configuration.providers.minecraft.mapped.NamedMinecraftProvider;
-import net.fabricmc.loom.task.NestJarsAction;
-import net.fabricmc.loom.task.RemapJarTask;
 import net.fabricmc.loom.util.Constants;
 import net.fabricmc.loom.util.download.Download;
 import net.fabricmc.loom.util.download.DownloadBuilder;
@@ -357,28 +350,5 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	@Override
 	public Provider<ArtifactMetadata.MixinRemapType> getDefaultMixinRemapTypeEnum() {
 		return getDefaultMixinRemapType().map(ArtifactMetadata.MixinRemapType::valueOf);
-	}
-
-	@Override
-	public void nestJars(TaskProvider<? extends Jar> jarTask, FileCollection jars) {
-		jarTask.configure(task -> {
-			if (task instanceof RemapJarTask remapJarTask) {
-				// For RemapJarTask, add to the nestedJars property
-				remapJarTask.getNestedJars().from(jars);
-			} else {
-				// For regular Jar tasks (non-remap mode), add a NestJarsAction with the FileCollection
-				NestJarsAction.addToTask(task, jars);
-			}
-		});
-	}
-
-	@Override
-	public void nestJars(TaskProvider<? extends Jar> jarTask, Configuration configuration) {
-		IncludeConfigurations.nestJars(project, jarTask, configuration);
-	}
-
-	@Override
-	public void nestJars(TaskProvider<? extends Jar> jarTask, NamedDomainObjectProvider<? extends Configuration> configuration) {
-		IncludeConfigurations.nestJars(project, jarTask, configuration);
 	}
 }

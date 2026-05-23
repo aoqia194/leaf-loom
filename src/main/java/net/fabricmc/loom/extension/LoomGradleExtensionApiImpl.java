@@ -63,6 +63,7 @@ import net.fabricmc.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder;
 import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
 import net.fabricmc.loom.api.remapping.RemapperExtension;
 import net.fabricmc.loom.api.remapping.RemapperParameters;
+import net.fabricmc.loom.configuration.IncludeConfigurations;
 import net.fabricmc.loom.configuration.RemapConfigurations;
 import net.fabricmc.loom.configuration.ide.RunConfigSettings;
 import net.fabricmc.loom.configuration.mods.ArtifactMetadata;
@@ -75,6 +76,8 @@ import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJarConfigura
 import net.fabricmc.loom.configuration.providers.minecraft.MinecraftMetadataProvider;
 import net.fabricmc.loom.configuration.providers.minecraft.MinecraftSourceSets;
 import net.fabricmc.loom.task.GenerateSourcesTask;
+import net.fabricmc.loom.task.NestJarsAction;
+import net.fabricmc.loom.task.RemapJarTask;
 import net.fabricmc.loom.util.DeprecationHelper;
 import net.fabricmc.loom.util.MirrorUtil;
 import net.fabricmc.loom.util.fmj.FabricModJson;
@@ -567,6 +570,29 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		return jars;
 	}
 
+	@Override
+	public void nestJars(TaskProvider<? extends Jar> jarTask, FileCollection jars) {
+		jarTask.configure(task -> {
+			if (task instanceof RemapJarTask remapJarTask) {
+				// For RemapJarTask, add to the nestedJars property
+				remapJarTask.getNestedJars().from(jars);
+			} else {
+				// For regular Jar tasks (non-remap mode), add a NestJarsAction with the FileCollection
+				NestJarsAction.addToTask(task, jars);
+			}
+		});
+	}
+
+	@Override
+	public void nestJars(TaskProvider<? extends Jar> jarTask, Configuration configuration) {
+		IncludeConfigurations.nestJars(getProject(), jarTask, configuration);
+	}
+
+	@Override
+	public void nestJars(TaskProvider<? extends Jar> jarTask, NamedDomainObjectProvider<? extends Configuration> configuration) {
+		IncludeConfigurations.nestJars(getProject(), jarTask, configuration);
+	}
+
 	private boolean notObfuscated() {
 		return LoomGradleExtension.get(getProject()).disableObfuscation();
 	}
@@ -600,21 +626,6 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 		@Override
 		public MixinExtension getMixin() {
-			throw new RuntimeException("Yeah... something is really wrong");
-		}
-
-		@Override
-		public void nestJars(TaskProvider<? extends Jar> jarTask, FileCollection jars) {
-			throw new RuntimeException("Yeah... something is really wrong");
-		}
-
-		@Override
-		public void nestJars(TaskProvider<? extends Jar> jarTask, Configuration configuration) {
-			throw new RuntimeException("Yeah... something is really wrong");
-		}
-
-		@Override
-		public void nestJars(TaskProvider<? extends Jar> jarTask, NamedDomainObjectProvider<? extends Configuration> configuration) {
 			throw new RuntimeException("Yeah... something is really wrong");
 		}
 	}
