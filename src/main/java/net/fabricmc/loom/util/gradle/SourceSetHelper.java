@@ -39,6 +39,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
@@ -150,12 +151,12 @@ public final class SourceSetHelper {
 			boolean isDebof = isLoom && LoomGradleExtension.get(reference.project()).disableObfuscation();
 			String configurationName = isLoom && !isDebof
 					? Constants.Configurations.NAMED_ELEMENTS : JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME;
-			final Configuration namedElements = reference.project().getConfigurations().getByName(configurationName);
+			final NamedDomainObjectProvider<? extends Configuration> namedElements = reference.project().getConfigurations().named(configurationName);
 
 			// Note: We're not looking at the artifacts from configuration variants. It's probably not needed
 			// (certainly not with Loom's setup), but technically someone could add child variants that add additional
 			// dev jars that wouldn't be picked up by this.
-			for (File artifact : namedElements.getOutgoing().getArtifacts().getFiles()) {
+			for (File artifact : namedElements.get().getOutgoing().getArtifacts().getFiles()) {
 				classpath.add(artifact);
 			}
 		}
