@@ -123,6 +123,7 @@ public class RunConfigUtils {
 	static RunConfiguration toSerialisable(RunConfiguration runConfig, Project project) {
 		RunConfigurationInternal runConfiguration = project.getObjects().newInstance(RunConfigurationInternal.class, runConfig.getName());
 		runConfiguration.inherit(runConfig);
+		runConfiguration.getDisplayName().convention(runConfig.getDisplayName());
 		runConfiguration.getIsFinalised().set(true);
 		DefaultRunConfigurationSettings.finialiseValues(runConfiguration);
 		return runConfiguration;

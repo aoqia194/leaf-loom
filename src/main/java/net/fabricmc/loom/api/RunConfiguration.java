@@ -132,7 +132,6 @@ public interface RunConfiguration extends Named {
 	Property<String> getDevLaunchMainClass();
 
 	default void inherit(RunConfiguration parent) {
-		getDisplayName().convention(parent.getDisplayName());
 		getJvmArguments().convention(parent.getJvmArguments());
 		getProgramArguments().convention(parent.getProgramArguments());
 		getEnvironmentVars().convention(parent.getEnvironmentVars());
