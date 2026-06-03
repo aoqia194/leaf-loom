@@ -94,12 +94,12 @@ public abstract class SandboxConfiguration implements Runnable {
 
 			settings.inherit(clientRun);
 
-			settings.name("Client Sandbox");
+			settings.getDisplayName().set("Client Sandbox");
 
 			// The sandbox also acts as DLI
 			// Set the sandbox as the true main class
 			settings.getDevLaunchMainClass().set(metadata.mainClass());
-			settings.property("fabric.sandbox.realMain", clientRun.getMainClass().get());
+			settings.getSystemProperties().put("fabric.sandbox.realMain", clientRun.getMainClass().get());
 		});
 	}
 }

@@ -129,7 +129,7 @@ public abstract class RunConfigSettings implements Named, RunConfiguration, RunC
 	 */
 	@Deprecated
 	public List<String> getProgramArgs() {
-		return getProgramArgs();
+		return getProgramArguments().get();
 	}
 
 	/**

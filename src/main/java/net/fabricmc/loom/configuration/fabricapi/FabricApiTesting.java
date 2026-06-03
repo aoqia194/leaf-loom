@@ -95,8 +95,8 @@ public abstract class FabricApiTesting extends FabricApiAbstractSourceSet {
 		if (settings.getEnableGameTests().get()) {
 			RunConfiguration gameTest = extension.getRunConfigs().create("gameTest", run -> {
 				run.inherit(extension.getRunConfigs().getByName("server"));
-				run.property("fabric-api.gametest");
-				run.runDir("build/run/gameTest");
+				run.getSystemProperties().put("fabric-api.gametest", "");
+				run.getRunDirectory().set(getProject().file("build/run/gameTest"));
 				configureBase.accept(run);
 			});
 
@@ -109,16 +109,16 @@ public abstract class FabricApiTesting extends FabricApiAbstractSourceSet {
 
 			RunConfigSettings clientGameTest = extension.getRunConfigs().create("clientGameTest", run -> {
 				run.inherit(extension.getRunConfigs().getByName("client"));
-				run.property("fabric.client.gametest");
+				run.getSystemProperties().put("fabric-api.client.gametest", "");
 
 				if (resourcesDir != null) {
-					run.property("fabric.client.gametest.testModResourcesPath", resourcesDir.getAbsolutePath());
+					run.getSystemProperties().put("fabric.client.gametest.testModResourcesPath", resourcesDir.getAbsolutePath());
 				}
 
-				run.runDir("build/run/clientGameTest");
+				run.getRunDirectory().set(getProject().file("build/run/clientGameTest"));
 
 				if (settings.getUsername().isPresent()) {
-					run.programArgs("--username", settings.getUsername().get());
+					run.getProgramArguments().addAll("--username", settings.getUsername().get());
 				}
 
 				configureBase.accept(run);
