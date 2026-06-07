@@ -294,7 +294,7 @@ class IdeaSyncTaskTest extends Specification {
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>
-    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
     <RunAsTest>false</RunAsTest>
