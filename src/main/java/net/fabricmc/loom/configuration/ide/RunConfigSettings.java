@@ -101,9 +101,8 @@ public abstract class RunConfigSettings implements Named, RunConfiguration, RunC
 	// Deprecated methods:
 
 	/**
-	 * @deprecated No replacement
+	 * Technically deprecated, but as it shadows the "project" property from the parent class, it reports as deprecated in IDEs, which is undesirable.
 	 */
-	@Deprecated
 	public Project getProject() {
 		return project;
 	}
