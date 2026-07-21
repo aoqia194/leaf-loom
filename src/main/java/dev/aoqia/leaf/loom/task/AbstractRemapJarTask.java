@@ -51,6 +51,7 @@ import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.bundling.ZipEntryCompression;
 import org.gradle.jvm.tasks.Jar;
+import org.gradle.work.DisableCachingByDefault;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
 import org.gradle.workers.WorkQueue;
@@ -68,6 +69,7 @@ import dev.aoqia.leaf.loom.util.ZipUtils;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
+@DisableCachingByDefault(because = "Jar task cannot be cached")
 public abstract class AbstractRemapJarTask extends Jar {
 	@InputFile
 	public abstract RegularFileProperty getInputFile();

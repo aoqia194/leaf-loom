@@ -30,14 +30,13 @@ import org.objectweb.asm.Opcodes;
 import java.nio.file.Path;
 
 public class Constants {
-    public static final String INDEX_MANIFEST_PATH = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/indexes";
-    public static final String VERSION_MANIFESTS = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/manifests";
+    public static final String INDEX_MANIFEST_PATH = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/dist/indexes";
+    public static final String VERSION_MANIFESTS = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/dist/manifests";
 
 	public static final String FABRIC_REPOSITORY = "https://maven.fabricmc.net/";
 
 	public static final int ASM_VERSION = Opcodes.ASM9;
-	public static final String RELEASE_TIME_1_3 = "2012-07-25T22:00:00+00:00";
-	public static final String RELEASE_TIME_BETA_1_0 = "2010-12-19T22:00:00+00:00";
+	public static final String RELEASE_TIME_41_78_19 = "2022-12-17T21:16:46Z";
 
     public static final String GAME_FOLDER = "ProjectZomboid";
 

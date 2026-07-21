@@ -246,8 +246,8 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 
 		final AnnotationsData remappedAnnotations = AnnotationsData.getRemappedAnnotations(getTargetNamespace(), mappingConfiguration, getProject(), configContext.serviceFactory(), toM);
 		final Map<String, String> remappedSignatures = SignatureFixerApplyVisitor.getRemappedSignatures(getTargetNamespace() == MappingsNamespace.INTERMEDIARY, mappingConfiguration, getProject(), configContext.serviceFactory(), toM);
-		final ZomboidVersionMeta.JavaVersion javaVersion = zomboidProvider.getVersionInfo().javaVersion();
-		final boolean fixRecords = javaVersion != null && javaVersion.majorVersion() >= 16;
+		final int javaVersion = zomboidProvider.getVersionInfo().javaVersion();
+		final boolean fixRecords = javaVersion >= 16;
 
 		TinyRemapper remapper = TinyRemapperHelper.getTinyRemapper(getProject(), configContext.serviceFactory(), fromM, toM, fixRecords, (builder) -> {
 			if (remappedAnnotations != null) {

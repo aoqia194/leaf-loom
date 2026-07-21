@@ -154,23 +154,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 		//noinspection unchecked
 		this.zomboidJarConfiguration = project.getObjects().property((Class<ZomboidJarConfiguration<?, ?, ?>>) (Class<?>) ZomboidJarConfiguration.class)
-				.convention(project.provider(() -> {
-					final LoomGradleExtension extension = LoomGradleExtension.get(project);
-					final ZomboidMetadataProvider metadataProvider = extension.getMetadataProvider();
-
-					// if no configuration is selected by the user, attempt to select one
-					// based on the mc version and which sides are present for it
-                    // TODO(leaf): Always select the most reasonable one for PZ
-					if (!metadataProvider.getVersionMeta().hasServer()) {
-						return ZomboidJarConfiguration.CLIENT_ONLY;
-					} else if (!metadataProvider.getVersionMeta().hasClient()) {
-						return ZomboidJarConfiguration.SERVER_ONLY;
-					} else if (!metadataProvider.getVersionMeta().isLegacyVersion()) {
-						return ZomboidJarConfiguration.MERGED;
-					} else {
-						return ZomboidJarConfiguration.LEGACY_MERGED;
-					}
-				}));
+				.convention(project.provider(() -> ZomboidJarConfiguration.MERGED));
 		this.zomboidJarConfiguration.finalizeValueOnRead();
 
 		this.accessWidener.finalizeValueOnRead();

@@ -86,14 +86,7 @@ public abstract non-sealed class ClientProductionRunTask extends AbstractProduct
 				.orElse(false)
 		);
 
-		getAssetsIndex().set(getExtension().getZomboidVersion()
-				.map(minecraftVersion -> getExtension()
-						.getZomboidProvider()
-						.getVersionInfo()
-						.assetIndex()
-						.leafId(minecraftVersion)
-				)
-		);
+		getAssetsIndex().set(getExtension().getZomboidVersion());
 		getAssetsDir().set(new File(getExtension().getFiles().getUserCache(), "assets"));
 		getMainClass().convention("dev.aoqia.leaf.loader.impl.launch.knot.KnotClient");
 

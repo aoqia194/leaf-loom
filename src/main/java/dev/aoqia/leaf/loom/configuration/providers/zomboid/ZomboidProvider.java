@@ -78,17 +78,13 @@ public abstract class ZomboidProvider {
 	public void provide() throws Exception {
 		initFiles();
 
-		final ZomboidVersionMeta.JavaVersion javaVersion = getVersionInfo().javaVersion();
+        final int requiredMajorJavaVersion = getVersionInfo().javaVersion();
+        final JavaVersion requiredJavaVersion = JavaVersion.toVersion(requiredMajorJavaVersion);
 
-		if (javaVersion != null) {
-			final int requiredMajorJavaVersion = getVersionInfo().javaVersion().majorVersion();
-			final JavaVersion requiredJavaVersion = JavaVersion.toVersion(requiredMajorJavaVersion);
-
-			if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
-				throw new IllegalStateException("Zomboid %s requires Java %s but Gradle is using %s"
-                    .formatted(zomboidVersion(), requiredJavaVersion, JavaVersion.current()));
-			}
-		}
+        if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
+            throw new IllegalStateException("Zomboid %s requires Java %s but Gradle is using %s"
+                .formatted(zomboidVersion(), requiredJavaVersion, JavaVersion.current()));
+        }
 
         setup(getProject());
 

@@ -24,21 +24,17 @@
 
 package dev.aoqia.leaf.loom.configuration.providers.zomboid;
 
-import java.util.List;
 import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
-public record VersionsManifest(List<Version> versions, Map<String, String> latest) {
+public record VersionsManifest(Map<String, Version> versions, Map<String, String> latest) {
 	public static class Version {
-		public String type, id, url, sha1;
+		public String url, hash;
 	}
 
 	@Nullable
 	public Version getVersion(String id) {
-		return versions.stream()
-				.filter(versions -> versions.id.equalsIgnoreCase(id))
-				.findFirst()
-				.orElse(null);
+		return versions.getOrDefault(id, null);
 	}
 }

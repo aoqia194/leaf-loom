@@ -36,16 +36,19 @@ import dev.aoqia.leaf.loom.util.Platform;
 
 @SuppressWarnings("unused")
 public record ZomboidVersionMeta(
-		AssetIndex assetIndex,
-		Map<String, Download> downloads,
 		String id,
-		List<Library> libraries,
+        String steamBranch,
+        String gitBranch,
+        String gitHash,
+        Manifests manifests,
 		String mainClass,
 		String releaseTime,
-		String time,
-		@Nullable JavaVersion javaVersion
+		String generateTime,
+		AssetIndexes assetIndexes,
+		int javaVersion,
+        List<Library> libraries
 ) {
-	private static Map<Platform.OperatingSystem, String> OS_NAMES = Map.of(
+	private static final Map<Platform.OperatingSystem, String> OS_NAMES = Map.of(
 			Platform.OperatingSystem.WINDOWS, "windows",
 			Platform.OperatingSystem.MAC_OS, "osx",
 			Platform.OperatingSystem.LINUX, "linux"
@@ -59,16 +62,15 @@ public record ZomboidVersionMeta(
 	 * Returns true if the version was released before 41.78.*
 	 */
 	public boolean isLegacyVersion() {
-        // TODO(leaf): Change to 41.78.*
-		return !isVersionOrNewer(Constants.RELEASE_TIME_1_3);
+		return !isVersionOrNewer(Constants.RELEASE_TIME_41_78_19);
 	}
 
 	public boolean hasClient() {
-		return downloads().containsKey("client");
+		return !manifests.client.isEmpty();
 	}
 
 	public boolean hasServer() {
-		return downloads().containsKey("server");
+		return !manifests.server.isEmpty();
 	}
 
 	/**
@@ -82,19 +84,41 @@ public record ZomboidVersionMeta(
 		//       to see which one they have.
 		//       Likewise, "clientOfficial"/"serverOfficial" could be allowed older single-env releases
 		//       as an alternative to "official".
-		return isLegacyVersion() && isVersionOrNewer(Constants.RELEASE_TIME_BETA_1_0);
+        // TODO(leaf): Remove me.
+		return false;
 	}
 
 	public boolean hasNativesToExtract() {
-//		return libraries.stream().anyMatch(Library::hasNatives);
-        return false;
+		// return libraries.stream().anyMatch(Library::hasNatives);
+        return !isLegacyVersion();
 	}
 
-	public record AssetIndex(String id, long totalSize, String path, String sha1, long size, String url) {
-		public String leafId(String version) {
-			return id.equals(version) ? version : version + "-" + id;
-		}
-	}
+	public record AssetIndexes(AssetIndexEntry client, AssetIndexEntry server) {}
+
+    public record AssetIndexEntry(AssetIndexEntryValue macos, AssetIndexEntryValue linux, AssetIndexEntryValue windows,
+        @Nullable AssetIndexEntryValue common) {}
+
+    public record AssetIndexEntryValue(String id, long size, String url, String sha1) {}
+
+    public record Manifests(ManifestEntry client, ManifestEntry server) {
+        public boolean contains(String id) {
+            return client.contains(id) || server.contains(id);
+        }
+    }
+
+    public record ManifestEntry(List<String> macos, List<String> linux, List<String> windows,
+        @Nullable List<String> common) {
+        public boolean contains(String id) {
+            return (common != null && common.contains(id))
+                || linux.contains(id)
+                || windows.contains(id)
+                || macos.contains(id);
+        }
+
+        public boolean isEmpty() {
+            return (common == null || common.isEmpty()) && linux.isEmpty() && windows.isEmpty() && macos.isEmpty();
+        }
+    }
 
 	public record Library(Downloads downloads, String name, Map<String, String> natives, List<Rule> rules, Object extract) {
 		public boolean isValidForOS(Platform platform) {
@@ -190,8 +214,5 @@ public record ZomboidVersionMeta(
 			Objects.requireNonNull(path(), "Cannot get relative file from a null path");
 			return new File(baseDirectory, path());
 		}
-	}
-
-	public record JavaVersion(String component, int majorVersion) {
 	}
 }

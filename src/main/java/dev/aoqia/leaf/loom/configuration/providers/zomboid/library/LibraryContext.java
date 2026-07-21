@@ -58,6 +58,11 @@ public final class LibraryContext {
 	 * @return True when the Minecraft libraries support Java 19 or later
 	 */
 	public boolean supportsJava19OrLater() {
+        if (versionMeta.libraries().isEmpty()) {
+            // As of PZ 42.19, it uses LWJGL 3.3.6
+            return !versionMeta.isLegacyVersion();
+        }
+
 		return versionMeta.libraries().stream().filter(library -> library.name().startsWith("org.lwjgl:lwjgl:")).anyMatch(library -> {
 			final String[] split = library.name().split(":");
 
@@ -94,8 +99,9 @@ public final class LibraryContext {
 	 * @return True when using LWJGL 3
 	 */
 	public boolean usesLWJGL3() {
-		return versionMeta.libraries().stream()
-				.anyMatch(library -> library.name().startsWith("org.lwjgl:lwjgl:3"));
+        return !versionMeta.isLegacyVersion();
+//		return versionMeta.libraries().stream()
+//				.anyMatch(library -> library.name().startsWith("org.lwjgl:lwjgl:3"));
 	}
 
 	/**

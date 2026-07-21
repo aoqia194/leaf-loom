@@ -93,9 +93,8 @@ public final class ZomboidMetadataProvider {
 		// Custom URL always takes priority
 		if (options.customManifestUrl() != null) {
 			VersionsManifest.Version customVersion = new VersionsManifest.Version();
-			customVersion.id = options.zomboidVersion();
 			customVersion.url = options.customManifestUrl();
-			return new ManifestEntryLocation(null, customVersion);
+			return new ManifestEntryLocation(null, options.zomboidVersion(), customVersion);
 		}
 
 		final List<ManifestEntrySupplier> suppliers = new ArrayList<>();
@@ -136,7 +135,7 @@ public final class ZomboidMetadataProvider {
 		final VersionsManifest.Version version = manifest.getVersion(options.zomboidVersion());
 
 		if (version != null) {
-			return new ManifestEntryLocation(location, version);
+			return new ManifestEntryLocation(location, options.zomboidVersion(), version);
 		}
 
 		return null;
@@ -145,8 +144,8 @@ public final class ZomboidMetadataProvider {
 	private ZomboidVersionMeta readVersionMeta() throws IOException {
 		final DownloadBuilder builder = download.apply(versionEntry.entry.url);
 
-		if (versionEntry.entry.sha1 != null) {
-			builder.sha1(versionEntry.entry.sha1);
+		if (versionEntry.entry.hash != null) {
+			builder.sha1(versionEntry.entry.hash);
 		} else {
 			builder.defaultCache();
 		}
@@ -195,6 +194,6 @@ public final class ZomboidMetadataProvider {
 		ManifestEntryLocation get() throws IOException;
 	}
 
-	private record ManifestEntryLocation(ManifestLocation manifest, VersionsManifest.Version entry) {
+	private record ManifestEntryLocation(ManifestLocation manifest, String entryKey, VersionsManifest.Version entry) {
 	}
 }

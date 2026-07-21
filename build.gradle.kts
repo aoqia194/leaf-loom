@@ -74,17 +74,17 @@ configurations.configureEach {
     resolutionStrategy {
         failOnNonReproducibleResolution()
     }
+}
 
-    if (isCanBeConsumed) {
-        attributes {
-            attribute(
-                GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-                objects.named(
-                    GradlePluginApiVersion::class.java,
-                    GradleVersion.current().version
-                )
+configurations.named(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME) {
+    attributes {
+        attribute(
+            GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+            objects.named(
+                GradlePluginApiVersion::class.java,
+                GradleVersion.current().version
             )
-        }
+        )
     }
 }
 

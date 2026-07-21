@@ -49,7 +49,7 @@ public class MirrorUtil {
 			return String.valueOf(ext.get("loom_version_manifests"));
 		}
 
-		return String.format("%s/client/%s/version_manifest.json", Constants.VERSION_MANIFESTS, getOsStringForUrl());
+		return String.format("%s/index.json", Constants.VERSION_MANIFESTS);
 	}
 
     public static String getServerVersionManifests(ExtensionAware aware) {
@@ -58,7 +58,7 @@ public class MirrorUtil {
 			return String.valueOf(ext.get("loom_version_manifests"));
 		}
 
-		return String.format("%s/server/%s/version_manifest.json", Constants.VERSION_MANIFESTS, getOsStringForUrl());
+		return String.format("%s/server/%s/index.json", Constants.VERSION_MANIFESTS, getOsStringForUrl());
 	}
 
     public static String getOsStringForUrl() throws RuntimeException {

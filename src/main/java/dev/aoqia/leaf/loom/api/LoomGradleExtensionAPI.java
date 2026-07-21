@@ -251,6 +251,10 @@ public interface LoomGradleExtensionAPI {
 		getZomboidJarConfiguration().set(ZomboidJarConfiguration.SPLIT);
 	}
 
+    default void mergedZomboidJar() {
+        getZomboidJarConfiguration().set(ZomboidJarConfiguration.MERGED);
+    }
+
 	void splitEnvironmentSourceSets();
 
 	boolean areEnvironmentSourceSetsSplit();
