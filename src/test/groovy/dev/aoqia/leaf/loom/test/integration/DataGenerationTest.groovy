@@ -40,7 +40,7 @@ class DataGenerationTest extends Specification implements GradleProjectTestTrait
 		dependencies {
 			minecraft "com.mojang:minecraft:1.21.4"
 			mappings "net.fabricmc:yarn:1.21.4+build.4:v2"
-			modImplementation "net.fabricmc:fabric-loader:0.16.9"
+			modImplementation "${LoomTestVersions.FABRIC_LOADER.mavenNotation()}"
 			modImplementation "net.fabricmc.fabric-api:fabric-api:0.114.0+1.21.4"
 		}
 	"""

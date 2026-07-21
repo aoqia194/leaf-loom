@@ -46,13 +46,13 @@ class SimpleBenchmark implements GradleProjectTestTrait {
 				gradleHomeDir: new File(dir, "gradlehome")
 				)
 
-		gradle.buildGradle << '''
+		gradle.buildGradle << """
                 dependencies {
                     minecraft "com.mojang:minecraft:1.18.1"
                     mappings "net.fabricmc:yarn:1.18.1+build.17:v2"
                     modImplementation "net.fabricmc.fabric-api:fabric-api:0.45.1+1.18"
                 }
-            '''
+            """
 
 		def timeStart = new Date()
 

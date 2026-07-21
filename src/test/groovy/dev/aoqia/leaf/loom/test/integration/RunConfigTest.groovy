@@ -92,13 +92,13 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
 
 		new File(gradle.projectDir, ".idea").mkdirs()
 
-		gradle.buildGradle << '''
+		gradle.buildGradle << """
                 dependencies {
                     minecraft "com.mojang:minecraft:1.18.1"
                     mappings "net.fabricmc:yarn:1.18.1+build.18:v2"
-                    modImplementation "net.fabricmc:fabric-loader:0.12.12"
+                    modImplementation "${LoomTestVersions.FABRIC_LOADER.mavenNotation()}"
                 }
-            '''
+            """
 
 		when:
 		// Dont run with any tasks, the idea sync task should be invoked automatically due to the system prop
@@ -117,17 +117,17 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
 		setup:
 		def gradle = gradleProject(project: "minimalBase", version: version)
 
-		gradle.buildGradle << '''
+		gradle.buildGradle << """
                 dependencies {
                     minecraft "com.mojang:minecraft:1.18.1"
                     mappings "net.fabricmc:yarn:1.18.1+build.18:v2"
-                    modImplementation "net.fabricmc:fabric-loader:0.12.12"
+                    modImplementation "${LoomTestVersions.FABRIC_LOADER.mavenNotation()}"
                 }
 
                 loom {
-    				runs.clear()
-				}
-            '''
+				runs.clear()
+			}
+            """
 
 		when:
 		def result = gradle.run(tasks: ["downloadAssets"])
@@ -143,17 +143,17 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
 	def "prod server (gradle #version)"() {
 		setup:
 		def gradle = gradleProject(project: "minimalBase", version: version)
-		gradle.buildGradle << '''
+		gradle.buildGradle << """
                 dependencies {
                     minecraft "com.mojang:minecraft:1.21.4"
                     mappings "net.fabricmc:yarn:1.21.4+build.4:v2"
-                    modImplementation "net.fabricmc:fabric-loader:0.16.9"
+                    modImplementation "${LoomTestVersions.FABRIC_LOADER.mavenNotation()}"
                 }
 
                 tasks.register("prodServer", net.fabricmc.loom.task.prod.ServerProductionRunTask) {
                     installerVersion = "1.0.1"
                 }
-            '''
+            """
 		when:
 		def result = gradle.run(task: "prodServer")
 
@@ -173,11 +173,11 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
 		Download.create(TRACY_CAPTURE_LINUX).defaultCache().downloadPath(tracyCapture.toPath())
 
 		def gradle = gradleProject(project: "minimalBase", version: version)
-		gradle.buildGradle << '''
+		gradle.buildGradle << """
                 dependencies {
                     minecraft "com.mojang:minecraft:1.21.4"
                     mappings "net.fabricmc:yarn:1.21.4+build.4:v2"
-                    modImplementation "net.fabricmc:fabric-loader:0.16.9"
+                    modImplementation "${LoomTestVersions.FABRIC_LOADER.mavenNotation()}"
                     modImplementation "net.fabricmc.fabric-api:fabric-api:0.114.0+1.21.4"
 
                     productionRuntimeMods "net.fabricmc.fabric-api:fabric-api:0.114.0+1.21.4"
@@ -191,7 +191,7 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
                 		output = file("profile.tracy")
                 	}
                 }
-            '''
+            """
 
 		// Copy tracy into the project
 		def projectTracyCapture = new File(gradle.projectDir, "tracy-capture")
