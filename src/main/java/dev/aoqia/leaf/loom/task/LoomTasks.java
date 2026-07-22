@@ -25,6 +25,7 @@
 package dev.aoqia.leaf.loom.task;
 
 import java.io.File;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -71,6 +72,83 @@ public abstract class LoomTasks implements Runnable {
 //            return;
 //        }
 
+		LoomGradleExtension extension = LoomGradleExtension.get(getProject());
+
+		if (!extension.disableObfuscation()) {
+			registerMigrateMappingsTasks();
+		}
+
+		var generateLog4jConfig = getTasks().register("generateLog4jConfig", GenerateLog4jConfigTask.class, t -> {
+			t.setDescription("Generate the log4j config file");
+		});
+
+		TaskProvider<GenerateRemapClasspathTask> generateRemapClasspath = null;
+
+		if (!extension.disableObfuscation()) {
+			generateRemapClasspath = getTasks().register("generateRemapClasspath", GenerateRemapClasspathTask.class, t -> {
+				t.setDescription("Generate the remap classpath file");
+			});
+		}
+
+		// Make the lambda happy
+		final TaskProvider<GenerateRemapClasspathTask> generateRemapClasspathTask = generateRemapClasspath;
+
+		getTasks().register("generateDLIConfig", GenerateDLIConfigTask.class, t -> {
+			t.setDescription("Generate the DevLaunchInjector config file");
+
+			// Must allow these IDE files to be generated first
+			t.mustRunAfter("eclipse");
+
+			t.dependsOn(generateLog4jConfig);
+
+			if (!extension.disableObfuscation()) {
+				GenerateRemapClasspathTask remapClasspath = Objects.requireNonNull(generateRemapClasspathTask.get());
+				t.getRemapClasspathFile().set(remapClasspath.getRemapClasspathFile());
+			}
+		});
+
+		getTasks().register("configureLaunch", task -> {
+			task.dependsOn(getTasks().named("generateDLIConfig"));
+			task.dependsOn(getTasks().named("generateLog4jConfig"));
+
+			if (!extension.disableObfuscation()) {
+				task.dependsOn(getTasks().named("generateRemapClasspath"));
+			}
+
+			task.setDescription("Setup the required files to launch Zomboid");
+			task.setGroup(Constants.TaskGroup.LEAF);
+		});
+
+		TaskProvider<ValidateAccessWidenerTask> validateAccessWidener = getTasks().register("validateAccessWidener", ValidateAccessWidenerTask.class, t -> {
+			t.setDescription("Validate all the rules in the access widener against the Zomboid jar");
+			t.setGroup("verification");
+		});
+
+		getTasks().named("check").configure(task -> task.dependsOn(validateAccessWidener));
+
+		registerIDETasks();
+		registerRunTasks();
+
+		// Must be done in afterEvaluate to allow time for the build script to configure the jar config.
+		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
+			if (extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY) {
+				// Server only, nothing more to do.
+				return;
+			}
+
+			final ZomboidVersionMeta versionInfo = extension.getZomboidProvider().getVersionInfo();
+
+			if (versionInfo == null) {
+				// Something has gone wrong, don't register the task.
+                LOGGER.error("Version info is null in LoomTasks#run");
+				return;
+			}
+
+			registerClientSetupTasks(getTasks(), versionInfo.hasNativesToExtract());
+		});
+	}
+
+	private void registerMigrateMappingsTasks() {
 		SourceSetHelper.getSourceSets(getProject()).all(sourceSet -> {
 			if (SourceSetHelper.isMainSourceSet(sourceSet)) {
 				getTasks().register("migrateMappings", MigrateMappingsTask.class, t -> {
@@ -93,61 +171,6 @@ public abstract class LoomTasks implements Runnable {
 
 		getTasks().register("migrateClassTweakerMappings", MigrateClassTweakerMappingsTask.class, t -> {
 			t.setDescription("Migrates access widener and class tweaker mappings to a new version.");
-		});
-
-		var generateLog4jConfig = getTasks().register("generateLog4jConfig", GenerateLog4jConfigTask.class, t -> {
-			t.setDescription("Generate the log4j config file");
-		});
-		var generateRemapClasspath = getTasks().register("generateRemapClasspath", GenerateRemapClasspathTask.class, t -> {
-			t.setDescription("Generate the remap classpath file");
-		});
-		getTasks().register("generateDLIConfig", GenerateDLIConfigTask.class, t -> {
-			t.setDescription("Generate the DevLaunchInjector config file");
-
-			// Must allow these IDE files to be generated first
-			t.mustRunAfter("eclipse");
-
-			t.dependsOn(generateLog4jConfig);
-			t.getRemapClasspathFile().set(generateRemapClasspath.get().getRemapClasspathFile());
-		});
-
-		getTasks().register("configureLaunch", task -> {
-			task.dependsOn(getTasks().named("generateDLIConfig"));
-			task.dependsOn(getTasks().named("generateLog4jConfig"));
-			task.dependsOn(getTasks().named("generateRemapClasspath"));
-
-			task.setDescription("Setup the required files to launch Zomboid");
-			task.setGroup(Constants.TaskGroup.LEAF);
-		});
-
-		TaskProvider<ValidateAccessWidenerTask> validateAccessWidener = getTasks().register("validateAccessWidener", ValidateAccessWidenerTask.class, t -> {
-			t.setDescription("Validate all the rules in the access widener against the Zomboid jar");
-			t.setGroup("verification");
-		});
-
-		getTasks().named("check").configure(task -> task.dependsOn(validateAccessWidener));
-
-		registerIDETasks();
-		registerRunTasks();
-
-		// Must be done in afterEvaluate to allow time for the build script to configure the jar config.
-		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
-			LoomGradleExtension extension = LoomGradleExtension.get(getProject());
-
-			if (extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY) {
-				// Server only, nothing more to do.
-				return;
-			}
-
-			final ZomboidVersionMeta versionInfo = extension.getZomboidProvider().getVersionInfo();
-
-			if (versionInfo == null) {
-				// Something has gone wrong, don't register the task.
-                LOGGER.error("Version info is null in LoomTasks#run");
-				return;
-			}
-
-			registerClientSetupTasks(getTasks(), versionInfo.hasNativesToExtract());
 		});
 	}
 

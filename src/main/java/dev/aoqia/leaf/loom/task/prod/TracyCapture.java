@@ -77,7 +77,7 @@ public abstract class TracyCapture {
 		getMaxShutdownWaitSeconds().convention(10);
 	}
 
-	void runWithTracy(IORunnable runnable) throws IOException {
+	public void runWithTracy(IORunnable runnable) throws IOException {
 		TracyCaptureRunner tracyCaptureRunner = createRunner();
 
 		boolean success = false;

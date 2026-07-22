@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.unit
+package net.fabricmc.loom.test.unit
 
 import java.nio.file.Path
 import java.util.function.Function
@@ -30,20 +30,18 @@ import java.util.stream.Stream
 
 import groovy.transform.CompileStatic
 import org.gradle.api.NamedDomainObjectList
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import spock.lang.Specification
 import spock.lang.TempDir
 
-import dev.aoqia.leaf.loom.LoomGradleExtension
-import dev.aoqia.leaf.loom.api.RemapConfigurationSettings
-import dev.aoqia.leaf.loom.api.fmj.LeafModJsonV1Spec
-import dev.aoqia.leaf.loom.configuration.processors.SpecContextProjectView
-import dev.aoqia.leaf.loom.configuration.processors.SpecContextRemappedImpl
-import dev.aoqia.leaf.loom.test.util.GradleTestUtil
-import dev.aoqia.leaf.loom.util.ZipUtils
-import dev.aoqia.leaf.loom.util.fmj.gen.LeafModJsonV1Generator
+import net.fabricmc.loom.api.RemapConfigurationSettings
+import net.fabricmc.loom.api.fmj.FabricModJsonV1Spec
+import net.fabricmc.loom.configuration.processors.speccontext.ProjectView
+import net.fabricmc.loom.configuration.processors.speccontext.RemappedProjectView
+import net.fabricmc.loom.configuration.processors.speccontext.RemappedSpecContext
+import net.fabricmc.loom.test.util.GradleTestUtil
+import net.fabricmc.loom.util.ZipUtils
+import net.fabricmc.loom.util.fmj.gen.FabricModJsonV1Generator
 
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
@@ -54,8 +52,7 @@ class SpecContextTest extends Specification {
 	Path tempDir
 
 	Project project
-	LoomGradleExtension extension
-	SpecContextProjectView projectView
+	RemappedProjectView projectView
 	NamedDomainObjectList<RemapConfigurationSettings> remapConfigurations
 
 	RemapConfigurationSettings implementation
@@ -67,14 +64,12 @@ class SpecContextTest extends Specification {
 
 	void setup() {
 		project = GradleTestUtil.mockProject()
-		extension = LoomGradleExtension.get(project)
-		projectView = mock(SpecContextProjectView.class)
+		projectView = mock(RemappedProjectView.class)
 		remapConfigurations = project.getObjects().namedDomainObjectList(RemapConfigurationSettings.class)
 
-		when(projectView.extension()).thenReturn(extension)
-		when(extension.getRemapConfigurations()).thenReturn(remapConfigurations)
-		when(projectView.resolveArtifacts(SpecContextProjectView.ArtifactUsage.RUNTIME)).thenReturn(resolve(runtimeArtifacts))
-		when(projectView.resolveArtifacts(SpecContextProjectView.ArtifactUsage.COMPILE)).thenReturn(resolve(apiArtifacts))
+		when(projectView.getRemapConfigurations()).thenReturn(remapConfigurations)
+		when(projectView.resolveArtifacts(ProjectView.ArtifactUsage.RUNTIME)).thenReturn(resolve(runtimeArtifacts))
+		when(projectView.resolveArtifacts(ProjectView.ArtifactUsage.COMPILE)).thenReturn(resolve(apiArtifacts))
 
 		implementation = createConfigurationSettings("implementation")
 		runtimeOnly = createConfigurationSettings("runtimeOnly")
@@ -85,8 +80,8 @@ class SpecContextTest extends Specification {
 			compileOnly
 		])
 
-		when(extension.getCompileRemapConfigurations()).thenReturn([implementation, compileOnly])
-		when(extension.getRuntimeRemapConfigurations()).thenReturn([implementation, runtimeOnly])
+		when(projectView.getCompileRemapConfigurations()).thenReturn([implementation, compileOnly])
+		when(projectView.getRuntimeRemapConfigurations()).thenReturn([implementation, runtimeOnly])
 	}
 
 	def "Empty"() {
@@ -98,7 +93,7 @@ class SpecContextTest extends Specification {
 				)
 
 		when:
-		def specContext = SpecContextRemappedImpl.create(projectView)
+		def specContext = RemappedSpecContext.create(projectView)
 
 		then:
 		specContext.modDependencies().size() == 0
@@ -117,7 +112,7 @@ class SpecContextTest extends Specification {
 				)
 
 		when:
-		def specContext = SpecContextRemappedImpl.create(projectView)
+		def specContext = RemappedSpecContext.create(projectView)
 
 		then:
 		specContext.modDependencies().size() == 1
@@ -136,7 +131,7 @@ class SpecContextTest extends Specification {
 				)
 
 		when:
-		def specContext = SpecContextRemappedImpl.create(projectView)
+		def specContext = RemappedSpecContext.create(projectView)
 
 		then:
 		specContext.modDependencies().size() == 1
@@ -155,7 +150,7 @@ class SpecContextTest extends Specification {
 				)
 
 		when:
-		def specContext = SpecContextRemappedImpl.create(projectView)
+		def specContext = RemappedSpecContext.create(projectView)
 
 		then:
 		specContext.modDependencies().size() == 1
@@ -175,7 +170,7 @@ class SpecContextTest extends Specification {
 				)
 
 		when:
-		def specContext = SpecContextRemappedImpl.create(projectView)
+		def specContext = RemappedSpecContext.create(projectView)
 
 		then:
 		specContext.modDependencies().size() == 1
@@ -196,23 +191,18 @@ class SpecContextTest extends Specification {
 		apiArtifacts[this.compileOnly].addAll(files.compileOnly)
 	}
 
-	private static void configureDependencies(List<Path> files, RemapConfigurationSettings settings) {
-		def configuration = mock(Configuration.class)
-		when(configuration.resolve()).thenReturn(files*.toFile() as Set)
-
-		def provider = mock(NamedDomainObjectProvider.class)
-		when(provider.get()).thenReturn(configuration)
-
-		when(settings.getSourceConfiguration()).thenReturn(provider)
+	private void configureDependencies(List<Path> files, RemapConfigurationSettings settings) {
+		project.configurations.register(settings.name)
+		project.dependencies.add(settings.name, project.files(files))
 	}
 
 	private Path mod(String modId) {
 		def zip = tempDir.resolve("${modId}.zip")
 
-		def spec = project.objects.newInstance(LeafModJsonV1Spec.class)
+		def spec = project.objects.newInstance(FabricModJsonV1Spec.class)
 		spec.modId.set(modId)
 		spec.version.set("1.0.0")
-		def json = LeafModJsonV1Generator.INSTANCE.generate(spec)
+		def json = FabricModJsonV1Generator.INSTANCE.generate(spec)
 		ZipUtils.add(zip, "fabric.mod.json", json)
 
 		return zip

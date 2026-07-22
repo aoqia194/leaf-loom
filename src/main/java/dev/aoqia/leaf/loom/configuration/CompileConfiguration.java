@@ -54,7 +54,6 @@ import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.api.tasks.testing.Test;
-import org.jetbrains.annotations.Nullable;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.InterfaceInjectionExtensionAPI;
@@ -106,6 +105,10 @@ public abstract class CompileConfiguration implements Runnable {
 		afterEvaluationWithService((serviceFactory) -> {
 			final ConfigContext configContext = new ConfigContextImpl(getProject(), serviceFactory, extension);
 
+			if (extension.disableObfuscation()) {
+				DebofConfiguration.create(getProject());
+			}
+
 			ZomboidSourceSets.get(getProject()).afterEvaluate(getProject());
 
 			final boolean previousRefreshDeps = extension.refreshDeps();
@@ -154,8 +157,10 @@ public abstract class CompileConfiguration implements Runnable {
 
 		finalizedBy("eclipse", "genEclipseRuns");
 
-		// Add the "dev" jar to the "namedElements" configuration
-		getProject().artifacts(artifactHandler -> artifactHandler.add(Configurations.NAMED_ELEMENTS, getTasks().named("jar")));
+		if (!extension.disableObfuscation()) {
+			// Add the "dev" jar to the "namedElements" configuration
+			getProject().artifacts(artifactHandler -> artifactHandler.add(Configurations.NAMED_ELEMENTS, getTasks().named("jar")));
+		}
 
 		// Ensure that the encoding is set to UTF-8, no matter what the system default is
 		// this fixes some edge cases with special characters not displaying correctly
@@ -175,6 +180,10 @@ public abstract class CompileConfiguration implements Runnable {
 
 		final ZomboidMetadataProvider metadataProvider = ZomboidMetadataProvider.create(configContext);
 		extension.setMetadataProvider(metadataProvider);
+
+        extension.getProductionNamespace().convention(MappingsNamespace.OFFICIAL.toString());
+
+		extension.getProductionNamespace().finalizeValue();
 
 		var jarConfiguration = extension.getZomboidJarConfiguration().get();
 
@@ -239,6 +248,10 @@ public abstract class CompileConfiguration implements Runnable {
 
 		if (interfaceInjection.isEnabled()) {
 			extension.addZomboidJarProcessor(InterfaceInjectionProcessor.class, "loom:interface-inject", interfaceInjection.getEnableDependencyInterfaceInjection().get());
+		}
+
+		if (!extension.getRemapJsrAnnotationsToJetBrains().get()) {
+			extension.addMinecraftJarProcessor(JsrAnnotationRemapperProcessor.class, "loom:jsr-annotations");
 		}
 	}
 

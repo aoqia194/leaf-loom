@@ -166,8 +166,8 @@ public class SourceRemapper {
 		LorenzMappingService lorenzMappingService = serviceFactory.get(LorenzMappingService.createOptions(
 				project,
 				mappingConfiguration,
-				toNamed ? MappingsNamespace.INTERMEDIARY : MappingsNamespace.NAMED,
-				toNamed ? MappingsNamespace.NAMED : MappingsNamespace.INTERMEDIARY));
+				toNamed ? extension.getProductionNamespaceEnum() : MappingsNamespace.NAMED,
+				toNamed ? MappingsNamespace.NAMED : extension.getProductionNamespaceEnum()));
 		MappingSet mappings = lorenzMappingService.getMappings();
 
 		Mercury mercury = createMercuryWithClassPath(project, toNamed);
@@ -182,8 +182,8 @@ public class SourceRemapper {
 			}
 		}
 
-		for (Path intermediaryJar : extension.getZomboidJars(MappingsNamespace.INTERMEDIARY)) {
-			mercury.getClassPath().add(intermediaryJar);
+		for (Path productionJar : extension.getZomboidJars(extension.getProductionNamespaceEnum())) {
+			mercury.getClassPath().add(productionJar);
 		}
 
 		for (Path intermediaryJar : extension.getZomboidJars(MappingsNamespace.NAMED)) {

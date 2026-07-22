@@ -35,7 +35,6 @@ class ModAccessWidenerEntryTest extends Specification {
 		given:
 		def mod = Mock(LeafModJson.Mockable)
 		mod.getClassTweakers() >> ["test.accesswidener": ModEnvironment.UNIVERSAL]
-		mod.hashCode() >> 0
 
 		when:
 		def entries = ModAccessWidenerEntry.readAll(mod, true)

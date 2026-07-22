@@ -36,12 +36,10 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.process.ExecSpec;
-import org.gradle.work.DisableCachingByDefault;
 import org.jetbrains.annotations.ApiStatus;
 
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
 
@@ -49,7 +47,6 @@ import dev.aoqia.leaf.loom.util.Platform;
  * A task that runs the Minecraft client in a similar way to a production launcher. You must manually register a task of this type to use it.
  */
 @ApiStatus.Experimental
-@DisableCachingByDefault
 public abstract non-sealed class ClientProductionRunTask extends AbstractProductionRunTask {
 	/**
 	 * Whether to use XVFB to run the game, using a virtual framebuffer. This is useful for CI environments that don't have a display server.
@@ -81,7 +78,6 @@ public abstract non-sealed class ClientProductionRunTask extends AbstractProduct
 	protected abstract Property<String> getAssetsIndex();
 
 	@InputFiles
-    @PathSensitive(PathSensitivity.ABSOLUTE)
 	protected abstract DirectoryProperty getAssetsDir();
 
 	@Inject
@@ -97,7 +93,11 @@ public abstract non-sealed class ClientProductionRunTask extends AbstractProduct
 
 		getClasspath().from(getExtension().getZomboidProvider().getZomboidClientJar());
 		getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:loader:%s", getProjectLoaderVersion()));
-		getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:intermediary:%s", getExtension().getZomboidVersion()));
+
+		if (getExtension().getProductionNamespaceEnum() == MappingsNamespace.INTERMEDIARY) {
+			getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:intermediary:%s", getExtension().getZomboidVersion()));
+		}
+
 		getClasspath().from(getProject().getConfigurations().named(Constants.Configurations.ZOMBOID_TEST_CLIENT_RUNTIME_LIBRARIES));
 
 		dependsOn("downloadAssets");

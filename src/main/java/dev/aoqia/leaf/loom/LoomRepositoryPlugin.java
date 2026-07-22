@@ -33,14 +33,13 @@ import org.gradle.api.initialization.Settings;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.PluginAware;
-import org.jetbrains.annotations.NotNull;
 
 import dev.aoqia.leaf.loom.extension.LoomFiles;
 import dev.aoqia.leaf.loom.util.MirrorUtil;
 
 public class LoomRepositoryPlugin implements Plugin<PluginAware> {
 	@Override
-	public void apply(@NotNull PluginAware target) {
+	public void apply(PluginAware target) {
 		if (target instanceof Settings settings) {
 			declareRepositories(settings.getDependencyResolutionManagement().getRepositories(), LoomFiles.create(settings), settings);
 

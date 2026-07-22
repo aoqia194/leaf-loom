@@ -38,7 +38,6 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 
@@ -62,7 +61,7 @@ public abstract class RemapConfigurationSettings implements Named {
 	}
 
 	@Override
-	public @NotNull String getName() {
+	public String getName() {
 		return name;
 	}
 

@@ -31,7 +31,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingLayer;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;

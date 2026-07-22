@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;

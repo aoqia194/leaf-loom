@@ -26,7 +26,7 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid;
 
 import java.util.Map;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public record VersionsManifest(Map<String, Version> versions, Map<String, String> latest) {
 	public static class Version {

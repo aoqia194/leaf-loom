@@ -51,7 +51,6 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.services.ServiceReference;
-import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Internal;
@@ -59,19 +58,18 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.api.tasks.UntrackedTask;
 import org.gradle.api.tasks.options.Option;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.process.ExecOperations;
-import org.gradle.work.DisableCachingByDefault;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
 import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 import org.gradle.workers.internal.WorkerDaemonClientsManager;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.decompilers.DecompilationMetadata;
 import dev.aoqia.leaf.loom.api.decompilers.DecompilerOptions;
 import dev.aoqia.leaf.loom.api.decompilers.LoomDecompiler;
@@ -100,10 +98,9 @@ import dev.aoqia.leaf.loom.util.ipc.IPCClient;
 import dev.aoqia.leaf.loom.util.ipc.IPCServer;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
-@UntrackedTask(because = "Manually invoked, has internal caching")
-@DisableCachingByDefault
 public abstract class GenerateSourcesTask extends AbstractLoomTask {
 	private static final String CACHE_VERSION = "v1";
 	private final DecompilerOptions decompilerOptions;
@@ -114,13 +111,13 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 	@Input
 	public abstract Property<String> getInputJarName();
 
-	@Classpath // Only contains a single file
+	@InputFiles // Only contains a single file
 	protected abstract ConfigurableFileCollection getClassesInputJar();
 
-	@Classpath
+	@InputFiles
 	protected abstract ConfigurableFileCollection getClasspath();
 
-	@Classpath
+	@InputFiles
 	protected abstract ConfigurableFileCollection getZomboidCompileLibraries();
 
 	@OutputFile
@@ -143,6 +140,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 	// Internal inputs
 	@ApiStatus.Internal
 	@Nested
+	@Optional
 	protected abstract Property<SourceMappingsService.Options> getMappings();
 
 	// Internal outputs
@@ -224,14 +222,15 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 		getUseCache().convention(true);
 		getResetCache().convention(getExtension().refreshDeps());
 
-		getMappings().set(SourceMappingsService.create(getProject()));
+		if (!LoomGradleExtension.get(getProject()).disableObfuscation()) {
+			getMappings().set(SourceMappingsService.create(getProject()));
+			getUnpickOptions().set(UnpickService.createOptions(this));
+		}
 
 		getMaxCachedFiles().set(GradleUtils.getIntegerPropertyProvider(getProject(), Constants.Properties.DECOMPILE_CACHE_MAX_FILES).orElse(50_000));
 		getMaxCacheFileAge().set(GradleUtils.getIntegerPropertyProvider(getProject(), Constants.Properties.DECOMPILE_CACHE_MAX_AGE).orElse(90));
 
 		getDaemonUtilsContext().set(getProject().getObjects().newInstance(DaemonUtils.Context.class, getProject()));
-
-		getUnpickOptions().set(UnpickService.createOptions(this));
 
 		mustRunAfter(getProject().getTasks().withType(AbstractRemapJarTask.class));
 	}
@@ -316,7 +315,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 
 		if (job instanceof CachedJarProcessor.WorkToDoJob workToDoJob) {
 			Path workInputJar = workToDoJob.incomplete();
-			@Nullable Path existingClasses = (job instanceof CachedJarProcessor.PartialWorkJob partialWorkJob) ? partialWorkJob.existingClasses() : null;
+			Path existingClasses = (job instanceof CachedJarProcessor.PartialWorkJob partialWorkJob) ? partialWorkJob.existingClasses() : null;
 
 			if (usingUnpick()) {
 				try (var timer = new Timer("Unpick")) {
@@ -410,11 +409,13 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 			sj.add(unpick.getUnpickCacheKey());
 		}
 
-		SourceMappingsService mappingsService = serviceFactory.get(getMappings());
-		String mappingsHash = mappingsService.getProcessorHash();
+		if (getMappings().isPresent()) {
+			SourceMappingsService mappingsService = serviceFactory.get(getMappings());
+			String mappingsHash = mappingsService.getProcessorHash();
 
-		if (mappingsHash != null) {
-			sj.add(mappingsHash);
+			if (mappingsHash != null) {
+				sj.add(mappingsHash);
+			}
 		}
 
 		getLogger().info("Decompile cache data: {}", sj);
@@ -487,7 +488,10 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 			params.getInputJar().set(inputJar.toFile());
 			params.getOutputJar().set(outputJar.toFile());
 			params.getLinemapFile().set(linemapFile.toFile());
-			params.getMappings().set(getMappings());
+
+			if (getMappings().isPresent()) {
+				params.getMappings().set(getMappings());
+			}
 
 			if (ipcServer != null) {
 				params.getIPCPath().set(ipcServer.getPath().toFile());
@@ -590,11 +594,16 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 			}
 
 			try (var serviceFactory = new ScopedServiceFactory()) {
-				final SourceMappingsService mappingsService = serviceFactory.get(getParameters().getMappings());
+				Path javaDocs = null;
+
+				if (getParameters().getMappings().isPresent()) {
+					final SourceMappingsService mappingsService = serviceFactory.get(getParameters().getMappings());
+					javaDocs = mappingsService.getMappingsFile();
+				}
 
 				final var metadata = new DecompilationMetadata(
 						decompilerOptions.maxThreads(),
-						mappingsService.getMappingsFile(),
+						javaDocs,
 						getLibraries(),
 						logger,
 						decompilerOptions.options()

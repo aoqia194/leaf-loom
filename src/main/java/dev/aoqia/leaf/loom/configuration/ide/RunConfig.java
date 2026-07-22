@@ -168,6 +168,13 @@ public class RunConfig {
 		runConfig.projectName = project.getName();
 		runConfig.folderName = settings.getIdeConfigFolder().getOrNull();
 
+		MinecraftVersionMeta.JavaVersion javaVersion = extension.getMinecraftProvider().getVersionInfo().javaVersion();
+
+		if (javaVersion != null && javaVersion.majorVersion() >= 25) {
+			runConfig.vmArgs.add("--sun-misc-unsafe-memory-access=allow");
+			runConfig.vmArgs.add("--enable-native-access=ALL-UNNAMED");
+		}
+
 		return runConfig;
 	}
 

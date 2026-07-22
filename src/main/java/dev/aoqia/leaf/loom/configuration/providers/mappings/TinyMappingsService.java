@@ -37,9 +37,7 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import dev.aoqia.leaf.loom.util.Lazy;
@@ -54,7 +52,6 @@ public final class TinyMappingsService extends Service<TinyMappingsService.Optio
 
 	public interface Options extends Service.Options {
 		@InputFiles
-        @PathSensitive(PathSensitivity.NONE)
 		ConfigurableFileCollection getMappings(); // Only a single file
 
 		/**

@@ -36,7 +36,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import org.gradle.api.Project;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +45,8 @@ import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.configuration.processors.speccontext.DeobfSpecContext;
+import dev.aoqia.leaf.loom.configuration.processors.speccontext.RemappedSpecContext;
 import dev.aoqia.leaf.loom.util.Checksum;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
@@ -69,9 +71,9 @@ public final class ZomboidJarProcessorManager {
 		SpecContext specContext;
 
 		if (extension.disableObfuscation()) {
-			specContext = SpecContextDebofImpl.create();
+			specContext = DeobfSpecContext.create(project);
 		} else {
-			specContext = SpecContextRemappedImpl.create(project);
+			specContext = RemappedSpecContext.create(project);
 		}
 
 		return ZomboidJarProcessorManager.create(processors, specContext);
@@ -143,7 +145,7 @@ public final class ZomboidJarProcessorManager {
 			try {
 				entry.processJar(jar, context);
 			} catch (IOException e) {
-				throw new IOException("Failed to process jar when running jar processor: %s".formatted(entry.name()), e);
+				throw new IOException("Failed to process jar when running jar processor: %s - %s".formatted(entry.name(), e.getMessage()), e);
 			}
 		}
 	}
@@ -160,7 +162,7 @@ public final class ZomboidJarProcessorManager {
 		return transformed;
 	}
 
-	record ProcessorEntry<S extends ZomboidJarProcessor.Spec>(S spec, ZomboidJarProcessor<S> processor, @Nullable ZomboidJarProcessor.MappingsProcessor<S> mappingsProcessor) {
+	record ProcessorEntry<S extends ZomboidJarProcessor.Spec>(S spec, ZomboidJarProcessor<S> processor, ZomboidJarProcessor.@Nullable MappingsProcessor<S> mappingsProcessor) {
 		@SuppressWarnings("unchecked")
 		ProcessorEntry(ZomboidJarProcessor<?> processor, ZomboidJarProcessor.Spec spec) {
 			this((S) Objects.requireNonNull(spec), (ZomboidJarProcessor<S>) processor, (ZomboidJarProcessor.MappingsProcessor<S>) processor.processMappings());

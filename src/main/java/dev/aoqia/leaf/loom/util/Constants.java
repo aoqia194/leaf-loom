@@ -174,7 +174,7 @@ public class Constants {
 		/**
 		 * Skip the signature verification of the jar and game resources after copying.
 		 */
-		public static final String DISABLE_GAME_VERIFICATION = "leaf.loom.disableGameVerification";
+		public static final String ENABLE_GAME_VERIFICATION = "leaf.loom.enableGameVerification";
 		/**
 		 * When using the MojangMappingLayer this will remove names for non root methods by using the intermediary mappings.
 		 */
@@ -183,10 +183,6 @@ public class Constants {
 		 * Set to true in all {@link dev.aoqia.leaf.loom.task.RenderDocRunTask} can be used to determine at runtime if running with loom's renderdoc setup.
 		 */
 		public static final String RENDER_DOC = "leaf.loom.renderdoc.enabled";
-        /**
-         * Is the host platform in a CI/CD environment?
-         */
-        public static final String IS_CI =  "leaf.loom.ci";
         /**
          * Skip setting up mixin and decompile/test tasks, and only set up the game provider jars.
          */

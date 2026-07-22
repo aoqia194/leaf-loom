@@ -46,7 +46,6 @@ import org.gradle.api.tasks.UntrackedTask;
 import org.gradle.process.ExecOperations;
 import org.jetbrains.annotations.ApiStatus;
 
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 import dev.aoqia.leaf.loom.util.LoomProblems;
 import dev.aoqia.leaf.loom.util.LoomVersions;
@@ -93,7 +92,7 @@ public abstract class ModEnigmaTask extends AbstractLoomTask {
 	protected abstract Problems getProblems();
 
 	public ModEnigmaTask() {
-		getMinecraftJars().convention(getProject().provider(() -> getExtension().getZomboidJars(MappingsNamespace.INTERMEDIARY)));
+		getMinecraftJars().convention(getProject().provider(() -> getExtension().getZomboidJars(getExtension().getProductionNamespaceEnum())));
 		getToolClasspath().from(getEnigmaClasspath(getProject()));
 	}
 

@@ -86,6 +86,8 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 
 	void setIntermediaryZomboidProvider(IntermediaryZomboidProvider<?> provider);
 
+	MappingsNamespace getProductionNamespaceEnum();
+
 	default List<Path> getZomboidJars(MappingsNamespace mappingsNamespace) {
 		return switch (mappingsNamespace) {
 		case NAMED -> getNamedZomboidProvider().getZomboidJarPaths();

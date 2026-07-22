@@ -45,6 +45,8 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.SetProperty;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
+import org.gradle.jvm.tasks.Jar;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.InterfaceInjectionExtensionAPI;
@@ -93,6 +95,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	protected final Property<Boolean> modProvidedJavadoc;
 	protected final Property<String> intermediary;
 	protected final Property<IntermediateMappingsProvider> intermediateMappingsProvider;
+	private final Property<String> productionNamespace;
+	private final Property<Boolean> remapJsrAnnotationsToJetBrains;
 	private final Property<Boolean> runtimeOnlyLog4j;
 	private final Property<Boolean> splitModDependencies;
 	private final Property<ZomboidJarConfiguration<?, ?, ?>> zomboidJarConfiguration;
@@ -137,6 +141,8 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		this.modProvidedJavadoc.finalizeValueOnRead();
 		this.intermediary = project.getObjects().property(String.class)
 				.convention(DEFAULT_INTERMEDIARY_URL);
+		this.productionNamespace = project.getObjects().property(String.class);
+		this.productionNamespace.finalizeValueOnRead();
 
 		this.intermediateMappingsProvider = project.getObjects().property(IntermediateMappingsProvider.class);
 		this.intermediateMappingsProvider.finalizeValueOnRead();
@@ -159,6 +165,9 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 		this.accessWidener.finalizeValueOnRead();
 		this.getGameJarProcessors().finalizeValueOnRead();
+
+		this.remapJsrAnnotationsToJetBrains = project.getObjects().property(Boolean.class).convention(true);
+		this.remapJsrAnnotationsToJetBrains.finalizeValueOnRead();
 
 		this.runtimeOnlyLog4j = project.getObjects().property(Boolean.class).convention(false);
 		this.runtimeOnlyLog4j.finalizeValueOnRead();
@@ -312,6 +321,11 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	}
 
 	@Override
+	public Property<String> getProductionNamespace() {
+		return productionNamespace;
+	}
+
+	@Override
 	public IntermediateMappingsProvider getIntermediateMappingsProvider() {
 		if (LoomGradleExtension.get(getProject()).disableObfuscation()) {
 			throw new UnsupportedOperationException("Cannot get intermediate mappings provider in a non-obfuscated environment");
@@ -336,7 +350,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	@Override
 	public File getMappingsFile() {
 		if (notObfuscated()) {
-			throw new UnsupportedOperationException("Cannot get mappings file in a non-obfuscated environment");
+			return null;
 		}
 
 		return LoomGradleExtension.get(getProject()).getMappingConfiguration().tinyMappings.toFile();
@@ -366,6 +380,11 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	@Override
 	public Property<ZomboidJarConfiguration<?, ?, ?>> getZomboidJarConfiguration() {
 		return zomboidJarConfiguration;
+	}
+
+	@Override
+	public Property<Boolean> getRemapJsrAnnotationsToJetBrains() {
+		return remapJsrAnnotationsToJetBrains;
 	}
 
 	@Override
@@ -513,6 +532,11 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 		@Override
 		public MixinExtension getMixin() {
+			throw new RuntimeException("Yeah... something is really wrong");
+		}
+
+		@Override
+		public void nestJars(TaskProvider<? extends Jar> jarTask, FileCollection jars) {
 			throw new RuntimeException("Yeah... something is really wrong");
 		}
 	}

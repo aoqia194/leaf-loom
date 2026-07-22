@@ -65,4 +65,14 @@ public record ProcessorContextImpl(ConfigContext configContext, ZomboidJar minec
 		LoomGradleExtension extension = LoomGradleExtension.get(configContext().project());
 		return extension.getMappingConfiguration().getMappingsService(configContext().project(), configContext().serviceFactory()).getMappingTree();
 	}
+
+	@Override
+	public boolean disableObfuscation() {
+		return configContext().extension().disableObfuscation();
+	}
+
+	@Override
+	public MappingsNamespace getProductionNamespace() {
+		return configContext().extension().getProductionNamespaceEnum();
+	}
 }

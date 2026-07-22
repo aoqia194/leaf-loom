@@ -26,7 +26,6 @@ package dev.aoqia.leaf.loom.configuration.mods;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -37,8 +36,7 @@ import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import com.google.gson.JsonObject;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.configuration.InstallerData;
@@ -47,8 +45,6 @@ import dev.aoqia.leaf.loom.util.FileSystemUtil;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 
 public record ArtifactMetadata(boolean isLeafMod, RemapRequirements remapRequirements, @Nullable InstallerData installerData, MixinRemapType mixinRemapType, List<String> knownIdyBsms) {
-	private static final String INSTALLER_PATH = "leaf-installer.json";
-
 	public static ArtifactMetadata create(ArtifactRef artifact, String currentLoomVersion) throws IOException {
 		boolean isFabricMod;
 		RemapRequirements remapRequirements = RemapRequirements.DEFAULT;
@@ -90,11 +86,10 @@ public record ArtifactMetadata(boolean isLeafMod, RemapRequirements remapRequire
 				}
 			}
 
-			final Path installerPath = fs.getPath(INSTALLER_PATH);
+			final Path installerPath = fs.getPath(InstallerData.INSTALLER_PATH);
 
 			if (isFabricMod && Files.exists(installerPath)) {
-				final JsonObject jsonObject = LoomGradlePlugin.GSON.fromJson(Files.readString(installerPath, StandardCharsets.UTF_8), JsonObject.class);
-				installerData = new InstallerData(artifact.version(), jsonObject);
+				installerData = InstallerData.fromBytes(Files.readAllBytes(installerPath), artifact.version());
 			}
 		}
 

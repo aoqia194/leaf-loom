@@ -22,12 +22,13 @@
  * SOFTWARE.
  */
 
+<<<<<<<< HEAD:src/main/java/dev/aoqia/leaf/loom/configuration/processors/SpecContextProjectView.java
 package dev.aoqia.leaf.loom.configuration.processors;
+========
+package net.fabricmc.loom.configuration.processors.speccontext;
+>>>>>>>> upstream/dev/1.14:src/main/java/dev/aoqia/leaf/loom/configuration/processors/speccontext/ProjectView.java
 
-import java.io.File;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.gradle.api.Project;
@@ -35,25 +36,38 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.attributes.Usage;
 
+<<<<<<<< HEAD:src/main/java/dev/aoqia/leaf/loom/configuration/processors/SpecContextProjectView.java
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonHelpers;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+========
+import net.fabricmc.loom.LoomGradleExtension;
+import net.fabricmc.loom.util.Constants;
+import net.fabricmc.loom.util.fmj.FabricModJson;
+import net.fabricmc.loom.util.fmj.FabricModJsonHelpers;
+import net.fabricmc.loom.util.gradle.GradleUtils;
+>>>>>>>> upstream/dev/1.14:src/main/java/dev/aoqia/leaf/loom/configuration/processors/speccontext/ProjectView.java
 
 // Used to abstract out the Gradle API usage to ease unit testing.
-public interface SpecContextProjectView {
-	LoomGradleExtension extension();
-
-	// Returns a list of Loom Projects found in the specified Configuration
+public interface ProjectView {
+	//Returns a list of Loom Projects found in the specified Configuration
 	Stream<Project> getLoomProjectDependencies(String name);
 
+<<<<<<<< HEAD:src/main/java/dev/aoqia/leaf/loom/configuration/processors/SpecContextProjectView.java
 	Function<RemapConfigurationSettings, Stream<Path>> resolveArtifacts(ArtifactUsage artifactUsage);
 
 	List<LeafModJson> getMods();
+========
+	// Returns the mods defined in the current project
+	List<FabricModJson> getMods();
+>>>>>>>> upstream/dev/1.14:src/main/java/dev/aoqia/leaf/loom/configuration/processors/speccontext/ProjectView.java
 
 	boolean disableProjectDependantMods();
+
+	boolean areEnvironmentSourceSetsSplit();
 
 	enum ArtifactUsage {
 		RUNTIME(Usage.JAVA_RUNTIME),
@@ -64,9 +78,21 @@ public interface SpecContextProjectView {
 		ArtifactUsage(String gradleUsage) {
 			this.gradleUsage = gradleUsage;
 		}
+
+		public String getGradleUsage() {
+			return gradleUsage;
+		}
 	}
 
-	record Impl(Project project, LoomGradleExtension extension) implements SpecContextProjectView {
+	abstract class AbstractProjectView implements ProjectView {
+		protected final Project project;
+		protected final LoomGradleExtension extension;
+
+		protected AbstractProjectView(Project project) {
+			this.project = project;
+			this.extension = LoomGradleExtension.get(project);
+		}
+
 		@Override
 		public Stream<Project> getLoomProjectDependencies(String name) {
 			final Configuration configuration = project.getConfigurations().getByName(name);
@@ -78,6 +104,7 @@ public interface SpecContextProjectView {
 		}
 
 		@Override
+<<<<<<<< HEAD:src/main/java/dev/aoqia/leaf/loom/configuration/processors/SpecContextProjectView.java
 		public Function<RemapConfigurationSettings, Stream<Path>> resolveArtifacts(ArtifactUsage artifactUsage) {
 			final Usage usage = project.getObjects().named(Usage.class, artifactUsage.gradleUsage);
 
@@ -92,6 +119,10 @@ public interface SpecContextProjectView {
 		@Override
 		public List<LeafModJson> getMods() {
 			return LeafModJsonHelpers.getModsInProject(project);
+========
+		public List<FabricModJson> getMods() {
+			return FabricModJsonHelpers.getModsInProject(project);
+>>>>>>>> upstream/dev/1.14:src/main/java/dev/aoqia/leaf/loom/configuration/processors/speccontext/ProjectView.java
 		}
 
 		@Override
@@ -100,6 +131,11 @@ public interface SpecContextProjectView {
 			// TODO provide a project isolated way of doing this.
 			return extension.isProjectIsolationActive()
 					|| GradleUtils.getBooleanProperty(project, Constants.Properties.DISABLE_PROJECT_DEPENDENT_MODS);
+		}
+
+		@Override
+		public boolean areEnvironmentSourceSetsSplit() {
+			return extension.areEnvironmentSourceSetsSplit();
 		}
 	}
 }

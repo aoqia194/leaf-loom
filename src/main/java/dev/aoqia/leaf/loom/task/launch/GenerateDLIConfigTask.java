@@ -45,8 +45,6 @@ import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
@@ -57,9 +55,6 @@ import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 import dev.aoqia.leaf.loom.task.service.ClasspathGroupService;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
-import org.gradle.work.DisableCachingByDefault;
-
-@DisableCachingByDefault
 public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	@Input
 	protected abstract Property<String> getVersionInfoJson();
@@ -90,8 +85,11 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	@Input
 	protected abstract Property<String> getNativesDirectoryPath();
 
+	@Input
+	protected abstract Property<String> getProductionNamespace();
+
 	@InputFile
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+	@Optional
 	public abstract RegularFileProperty getRemapClasspathFile();
 
 	@OutputFile
@@ -117,6 +115,7 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 
 		getNativesDirectoryPath().set(getExtension().getFiles().getNativesDirectory(getProject()).getAbsolutePath());
 		getDevLauncherConfig().set(getExtension().getFiles().getDevLauncherConfig());
+		getProductionNamespace().set(getExtension().getProductionNamespaceEnum().toString());
 	}
 
 	@TaskAction
@@ -125,9 +124,9 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 
 		final LaunchConfig launchConfig = new LaunchConfig()
 				.property("leaf.development", "true")
-				.property("leaf.remapClasspathFile", getRemapClasspathFile().get().getAsFile().getAbsolutePath())
 				.property("log4j.configurationFile", getLog4jConfigPaths().get())
-				.property("log4j2.formatMsgNoLookups", "true");
+				.property("log4j2.formatMsgNoLookups", "true")
+				.property("leaf.defaultModDistributionNamespace", getProductionNamespace().get());
 
         // TODO(leaf): Add any jvm args from the versionInfo manifest
 
@@ -186,6 +185,10 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 //                throw new IllegalStateException("arg in ZomboidVersionMeta json wasn't a string or object.");
 //            }
 //        }
+
+		if (getRemapClasspathFile().isPresent()) {
+			launchConfig.property("leaf.remapClasspathFile", getRemapClasspathFile().get().getAsFile().getAbsolutePath());
+		}
 
 		if (versionInfo.hasNativesToExtract()) {
 			String nativesPath = getNativesDirectoryPath().get();

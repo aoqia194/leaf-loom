@@ -45,6 +45,8 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.TaskProvider;
+import org.gradle.jvm.tasks.Jar;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
@@ -119,8 +121,13 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 		disableObfuscation = project.getObjects().property(Boolean.class);
 		dontRemap = project.getObjects().property(Boolean.class);
 
-		disableObfuscation.set(project.provider(() -> GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DISABLE_OBFUSCATION)));
-		disableObfuscation.finalizeValueOnRead();
+		if (project.getPluginManager().hasPlugin(LoomNoRemapGradlePlugin.NAME)) {
+			disableObfuscation.set(true);
+			disableObfuscation.finalizeValue();
+		} else {
+			disableObfuscation.set(project.provider(() -> GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DISABLE_OBFUSCATION)));
+			disableObfuscation.finalizeValueOnRead();
+		}
 
 		dontRemap.set(disableObfuscation.map(notObfuscated -> notObfuscated || GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DONT_REMAP)));
 		dontRemap.finalizeValueOnRead();
@@ -167,6 +174,7 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	@Override
 	public MappingConfiguration getMappingConfiguration() {
 		if (disableObfuscation()) {
+			project.getLogger().lifecycle("help", new RuntimeException());
 			throw new UnsupportedOperationException("Cannot get mappings configuration in a non-obfuscated environment");
 		}
 
@@ -346,5 +354,23 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	@Override
 	public boolean disableObfuscation() {
 		return disableObfuscation.get();
+	}
+
+	@Override
+	public MappingsNamespace getProductionNamespaceEnum() {
+		return Objects.requireNonNull(MappingsNamespace.of(getProductionNamespace().get()), "Invalid production namespace");
+	}
+
+	@Override
+	public void nestJars(TaskProvider<? extends Jar> jarTask, FileCollection jars) {
+		jarTask.configure(task -> {
+			if (task instanceof RemapJarTask remapJarTask) {
+				// For RemapJarTask, add to the nestedJars property
+				remapJarTask.getNestedJars().from(jars);
+			} else {
+				// For regular Jar tasks (non-remap mode), add a NestJarsAction with the FileCollection
+				NestJarsAction.addToTask(task, jars);
+			}
+		});
 	}
 }

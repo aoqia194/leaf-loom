@@ -32,7 +32,7 @@ import java.util.Objects;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 public abstract sealed class LeafModJson permits LeafModJsonV0, LeafModJsonV1, LeafModJsonV2, LeafModJson.Mockable {

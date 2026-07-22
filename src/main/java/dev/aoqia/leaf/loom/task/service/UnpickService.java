@@ -48,16 +48,13 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
@@ -91,17 +88,16 @@ public class UnpickService extends Service<UnpickService.Options> {
 
 	public interface Options extends Service.Options {
 		@InputFile
-        @PathSensitive(PathSensitivity.NONE)
 		RegularFileProperty getUnpickDefinitions();
 
 		@Optional
 		@Nested
 		Property<UnpickRemapperService.Options> getUnpickRemapperService();
 
-		@Classpath
+		@InputFiles
 		ConfigurableFileCollection getUnpickConstantJar();
 
-		@Classpath
+		@InputFiles
 		ConfigurableFileCollection getUnpickClasspath();
 
 		@OutputFile

@@ -28,10 +28,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
+import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.util.Checksum;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;
@@ -43,9 +44,22 @@ public record LocalAccessWidenerEntry(Path path, String hash) implements AccessW
 	}
 
 	@Override
-	public void read(ClassTweakerVisitor visitor, LazyCloseable<TinyRemapper> remapper) throws IOException {
+	public void read(ClassTweakerVisitor visitor, LazyCloseable<TinyRemapper> remapper, MappingsNamespace productionNamespace) throws IOException {
 		var reader = ClassTweakerReader.create(visitor);
 		reader.read(Files.readAllBytes(path), null);
+	}
+
+	@Override
+	public void readOfficial(ClassTweakerVisitor visitor) throws IOException {
+		final byte[] data = Files.readAllBytes(path);
+		final ClassTweakerReader.Header header = ClassTweakerReader.readHeader(data);
+
+		if (!header.getNamespace().equals(MappingsNamespace.OFFICIAL.toString())) {
+			throw new IOException("Expected official namespace for access widener entry, found: " + header.getNamespace());
+		}
+
+		var reader = ClassTweakerReader.create(visitor);
+		reader.read(data, null);
 	}
 
 	@Override

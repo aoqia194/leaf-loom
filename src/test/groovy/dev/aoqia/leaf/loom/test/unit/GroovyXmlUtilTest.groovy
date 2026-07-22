@@ -24,7 +24,8 @@
 
 package dev.aoqia.leaf.loom.test.unit
 
-import groovy.xml.QName
+import groovy.namespace.QName
+import groovy.xml.XmlParser
 import spock.lang.Specification
 
 import dev.aoqia.leaf.loom.util.GroovyXmlUtil
