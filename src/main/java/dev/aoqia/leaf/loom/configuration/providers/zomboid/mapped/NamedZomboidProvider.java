@@ -26,6 +26,8 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped;
 
 import java.util.List;
 
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.CompleteJarZomboidProvider;
+
 import org.gradle.api.Project;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
@@ -196,4 +198,22 @@ public abstract class NamedZomboidProvider<M extends ZomboidProvider> extends Ab
 			return env;
 		}
 	}
+
+    public static final class CompleteJarImpl extends NamedZomboidProvider<CompleteJarZomboidProvider> implements CompleteJar {
+        public CompleteJarImpl(Project project, CompleteJarZomboidProvider provider) {
+            super(project, provider);
+        }
+
+        @Override
+        public List<RemappedJars> getRemappedJars() {
+            return List.of(
+                new RemappedJars(zomboidProvider.getZomboidJar(), getZomboidJar(), zomboidProvider.getOfficialNamespace())
+            );
+        }
+
+        @Override
+        public List<ZomboidJar.Type> getDependencyTypes() {
+            return List.of(ZomboidJar.Type.COMPLETE);
+        }
+    }
 }

@@ -165,7 +165,6 @@ public abstract class ZomboidProvider {
 		return zomboidClientJar;
 	}
 
-	// This may be the server bundler jar on newer versions prob not what you want.
 	public File getZomboidServerJar() {
 		Check.require(provideServer(), "Not configured to provide server jar");
 		return zomboidServerJar;

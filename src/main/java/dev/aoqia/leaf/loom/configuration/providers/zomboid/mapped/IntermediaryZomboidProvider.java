@@ -26,6 +26,8 @@ package dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped;
 
 import java.util.List;
 
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.CompleteJarZomboidProvider;
+
 import org.gradle.api.Project;
 
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
@@ -38,7 +40,7 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarZomboidProvi
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitZomboidProvider;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public abstract sealed class IntermediaryZomboidProvider<M extends ZomboidProvider> extends AbstractMappedZomboidProvider<M> permits IntermediaryZomboidProvider.MergedImpl, IntermediaryZomboidProvider.LegacyMergedImpl, IntermediaryZomboidProvider.SingleJarImpl, IntermediaryZomboidProvider.SplitImpl {
+public abstract sealed class IntermediaryZomboidProvider<M extends ZomboidProvider> extends AbstractMappedZomboidProvider<M> permits IntermediaryZomboidProvider.MergedImpl, IntermediaryZomboidProvider.LegacyMergedImpl, IntermediaryZomboidProvider.SingleJarImpl, IntermediaryZomboidProvider.SplitImpl, IntermediaryZomboidProvider.CompleteJarImpl {
 	public IntermediaryZomboidProvider(Project project, M minecraftProvider) {
 		super(project, minecraftProvider);
 	}
@@ -170,4 +172,17 @@ public abstract sealed class IntermediaryZomboidProvider<M extends ZomboidProvid
 			return env;
 		}
 	}
+
+    public static final class CompleteJarImpl extends IntermediaryZomboidProvider<CompleteJarZomboidProvider> implements CompleteJar {
+        public CompleteJarImpl(Project project, CompleteJarZomboidProvider provider) {
+            super(project, provider);
+        }
+
+        @Override
+        public List<RemappedJars> getRemappedJars() {
+            return List.of(
+                new RemappedJars(zomboidProvider.getZomboidJar(), getZomboidJar(), zomboidProvider.getOfficialNamespace())
+            );
+        }
+    }
 }

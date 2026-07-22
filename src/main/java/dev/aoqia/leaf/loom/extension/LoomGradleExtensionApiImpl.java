@@ -154,7 +154,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 		//noinspection unchecked
 		this.zomboidJarConfiguration = project.getObjects().property((Class<ZomboidJarConfiguration<?, ?, ?>>) (Class<?>) ZomboidJarConfiguration.class)
-				.convention(project.provider(() -> ZomboidJarConfiguration.MERGED));
+				.convention(project.provider(() -> ZomboidJarConfiguration.COMPLETE));
 		this.zomboidJarConfiguration.finalizeValueOnRead();
 
 		this.accessWidener.finalizeValueOnRead();

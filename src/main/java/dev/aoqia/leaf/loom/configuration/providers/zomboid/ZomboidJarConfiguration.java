@@ -104,6 +104,18 @@ public record ZomboidJarConfiguration<
 				SplitDecompileConfiguration::new,
 				List.of("client", "server")
 			);
+    public static final ZomboidJarConfiguration<
+            CompleteJarZomboidProvider,
+            NamedZomboidProvider.CompleteJarImpl,
+            MappedZomboidProvider
+        > COMPLETE = new ZomboidJarConfiguration<>(
+            CompleteJarZomboidProvider::new,
+            IntermediaryZomboidProvider.CompleteJarImpl::new,
+            NamedZomboidProvider.CompleteJarImpl::new,
+            ProcessedNamedZomboidProvider.CompleteJarImpl::new,
+            SingleJarDecompileConfiguration::new,
+            List.of("client", "server")
+        );
 
 	public ZomboidProvider createZomboidProvider(ZomboidMetadataProvider metadataProvider, ConfigContext context) {
 		return zomboidProviderFactory.create(metadataProvider, context);

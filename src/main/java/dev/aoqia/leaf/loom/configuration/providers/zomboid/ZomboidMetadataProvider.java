@@ -163,7 +163,7 @@ public final class ZomboidMetadataProvider {
 		}
 
 		// metadata url taken from versions manifest
-		return versionEntry.manifest.name() + "_zomboid_info.json";
+		return versionEntry.manifest.name() + "_version_info.json";
 	}
 
 	public record Options(String zomboidVersion,

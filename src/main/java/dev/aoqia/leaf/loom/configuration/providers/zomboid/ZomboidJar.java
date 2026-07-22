@@ -28,7 +28,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public abstract sealed class ZomboidJar permits ZomboidJar.Client, ZomboidJar.ClientOnly, ZomboidJar.Common, ZomboidJar.Merged, ZomboidJar.Server {
+public abstract sealed class ZomboidJar permits ZomboidJar.Client, ZomboidJar.ClientOnly, ZomboidJar.Common, ZomboidJar.Merged, ZomboidJar.Server, ZomboidJar.Complete {
 	private final Path path;
 	private final boolean merged, client, server;
 	private final Type type;
@@ -128,6 +128,17 @@ public abstract sealed class ZomboidJar permits ZomboidJar.Client, ZomboidJar.Cl
 		}
 	}
 
+    public static final class Complete extends ZomboidJar {
+        public Complete(Path path) {
+            super(path, false, true, true, Type.COMPLETE);
+        }
+
+        @Override
+        public ZomboidJar forPath(Path path) {
+            return new Complete(path);
+        }
+    }
+
 	public enum Type {
 		// Merged jar
 		MERGED("merged"),
@@ -135,6 +146,10 @@ public abstract sealed class ZomboidJar permits ZomboidJar.Client, ZomboidJar.Cl
 		// Regular jars, not merged or split
 		SERVER("server"),
 		CLIENT("client"),
+
+        // Regular jar which contains client and server for both client and server installs
+        // not merged or split
+        COMPLETE("complete"),
 
 		// Split jars
 		COMMON("common"),

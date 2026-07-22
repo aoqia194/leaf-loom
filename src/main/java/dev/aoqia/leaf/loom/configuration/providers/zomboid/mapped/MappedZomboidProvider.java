@@ -83,4 +83,15 @@ public interface MappedZomboidProvider {
 			return List.of(getEnvOnlyJar());
 		}
 	}
+
+    interface CompleteJar extends ProviderImpl {
+        default ZomboidJar getZomboidJar() {
+            return new ZomboidJar.Complete(getJar(ZomboidJar.Type.COMPLETE));
+        }
+
+        @Override
+        default List<ZomboidJar> getZomboidJars() {
+            return List.of(getZomboidJar());
+        }
+    }
 }

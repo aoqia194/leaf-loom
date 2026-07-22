@@ -37,6 +37,7 @@ import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper;
 import dev.aoqia.leaf.loom.configuration.processors.ZomboidJarProcessorManager;
 import dev.aoqia.leaf.loom.configuration.processors.ProcessorContextImpl;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.CompleteJarZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.LegacyMergedZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
@@ -242,4 +243,15 @@ public abstract class ProcessedNamedZomboidProvider<M extends ZomboidProvider, P
 			return env;
 		}
 	}
+
+    public static final class CompleteJarImpl extends ProcessedNamedZomboidProvider<CompleteJarZomboidProvider, NamedZomboidProvider.CompleteJarImpl> implements CompleteJar {
+        public CompleteJarImpl(NamedZomboidProvider.CompleteJarImpl parentProvide, ZomboidJarProcessorManager jarProcessorManager) {
+            super(parentProvide, jarProcessorManager);
+        }
+
+        @Override
+        public ZomboidJar getZomboidJar() {
+            return getProcessedJar(getParentProvider().getZomboidJar());
+        }
+    }
 }
