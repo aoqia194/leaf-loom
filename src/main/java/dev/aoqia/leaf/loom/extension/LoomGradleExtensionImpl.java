@@ -34,6 +34,9 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import dev.aoqia.leaf.loom.LoomNoRemapGradlePlugin;
+import dev.aoqia.leaf.loom.task.NestJarsAction;
+import dev.aoqia.leaf.loom.task.RemapJarTask;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFile;
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;

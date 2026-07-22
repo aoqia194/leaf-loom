@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.util.ipc;
+package dev.aoqia.leaf.loom.util.ipc;
 
 import org.jspecify.annotations.NullMarked;

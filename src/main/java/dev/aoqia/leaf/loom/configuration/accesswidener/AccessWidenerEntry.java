@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import org.jspecify.annotations.Nullable;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
 import dev.aoqia.leaf.loom.util.fmj.ModEnvironment;

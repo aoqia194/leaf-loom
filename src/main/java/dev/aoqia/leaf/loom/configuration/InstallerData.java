@@ -28,6 +28,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.util.FileSystemUtil;
 
 import org.apache.commons.io.FileSystem;
@@ -48,11 +49,18 @@ import dev.aoqia.leaf.loom.util.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public record InstallerData(String version, JsonObject installerJson) {
+    public static final String INSTALLER_PATH = "leaf-installer.json";
 	private static final Logger LOGGER = LoggerFactory.getLogger(InstallerData.class);
+
+    public static InstallerData fromBytes(byte[] bytes, String version) {
+        return new InstallerData(version,
+            LoomGradlePlugin.GSON.fromJson(new String(bytes, StandardCharsets.UTF_8), JsonObject.class));
+    }
 
 	public void applyToProject(Project project) {
 		LoomGradleExtension extension = LoomGradleExtension.get(project);

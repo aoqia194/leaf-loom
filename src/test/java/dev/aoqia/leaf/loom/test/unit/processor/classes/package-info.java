@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.test.unit.processor.classes;
+package dev.aoqia.leaf.loom.test.unit.processor.classes;
 
 import org.jspecify.annotations.NullMarked;

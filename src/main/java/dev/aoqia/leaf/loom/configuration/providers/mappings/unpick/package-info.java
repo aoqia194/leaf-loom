@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.configuration.providers.mappings.unpick;
+package dev.aoqia.leaf.loom.configuration.providers.mappings.unpick;
 
 import org.jspecify.annotations.NullMarked;

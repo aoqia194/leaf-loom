@@ -38,6 +38,9 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.processors.JsrAnnotationRemapperProcessor;
+import dev.aoqia.leaf.loom.configuration.processors.speccontext.DebofConfiguration;
 import dev.aoqia.leaf.loom.util.Constants;
 
 import org.gradle.api.Action;
@@ -83,6 +86,8 @@ import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 import dev.aoqia.leaf.loom.util.gradle.daemon.DaemonUtils;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+
+import org.jetbrains.annotations.Nullable;
 
 public abstract class CompileConfiguration implements Runnable {
 	private static final String LOCK_PROPERTY_KEY = "leaf.loom.internal.global.lock";
@@ -251,7 +256,7 @@ public abstract class CompileConfiguration implements Runnable {
 		}
 
 		if (!extension.getRemapJsrAnnotationsToJetBrains().get()) {
-			extension.addMinecraftJarProcessor(JsrAnnotationRemapperProcessor.class, "loom:jsr-annotations");
+			extension.addZomboidJarProcessor(JsrAnnotationRemapperProcessor.class, "loom:jsr-annotations");
 		}
 	}
 

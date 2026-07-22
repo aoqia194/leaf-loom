@@ -88,7 +88,7 @@ public abstract class ZomboidProvider {
 
         setup(getProject());
 
-        if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DISABLE_GAME_VERIFICATION)) {
+        if (!GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ENABLE_GAME_VERIFICATION)) {
             LOGGER.info("Skipping game verification!");
         } else {
             verifyFiles();
@@ -122,7 +122,7 @@ public abstract class ZomboidProvider {
     }
 
 	private void verifyJars() throws IOException, SignatureVerificationFailure {
-		if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DISABLE_GAME_VERIFICATION)) {
+		if (!GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ENABLE_GAME_VERIFICATION)) {
 			LOGGER.info("Skipping game jar verification!");
 			return;
 		}

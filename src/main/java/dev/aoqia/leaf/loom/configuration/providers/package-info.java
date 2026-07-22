@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.configuration.providers;
+package dev.aoqia.leaf.loom.configuration.providers;
 
 import org.jspecify.annotations.NullMarked;

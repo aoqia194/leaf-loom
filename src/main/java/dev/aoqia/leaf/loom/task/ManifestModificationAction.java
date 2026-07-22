@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.task;
+package dev.aoqia.leaf.loom.task;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,10 +40,10 @@ import org.gradle.api.Task;
 import org.gradle.api.provider.Provider;
 import org.gradle.jvm.tasks.Jar;
 
-import net.fabricmc.loom.task.service.JarManifestService;
-import net.fabricmc.loom.util.Check;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.task.service.JarManifestService;
+import dev.aoqia.leaf.loom.util.Check;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.ZipUtils;
 
 /**
  * Action that modifies the manifest of a jar file to add Loom metadata.

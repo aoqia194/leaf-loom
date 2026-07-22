@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.api.mappings.layered;
+package dev.aoqia.leaf.loom.api.mappings.layered;
 
 import org.jspecify.annotations.NullMarked;

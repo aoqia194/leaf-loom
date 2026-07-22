@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration;
+package dev.aoqia.leaf.loom.configuration;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,10 +36,10 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.configuration.processors.speccontext.DebofConfiguration;
-import net.fabricmc.loom.util.ZipUtils;
-import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
+import dev.aoqia.leaf.loom.configuration.processors.speccontext.DebofConfiguration;
+import dev.aoqia.leaf.loom.util.ZipUtils;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 
 public class DebofInstallerData {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DebofInstallerData.class);
@@ -72,9 +72,9 @@ public class DebofInstallerData {
 				return null;
 			}
 
-			FabricModJson fabricModJson = FabricModJsonFactory.createFromZip(file.toPath());
-			LOGGER.info("Found installer in mod {} version {}", fabricModJson.getId(), fabricModJson.getModVersion());
-			return InstallerData.fromBytes(installerData, fabricModJson.getModVersion());
+			LeafModJson LeafModJson = LeafModJsonFactory.createFromZip(file.toPath());
+			LOGGER.info("Found installer in mod {} version {}", LeafModJson.getId(), LeafModJson.getModVersion());
+			return InstallerData.fromBytes(installerData, LeafModJson.getModVersion());
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to read " + file, e);
 		}

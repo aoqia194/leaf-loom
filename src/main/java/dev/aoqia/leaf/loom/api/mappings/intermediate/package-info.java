@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.api.mappings.intermediate;
+package dev.aoqia.leaf.loom.api.mappings.intermediate;
 
 import org.jspecify.annotations.NullMarked;

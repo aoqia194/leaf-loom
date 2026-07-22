@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.task;
+package dev.aoqia.leaf.loom.task;
 
 import java.io.File;
 import java.io.Serializable;
@@ -44,7 +44,7 @@ import org.gradle.workers.WorkerExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fabricmc.loom.build.nesting.JarNester;
+import dev.aoqia.leaf.loom.build.nesting.JarNester;
 
 /**
  * Configuration-cache-compatible action for nesting jars.

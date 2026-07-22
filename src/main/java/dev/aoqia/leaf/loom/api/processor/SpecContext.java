@@ -31,8 +31,8 @@ import java.util.stream.Stream;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.processors.speccontext.ProjectView;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.processors.speccontext.ProjectView;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
 
 public interface SpecContext {
@@ -70,10 +70,10 @@ public interface SpecContext {
 	}
 
 	// Sort to ensure stable caching
-	static List<FabricModJson> distinctSorted(List<FabricModJson> mods) {
+	static List<LeafModJson> distinctSorted(List<LeafModJson> mods) {
 		return mods.stream()
 				.distinct()
-				.sorted(Comparator.comparing(FabricModJson::getId))
+				.sorted(Comparator.comparing(LeafModJson::getId))
 				.toList();
 	}
 }

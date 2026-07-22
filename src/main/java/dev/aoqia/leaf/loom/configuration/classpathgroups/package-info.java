@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.configuration.classpathgroups;
+package dev.aoqia.leaf.loom.configuration.classpathgroups;
 
 import org.jspecify.annotations.NullMarked;

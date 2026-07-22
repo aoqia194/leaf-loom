@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.task;
+package dev.aoqia.leaf.loom.task;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,13 +36,13 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.tasks.Jar;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.build.nesting.NestableJarGenerationTask;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftSourceSets;
-import net.fabricmc.loom.task.service.ClientEntriesService;
-import net.fabricmc.loom.task.service.JarManifestService;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
-import net.fabricmc.loom.util.service.ScopedServiceFactory;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.build.nesting.NestableJarGenerationTask;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
+import dev.aoqia.leaf.loom.task.service.ClientEntriesService;
+import dev.aoqia.leaf.loom.task.service.JarManifestService;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
 /**
  * Configures the jar task for non-remapped (non-obfuscated) output.
@@ -87,7 +87,7 @@ public class NonRemappedJarTaskConfiguration {
 		}
 
 		final SourceSet clientSourceSet = SourceSetHelper.getSourceSetByName(
-				MinecraftSourceSets.Split.CLIENT_ONLY_SOURCE_SET_NAME,
+				ZomboidSourceSets.Split.CLIENT_ONLY_SOURCE_SET_NAME,
 				project
 		);
 		final Provider<ClientEntriesService.Classes.Options> optionsProvider = ClientEntriesService.Classes.createOptions(project, clientSourceSet);

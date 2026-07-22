@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.processors.speccontext;
+package dev.aoqia.leaf.loom.configuration.processors.speccontext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,10 +33,10 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.tasks.SourceSet;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.configuration.LoomConfigurations;
-import net.fabricmc.loom.util.Strings;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.configuration.LoomConfigurations;
+import dev.aoqia.leaf.loom.util.Strings;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 /**
  * This mess is created out of the need to resolve the compile/runtime dependencies, without using the actual runtime/compile classpath.

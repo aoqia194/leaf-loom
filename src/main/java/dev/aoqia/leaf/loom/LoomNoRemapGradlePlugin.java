@@ -22,31 +22,23 @@
  * SOFTWARE.
  */
 
-<<<<<<<< HEAD:src/test/groovy/dev/aoqia/leaf/loom/test/unit/TestServiceFactoryTest.groovy
-package dev.aoqia.leaf.loom.test.unit
-========
-package net.fabricmc.loom;
->>>>>>>> upstream/dev/1.14:src/main/java/dev/aoqia/leaf/loom/LoomNoRemapGradlePlugin.java
+package dev.aoqia.leaf.loom;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
-<<<<<<<< HEAD:src/test/groovy/dev/aoqia/leaf/loom/test/unit/TestServiceFactoryTest.groovy
-import dev.aoqia.leaf.loom.test.util.TestServiceFactory
-========
 /**
  * A marker plugin to indicate to the main loom plugin not to setup for remapping.
  */
 public class LoomNoRemapGradlePlugin implements Plugin<Project> {
-	public static final String NAME = "net.fabricmc.fabric-loom";
->>>>>>>> upstream/dev/1.14:src/main/java/dev/aoqia/leaf/loom/LoomNoRemapGradlePlugin.java
+    public static final String NAME = "dev.aoqia.leaf.loom";
 
-	@Override
-	public void apply(Project target) {
-		if (target.getPluginManager().hasPlugin(LoomGradlePlugin.NAME)) {
-			throw new IllegalStateException(NAME + " must be applied before " + LoomGradlePlugin.NAME);
-		}
+    @Override
+    public void apply(Project target) {
+        if (target.getPluginManager().hasPlugin(LoomGradlePlugin.NAME)) {
+            throw new IllegalStateException(NAME + " must be applied before " + LoomGradlePlugin.NAME);
+        }
 
-		target.getPlugins().apply(LoomGradlePlugin.NAME);
-	}
+        target.getPlugins().apply(LoomGradlePlugin.NAME);
+    }
 }

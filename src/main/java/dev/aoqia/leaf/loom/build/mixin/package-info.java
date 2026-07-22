@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.build.mixin;
+package dev.aoqia.leaf.loom.build.mixin;
 
 import org.jspecify.annotations.NullMarked;

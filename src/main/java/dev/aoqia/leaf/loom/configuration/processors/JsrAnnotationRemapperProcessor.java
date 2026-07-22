@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.processors;
+package dev.aoqia.leaf.loom.configuration.processors;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -32,15 +32,15 @@ import javax.inject.Inject;
 
 import org.jspecify.annotations.Nullable;
 
-import net.fabricmc.loom.api.processor.MinecraftJarProcessor;
-import net.fabricmc.loom.api.processor.ProcessorContext;
-import net.fabricmc.loom.api.processor.SpecContext;
-import net.fabricmc.loom.util.TinyRemapperLoggerAdapter;
+import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
+import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
+import dev.aoqia.leaf.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
 import net.fabricmc.tinyremapper.IMappingProvider;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
-public class JsrAnnotationRemapperProcessor implements MinecraftJarProcessor<JsrAnnotationRemapperProcessor.Spec> {
+public class JsrAnnotationRemapperProcessor implements ZomboidJarProcessor<JsrAnnotationRemapperProcessor.Spec> {
 	private static final Map<String, String> JETBRAINS_TO_JSR = Map.of(
 			"org/jetbrains/annotations/Nullable", "javax/annotation/Nullable",
 			"org/jetbrains/annotations/NotNull", "javax/annotation/Nonnull",
@@ -80,7 +80,7 @@ public class JsrAnnotationRemapperProcessor implements MinecraftJarProcessor<Jsr
 		return name;
 	}
 
-	public record Spec(Map<String, String> annotationMapping) implements MinecraftJarProcessor.Spec {
+	public record Spec(Map<String, String> annotationMapping) implements ZomboidJarProcessor.Spec {
 		public IMappingProvider getMappings() {
 			return out -> annotationMapping.forEach(out::acceptClass);
 		}

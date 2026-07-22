@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.configuration.providers.minecraft.verify;
+package dev.aoqia.leaf.loom.configuration.providers.minecraft.verify;
 
 import org.jspecify.annotations.NullMarked;

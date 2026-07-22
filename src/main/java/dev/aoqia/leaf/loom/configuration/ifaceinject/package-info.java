@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.configuration.ifaceinject;
+package dev.aoqia.leaf.loom.configuration.ifaceinject;
 
 import org.jspecify.annotations.NullMarked;

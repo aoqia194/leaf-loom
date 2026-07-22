@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.configuration.accesswidener;
+package dev.aoqia.leaf.loom.configuration.accesswidener;
 
 import org.jspecify.annotations.NullMarked;

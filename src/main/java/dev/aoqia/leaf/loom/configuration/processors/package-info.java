@@ -22,34 +22,7 @@
  * SOFTWARE.
  */
 
-<<<<<<<< HEAD:src/main/java/dev/aoqia/leaf/loom/configuration/processors/SpecContextDebofImpl.java
+@NullMarked
 package dev.aoqia.leaf.loom.configuration.processors;
 
-import java.util.List;
-
-import dev.aoqia.leaf.loom.api.processor.SpecContext;
-import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
-
-// TODO debof - fixme
-public record SpecContextDebofImpl(List<LeafModJson> modDependencies,
-									List<LeafModJson> localMods) implements SpecContext {
-	public static SpecContext create() {
-		return new SpecContextDebofImpl(List.of(), List.of());
-	}
-
-	@Override
-	public List<LeafModJson> modDependenciesCompileRuntime() {
-		return List.of();
-	}
-
-	@Override
-	public List<LeafModJson> modDependenciesCompileRuntimeClient() {
-		return List.of();
-	}
-}
-========
-@NullMarked
-package net.fabricmc.loom.configuration.processors;
-
 import org.jspecify.annotations.NullMarked;
->>>>>>>> upstream/dev/1.14:src/main/java/dev/aoqia/leaf/loom/configuration/processors/package-info.java

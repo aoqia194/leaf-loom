@@ -381,7 +381,7 @@ public class ModConfigurationRemapper {
 	}
 
 	private static boolean isCIBuild() {
-		final String loomProperty = System.getProperty(Constants.Properties.IS_CI);
+		final String loomProperty = System.getProperty("leaf.loom.ci");
 
 		if (loomProperty != null) {
 			return loomProperty.equalsIgnoreCase("true");

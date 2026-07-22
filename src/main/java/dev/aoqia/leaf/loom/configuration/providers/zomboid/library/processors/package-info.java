@@ -23,6 +23,6 @@
  */
 
 @NullMarked
-package net.fabricmc.loom.configuration.providers.minecraft.library.processors;
+package dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors;
 
 import org.jspecify.annotations.NullMarked;
