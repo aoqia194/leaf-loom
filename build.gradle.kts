@@ -557,3 +557,4 @@ jreleaser {
 }
 
 apply(from = rootProject.file("gradle/versions.gradle"))
+apply(from = rootProject.file("gradle/package-info.gradle"))
