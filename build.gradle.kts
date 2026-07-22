@@ -158,6 +158,7 @@ dependencies {
 
     // source code remapping
     implementation(libs.fabric.mercury)
+    implementation(libs.fabric.mercury.mixin)
 
     implementation(libs.fabric.unpick)
     implementation(libs.fabric.unpick.utils)

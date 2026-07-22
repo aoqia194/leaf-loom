@@ -110,10 +110,8 @@ public final class MigrateMappingsService extends Service<MigrateMappingsService
             return project.getConfigurations().detachedConfiguration(dependency);
 		} catch (IllegalDependencyNotation ignored) {
 			LOGGER.info("Could not locate mappings, presuming V2 Yarn");
-			String mavenNotation = "net.fabricmc:yarn:%s:v2".formatted(mappings);
+			String mavenNotation = "dev.aoqia.leaf:yarn:%s:v2".formatted(mappings);
 			return project.getConfigurations().detachedConfiguration(project.getDependencies().create(mavenNotation));
-		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to resolve mappings", e);
 		}
 	}
 }

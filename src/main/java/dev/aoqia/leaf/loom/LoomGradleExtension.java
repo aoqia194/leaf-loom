@@ -66,7 +66,7 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 
 	InstallerData getInstallerData();
 
-	MinecraftMetadataProvider getMetadataProvider();
+	ZomboidMetadataProvider getMetadataProvider();
 
 	void setMetadataProvider(ZomboidMetadataProvider metadataProvider);
 

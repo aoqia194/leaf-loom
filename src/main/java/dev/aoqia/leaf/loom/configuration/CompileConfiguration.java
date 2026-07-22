@@ -126,13 +126,9 @@ public abstract class CompileConfiguration implements Runnable {
 
                 // NOTE(leaf): If we only want to provide jars, don't setup mixin or other tasks!
                 if (!GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
-                    LoomDependencyManager dependencyManager = new LoomDependencyManager();
-                    extension.setDependencyManager(dependencyManager);
-                    dependencyManager.handleDependencies(getProject(), serviceFactory);
+                    var dependencyManager = new LoomDependencyManager(getProject(), serviceFactory, extension);
+                    dependencyManager.handleDependencies();
                 }
-
-				var dependencyManager = new LoomDependencyManager(getProject(), serviceFactory, extension);
-				dependencyManager.handleDependencies();
 			} catch (Exception e) {
 				ExceptionUtil.processException(e, DaemonUtils.Context.fromProject(getProject()));
 				disownLock();

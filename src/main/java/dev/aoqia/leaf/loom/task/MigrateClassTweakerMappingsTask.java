@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.task;
+package dev.aoqia.leaf.loom.task;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,9 +40,10 @@ import org.gradle.api.tasks.options.Option;
 import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.api.ClassTweakerWriter;
 import net.fabricmc.classtweaker.visitors.ClassTweakerRemapperVisitor;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.task.service.MigrateClassTweakerMappingsService;
-import net.fabricmc.loom.util.service.ScopedServiceFactory;
+
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.task.service.MigrateClassTweakerMappingsService;
+import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
 @UntrackedTask(because = "Always rerun this task.")
 public abstract class MigrateClassTweakerMappingsTask extends AbstractMigrateMappingsTask {

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.task.service;
+package dev.aoqia.leaf.loom.task.service;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -42,15 +42,16 @@ import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.Nested;
 import org.objectweb.asm.commons.Remapper;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.mappings.TinyMappingsService;
-import net.fabricmc.loom.util.Checksum;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.FileSystemUtil;
-import net.fabricmc.loom.util.service.Service;
-import net.fabricmc.loom.util.service.ServiceFactory;
-import net.fabricmc.loom.util.service.ServiceType;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.TinyMappingsService;
+import dev.aoqia.leaf.loom.util.Checksum;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.adapter.MappingNsRenamer;
 import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
@@ -74,9 +75,9 @@ public final class MigrateClassTweakerMappingsService extends Service<MigrateCla
 	}
 
 	public static Provider<Options> createOptions(Project project, Provider<String> targetMappings) {
-		ConfigurableFileCollection minecraftLibraryClasspath = project.getObjects().fileCollection();
-		minecraftLibraryClasspath.from(project.getConfigurations().getByName(Constants.Configurations.MINECRAFT_COMPILE_LIBRARIES));
-		minecraftLibraryClasspath.from(project.getConfigurations().getByName(Constants.Configurations.MINECRAFT_RUNTIME_LIBRARIES));
+		ConfigurableFileCollection libraryClasspath = project.getObjects().fileCollection();
+		libraryClasspath.from(project.getConfigurations().getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
+		libraryClasspath.from(project.getConfigurations().getByName(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES));
 
 		return TYPE.create(project, (o) -> {
 			o.getMappings().set(MigrateMappingsService.createOptions(project, targetMappings));
@@ -86,7 +87,7 @@ public final class MigrateClassTweakerMappingsService extends Service<MigrateCla
 			o.getMergedMappings().set(mergedMappings);
 
 			o.getTinyRemapperOptions().set(TinyRemapperService.TYPE.create(project, o2 -> {
-				o2.getClasspath().from(o.getMappings().map(m -> m.getClasspath().minus(minecraftLibraryClasspath)));
+				o2.getClasspath().from(o.getMappings().map(m -> m.getClasspath().minus(libraryClasspath)));
 				o2.getFrom().set(MappingsNamespace.NAMED.toString());
 				o2.getTo().set(MIGRATION_TARGET_NS);
 				o2.getMappings().add(MappingsService.TYPE.create(project, o3 -> {

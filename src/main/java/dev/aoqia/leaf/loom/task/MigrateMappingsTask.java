@@ -38,7 +38,7 @@ import org.gradle.api.tasks.UntrackedTask;
 import org.gradle.api.tasks.options.Option;
 
 import dev.aoqia.leaf.loom.task.service.MigrateSourceCodeMappingsService;
-import net.fabricmc.loom.util.DeletingFileVisitor;
+import dev.aoqia.leaf.loom.util.DeletingFileVisitor;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
 @UntrackedTask(because = "Always rerun this task.")

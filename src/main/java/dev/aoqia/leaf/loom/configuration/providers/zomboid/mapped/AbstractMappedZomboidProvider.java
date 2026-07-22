@@ -197,7 +197,7 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 
 	protected String getVersion() {
 		if (extension.disableObfuscation()) {
-			return extension.getMinecraftProvider().minecraftVersion();
+			return extension.getZomboidProvider().zomboidVersion();
 		}
 
 		return "%s-%s".formatted(extension.getZomboidProvider().zomboidVersion(), extension.getMappingConfiguration().mappingsIdentifier());

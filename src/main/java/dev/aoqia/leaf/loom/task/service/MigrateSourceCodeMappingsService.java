@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.task.service;
+package dev.aoqia.leaf.loom.task.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,13 +44,14 @@ import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.OutputDirectory;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.configuration.providers.mappings.TinyMappingsService;
-import net.fabricmc.loom.util.DeletingFileVisitor;
-import net.fabricmc.loom.util.ExceptionUtil;
-import net.fabricmc.loom.util.service.Service;
-import net.fabricmc.loom.util.service.ServiceFactory;
-import net.fabricmc.loom.util.service.ServiceType;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.TinyMappingsService;
+import dev.aoqia.leaf.loom.util.DeletingFileVisitor;
+import dev.aoqia.leaf.loom.util.ExceptionUtil;
+import dev.aoqia.leaf.loom.util.service.Service;
+import dev.aoqia.leaf.loom.util.service.ServiceFactory;
+import dev.aoqia.leaf.loom.util.service.ServiceType;
+
 import net.fabricmc.lorenztiny.TinyMappingsJoiner;
 
 public final class MigrateSourceCodeMappingsService extends Service<MigrateSourceCodeMappingsService.Options> {
