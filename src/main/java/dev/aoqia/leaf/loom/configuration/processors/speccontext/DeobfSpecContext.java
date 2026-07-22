@@ -42,43 +42,43 @@ import java.util.stream.Stream;
 import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
 
-import net.fabricmc.loom.api.mappings.layered.MappingsNamespace;
-import net.fabricmc.loom.api.processor.SpecContext;
-import net.fabricmc.loom.util.AsyncCache;
-import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
-import net.fabricmc.loom.util.fmj.FabricModJsonHelpers;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
+import dev.aoqia.leaf.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.util.AsyncCache;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJson;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
+import dev.aoqia.leaf.loom.util.fmj.LeafModJsonHelpers;
 
-public record DeobfSpecContext(List<FabricModJson> modDependencies,
-								List<FabricModJson> localMods,
+public record DeobfSpecContext(List<LeafModJson> modDependencies,
+								List<LeafModJson> localMods,
 								// Mods that are in the following configurations: [runtimeClasspath, compileClasspath] or [runtimeClientClasspath, compileClientClasspath]
 								// These are mods that will be used to transform both the client and server jars
-								List<FabricModJson> modDependenciesCompileRuntime,
+								List<LeafModJson> modDependenciesCompileRuntime,
 								// Here we want mods that are ONLY in [runtimeClientClasspath, compileClientClasspath] and not [runtimeClasspath, compileClasspath]
 								// These mods will be excluded from transforming the server jar
-								List<FabricModJson> modDependenciesCompileRuntimeClient
+								List<LeafModJson> modDependenciesCompileRuntimeClient
 ) implements SpecContext {
 	public static DeobfSpecContext create(Project project) {
 		return create(new DeobfProjectView.Impl(project));
 	}
 
 	public static DeobfSpecContext create(DeobfProjectView projectView) {
-		AsyncCache<List<FabricModJson>> fmjCache = new AsyncCache<>();
+		AsyncCache<List<LeafModJson>> fmjCache = new AsyncCache<>();
 
 		FileCollection mainRuntimeClasspath = projectView.getDependencies(DebofConfiguration.RUNTIME, DebofConfiguration.TargetSourceSet.MAIN);
 		FileCollection mainCompileClasspath = projectView.getDependencies(DebofConfiguration.COMPILE, DebofConfiguration.TargetSourceSet.MAIN);
 
 		// All mods in both [runtimeClasspath, compileClasspath]
-		List<FabricModJson> mainRuntimeMods = getModsFromConfiguration(mainRuntimeClasspath, fmjCache);
-		List<FabricModJson> mainCompileMods = getModsFromConfiguration(mainCompileClasspath, fmjCache);
+		List<LeafModJson> mainRuntimeMods = getModsFromConfiguration(mainRuntimeClasspath, fmjCache);
+		List<LeafModJson> mainCompileMods = getModsFromConfiguration(mainCompileClasspath, fmjCache);
 
 		Set<String> mainRuntimeModIds = toModIdSet(mainRuntimeMods);
 		Set<String> mainCompileModIds = toModIdSet(mainCompileMods);
 		Set<String> mainTransformingModIds = common(mainRuntimeModIds, mainCompileModIds);
 
 		// All mods in both [runtimeClientClasspath, compileClientClasspath]
-		List<FabricModJson> clientRuntimeMods;
-		List<FabricModJson> clientCompileMods;
+		List<LeafModJson> clientRuntimeMods;
+		List<LeafModJson> clientCompileMods;
 		Set<String> clientTransformingModIds;
 
 		if (projectView.areEnvironmentSourceSetsSplit()) {
@@ -98,7 +98,7 @@ public record DeobfSpecContext(List<FabricModJson> modDependencies,
 		}
 
 		// Build the full list of dependent mods from all configurations
-		List<FabricModJson> allMods = new ArrayList<>();
+		List<LeafModJson> allMods = new ArrayList<>();
 		allMods.addAll(mainRuntimeMods);
 		allMods.addAll(mainCompileMods);
 		allMods.addAll(clientRuntimeMods);
@@ -107,16 +107,16 @@ public record DeobfSpecContext(List<FabricModJson> modDependencies,
 		// Add project dependencies
 		if (!projectView.disableProjectDependantMods()) {
 			for (Project dependentProject : SpecContext.getDependentProjects(projectView).toList()) {
-				allMods.addAll(fmjCache.getBlocking(dependentProject.getPath(), () -> FabricModJsonHelpers.getModsInProject(dependentProject)));
+				allMods.addAll(fmjCache.getBlocking(dependentProject.getPath(), () -> LeafModJsonHelpers.getModsInProject(dependentProject)));
 			}
 		}
 
-		List<FabricModJson> dependentMods = SpecContext.distinctSorted(allMods);
-		Map<String, FabricModJson> mods = dependentMods.stream()
+		List<LeafModJson> dependentMods = SpecContext.distinctSorted(allMods);
+		Map<String, LeafModJson> mods = dependentMods.stream()
 				.collect(HashMap::new, (map, mod) -> map.put(mod.getId(), mod), Map::putAll);
 
 		// All dependency mods that are on both the compile and runtime classpath
-		List<FabricModJson> modDependenciesCompileRuntime = new ArrayList<>(getMods(mods, combine(mainTransformingModIds, clientTransformingModIds)));
+		List<LeafModJson> modDependenciesCompileRuntime = new ArrayList<>(getMods(mods, combine(mainTransformingModIds, clientTransformingModIds)));
 
 		// Add all of the project depedencies that are on both the compile and runtime classpath
 		modDependenciesCompileRuntime.addAll(getCompileRuntimeProjectMods(projectView, fmjCache));
@@ -130,8 +130,8 @@ public record DeobfSpecContext(List<FabricModJson> modDependencies,
 	}
 
 	// Returns a list of all the mods that the current project depends on
-	private static List<FabricModJson> getDependentMods(DeobfProjectView projectView, AsyncCache<List<FabricModJson>> fmjCache) {
-		var futures = new ArrayList<CompletableFuture<List<FabricModJson>>>();
+	private static List<LeafModJson> getDependentMods(DeobfProjectView projectView, AsyncCache<List<LeafModJson>> fmjCache) {
+		var futures = new ArrayList<CompletableFuture<List<LeafModJson>>>();
 
 		for (File artifact : projectView.getFullClasspath().getFiles()) {
 			futures.add(fmjCache.get(artifact.toPath().toAbsolutePath().toString(), () -> getMod(artifact.toPath())
@@ -142,7 +142,7 @@ public record DeobfSpecContext(List<FabricModJson> modDependencies,
 		if (!projectView.disableProjectDependantMods()) {
 			// Add all the dependent projects
 			for (Project dependentProject : SpecContext.getDependentProjects(projectView).toList()) {
-				futures.add(fmjCache.get(dependentProject.getPath(), () -> FabricModJsonHelpers.getModsInProject(dependentProject)));
+				futures.add(fmjCache.get(dependentProject.getPath(), () -> LeafModJsonHelpers.getModsInProject(dependentProject)));
 			}
 		}
 
@@ -150,8 +150,8 @@ public record DeobfSpecContext(List<FabricModJson> modDependencies,
 	}
 
 	// Returns a list of mods from a given configuration
-	private static List<FabricModJson> getModsFromConfiguration(FileCollection configuration, AsyncCache<List<FabricModJson>> fmjCache) {
-		var futures = new ArrayList<CompletableFuture<List<FabricModJson>>>();
+	private static List<LeafModJson> getModsFromConfiguration(FileCollection configuration, AsyncCache<List<LeafModJson>> fmjCache) {
+		var futures = new ArrayList<CompletableFuture<List<LeafModJson>>>();
 
 		for (File artifact : configuration.getFiles()) {
 			futures.add(fmjCache.get(artifact.toPath().toAbsolutePath().toString(), () -> getMod(artifact.toPath())
@@ -162,22 +162,22 @@ public record DeobfSpecContext(List<FabricModJson> modDependencies,
 		return SpecContext.distinctSorted(AsyncCache.joinList(futures));
 	}
 
-	private static Set<String> toModIdSet(List<FabricModJson> mods) {
+	private static Set<String> toModIdSet(List<LeafModJson> mods) {
 		return mods.stream()
-				.map(FabricModJson::getId)
+				.map(LeafModJson::getId)
 				.collect(HashSet::new, Set::add, Set::addAll);
 	}
 
-	private static Optional<FabricModJson> getMod(Path path) {
+	private static Optional<LeafModJson> getMod(Path path) {
 		if (Files.isRegularFile(path)) {
-			return FabricModJsonFactory.createFromZipOptional(path);
+			return LeafModJsonFactory.createFromZipOptional(path);
 		}
 
 		return Optional.empty();
 	}
 
-	private static List<FabricModJson> getMods(Map<String, FabricModJson> mods, Set<String> ids) {
-		List<FabricModJson> result = new ArrayList<>();
+	private static List<LeafModJson> getMods(Map<String, LeafModJson> mods, Set<String> ids) {
+		List<LeafModJson> result = new ArrayList<>();
 
 		for (String id : ids) {
 			result.add(Objects.requireNonNull(mods.get(id), "Could not find mod with id: " + id));
@@ -187,11 +187,11 @@ public record DeobfSpecContext(List<FabricModJson> modDependencies,
 	}
 
 	// Returns a list of mods that are on both to compile and runtime classpath
-	private static List<FabricModJson> getCompileRuntimeProjectMods(DeobfProjectView projectView, AsyncCache<List<FabricModJson>> fmjCache) {
-		var mods = new ArrayList<FabricModJson>();
+	private static List<LeafModJson> getCompileRuntimeProjectMods(DeobfProjectView projectView, AsyncCache<List<LeafModJson>> fmjCache) {
+		var mods = new ArrayList<LeafModJson>();
 
 		for (Project dependentProject : getCompileRuntimeProjectDependencies(projectView).toList()) {
-			List<FabricModJson> projectMods = fmjCache.getBlocking(dependentProject.getPath(), () -> FabricModJsonHelpers.getModsInProject(dependentProject));
+			List<LeafModJson> projectMods = fmjCache.getBlocking(dependentProject.getPath(), () -> LeafModJsonHelpers.getModsInProject(dependentProject));
 
 			mods.addAll(projectMods);
 		}
