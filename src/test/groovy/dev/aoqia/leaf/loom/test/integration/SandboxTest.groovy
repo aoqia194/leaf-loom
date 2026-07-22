@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.integration
+package net.fabricmc.loom.test.integration
 
 import java.nio.file.Path
 
@@ -30,14 +30,15 @@ import org.intellij.lang.annotations.Language
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper
-import dev.aoqia.leaf.loom.test.unit.sandbox.SandboxEntrypoint
-import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
-import dev.aoqia.leaf.loom.test.util.ZipTestUtils
-import dev.aoqia.leaf.loom.util.Constants
-import dev.aoqia.leaf.loom.util.ZipUtils
+import net.fabricmc.loom.configuration.mods.dependency.LocalMavenHelper
+import net.fabricmc.loom.test.LoomTestVersions
+import net.fabricmc.loom.test.unit.sandbox.SandboxEntrypoint
+import net.fabricmc.loom.test.util.GradleProjectTestTrait
+import net.fabricmc.loom.test.util.ZipTestUtils
+import net.fabricmc.loom.util.Constants
+import net.fabricmc.loom.util.ZipUtils
 
-import static dev.aoqia.leaf.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class SandboxTest extends Specification implements GradleProjectTestTrait {
@@ -77,7 +78,7 @@ class SandboxTest extends Specification implements GradleProjectTestTrait {
 
 	static Path createDummySandboxJar() {
 		def zip = ZipTestUtils.createZip(["fabric-sandbox.json": METADATA_JSON], ".jar")
-		ZipUtils.add(zip, "dev/aoqia/leaf/loom/test/unit/sandbox/SandboxEntrypoint.class", getClassBytes(SandboxEntrypoint.class))
+		ZipUtils.add(zip, "net/fabricmc/loom/test/unit/sandbox/SandboxEntrypoint.class", getClassBytes(SandboxEntrypoint.class))
 		return zip
 	}
 

@@ -112,7 +112,7 @@ public class ZomboidLibraryProvider {
 
 		// After Minecraft 1.19-pre1 the natives should be on the runtime classpath.
 		if (!zomboidProvider.getVersionInfo().hasNativesToExtract()) {
-			project.getConfigurations().named(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES, configuration -> configuration.extendsFrom(project.getConfigurations().getByName(Constants.Configurations.ZOMBOID_NATIVES)));
+			project.getConfigurations().named(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES, configuration -> configuration.extendsFrom(project.getConfigurations().named(Constants.Configurations.ZOMBOID_NATIVES)));
 		}
 	}
 

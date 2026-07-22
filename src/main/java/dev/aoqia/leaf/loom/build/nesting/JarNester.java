@@ -26,27 +26,31 @@ package dev.aoqia.leaf.loom.build.nesting;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.gradle.api.UncheckedIOException;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.util.Check;
 import dev.aoqia.leaf.loom.util.Pair;
+import dev.aoqia.leaf.loom.util.ZipReprocessorUtil;
 import dev.aoqia.leaf.loom.util.ZipUtils;
 import dev.aoqia.leaf.loom.util.fmj.LeafModJsonFactory;
 
 public class JarNester {
-	public static void nestJars(Collection<File> jars, File modJar, Logger logger) {
+	private static final Logger LOGGER = LoggerFactory.getLogger(JarNester.class);
+	private static final Gson GSON = new Gson();
+
+	public static void nestJars(Collection<File> jars, File modJar) {
 		if (jars.isEmpty()) {
-			logger.debug("Nothing to nest into " + modJar.getName());
+			LOGGER.debug("Nothing to nest into {}", modJar.getName());
 			return;
 		}
 
@@ -56,47 +60,32 @@ public class JarNester {
 		Collection<File> sortedJars = jars.stream().sorted(Comparator.comparing(File::getName)).toList();
 
 		try {
-			ZipUtils.add(modJar.toPath(), sortedJars.stream().map(file -> {
-				try {
-					return new Pair<>("META-INF/jars/" + file.getName(), Files.readAllBytes(file.toPath()));
-				} catch (IOException e) {
-					throw new UncheckedIOException(e);
-				}
-			}).collect(Collectors.toList()));
+			Map<String, Path> nestedJarPaths = new LinkedHashMap<>();
+
+			for (File file : sortedJars) {
+				String nestedJarPath = "META-INF/jars/" + file.getName();
+				Check.require(LeafModJsonFactory.isModJar(file), "Cannot nest none mod jar: " + file.getName());
+				Check.require(nestedJarPaths.putIfAbsent(nestedJarPath, file.toPath()) == null, "Cannot nest multiple jars at " + nestedJarPath);
+			}
+
+			ZipReprocessorUtil.appendZipEntries(modJar.toPath(), nestedJarPaths);
+			nestedJarPaths.keySet().forEach(path -> LOGGER.debug("Nested {} into {}", path, modJar.getName()));
 
             // TODO(leaf): Support leaf.mod.json
-			int count = ZipUtils.transformJson(JsonObject.class, modJar.toPath(), Stream.of(new Pair<>("leaf.mod.json", json -> {
-				JsonArray nestedJars = json.getAsJsonArray("jars");
-
-				if (nestedJars == null || !json.has("jars")) {
-					nestedJars = new JsonArray();
-				}
+			ZipReprocessorUtil.transformZipEntry(modJar.toPath(), "leaf.mod.json", bytes -> {
+				JsonObject json = GSON.fromJson(new String(bytes), JsonObject.class);
+				JsonArray nestedJars = json.has("jars") ? json.getAsJsonArray("jars") : new JsonArray();
 
 				for (File file : sortedJars) {
 					String nestedJarPath = "META-INF/jars/" + file.getName();
-					Check.require(LeafModJsonFactory.isModJar(file), "Cannot nest none mod jar: " + file.getName());
-
-					for (JsonElement nestedJar : nestedJars) {
-						JsonObject jsonObject = nestedJar.getAsJsonObject();
-
-						if (jsonObject.has("file") && jsonObject.get("file").getAsString().equals(nestedJarPath)) {
-							throw new IllegalStateException("Cannot nest 2 jars at the same path: " + nestedJarPath);
-						}
-					}
-
-					JsonObject jsonObject = new JsonObject();
-					jsonObject.addProperty("file", nestedJarPath);
-					nestedJars.add(jsonObject);
-
-					logger.debug("Nested " + nestedJarPath + " into " + modJar.getName());
+					JsonObject entry = new JsonObject();
+					entry.addProperty("file", nestedJarPath);
+					nestedJars.add(entry);
 				}
 
 				json.add("jars", nestedJars);
-
-				return json;
-			})));
-
-			Check.require(count > 0, "Failed to transform leaf.mod.json");
+				return GSON.toJson(json).getBytes();
+			});
 		} catch (IOException e) {
 			throw new java.io.UncheckedIOException("Failed to nest jars into " + modJar.getName(), e);
 		}

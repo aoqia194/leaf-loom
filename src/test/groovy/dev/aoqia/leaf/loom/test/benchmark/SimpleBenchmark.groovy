@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2022 FabricMC
+ * Copyright (c) 2026 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,14 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.benchmark
+package net.fabricmc.loom.test.benchmark
 
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 
-import dev.aoqia.leaf.loom.test.LoomTestConstants
-import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import net.fabricmc.loom.test.LoomTestConstants
+import net.fabricmc.loom.test.LoomTestVersions
+import net.fabricmc.loom.test.util.GradleProjectTestTrait
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -37,10 +38,10 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
  * Allow for one warm up run before profiling, follow up runs should not be using the network.
  */
 @Singleton
-class SimpleBenchmark implements GradleProjectTestTrait {
+class UnobfBenchmark implements GradleProjectTestTrait {
 	def run(File dir) {
 		def gradle = gradleProject(
-				project: "minimalBase",
+				project: "minimalBaseNoRemap",
 				version: LoomTestConstants.PRE_RELEASE_GRADLE,
 				projectDir: new File(dir, "project"),
 				gradleHomeDir: new File(dir, "gradlehome")
@@ -48,15 +49,20 @@ class SimpleBenchmark implements GradleProjectTestTrait {
 
 		gradle.buildGradle << """
                 dependencies {
-                    minecraft "com.mojang:minecraft:1.18.1"
-                    mappings "net.fabricmc:yarn:1.18.1+build.17:v2"
-                    modImplementation "net.fabricmc.fabric-api:fabric-api:0.45.1+1.18"
+                    minecraft "com.mojang:minecraft:26.1-snapshot-1"
+                    implementation "net.fabricmc.fabric-api:fabric-api:0.140.3+26.1"
+                    implementation "${LoomTestVersions.FABRIC_LOADER.mavenNotation()}"
                 }
             """
 
 		def timeStart = new Date()
 
-		def result = gradle.run(tasks: ["clean", "build"])
+		def result = gradle.run(tasks: [
+			"clean",
+			"build",
+			"configureClientLaunch",
+			"--rerun-tasks"
+		])
 
 		def timeStop = new Date()
 		TimeDuration duration = TimeCategory.minus(timeStop, timeStart)

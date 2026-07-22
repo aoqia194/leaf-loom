@@ -24,6 +24,7 @@
 
 package dev.aoqia.leaf.loom.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -32,6 +33,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
+import java.util.Map;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -133,11 +135,57 @@ public class ZipReprocessorUtil {
 	}
 
 	/**
+	 * Transforms a single entry in a zip file, preserving the existing entry order.
+	 * The transformed entry is written with a constant time stamp to ensure reproducibility.
+	 * This method should only be used when a reproducible output is required, use {@link ZipUtils#transform(Path, java.util.Map)} normally.
+	 *
+	 * @throws IllegalArgumentException if the zip file does not contain the specified entry
+	 */
+	public static void transformZipEntry(Path file, String path, ZipUtils.UnsafeUnaryOperator<byte[]> transformer) throws IOException {
+		final Path tempFile = file.resolveSibling(file.getFileName() + ".tmp");
+
+		try (var zipFile = new ZipFile(file.toFile());
+				var fileOutputStream = Files.newOutputStream(tempFile)) {
+			ZipEntry[] entries = zipFile.stream().toArray(ZipEntry[]::new);
+			boolean found = false;
+
+			try (var zipOutputStream = new ZipOutputStream(fileOutputStream)) {
+				for (ZipEntry entry : entries) {
+					if (entry.getName().equals(path)) {
+						found = true;
+						byte[] transformed = transformer.apply(zipFile.getInputStream(entry).readAllBytes());
+						var newEntry = new ZipEntry(path);
+						setConstantFileTime(newEntry);
+						copyZipEntry(zipOutputStream, newEntry, new ByteArrayInputStream(transformed));
+					} else {
+						copyZipEntry(zipOutputStream, entry, zipFile.getInputStream(entry));
+					}
+				}
+			}
+
+			if (!found) {
+				throw new IllegalArgumentException("Zip file (%s) does not contain entry (%s)".formatted(file.getFileName().toString(), path));
+			}
+		}
+
+		Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
+	}
+
+	/**
 	 * Appends an entry to a zip file, persevering the existing entry order and time stamps.
 	 * The new entry is added with a constant time stamp to ensure reproducibility.
 	 * This method should only be used when a reproducible output is required, use {@link ZipUtils#add(Path, String, byte[])} normally.
 	 */
 	public static void appendZipEntry(Path file, String path, byte[] data) throws IOException {
+		appendZipEntry(file, path, new ByteArrayInputStream(data));
+	}
+
+	/**
+	 * Appends an entry to a zip file, persevering the existing entry order and time stamps.
+	 * The new entry is added with a constant time stamp to ensure reproducibility.
+	 * This method should only be used when a reproducible output is required, use {@link ZipUtils#add(Path, String, byte[])} normally.
+	 */
+	public static void appendZipEntry(Path file, String path, InputStream data) throws IOException {
 		final Path tempFile = file.resolveSibling(file.getFileName() + ".tmp");
 
 		try (var zipFile = new ZipFile(file.toFile());
@@ -157,9 +205,46 @@ public class ZipReprocessorUtil {
 				// Append the new entry
 				var entry = new ZipEntry(path);
 				setConstantFileTime(entry);
-				zipOutputStream.putNextEntry(entry);
-				zipOutputStream.write(data, 0, data.length);
-				zipOutputStream.closeEntry();
+				copyZipEntry(zipOutputStream, entry, data);
+			}
+		}
+
+		Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
+	}
+
+	/**
+	 * Appends files to a zip file, preserving the existing entry order and time stamps.
+	 * The new entries are appended in map iteration order with constant time stamps to ensure reproducibility.
+	 * This method should only be used when a reproducible output is required, use {@link ZipUtils#add(Path, Iterable)} normally.
+	 */
+	public static void appendZipEntries(Path file, Map<String, Path> paths) throws IOException {
+		if (paths.isEmpty()) {
+			return;
+		}
+
+		final Path tempFile = file.resolveSibling(file.getFileName() + ".tmp");
+
+		try (var zipFile = new ZipFile(file.toFile());
+				var fileOutputStream = Files.newOutputStream(tempFile)) {
+			ZipEntry[] entries = zipFile.stream().toArray(ZipEntry[]::new);
+
+			try (var zipOutputStream = new ZipOutputStream(fileOutputStream)) {
+				for (ZipEntry entry : entries) {
+					if (paths.containsKey(entry.getName())) {
+						throw new IllegalArgumentException("Zip file (%s) already contains entry (%s)".formatted(file.getFileName().toString(), entry.getName()));
+					}
+
+					copyZipEntry(zipOutputStream, entry, zipFile.getInputStream(entry));
+				}
+
+				for (Map.Entry<String, Path> path : paths.entrySet()) {
+					var entry = new ZipEntry(path.getKey());
+					setConstantFileTime(entry);
+
+					try (var inputStream = Files.newInputStream(path.getValue())) {
+						copyZipEntry(zipOutputStream, entry, inputStream);
+					}
+				}
 			}
 		}
 
@@ -168,13 +253,7 @@ public class ZipReprocessorUtil {
 
 	private static void copyZipEntry(ZipOutputStream zipOutputStream, ZipEntry entry, InputStream inputStream) throws IOException {
 		zipOutputStream.putNextEntry(entry);
-		byte[] buf = new byte[1024];
-		int length;
-
-		while ((length = inputStream.read(buf)) > 0) {
-			zipOutputStream.write(buf, 0, length);
-		}
-
+		inputStream.transferTo(zipOutputStream);
 		zipOutputStream.closeEntry();
 	}
 

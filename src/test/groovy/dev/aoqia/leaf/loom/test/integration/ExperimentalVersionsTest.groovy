@@ -22,14 +22,15 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.integration
+package net.fabricmc.loom.test.integration
 
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import net.fabricmc.loom.test.LoomTestVersions
+import net.fabricmc.loom.test.util.GradleProjectTestTrait
 
-import static dev.aoqia.leaf.loom.test.LoomTestConstants.*
+import static net.fabricmc.loom.test.LoomTestConstants.*
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class ExperimentalVersionsTest extends Specification implements GradleProjectTestTrait {

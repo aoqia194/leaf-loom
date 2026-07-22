@@ -59,6 +59,12 @@ public abstract sealed class IntermediaryZomboidProvider<M extends ZomboidProvid
 		return MavenScope.GLOBAL;
 	}
 
+	@Override
+	protected boolean requiresBackupJars() {
+		// No backup jars should be created for intermediary providers, as we never decompile the intermediary jars.
+		return false;
+	}
+
 	public static final class MergedImpl extends IntermediaryZomboidProvider<MergedZomboidProvider> implements Merged {
 		public MergedImpl(Project project, MergedZomboidProvider minecraftProvider) {
 			super(project, minecraftProvider);

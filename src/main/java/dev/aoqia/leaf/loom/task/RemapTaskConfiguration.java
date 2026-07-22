@@ -40,7 +40,7 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 import org.gradle.jvm.tasks.Jar;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.build.nesting.NestableJarGenerationTask;
+import dev.aoqia.leaf.loom.configuration.IncludeConfigurations;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
@@ -67,15 +67,8 @@ public abstract class RemapTaskConfiguration implements Runnable {
 
 		SyncTaskBuildService.register(getProject());
 
-		Configuration includeConfiguration = getProject().getConfigurations().getByName(Constants.Configurations.INCLUDE_INTERNAL);
-		TaskProvider<NestableJarGenerationTask> processIncludeJarsTask = getTasks().register(Constants.Task.PROCESS_INCLUDE_JARS, NestableJarGenerationTask.class, task -> {
-			task.from(includeConfiguration);
-			task.getOutputDirectory().set(getProject().getLayout().getBuildDirectory().dir(task.getName()));
-			task.getUncompressNestedJars().set(extension.getUncompressNestedJars());
-		});
-
 		if (extension.dontRemapOutputs()) {
-			new NonRemappedJarTaskConfiguration(getProject(), extension, processIncludeJarsTask).configure();
+			new NonRemappedJarTaskConfiguration(getProject(), extension).configure();
 			return;
 		}
 
@@ -99,6 +92,13 @@ public abstract class RemapTaskConfiguration implements Runnable {
 		// must not be lazy to ensure that the prepare tasks get setup for other projects to depend on.
 		// Being lazy also breaks maven publishing, see: https://github.com/FabricMC/fabric-loom/issues/1023
 		getTasks().create(REMAP_JAR_TASK_NAME, RemapJarTask.class, remapJarTaskAction);
+		IncludeConfigurations.nestJars(
+				getProject(),
+				getTasks().named(REMAP_JAR_TASK_NAME, RemapJarTask.class),
+				getConfigurations().named(Constants.Configurations.INCLUDE),
+				Constants.Task.PROCESS_INCLUDE_JARS,
+				Constants.Configurations.INCLUDE_INTERNAL
+		);
 
 		// Configure the default jar task
 		getTasks().named(JavaPlugin.JAR_TASK_NAME, AbstractArchiveTask.class).configure(task -> {

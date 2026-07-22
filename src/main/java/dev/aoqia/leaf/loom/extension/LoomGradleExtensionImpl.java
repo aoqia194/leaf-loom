@@ -49,8 +49,6 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.TaskProvider;
-import org.gradle.jvm.tasks.Jar;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
@@ -368,18 +366,5 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	@Override
 	public Provider<ArtifactMetadata.MixinRemapType> getDefaultMixinRemapTypeEnum() {
 		return getDefaultMixinRemapType().map(ArtifactMetadata.MixinRemapType::valueOf);
-	}
-
-	@Override
-	public void nestJars(TaskProvider<? extends Jar> jarTask, FileCollection jars) {
-		jarTask.configure(task -> {
-			if (task instanceof RemapJarTask remapJarTask) {
-				// For RemapJarTask, add to the nestedJars property
-				remapJarTask.getNestedJars().from(jars);
-			} else {
-				// For regular Jar tasks (non-remap mode), add a NestJarsAction with the FileCollection
-				NestJarsAction.addToTask(task, jars);
-			}
-		});
 	}
 }

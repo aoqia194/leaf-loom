@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.integration
+package net.fabricmc.loom.test.integration
 
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.CompletableFuture
@@ -41,11 +41,12 @@ import io.reactivex.functions.Function
 import spock.lang.Specification
 import spock.lang.Timeout
 
-import dev.aoqia.leaf.loom.configuration.providers.minecraft.MinecraftJar
-import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
-import dev.aoqia.leaf.loom.util.ZipUtils
+import net.fabricmc.loom.configuration.providers.minecraft.MinecraftJar
+import net.fabricmc.loom.test.LoomTestVersions
+import net.fabricmc.loom.test.util.GradleProjectTestTrait
+import net.fabricmc.loom.util.ZipUtils
 
-import static dev.aoqia.leaf.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
+import static net.fabricmc.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 @Timeout(value = 30, unit = TimeUnit.MINUTES)

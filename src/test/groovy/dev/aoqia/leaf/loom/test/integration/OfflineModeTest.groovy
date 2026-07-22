@@ -22,14 +22,15 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.integration
+package net.fabricmc.loom.test.integration
 
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import net.fabricmc.loom.test.LoomTestVersions
+import net.fabricmc.loom.test.util.GradleProjectTestTrait
 
-import static dev.aoqia.leaf.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
+import static net.fabricmc.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class OfflineModeTest extends Specification implements GradleProjectTestTrait {
@@ -46,7 +47,7 @@ class OfflineModeTest extends Specification implements GradleProjectTestTrait {
                 modImplementation 'net.fabricmc.fabric-api:fabric-api:0.95.4+1.20.4'
             }
 
-			import dev.aoqia.leaf.loom.util.Checksum
+			import net.fabricmc.loom.util.Checksum
 			def projectHash = Checksum.of(getProject()).sha1().hex()
             println("%%" + projectHash + "%%")
 

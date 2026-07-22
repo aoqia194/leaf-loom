@@ -132,7 +132,15 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 		return outputJarPath.resolveSibling(outputJarPath.getFileName() + ".backup");
 	}
 
+	protected boolean requiresBackupJars() {
+		return true;
+	}
+
 	protected void createBackupJars(List<ZomboidJar> minecraftJars) throws IOException {
+		if (!requiresBackupJars()) {
+			return;
+		}
+
 		for (ZomboidJar minecraftJar : minecraftJars) {
 			Files.copy(minecraftJar.getPath(), getBackupJarPath(minecraftJar), StandardCopyOption.REPLACE_EXISTING);
 		}
@@ -226,10 +234,12 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 			}
 		}
 
-		for (OutputJar outputJar : outputJars) {
-			if (!Files.exists(getBackupJarPath(outputJar.outputJar()))) {
-				LOGGER.info("Refreshing outputs for mapped jar, as backup jar does not exist for {}", outputJar.outputJar());
-				return true;
+		if (requiresBackupJars()) {
+			for (OutputJar outputJar : outputJars) {
+				if (!Files.exists(getBackupJarPath(outputJar.outputJar()))) {
+					LOGGER.info("Refreshing outputs for mapped jar, as backup jar does not exist for {}", outputJar.outputJar());
+					return true;
+				}
 			}
 		}
 

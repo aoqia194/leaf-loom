@@ -24,8 +24,6 @@
 
 package dev.aoqia.leaf.loom.task;
 
-import java.io.File;
-
 import javax.inject.Inject;
 
 import org.gradle.api.file.RegularFileProperty;
@@ -41,7 +39,7 @@ import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.api.RunConfiguration;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
 
@@ -60,7 +58,7 @@ public abstract class RenderDocRunTask extends RunGameTask {
 	protected abstract ExecOperations getExecOperations();
 
 	@Inject
-	public RenderDocRunTask(RunConfigSettings settings) {
+	public RenderDocRunTask(RunConfiguration settings) {
 		super(settings);
 		setGroup(Constants.TaskGroup.LEAF);
 		dependsOn("configureClientLaunch");
@@ -70,12 +68,12 @@ public abstract class RenderDocRunTask extends RunGameTask {
 	@Override
 	public void exec() {
 		ExecResult result = getExecOperations().exec(exec -> {
-			exec.workingDir(new File(getProjectDir().get(), getInternalRunDir().get()));
+			exec.workingDir(getInternalRunDir());
 			exec.environment(getInternalEnvironmentVars().get());
 
 			exec.commandLine(getRenderDocExecutable().get().getAsFile());
 			exec.args(getRenderDocArgs().get());
-			exec.args("--working-dir", new File(getProjectDir().get(), getInternalRunDir().get()));
+			exec.args("--working-dir", getInternalRunDir().get().getAsFile().getAbsolutePath());
 			exec.args(getJavaLauncher().get().getExecutablePath());
 			exec.args(getJvmArgs());
 			exec.args("-D%s=true".formatted(Constants.Properties.RENDER_DOC));

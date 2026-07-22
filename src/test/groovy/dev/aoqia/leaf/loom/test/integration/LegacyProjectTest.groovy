@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.integration
+package net.fabricmc.loom.test.integration
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -30,10 +30,11 @@ import java.nio.file.Path
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
+import net.fabricmc.loom.test.LoomTestVersions
+import net.fabricmc.loom.test.util.GradleProjectTestTrait
 
-import static dev.aoqia.leaf.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
-import static dev.aoqia.leaf.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static net.fabricmc.loom.test.LoomTestConstants.PRE_RELEASE_GRADLE
+import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class LegacyProjectTest extends Specification implements GradleProjectTestTrait {
@@ -60,7 +61,7 @@ class LegacyProjectTest extends Specification implements GradleProjectTestTrait 
                 dependencies {
                     minecraft "com.mojang:minecraft:${version}"
 
-                    implementation "net.fabricmc:fabric-loader:0.12.12"
+                    implementation "${LoomTestVersions.FABRIC_LOADER.mavenNotation()}"
                 }
 			"""
 
@@ -94,7 +95,7 @@ class LegacyProjectTest extends Specification implements GradleProjectTestTrait 
                 dependencies {
                     minecraft "com.mojang:minecraft:${version}"
 
-                    implementation "net.fabricmc:fabric-loader:0.12.12"
+                    implementation "${LoomTestVersions.FABRIC_LOADER.mavenNotation()}"
                 }
 			"""
 

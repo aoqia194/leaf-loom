@@ -222,7 +222,7 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 		getClasspath().from(decompilerOptions.getClasspath()).finalizeValueOnRead();
 		dependsOn(decompilerOptions.getClasspath().getBuiltBy());
 
-		getZomboidCompileLibraries().from(getProject().getConfigurations().getByName(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
+		getZomboidCompileLibraries().from(getProject().getConfigurations().named(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES));
 		getDecompileCacheFile().set(getExtension().getFiles().getDecompileCache(CACHE_VERSION));
 
 		getUseCache().convention(true);

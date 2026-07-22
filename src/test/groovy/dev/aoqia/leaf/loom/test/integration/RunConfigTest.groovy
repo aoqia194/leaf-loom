@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.integration
+package net.fabricmc.loom.test.integration
 
 import java.util.concurrent.TimeUnit
 
@@ -32,11 +32,12 @@ import spock.lang.Timeout
 import spock.lang.Unroll
 import spock.util.environment.RestoreSystemProperties
 
-import dev.aoqia.leaf.loom.test.LoomTestConstants
-import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
-import dev.aoqia.leaf.loom.util.download.Download
+import net.fabricmc.loom.test.LoomTestConstants
+import net.fabricmc.loom.test.LoomTestVersions
+import net.fabricmc.loom.test.util.GradleProjectTestTrait
+import net.fabricmc.loom.util.download.Download
 
-import static dev.aoqia.leaf.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
+import static net.fabricmc.loom.test.LoomTestConstants.STANDARD_TEST_VERSIONS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 // This test runs a mod that exits on mod init
@@ -102,6 +103,39 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
 
 		when:
 		// Dont run with any tasks, the idea sync task should be invoked automatically due to the system prop
+		def result = gradle.run(tasks: [])
+
+		then:
+		result.task(":ideaSyncTask").outcome == SUCCESS
+
+		where:
+		version << STANDARD_TEST_VERSIONS
+	}
+
+	@RestoreSystemProperties
+	@Unroll
+	def "idea auto configuration with gradle task run configs (gradle #version)"() {
+		setup:
+		System.setProperty("idea.sync.active", "true")
+		def gradle = gradleProject(project: "minimalBase", version: version)
+
+		new File(gradle.projectDir, ".idea").mkdirs()
+
+		gradle.buildGradle << """
+                dependencies {
+                    minecraft "com.mojang:minecraft:1.18.1"
+                    mappings "net.fabricmc:yarn:1.18.1+build.18:v2"
+                    modImplementation "${LoomTestVersions.FABRIC_LOADER.mavenNotation()}"
+                }
+
+                loom {
+                    runs.configureEach {
+                        preferGradleTask = true
+                    }
+                }
+            """
+
+		when:
 		def result = gradle.run(tasks: [])
 
 		then:
@@ -214,11 +248,11 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
 	def "client game tests with XVFB (gradle #version)"() {
 		setup:
 		def gradle = gradleProject(project: "minimalBase", version: version)
-		gradle.buildGradle << '''
+		gradle.buildGradle << """
                 dependencies {
                     minecraft "com.mojang:minecraft:1.21.4"
                     mappings "net.fabricmc:yarn:1.21.4+build.4:v2"
-                    modImplementation "net.fabricmc:fabric-loader:0.16.9"
+                    modImplementation "${LoomTestVersions.FABRIC_LOADER.mavenNotation()}"
                     modImplementation "net.fabricmc.fabric-api:fabric-api:0.114.0+1.21.4"
                 }
 
@@ -233,7 +267,7 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
                 tasks.named("runClientGameTest") {
                     useXvfb.set(true)
                 }
-            '''
+            """
 		when:
 		def result = gradle.run(task: "runClientGameTest")
 		def eula = new File(gradle.projectDir, "build/run/clientGameTest/eula.txt")
@@ -244,5 +278,24 @@ class RunConfigTest extends Specification implements GradleProjectTestTrait {
 
 		where:
 		version << STANDARD_TEST_VERSIONS
+	}
+
+	@IgnoreIf({ !os.linux })
+	def "XVFB forwards game JVM arguments"() {
+		given:
+		def gradle = gradleProject(project: "runconfigs", version: LoomTestConstants.DEFAULT_GRADLE)
+		gradle.buildGradle << '''
+
+tasks.named('runCustomMain') {
+	useXvfb.set(true)
+}
+ '''
+
+		when:
+		def result = gradle.run(task: "runCustomMain")
+
+		then:
+		result.task(":runCustomMain").outcome == SUCCESS
+		result.output.contains("This contains a space")
 	}
 }

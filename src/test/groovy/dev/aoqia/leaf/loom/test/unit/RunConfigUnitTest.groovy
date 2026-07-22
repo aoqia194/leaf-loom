@@ -22,16 +22,16 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.unit
+package net.fabricmc.loom.test.unit
 
 import spock.lang.Specification
 
-import dev.aoqia.leaf.loom.configuration.ide.RunConfig
+import net.fabricmc.loom.util.Arguments
 
 class RunConfigUnitTest extends Specification {
 	def "escape arguments"() {
 		when:
-		def args = RunConfig.joinArguments([
+		def args = Arguments.join([
 			"-Dfabric.test=123",
 			"-Dfabric.test=abc 123"
 		])

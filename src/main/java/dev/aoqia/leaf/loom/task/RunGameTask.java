@@ -28,14 +28,14 @@ import javax.inject.Inject;
 
 import org.gradle.work.DisableCachingByDefault;
 
-import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
-import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.api.RunConfiguration;
+import dev.aoqia.leaf.loom.configuration.ide.DefaultRunConfigurationSettings;
 
 @DisableCachingByDefault
 public abstract class RunGameTask extends AbstractRunTask {
 	@Inject
-	public RunGameTask(RunConfigSettings settings) {
-		super(proj -> RunConfig.runConfig(proj, settings));
+	public RunGameTask(RunConfiguration settings) {
+		super(proj -> DefaultRunConfigurationSettings.finialise(settings, proj));
 
 		// Defaults to empty, forwards stdin to mc.
 		setStandardInput(System.in);

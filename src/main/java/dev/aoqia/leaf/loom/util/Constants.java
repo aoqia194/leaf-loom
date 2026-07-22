@@ -34,6 +34,7 @@ public class Constants {
     public static final String VERSION_MANIFESTS = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/dist/manifests";
 
 	public static final String FABRIC_REPOSITORY = "https://maven.fabricmc.net/";
+	public static final String DLI_ENTRYPOINT = "net.fabricmc.devlaunchinjector.Main";
 
 	public static final int ASM_VERSION = Opcodes.ASM9;
 	public static final String RELEASE_TIME_41_78_19 = "2022-12-17T21:16:46Z";

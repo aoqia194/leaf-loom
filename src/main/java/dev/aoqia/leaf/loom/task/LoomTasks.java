@@ -39,7 +39,7 @@ import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.api.tasks.TaskProvider;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.api.RunConfiguration;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.task.launch.GenerateDLIConfigTask;
@@ -188,7 +188,7 @@ public abstract class LoomTasks implements Runnable {
 		});
 	}
 
-	public static String getRunConfigTaskName(RunConfigSettings config) {
+	public static String getRunConfigTaskName(RunConfiguration config) {
 		String configName = config.getName();
 		return "run" + configName.substring(0, 1).toUpperCase() + configName.substring(1);
 	}
@@ -203,9 +203,8 @@ public abstract class LoomTasks implements Runnable {
 			var runTask = getTasks().register(getRunConfigTaskName(config), RunGameTask.class, config);
 
 			runTask.configure(t -> {
-				t.setDescription("Starts the '" + config.getConfigName() + "' run configuration");
-
-				t.dependsOn(config.getEnvironment().equals("client") ? "configureClientLaunch" : "configureLaunch");
+				t.setDescription("Starts the '" + config.getName() + "' run configuration");
+				t.dependsOn(config.getRuntimeEnvironment().map(env -> env.equals("client") ? "configureClientLaunch" : "configureLaunch"));
 			});
 
 			if (config.getName().equals("client") && renderDocSupported) {
@@ -225,8 +224,8 @@ public abstract class LoomTasks implements Runnable {
 			});
 		});
 
-		extension.getRunConfigs().create("client", RunConfigSettings::client);
-		extension.getRunConfigs().create("server", RunConfigSettings::server);
+		extension.getRunConfigs().create("client", RunConfiguration::client);
+		extension.getRunConfigs().create("server", RunConfiguration::server);
 
 		// Remove the client or server run config when not required. Done by name to not remove any possible custom run configs
 		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {

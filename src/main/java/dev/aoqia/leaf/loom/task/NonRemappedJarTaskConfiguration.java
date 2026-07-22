@@ -33,14 +33,14 @@ import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.tasks.Jar;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.build.nesting.NestableJarGenerationTask;
+import dev.aoqia.leaf.loom.configuration.IncludeConfigurations;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.task.service.ClientEntriesService;
 import dev.aoqia.leaf.loom.task.service.JarManifestService;
+import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 
@@ -51,23 +51,16 @@ import dev.aoqia.leaf.loom.util.service.ScopedServiceFactory;
 public class NonRemappedJarTaskConfiguration {
 	private final Project project;
 	private final LoomGradleExtension extension;
-	private final TaskProvider<NestableJarGenerationTask> processIncludeJarsTask;
 
-	public NonRemappedJarTaskConfiguration(Project project, LoomGradleExtension extension, TaskProvider<NestableJarGenerationTask> processIncludeJarsTask) {
+	public NonRemappedJarTaskConfiguration(Project project, LoomGradleExtension extension) {
 		this.project = project;
 		this.extension = extension;
-		this.processIncludeJarsTask = processIncludeJarsTask;
 	}
 
 	public void configure() {
 		final Provider<JarManifestService> manifestServiceProvider = JarManifestService.get(project);
 
 		project.getTasks().named(JavaPlugin.JAR_TASK_NAME, Jar.class).configure(task -> {
-			task.dependsOn(processIncludeJarsTask);
-
-			NestJarsAction.addToTask(task, project.fileTree(processIncludeJarsTask.flatMap(NestableJarGenerationTask::getOutputDirectory))
-					.matching(pattern -> pattern.include("*.jar")));
-
 			task.doLast(new ManifestModificationAction(
 					manifestServiceProvider,
 					"official",
@@ -77,6 +70,14 @@ public class NonRemappedJarTaskConfiguration {
 
 			task.usesService(manifestServiceProvider);
 		});
+
+		IncludeConfigurations.nestJars(
+				project,
+				project.getTasks().named(JavaPlugin.JAR_TASK_NAME, Jar.class),
+				project.getConfigurations().named(Constants.Configurations.INCLUDE),
+				Constants.Task.PROCESS_INCLUDE_JARS,
+				Constants.Configurations.INCLUDE_INTERNAL
+		);
 
 		extension.getUnmappedModCollection().from(project.getTasks().named(JavaPlugin.JAR_TASK_NAME));
 	}

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.integration
+package net.fabricmc.loom.test.integration
 
 import org.intellij.lang.annotations.Language
 import spock.lang.Specification
@@ -30,11 +30,12 @@ import spock.lang.Stepwise
 import spock.lang.Unroll
 import spock.util.environment.RestoreSystemProperties
 
-import dev.aoqia.leaf.loom.test.util.GradleProjectTestTrait
-import dev.aoqia.leaf.loom.test.util.MockMavenServerTrait
+import net.fabricmc.loom.test.LoomTestVersions
+import net.fabricmc.loom.test.util.GradleProjectTestTrait
+import net.fabricmc.loom.test.util.MockMavenServerTrait
 
 import static java.lang.System.setProperty
-import static dev.aoqia.leaf.loom.test.LoomTestConstants.*
+import static net.fabricmc.loom.test.LoomTestConstants.*
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 /**
