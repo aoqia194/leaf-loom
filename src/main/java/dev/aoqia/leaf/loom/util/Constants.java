@@ -158,6 +158,7 @@ public class Constants {
 
 	public static final class Properties {
 		public static final String DONT_REMAP = "leaf.loom.dontRemap";
+		public static final String DISABLE_OBFUSCATION = "fabric.loom.disableObfuscation";
 		public static final String DISABLE_REMAPPED_VARIANTS = "leaf.loom.disableRemappedVariants";
 		public static final String DISABLE_PROJECT_DEPENDENT_MODS = "leaf.loom.disableProjectDependentMods";
 		public static final String LIBRARY_PROCESSORS = "leaf.loom.libraryProcessors";

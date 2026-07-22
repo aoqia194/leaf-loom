@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2022 FabricMC
+ * Copyright (c) 2025 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,22 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.configuration.decompile;
+package net.fabricmc.loom.task;
 
-import org.gradle.api.Project;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.options.Option;
 
-import dev.aoqia.leaf.loom.LoomGradleExtension;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
+public abstract class AbstractMigrateMappingsTask extends AbstractLoomTask {
+	@Input
+	@Option(option = "mappings", description = "Target mappings")
+	public abstract Property<String> getMappings();
 
-public abstract class DecompileConfiguration<T extends MappedZomboidProvider> {
-	static final String DEFAULT_DECOMPILER = "Vineflower";
+	@Input
+	@Option(option = "overrideInputsIHaveABackup", description = "Override input files with the remapped files")
+	public abstract Property<Boolean> getOverrideInputs();
 
-	protected final Project project;
-	protected final T zomboidProvider;
-	protected final LoomGradleExtension extension;
-
-	public DecompileConfiguration(Project project, T zomboidProvider) {
-		this.project = project;
-		this.zomboidProvider = zomboidProvider;
-		this.extension = LoomGradleExtension.get(project);
+	public AbstractMigrateMappingsTask() {
+		getOverrideInputs().convention(false);
 	}
-
-	public abstract String getTaskName(ZomboidJar.Type type);
-
-	public abstract void afterEvaluation();
 }

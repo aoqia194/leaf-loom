@@ -66,7 +66,15 @@ public final class ZomboidJarProcessorManager {
 			processors.add(project.getObjects().newInstance(LegacyJarProcessorWrapper.class, legacyProcessor));
 		}
 
-		return ZomboidJarProcessorManager.create(processors, SpecContextImpl.create(project));
+		SpecContext specContext;
+
+		if (extension.disableObfuscation()) {
+			specContext = SpecContextDebofImpl.create();
+		} else {
+			specContext = SpecContextRemappedImpl.create(project);
+		}
+
+		return ZomboidJarProcessorManager.create(processors, specContext);
 	}
 
 	@Nullable

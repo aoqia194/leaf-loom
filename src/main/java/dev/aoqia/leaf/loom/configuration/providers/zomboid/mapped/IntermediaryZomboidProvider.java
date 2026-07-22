@@ -43,6 +43,10 @@ import net.fabricmc.tinyremapper.TinyRemapper;
 public abstract sealed class IntermediaryZomboidProvider<M extends ZomboidProvider> extends AbstractMappedZomboidProvider<M> permits IntermediaryZomboidProvider.MergedImpl, IntermediaryZomboidProvider.LegacyMergedImpl, IntermediaryZomboidProvider.SingleJarImpl, IntermediaryZomboidProvider.SplitImpl, IntermediaryZomboidProvider.CompleteJarImpl {
 	public IntermediaryZomboidProvider(Project project, M minecraftProvider) {
 		super(project, minecraftProvider);
+
+		if (extension.disableObfuscation()) {
+			throw new UnsupportedOperationException("Intermediary Minecraft providers cannot be used when obfuscation is disabled");
+		}
 	}
 
 	@Override

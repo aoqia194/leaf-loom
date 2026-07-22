@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2016-2022 FabricMC
+ * Copyright (c) 2016-2025 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,6 +49,7 @@ import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.LoomVersions;
 import dev.aoqia.leaf.loom.util.Platform;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,8 +71,28 @@ public abstract class LoomTasks implements Runnable {
 //            return;
 //        }
 
-		getTasks().register("migrateMappings", MigrateMappingsTask.class, t -> {
-			t.setDescription("Migrates mappings to a new version.");
+		SourceSetHelper.getSourceSets(getProject()).all(sourceSet -> {
+			if (SourceSetHelper.isMainSourceSet(sourceSet)) {
+				getTasks().register("migrateMappings", MigrateMappingsTask.class, t -> {
+					t.setDescription("Migrates source code mappings to a new version.");
+				});
+
+				return;
+			}
+
+			if (!SourceSetHelper.getFirstSrcDir(sourceSet).exists()) {
+				return;
+			}
+
+			getTasks().register(sourceSet.getTaskName("migrate", "mappings"), MigrateMappingsTask.class, t -> {
+				t.setDescription("Migrates source code mappings to a new version.");
+				t.getInputDir().set(SourceSetHelper.getFirstSrcDir(sourceSet));
+				t.getOutputDir().convention(getProject().getLayout().getProjectDirectory().dir(sourceSet.getTaskName("remapped", "src")));
+			});
+		});
+
+		getTasks().register("migrateClassTweakerMappings", MigrateClassTweakerMappingsTask.class, t -> {
+			t.setDescription("Migrates access widener and class tweaker mappings to a new version.");
 		});
 
 		var generateLog4jConfig = getTasks().register("generateLog4jConfig", GenerateLog4jConfigTask.class, t -> {
@@ -228,9 +249,9 @@ public abstract class LoomTasks implements Runnable {
 			task.setGroup(Constants.TaskGroup.LEAF);
 
 			if (operatingSystem.isWindows()) {
-				task.from(getProject().zipTree(downloadRenderDoc.map(DownloadTask::getOutput)));
+				task.from(getProject().zipTree(downloadRenderDoc.flatMap(DownloadTask::getOutput)));
 			} else {
-				task.from(getProject().tarTree(downloadRenderDoc.map(DownloadTask::getOutput)));
+				task.from(getProject().tarTree(downloadRenderDoc.flatMap(DownloadTask::getOutput)));
 			}
 
 			task.into(getProject().getLayout().getBuildDirectory().dir("renderdoc"));

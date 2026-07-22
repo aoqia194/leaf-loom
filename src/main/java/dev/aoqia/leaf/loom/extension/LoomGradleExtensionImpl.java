@@ -42,6 +42,7 @@ import org.gradle.api.configuration.BuildFeatures;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
@@ -81,6 +82,8 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	private final boolean configurationCacheActive;
 	private final boolean isolatedProjectsActive;
 	private final boolean isCollectingDependencyVerificationMetadata;
+	private final Property<Boolean> disableObfuscation;
+	private final Property<Boolean> dontRemap;
 
 	@Inject
 	protected abstract BuildFeatures getBuildFeatures();
@@ -111,6 +114,14 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 		configurationCacheActive = getBuildFeatures().getConfigurationCache().getActive().get();
 		isolatedProjectsActive = getBuildFeatures().getIsolatedProjects().getActive().get();
 		isCollectingDependencyVerificationMetadata = !project.getGradle().getStartParameter().getWriteDependencyVerifications().isEmpty();
+		disableObfuscation = project.getObjects().property(Boolean.class);
+		dontRemap = project.getObjects().property(Boolean.class);
+
+		disableObfuscation.set(project.provider(() -> GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DISABLE_OBFUSCATION)));
+		disableObfuscation.finalizeValueOnRead();
+
+		dontRemap.set(disableObfuscation.map(notObfuscated -> notObfuscated || GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DONT_REMAP)));
+		dontRemap.finalizeValueOnRead();
 
 		if (refreshDeps) {
 			project.getLogger().lifecycle("Refresh dependencies is in use, loom will be significantly slower.");
@@ -129,16 +140,6 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	@Override
 	public LoomFiles getFiles() {
 		return loomFiles;
-	}
-
-	@Override
-	public void setDependencyManager(LoomDependencyManager dependencyManager) {
-		this.dependencyManager = dependencyManager;
-	}
-
-	@Override
-	public LoomDependencyManager getDependencyManager() {
-		return Objects.requireNonNull(dependencyManager, "Cannot get LoomDependencyManager before it has been setup");
 	}
 
 	@Override
@@ -163,11 +164,19 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 
 	@Override
 	public MappingConfiguration getMappingConfiguration() {
+		if (disableObfuscation()) {
+			throw new UnsupportedOperationException("Cannot get mappings configuration in a non-obfuscated environment");
+		}
+
 		return Objects.requireNonNull(mappingConfiguration, "Cannot get MappingsProvider before it has been setup");
 	}
 
 	@Override
 	public void setMappingConfiguration(MappingConfiguration mappingConfiguration) {
+		if (disableObfuscation()) {
+			throw new UnsupportedOperationException("Cannot set mappings configuration in a non-obfuscated environment");
+		}
+
 		this.mappingConfiguration = mappingConfiguration;
 	}
 
@@ -292,6 +301,10 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 
 	@Override
 	public Collection<LayeredMappingsFactory> getLayeredMappingFactories() {
+		if (disableObfuscation()) {
+			throw new UnsupportedOperationException("Cannot get layered mapping factories in a non-obfuscated environment");
+		}
+
 		hasEvaluatedLayeredMappings = true;
 		return Collections.unmodifiableCollection(layeredMappingsDependencyMap.values());
 	}
@@ -321,5 +334,15 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	@Override
 	public boolean isCollectingDependencyVerificationMetadata() {
 		return isCollectingDependencyVerificationMetadata;
+	}
+
+	@Override
+	public boolean dontRemapOutputs() {
+		return dontRemap.get();
+	}
+
+	@Override
+	public boolean disableObfuscation() {
+		return disableObfuscation.get();
 	}
 }

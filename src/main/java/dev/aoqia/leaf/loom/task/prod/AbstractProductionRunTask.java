@@ -129,7 +129,7 @@ public abstract sealed class AbstractProductionRunTask extends AbstractLoomTask 
 		getJavaLauncher().convention(getJavaToolchainService().launcherFor(defaultToolchain));
 		getRunDir().convention(getProject().getLayout().getProjectDirectory().dir("run"));
 
-		if (!GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DONT_REMAP)) {
+		if (!getExtension().dontRemapOutputs()) {
 			getMods().from(getProject().getTasks().named(RemapTaskConfiguration.REMAP_JAR_TASK_NAME));
 		}
 

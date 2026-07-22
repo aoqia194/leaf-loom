@@ -39,7 +39,6 @@ import org.jetbrains.annotations.ApiStatus;
 import dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.InstallerData;
-import dev.aoqia.leaf.loom.configuration.LoomDependencyManager;
 import dev.aoqia.leaf.loom.configuration.accesswidener.AccessWidenerFile;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingsFactory;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
@@ -67,11 +66,7 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 
 	InstallerData getInstallerData();
 
-	void setDependencyManager(LoomDependencyManager dependencyManager);
-
-	LoomDependencyManager getDependencyManager();
-
-	ZomboidMetadataProvider getMetadataProvider();
+	MinecraftMetadataProvider getMetadataProvider();
 
 	void setMetadataProvider(ZomboidMetadataProvider metadataProvider);
 
@@ -130,4 +125,14 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 	 * @return true when '--write-verification-metadata` is set
 	 */
 	boolean isCollectingDependencyVerificationMetadata();
+
+	/**
+	 * When enabled do not remap the output jars.
+	 */
+	boolean dontRemapOutputs();
+
+	/**
+	 * When enabled disable all forms of remapping.
+	 */
+	boolean disableObfuscation();
 }

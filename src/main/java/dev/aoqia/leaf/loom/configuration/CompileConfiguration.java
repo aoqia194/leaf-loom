@@ -47,12 +47,14 @@ import org.gradle.api.Task;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.AbstractCopyTask;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.api.tasks.testing.Test;
+import org.jetbrains.annotations.Nullable;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.InterfaceInjectionExtensionAPI;
@@ -128,6 +130,9 @@ public abstract class CompileConfiguration implements Runnable {
                     extension.setDependencyManager(dependencyManager);
                     dependencyManager.handleDependencies(getProject(), serviceFactory);
                 }
+
+				var dependencyManager = new LoomDependencyManager(getProject(), serviceFactory, extension);
+				dependencyManager.handleDependencies();
 			} catch (Exception e) {
 				ExceptionUtil.processException(e, DaemonUtils.Context.fromProject(getProject()));
 				disownLock();
@@ -187,20 +192,22 @@ public abstract class CompileConfiguration implements Runnable {
             return;
         }
 
-		// Realise the dependencies without actually resolving them, this forces any lazy providers to be created, populating the layered mapping factories.
-		project.getConfigurations().getByName(Configurations.MAPPINGS).getDependencies().toArray();
+		if (!extension.disableObfuscation()) {
+			// Realise the dependencies without actually resolving them, this forces any lazy providers to be created, populating the layered mapping factories.
+			project.getConfigurations().getByName(Configurations.MAPPINGS).getDependencies().toArray();
 
-		// Created any layered mapping files.
-		LayeredMappingsFactory.afterEvaluate(configContext);
+			// Created any layered mapping files.
+			LayeredMappingsFactory.afterEvaluate(configContext);
 
-		// Resolve the mapping files from the configuration
-		final DependencyInfo mappingsDep = DependencyInfo.create(getProject(), Configurations.MAPPINGS);
+			// Resolve the mapping files from the configuration
+			final DependencyInfo mappingsDep = DependencyInfo.create(getProject(), Configurations.MAPPINGS);
 		final MappingConfiguration mappingConfiguration = MappingConfiguration.create(getProject(), configContext.serviceFactory(), mappingsDep, zomboidProvider);
-		extension.setMappingConfiguration(mappingConfiguration);
-		mappingConfiguration.applyToProject(getProject(), mappingsDep);
+			extension.setMappingConfiguration(mappingConfiguration);
+			mappingConfiguration.applyToProject(getProject(), mappingsDep);
+		}
 
 		// Provide the remapped jars
-		final IntermediaryZomboidProvider<?> intermediaryZomboidProvider = jarConfiguration.createIntermediaryZomboidProvider(project);
+		@Nullable IntermediaryZomboidProvider<?> intermediaryZomboidProvider = extension.disableObfuscation() ? null : jarConfiguration.createIntermediaryZomboidProvider(project);
 		NamedZomboidProvider<?> namedZomboidProvider = jarConfiguration.createNamedZomboidProvider(project);
 
 		registerGameProcessors(configContext);
@@ -213,8 +220,10 @@ public abstract class CompileConfiguration implements Runnable {
 
 		final var provideContext = new AbstractMappedZomboidProvider.ProvideContext(true, extension.refreshDeps(), configContext);
 
-		extension.setIntermediaryZomboidProvider(intermediaryZomboidProvider);
-		intermediaryZomboidProvider.provide(provideContext);
+		if (intermediaryZomboidProvider != null) {
+			extension.setIntermediaryZomboidProvider(intermediaryZomboidProvider);
+			intermediaryZomboidProvider.provide(provideContext);
+		}
 
 		extension.setNamedZomboidProvider(namedZomboidProvider);
 		namedZomboidProvider.provide(provideContext);
@@ -281,7 +290,10 @@ public abstract class CompileConfiguration implements Runnable {
 		}
 
 		getProject().getTasks().named(JavaPlugin.TEST_TASK_NAME, Test.class, test -> {
-			test.getInputs().property("LoomClassPathGroups", ClasspathGroupService.create(getProject()));
+			Provider<ClasspathGroupService.Options> optionsProvider = ClasspathGroupService.create(getProject());
+			test.getInputs().property("LoomClassPathGroups", optionsProvider);
+			test.getInputs().files(optionsProvider.map((ClasspathGroupService.Options::getExternalClasspathGroups)));
+
 			test.doFirst(new Action<Task>() {
 				@Override
 				public void execute(Task task) {

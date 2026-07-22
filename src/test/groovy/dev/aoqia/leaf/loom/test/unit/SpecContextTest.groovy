@@ -39,8 +39,8 @@ import spock.lang.TempDir
 import dev.aoqia.leaf.loom.LoomGradleExtension
 import dev.aoqia.leaf.loom.api.RemapConfigurationSettings
 import dev.aoqia.leaf.loom.api.fmj.LeafModJsonV1Spec
-import dev.aoqia.leaf.loom.configuration.processors.SpecContextImpl
 import dev.aoqia.leaf.loom.configuration.processors.SpecContextProjectView
+import dev.aoqia.leaf.loom.configuration.processors.SpecContextRemappedImpl
 import dev.aoqia.leaf.loom.test.util.GradleTestUtil
 import dev.aoqia.leaf.loom.util.ZipUtils
 import dev.aoqia.leaf.loom.util.fmj.gen.LeafModJsonV1Generator
@@ -98,7 +98,7 @@ class SpecContextTest extends Specification {
 				)
 
 		when:
-		def specContext = SpecContextImpl.create(projectView)
+		def specContext = SpecContextRemappedImpl.create(projectView)
 
 		then:
 		specContext.modDependencies().size() == 0
@@ -117,7 +117,7 @@ class SpecContextTest extends Specification {
 				)
 
 		when:
-		def specContext = SpecContextImpl.create(projectView)
+		def specContext = SpecContextRemappedImpl.create(projectView)
 
 		then:
 		specContext.modDependencies().size() == 1
@@ -136,7 +136,7 @@ class SpecContextTest extends Specification {
 				)
 
 		when:
-		def specContext = SpecContextImpl.create(projectView)
+		def specContext = SpecContextRemappedImpl.create(projectView)
 
 		then:
 		specContext.modDependencies().size() == 1
@@ -155,7 +155,7 @@ class SpecContextTest extends Specification {
 				)
 
 		when:
-		def specContext = SpecContextImpl.create(projectView)
+		def specContext = SpecContextRemappedImpl.create(projectView)
 
 		then:
 		specContext.modDependencies().size() == 1
@@ -175,7 +175,7 @@ class SpecContextTest extends Specification {
 				)
 
 		when:
-		def specContext = SpecContextImpl.create(projectView)
+		def specContext = SpecContextRemappedImpl.create(projectView)
 
 		then:
 		specContext.modDependencies().size() == 1
