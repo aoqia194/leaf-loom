@@ -76,7 +76,7 @@ configurations.configureEach {
     }
 }
 
-configurations.named(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME) {
+configurations.named(JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME) {
     attributes {
         attribute(
             GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
@@ -92,12 +92,6 @@ sourceSets {
     create("commonDecompiler") {
         java {
             srcDir("src/decompilers/common")
-        }
-    }
-
-    create("fernflower") {
-        java {
-            srcDir("src/decompilers/fernflower")
         }
     }
 
@@ -125,6 +119,7 @@ dependencies {
     // game handling utils
     implementation(libs.fabric.stitch) {
         exclude(module = "enigma")
+        exclude(module = "guava")
     }
 
     // tinyfile management
@@ -138,21 +133,16 @@ dependencies {
     implementation(libs.fabric.loom.nativelib)
 
     // decompilers
-    "fernflowerCompileOnly"(runtimeLibs.fernflower)
-    "fernflowerCompileOnly"(libs.fabric.mapping.io)
-
     "cfrCompileOnly"(runtimeLibs.cfr)
     "cfrCompileOnly"(libs.fabric.mapping.io)
 
     "vineflowerCompileOnly"(runtimeLibs.vineflower)
     "vineflowerCompileOnly"(libs.fabric.mapping.io)
 
-    "fernflowerApi"(sourceSets.named("commonDecompiler").get().output)
     "cfrApi"(sourceSets.named("commonDecompiler").get().output)
     "vineflowerApi"(sourceSets.named("commonDecompiler").get().output)
 
     implementation(sourceSets.named("commonDecompiler").get().output)
-    implementation(sourceSets.named("fernflower").get().output)
     implementation(sourceSets.named("cfr").get().output)
     implementation(sourceSets.named("vineflower").get().output)
 
@@ -222,7 +212,6 @@ tasks.jar {
 
     from(sourceSets.named("commonDecompiler").get().output.classesDirs)
     from(sourceSets.named("cfr").get().output.classesDirs)
-    from(sourceSets.named("fernflower").get().output.classesDirs)
     from(sourceSets.named("vineflower").get().output.classesDirs)
 }
 
@@ -292,6 +281,19 @@ tasks.register<PrintActionsTestName>("printActionsTestName") {
     description = "Replaces invalid characters in test names for GitHub Actions artifacts."
 }
 
+tasks.register("exportVersions") {
+    description = "Exports the project version to a file for CI"
+
+    val versionFile = file("${layout.buildDirectory.get()}/version.txt")
+    outputs.file(versionFile)
+
+    val v = "${project.version}"
+    doLast {
+        versionFile.writeText(v)
+        println("Exported version: $v")
+    }
+}
+
 tasks.register("writeActionsTestMatrix") {
     description = "Outputs a JSON file with a list of all the tests to run."
 
@@ -313,6 +315,8 @@ tasks.register("writeActionsTestMatrix") {
 
                 val className = it.name.replace(".groovy", "")
                 testMatrix.add("${rootProject.group}.${rootProject.name}.test.integration.${className}")
+            } else if (it.name.endsWith("noRemap")) {
+                testMatrix.add("${rootProject.group}.${rootProject.name}.test.integration.noRemap.*")
             }
         }
 
@@ -420,6 +424,12 @@ gradlePlugin {
             id = "${rootProject.group}.${rootProject.name}-companion"
             implementationClass = "${rootProject.group}.${rootProject.name}.LoomCompanionGradlePlugin"
             displayName = "${rootProject.name}-companion"
+            tags = listOf("projectzomboid", "zomboid", "leaf")
+        }
+        create("leafLoomRepositories") {
+            id = "${rootProject.group}.${rootProject.name}-repositories"
+            implementationClass = "${rootProject.group}.${rootProject.name}.LoomRepositoryPlugin"
+            displayName = "${rootProject.name}-repositories"
             tags = listOf("projectzomboid", "zomboid", "leaf")
         }
     }
