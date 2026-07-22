@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.ide.idea;
+package dev.aoqia.leaf.loom.configuration.ide.idea;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,9 +31,9 @@ import java.nio.charset.StandardCharsets;
 import groovy.xml.XmlUtil;
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.api.RunConfiguration;
-import net.fabricmc.loom.configuration.ide.RunConfigUtils;
-import net.fabricmc.loom.task.LoomTasks;
+import dev.aoqia.leaf.loom.api.RunConfiguration;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigUtils;
+import dev.aoqia.leaf.loom.task.LoomTasks;
 
 public final class GradleTaskIntellijRunConfigWriter extends AbstractIntellijRunConfigWriter {
 	public GradleTaskIntellijRunConfigWriter(RunConfiguration run, Project project) {

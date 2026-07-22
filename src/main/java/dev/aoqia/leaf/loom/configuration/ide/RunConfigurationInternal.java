@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.ide;
+package dev.aoqia.leaf.loom.configuration.ide;
 
 import org.gradle.api.provider.Property;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loom.api.RunConfiguration;
+import dev.aoqia.leaf.loom.api.RunConfiguration;
 
 @ApiStatus.Internal
 public interface RunConfigurationInternal extends RunConfiguration {

@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.ide.idea;
+package dev.aoqia.leaf.loom.configuration.ide.idea;
 
 import org.gradle.api.Project;
 
-import net.fabricmc.loom.api.RunConfiguration;
+import dev.aoqia.leaf.loom.api.RunConfiguration;
 
 abstract class AbstractIntellijRunConfigWriter implements IntellijRunConfigWriter {
 	protected final RunConfiguration run;

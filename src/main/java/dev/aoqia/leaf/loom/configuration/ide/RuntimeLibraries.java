@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.ide;
+package dev.aoqia.leaf.loom.configuration.ide;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,10 +37,10 @@ import org.gradle.api.artifacts.ModuleVersionIdentifier;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.ResolvedModuleVersion;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.RunConfiguration;
-import net.fabricmc.loom.configuration.providers.BundleMetadata;
-import net.fabricmc.loom.util.Constants;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.RunConfiguration;
+import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
+import dev.aoqia.leaf.loom.util.Constants;
 
 public class RuntimeLibraries {
 	public static List<String> getExcludedLibraryPaths(Project project, RunConfiguration runConfiguration) {
@@ -48,15 +48,8 @@ public class RuntimeLibraries {
 			return Collections.emptyList();
 		}
 
-		final BundleMetadata bundleMetadata = LoomGradleExtension.get(project).getMinecraftProvider().getServerBundleMetadata();
-
-		if (bundleMetadata == null) {
-			// Legacy version
-			return Collections.emptyList();
-		}
-
-		final Set<ResolvedArtifact> clientLibraries = getArtifacts(project, Constants.Configurations.MINECRAFT_CLIENT_RUNTIME_LIBRARIES);
-		final Set<ResolvedArtifact> serverLibraries = getArtifacts(project, Constants.Configurations.MINECRAFT_SERVER_RUNTIME_LIBRARIES);
+		final Set<ResolvedArtifact> clientLibraries = getArtifacts(project, Constants.Configurations.ZOMBOID_CLIENT_RUNTIME_LIBRARIES);
+		final Set<ResolvedArtifact> serverLibraries = getArtifacts(project, Constants.Configurations.ZOMBOID_SERVER_RUNTIME_LIBRARIES);
 		final List<String> clientOnlyLibraries = new ArrayList<>();
 
 		for (ResolvedArtifact library : clientLibraries) {

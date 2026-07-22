@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration;
+package dev.aoqia.leaf.loom.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +42,11 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.tasks.Jar;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.build.nesting.NestableJarGenerationTask;
-import net.fabricmc.loom.task.NestJarsAction;
-import net.fabricmc.loom.task.RemapJarTask;
-import net.fabricmc.loom.util.Strings;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.build.nesting.NestableJarGenerationTask;
+import dev.aoqia.leaf.loom.task.NestJarsAction;
+import dev.aoqia.leaf.loom.task.RemapJarTask;
+import dev.aoqia.leaf.loom.util.Strings;
 
 /**
  * Sets up include configurations for the jar task that consumes them.

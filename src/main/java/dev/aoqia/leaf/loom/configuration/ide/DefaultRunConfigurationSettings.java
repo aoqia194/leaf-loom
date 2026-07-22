@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.ide;
+package dev.aoqia.leaf.loom.configuration.ide;
 
 import java.util.Locale;
 
@@ -30,15 +30,15 @@ import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 
-import net.fabricmc.loom.LoomGradleExtension;
-import net.fabricmc.loom.api.RunConfiguration;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftSourceSets;
-import net.fabricmc.loom.configuration.providers.minecraft.MinecraftVersionMeta;
-import net.fabricmc.loom.configuration.providers.minecraft.library.LibraryContext;
-import net.fabricmc.loom.util.Constants;
-import net.fabricmc.loom.util.Platform;
-import net.fabricmc.loom.util.Strings;
-import net.fabricmc.loom.util.gradle.GradleUtils;
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.api.RunConfiguration;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.Strings;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 public class DefaultRunConfigurationSettings {
 	// Configure the default values before the user can modify them.
@@ -46,7 +46,7 @@ public class DefaultRunConfigurationSettings {
 		run.getAppendProjectPathToDisplayName().convention(true);
 		run.getMainClass().convention(run.getRuntimeEnvironment().map(side -> RunConfigUtils.getMainClass(side, LoomGradleExtension.get(project))));
 		run.getDevLaunchMainClass().convention(Constants.DLI_ENTRYPOINT);
-		run.getSourceSet().convention(run.getRuntimeEnvironment().map(runtimeEnvironment -> MinecraftSourceSets.get(project).getSourceSetForEnv(runtimeEnvironment)));
+		run.getSourceSet().convention(run.getRuntimeEnvironment().map(runtimeEnvironment -> ZomboidSourceSets.get(project).getSourceSetForEnv(runtimeEnvironment)));
 		run.getDisplayName().convention(run.getSourceSet().map(sourceSet -> {
 			String configName = "";
 
@@ -78,8 +78,8 @@ public class DefaultRunConfigurationSettings {
 		internalRun.getIsFinalised().finalizeValue();
 
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
-		LibraryContext context = new LibraryContext(extension.getMinecraftProvider().getVersionInfo(), JavaVersion.current());
-		MinecraftVersionMeta.JavaVersion javaVersion = extension.getMinecraftProvider().getVersionInfo().javaVersion();
+		LibraryContext context = new LibraryContext(extension.getZomboidProvider().getVersionInfo(), JavaVersion.current());
+		int javaVersion = extension.getZomboidProvider().getVersionInfo().javaVersion();
 
 		String environment = run.getRuntimeEnvironment().get().toLowerCase(Locale.ROOT);
 
@@ -97,7 +97,7 @@ public class DefaultRunConfigurationSettings {
 			}
 		}
 
-		if (javaVersion != null && javaVersion.majorVersion() >= 25) {
+		if (javaVersion >= 25) {
 			run.getJvmArguments().add("--sun-misc-unsafe-memory-access=allow");
 			run.getJvmArguments().add("--enable-native-access=ALL-UNNAMED");
 		}

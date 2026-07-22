@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.fabricmc.loom.configuration.ide.idea;
+package dev.aoqia.leaf.loom.configuration.ide.idea;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,11 +34,11 @@ import groovy.xml.XmlUtil;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 
-import net.fabricmc.loom.api.RunConfiguration;
-import net.fabricmc.loom.configuration.ide.RunConfigUtils;
-import net.fabricmc.loom.util.Arguments;
-import net.fabricmc.loom.util.gradle.SourceSetHelper;
-import net.fabricmc.loom.util.gradle.SourceSetReference;
+import dev.aoqia.leaf.loom.api.RunConfiguration;
+import dev.aoqia.leaf.loom.configuration.ide.RunConfigUtils;
+import dev.aoqia.leaf.loom.util.Arguments;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
+import dev.aoqia.leaf.loom.util.gradle.SourceSetReference;
 
 public final class ApplicationIntellijRunConfigWriter extends AbstractIntellijRunConfigWriter {
 	private final List<String> excludedLibraryPaths;
