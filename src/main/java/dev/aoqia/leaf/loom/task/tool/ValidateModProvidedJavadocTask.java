@@ -55,9 +55,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import net.fabricmc.loom.task.AbstractLoomTask;
-import net.fabricmc.loom.util.FileSystemUtil;
-import net.fabricmc.loom.util.LoomProblems;
 import net.fabricmc.mappingio.FlatMappingVisitor;
 import net.fabricmc.mappingio.MappedElementKind;
 import net.fabricmc.mappingio.MappingReader;
@@ -65,6 +62,10 @@ import net.fabricmc.mappingio.MappingUtil;
 import net.fabricmc.mappingio.MappingVisitor;
 import net.fabricmc.mappingio.adapter.FlatAsRegularMappingVisitor;
 import net.fabricmc.mappingio.adapter.ForwardingMappingVisitor;
+
+import dev.aoqia.leaf.loom.task.AbstractLoomTask;
+import dev.aoqia.leaf.loom.util.FileSystemUtil;
+import dev.aoqia.leaf.loom.util.LoomProblems;
 
 /**
  * Checks that the mod-provided javadoc mappings in a specific file are valid.
@@ -88,7 +89,7 @@ public abstract class ValidateModProvidedJavadocTask extends AbstractLoomTask {
 	 * The game jars. All targeted code elements will need to be in these jars.
 	 */
 	@Classpath
-	public abstract ConfigurableFileCollection getMinecraftJars();
+	public abstract ConfigurableFileCollection getZomboidJars();
 
 	/**
 	 * The expected source namespaced for the mappings.
@@ -101,7 +102,7 @@ public abstract class ValidateModProvidedJavadocTask extends AbstractLoomTask {
 	protected abstract Problems getProblems();
 
 	public ValidateModProvidedJavadocTask() {
-		getMinecraftJars().convention(getExtension().getProductionNamespaceEnum().map(getExtension()::getMinecraftJarsCollection));
+		getZomboidJars().convention(getExtension().getProductionNamespaceEnum().map(getExtension()::getZomboidJarsCollection));
 		getExpectedNamespace().convention(getExtension().getProductionNamespace());
 
 		// Ignore outputs for up-to-date checks as there aren't any (so only inputs are checked)
@@ -110,7 +111,7 @@ public abstract class ValidateModProvidedJavadocTask extends AbstractLoomTask {
 
 	@TaskAction
 	protected void check() throws IOException {
-		try (var validator = new Validator(this::reportError, getMinecraftJars().getFiles())) {
+		try (var validator = new Validator(this::reportError, getZomboidJars().getFiles())) {
 			for (File mappingFile : getMappingFiles()) {
 				validator.check(mappingFile.toPath(), getExpectedNamespace().get());
 			}
