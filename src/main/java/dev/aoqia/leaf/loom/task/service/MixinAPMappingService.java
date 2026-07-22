@@ -46,7 +46,10 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.fabricmc.tinyremapper.IMappingProvider;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomNoRemapGradlePlugin;
 import dev.aoqia.leaf.loom.build.mixin.AnnotationProcessorInvoker;
 import dev.aoqia.leaf.loom.util.TinyRemapperHelper;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
@@ -54,7 +57,6 @@ import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 import dev.aoqia.leaf.loom.util.service.Service;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import dev.aoqia.leaf.loom.util.service.ServiceType;
-import net.fabricmc.tinyremapper.IMappingProvider;
 
 public class MixinAPMappingService extends Service<MixinAPMappingService.Options> {
 	public static final ServiceType<Options, MixinAPMappingService> TYPE = new ServiceType<>(Options.class, MixinAPMappingService.class);

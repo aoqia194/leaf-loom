@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
 
 import org.gradle.api.Project;

@@ -30,7 +30,7 @@ import java.util.Optional;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileMappingsSpecBuilder;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
-import net.fabricmc.loom.configuration.providers.mappings.utils.MavenFileSpec;
+import dev.aoqia.leaf.loom.configuration.providers.mappings.utils.MavenFileSpec;
 
 public class FileMappingsSpecBuilderImpl implements FileMappingsSpecBuilder {
 	/**

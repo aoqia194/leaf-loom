@@ -53,7 +53,6 @@ import dev.aoqia.leaf.loom.api.remapping.RemapperExtension;
 import dev.aoqia.leaf.loom.api.remapping.RemapperParameters;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.leaf.loom.configuration.processors.JarProcessor;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.NoOpIntermediateMappingsProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ManifestLocations;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;

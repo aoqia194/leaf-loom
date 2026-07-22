@@ -69,7 +69,7 @@ public abstract class ModEnigmaTask extends AbstractLoomTask {
 
 	// Must be a ListProperty because the order matters.
 	@Input
-	public abstract ListProperty<Path> getMinecraftJars();
+	public abstract ListProperty<Path> getZomboidJars();
 
 	/**
 	 * The mapping file path. It must be a single Enigma-formatted file.
@@ -118,7 +118,7 @@ public abstract class ModEnigmaTask extends AbstractLoomTask {
 			spec.setClasspath(getToolClasspath());
 			spec.jvmArgs("-Xmx2048m");
 
-			for (Path path : getMinecraftJars().get()) {
+			for (Path path : getZomboidJars().get()) {
 				spec.args("-jar", path.toAbsolutePath().toString());
 			}
 

@@ -90,8 +90,7 @@ public final class ZomboidMetadataProvider {
 	}
 
 	public boolean isUnobfuscated() {
-		return getVersionMeta().isVersionOrNewer(Constants.RELEASE_TIME_1_21_11_UNOBFUSCATED_SNAPSHOTS)
-				&& !getVersionMeta().downloads().containsKey("client_mappings");
+		return true;
 	}
 
 	private ManifestEntryLocation getVersionEntry() throws IOException {
