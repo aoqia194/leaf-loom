@@ -47,6 +47,6 @@
  */
 
 @NullMarked
-package dev.aoqia.leaf.loom.util.ipc;
+package dev.aoqia.leaf.loom.util.copygamefile;
 
 import org.jspecify.annotations.NullMarked;
