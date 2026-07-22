@@ -35,11 +35,9 @@ import org.gradle.api.Project;
 import org.gradle.api.plugins.PluginAware;
 
 import dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI;
-import dev.aoqia.leaf.loom.api.fabricapi.LeafApiExtension;
 import dev.aoqia.leaf.loom.configuration.CompileConfiguration;
 import dev.aoqia.leaf.loom.configuration.LoomConfigurations;
 import dev.aoqia.leaf.loom.configuration.MavenPublication;
-import dev.aoqia.leaf.loom.configuration.fabricapi.LeafApiExtensionImpl;
 import dev.aoqia.leaf.loom.configuration.ide.idea.IdeaConfiguration;
 import dev.aoqia.leaf.loom.configuration.sandbox.SandboxConfiguration;
 import dev.aoqia.leaf.loom.decompilers.DecompilerConfiguration;
