@@ -24,18 +24,25 @@
 
 package dev.aoqia.leaf.loom.configuration.providers.mappings.file;
 
+import java.util.Optional;
+
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingContext;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec;
 import dev.aoqia.leaf.loom.api.mappings.layered.spec.MappingsSpec;
 
 public record FileMappingsSpec(
 		FileSpec fileSpec, String mappingPath,
-		String fallbackSourceNamespace, String fallbackTargetNamespace,
+		Optional<String> fallbackSourceNamespace, String fallbackTargetNamespace,
 		boolean enigma, boolean unpick, boolean annotations,
-		String mergeNamespace
+		Optional<String> mergeNamespace,
+		Optional<String> fallbackUnpickConstants
 ) implements MappingsSpec<FileMappingsLayer> {
 	@Override
 	public FileMappingsLayer createLayer(MappingContext context) {
-		return new FileMappingsLayer(fileSpec.get(context), mappingPath, fallbackSourceNamespace, fallbackTargetNamespace, enigma, unpick, annotations, mergeNamespace);
+		String finalFallbackSourceNamespace = fallbackSourceNamespace.orElse(context.productionNamespace());
+		String finalMergeNamespace = mergeNamespace.orElse(context.isUsingIntermediateMappings() ? MappingsNamespace.INTERMEDIARY.toString() : MappingsNamespace.OFFICIAL.toString());
+		String finalFallbackUnpickConstants = unpick ? fallbackUnpickConstants.orElse(null) : null;
+		return new FileMappingsLayer(fileSpec.get(context), mappingPath, finalFallbackSourceNamespace, fallbackTargetNamespace, enigma, unpick, annotations, finalMergeNamespace, finalFallbackUnpickConstants);
 	}
 }

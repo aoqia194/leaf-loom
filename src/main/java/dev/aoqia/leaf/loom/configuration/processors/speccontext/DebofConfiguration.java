@@ -35,6 +35,7 @@ import org.gradle.api.tasks.SourceSet;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.LoomConfigurations;
+import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Strings;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
@@ -46,12 +47,14 @@ public record DebofConfiguration(String name, List<Function<SourceSet, String>> 
 	public static final DebofConfiguration COMPILE = new DebofConfiguration("compile", List.of(
 			SourceSet::getImplementationConfigurationName,
 			SourceSet::getApiConfigurationName,
-			SourceSet::getCompileOnlyConfigurationName
+			SourceSet::getCompileOnlyConfigurationName,
+			SourceSet::getCompileOnlyApiConfigurationName
 	));
 	public static final DebofConfiguration RUNTIME = new DebofConfiguration("runtime", List.of(
 			SourceSet::getImplementationConfigurationName,
 			SourceSet::getApiConfigurationName,
-			SourceSet::getRuntimeOnlyConfigurationName
+			SourceSet::getRuntimeOnlyConfigurationName,
+			s -> Constants.Configurations.LOCAL_RUNTIME
 	));
 	public static final List<DebofConfiguration> ALL = List.of(COMPILE, RUNTIME);
 

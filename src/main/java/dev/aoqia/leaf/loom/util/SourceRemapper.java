@@ -162,12 +162,13 @@ public class SourceRemapper {
 
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
 		MappingConfiguration mappingConfiguration = extension.getMappingConfiguration();
+		MappingsNamespace prodNamespace = extension.getProductionNamespaceEnum().get();
 
 		LorenzMappingService lorenzMappingService = serviceFactory.get(LorenzMappingService.createOptions(
 				project,
 				mappingConfiguration,
-				toNamed ? extension.getProductionNamespaceEnum() : MappingsNamespace.NAMED,
-				toNamed ? MappingsNamespace.NAMED : extension.getProductionNamespaceEnum()));
+				toNamed ? prodNamespace : MappingsNamespace.NAMED,
+				toNamed ? MappingsNamespace.NAMED : prodNamespace));
 		MappingSet mappings = lorenzMappingService.getMappings();
 
 		Mercury mercury = createMercuryWithClassPath(project, toNamed);
@@ -182,7 +183,7 @@ public class SourceRemapper {
 			}
 		}
 
-		for (Path productionJar : extension.getZomboidJars(extension.getProductionNamespaceEnum())) {
+		for (Path productionJar : extension.getZomboidJars(prodNamespace)) {
 			mercury.getClassPath().add(productionJar);
 		}
 

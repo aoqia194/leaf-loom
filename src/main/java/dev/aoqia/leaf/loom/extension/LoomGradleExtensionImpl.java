@@ -48,6 +48,7 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.tasks.Jar;
 
@@ -57,10 +58,10 @@ import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.InstallerData;
 import dev.aoqia.leaf.loom.configuration.LoomDependencyManager;
 import dev.aoqia.leaf.loom.configuration.accesswidener.AccessWidenerFile;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.IntermediaryMappingsProvider;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingsFactory;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.MappingConfiguration;
-import dev.aoqia.leaf.loom.configuration.providers.mappings.NoOpIntermediateMappingsProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidMetadataProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
@@ -215,7 +216,7 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 
 	@Override
 	public void noIntermediateMappings() {
-		setIntermediateMappingsProvider(NoOpIntermediateMappingsProvider.class, p -> { });
+		getUseIntermediateMappings().set(false);
 	}
 
 	@Override
@@ -360,8 +361,13 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 	}
 
 	@Override
-	public MappingsNamespace getProductionNamespaceEnum() {
-		return Objects.requireNonNull(MappingsNamespace.of(getProductionNamespace().get()), "Invalid production namespace");
+	public Provider<MappingsNamespace> getProductionNamespaceEnum() {
+		return getProductionNamespace().map(s -> Objects.requireNonNull(MappingsNamespace.of(s), "Invalid production namespace"));
+	}
+
+	@Override
+	public Provider<ArtifactMetadata.MixinRemapType> getDefaultMixinRemapTypeEnum() {
+		return getDefaultMixinRemapType().map(ArtifactMetadata.MixinRemapType::valueOf);
 	}
 
 	@Override

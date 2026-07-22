@@ -46,7 +46,6 @@ class DecompileTest extends Specification implements GradleProjectTestTrait {
 
 		where:
 		decompiler 		| task								| version
-		'fernflower'	| "genSourcesWithFernFlower"		| PRE_RELEASE_GRADLE
 		'cfr' 			| "genSourcesWithCfr"				| PRE_RELEASE_GRADLE
 		'vineflower' 	| "genSourcesWithVineflower"		| PRE_RELEASE_GRADLE
 	}
@@ -111,18 +110,14 @@ class DecompileTest extends Specification implements GradleProjectTestTrait {
 	@Unroll
 	def "CFR legacy"() {
 		setup:
-		def gradle = gradleProject(project: "minimalBase", version: PRE_RELEASE_GRADLE)
+		def gradle = gradleProject(project: "minimalBaseNoRemap", version: PRE_RELEASE_GRADLE)
 		gradle.buildGradle << '''
 				loom {
-					noIntermediateMappings()
 					clientOnlyMinecraftJar()
 				}
 
                 dependencies {
                     minecraft "com.mojang:minecraft:c0.30_01c"
-					mappings loom.layered() {
-						// No names
-					}
                 }
 		'''
 

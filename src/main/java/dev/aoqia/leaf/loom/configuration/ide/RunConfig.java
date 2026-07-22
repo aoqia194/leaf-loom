@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -273,7 +272,7 @@ public class RunConfig {
 
 		final Set<ResolvedArtifact> clientLibraries = getArtifacts(project, Constants.Configurations.ZOMBOID_CLIENT_RUNTIME_LIBRARIES);
 		final Set<ResolvedArtifact> serverLibraries = getArtifacts(project, Constants.Configurations.ZOMBOID_SERVER_RUNTIME_LIBRARIES);
-		final List<String> clientOnlyLibraries = new LinkedList<>();
+		final List<String> clientOnlyLibraries = new ArrayList<>();
 
 		for (ResolvedArtifact library : clientLibraries) {
 			if (!containsLibrary(serverLibraries, library.getModuleVersion().getId())) {

@@ -50,6 +50,8 @@ public interface MappingContext {
 
 	boolean isUsingIntermediateMappings();
 
+	String productionNamespace();
+
 	ZomboidProvider zomboidProvider();
 
 	default String zomboidVersion() {

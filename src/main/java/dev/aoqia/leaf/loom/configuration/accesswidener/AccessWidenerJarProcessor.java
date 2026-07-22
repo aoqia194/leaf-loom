@@ -84,7 +84,7 @@ public class AccessWidenerJarProcessor implements ZomboidJarProcessor<AccessWide
 		 */
 
 		if (includeTransitive) {
-			for (LeafModJson fabricModJson : context.modDependencies()) {
+			for (LeafModJson fabricModJson : context.modDependenciesCompileRuntime()) {
 				accessWideners.addAll(ModAccessWidenerEntry.readAll(fabricModJson, true));
 			}
 		}

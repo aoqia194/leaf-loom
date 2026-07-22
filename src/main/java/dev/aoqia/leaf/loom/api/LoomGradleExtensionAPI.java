@@ -217,7 +217,8 @@ public interface LoomGradleExtensionAPI {
 	 */
 	@ApiStatus.Experimental
 	default void noIntermediateMappings() {
-		setIntermediateMappingsProvider(NoOpIntermediateMappingsProvider.class, p -> { });
+		getUseIntermediateMappings().set(false);
+		getUseIntermediateMappings().finalizeValue();
 	}
 
 	/**
@@ -244,6 +245,16 @@ public interface LoomGradleExtensionAPI {
 	 * @return the production namespace
 	 */
 	Property<String> getProductionNamespace();
+
+	/**
+	 * @return whether to use intermediate mappings
+	 */
+	Property<Boolean> getUseIntermediateMappings();
+
+	/**
+	 * @return the default mixin remap type
+	 */
+	Property<String> getDefaultMixinRemapType();
 
 	@ApiStatus.Experimental
 	Property<ZomboidJarConfiguration<?, ?, ?>> getZomboidJarConfiguration();

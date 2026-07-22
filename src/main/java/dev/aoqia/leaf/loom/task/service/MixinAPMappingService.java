@@ -39,7 +39,6 @@ import org.gradle.api.Task;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.SourceSet;
@@ -65,8 +64,7 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
 	private static final Logger LOGGER = LoggerFactory.getLogger(MixinAPMappingService.class);
 
 	public interface Options extends Service.Options {
-		@Classpath
-            // We need to depend on all the outputs, as we don't know if the mixin mapping will exist at the time of task creation
+		@InputFiles // We need to depend on all the outputs, as we don't know if the mixin mapping will exist at the time of task creation
 		ConfigurableFileCollection getCompileOutputs();
 		@Input
 		Property<String> getMixinMappingFileName();
@@ -110,6 +108,11 @@ public class MixinAPMappingService extends Service<MixinAPMappingService.Options
 			processProject.accept(thisProject);
 		} else {
 			GradleUtils.allLoomProjects(thisProject.getGradle(), project -> {
+				if (project.getPlugins().hasPlugin(LoomNoRemapGradlePlugin.NAME)) {
+					// Unobfuscated projects do not have mappings to provide.
+					return;
+				}
+
 				final LoomGradleExtension extension = LoomGradleExtension.get(project);
 
 				if (!mappingId.equals(extension.getMappingConfiguration().mappingsIdentifier)) {

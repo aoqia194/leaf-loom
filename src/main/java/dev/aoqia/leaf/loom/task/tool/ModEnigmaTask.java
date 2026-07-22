@@ -92,7 +92,7 @@ public abstract class ModEnigmaTask extends AbstractLoomTask {
 	protected abstract Problems getProblems();
 
 	public ModEnigmaTask() {
-		getMinecraftJars().convention(getProject().provider(() -> getExtension().getZomboidJars(getExtension().getProductionNamespaceEnum())));
+		getZomboidJars().convention(getExtension().getProductionNamespaceEnum().map(getExtension()::getZomboidJars));
 		getToolClasspath().from(getEnigmaClasspath(getProject()));
 	}
 

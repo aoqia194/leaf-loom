@@ -60,7 +60,7 @@ public abstract class GenerateRemapClasspathTask extends AbstractLoomTask {
 				.map(configurations::named)
 				.forEach(getRemapClasspath()::from);
 
-		for (Path minecraftJar : getExtension().getZomboidJars(getExtension().getProductionNamespaceEnum())) {
+		for (Path minecraftJar : getExtension().getZomboidJars(getExtension().getProductionNamespaceEnum().get())) {
 			getRemapClasspath().from(minecraftJar.toFile());
 		}
 

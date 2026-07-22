@@ -73,6 +73,6 @@ public record ProcessorContextImpl(ConfigContext configContext, ZomboidJar minec
 
 	@Override
 	public MappingsNamespace getProductionNamespace() {
-		return configContext().extension().getProductionNamespaceEnum();
+		return configContext().extension().getProductionNamespaceEnum().get();
 	}
 }

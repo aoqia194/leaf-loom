@@ -63,6 +63,7 @@ import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
 import dev.aoqia.leaf.loom.task.prod.TracyCapture;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.XVFBExistsValueSource;
 
 public abstract class AbstractRunTask extends JavaExec {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRunTask.class);
@@ -84,7 +85,7 @@ public abstract class AbstractRunTask extends JavaExec {
 	// We use a string here, as it's technically an output, but we don't want to cache runs of this task by default.
 	protected abstract Property<String> getArgFilePath();
 	@Input
-	protected abstract Property<Boolean> getUseXvfb();
+	public abstract Property<Boolean> getUseXvfb();
 
 	@Nested
 	@Optional
@@ -143,10 +144,12 @@ public abstract class AbstractRunTask extends JavaExec {
 		getUseArgFile().set(getProject().provider(this::canUseArgFile));
 		getProjectDir().set(getProject().getProjectDir().getAbsolutePath());
 
-		// Set up useXvfb: convention is CI + Linux
+		// Set up useXvfb: convention is CI + Linux + client run config + xvfb exists
 		getUseXvfb().convention(
 				getProject().getProviders().environmentVariable("CI")
 						.map(value -> Platform.CURRENT.getOperatingSystem().isLinux())
+						.zip(config, (enabled, runConfig) -> enabled && runConfig.environment.equals("client"))
+						.flatMap(enabled -> enabled ? XVFBExistsValueSource.exists(getProject()) : getProject().getProviders().provider(() -> false))
 						.orElse(false)
 		);
 
@@ -227,13 +230,11 @@ public abstract class AbstractRunTask extends JavaExec {
 	}
 
 	private void execWithXvfb() {
-		String xvfbRunPath = "/usr/bin/xvfb-run";
-
 		String javaExec = getJavaLauncher().get().getExecutablePath().getAsFile().getAbsolutePath();
 
 		// Build the complete command line: xvfb-run --auto-servernum java [jvm-args] mainclass [program-args]
 		List<String> commandLine = new ArrayList<>();
-		commandLine.add(xvfbRunPath);
+		commandLine.add(XVFBExistsValueSource.XVFB);
 		commandLine.add("--auto-servernum");
 		commandLine.add(javaExec);
 		commandLine.addAll(getJvmArguments().get());

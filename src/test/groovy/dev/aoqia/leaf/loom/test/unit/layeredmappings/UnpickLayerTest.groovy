@@ -22,24 +22,18 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.test.unit.layeredmappings
+package net.fabricmc.loom.test.unit.layeredmappings
 
-import dev.aoqia.leaf.loom.api.mappings.layered.spec.FileSpec
-import dev.aoqia.leaf.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl
-import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec
-import dev.aoqia.leaf.loom.configuration.providers.mappings.unpick.UnpickMetadata
+import net.fabricmc.loom.api.mappings.layered.spec.FileSpec
+import net.fabricmc.loom.configuration.providers.mappings.file.FileMappingsSpecBuilderImpl
+import net.fabricmc.loom.configuration.providers.mappings.unpick.UnpickMetadata
 
 class UnpickLayerTest extends LayeredMappingsSpecification {
 	def "read unpick data from yarn"() {
-		setup:
-		intermediaryUrl = INTERMEDIARY_1_17_URL
-		mockMinecraftProvider.getVersionInfo() >> VERSION_META_1_17
 		when:
-		def builder = FileMappingsSpecBuilderImpl.builder(FileSpec.create(YARN_1_17_URL)).containsUnpick()
-		def unpickData = getUnpickData(
-				new IntermediaryMappingsSpec(),
-				builder.build()
-				)
+		def yarnSpec = FileMappingsSpecBuilderImpl.builder(FileSpec.create(YARN_1_17_URL)).containsUnpick().build()
+		def yarnLayer = yarnSpec.createLayer(createMappingContext(yarnSpec))
+		def unpickData = yarnLayer.getUnpickData()
 		def metadata = unpickData.metadata()
 		then:
 		metadata instanceof UnpickMetadata.V1

@@ -34,6 +34,7 @@ import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Provider;
 import org.jetbrains.annotations.ApiStatus;
 
 import dev.aoqia.leaf.loom.api.LoomGradleExtensionAPI;
@@ -86,7 +87,9 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 
 	void setIntermediaryZomboidProvider(IntermediaryZomboidProvider<?> provider);
 
-	MappingsNamespace getProductionNamespaceEnum();
+	Provider<MappingsNamespace> getProductionNamespaceEnum();
+
+	Provider<ArtifactMetadata.MixinRemapType> getDefaultMixinRemapTypeEnum();
 
 	default List<Path> getZomboidJars(MappingsNamespace mappingsNamespace) {
 		return switch (mappingsNamespace) {

@@ -42,6 +42,7 @@ import org.jetbrains.annotations.ApiStatus;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.XVFBExistsValueSource;
 
 /**
  * A task that runs the Minecraft client in a similar way to a production launcher. You must manually register a task of this type to use it.
@@ -94,7 +95,7 @@ public abstract non-sealed class ClientProductionRunTask extends AbstractProduct
 		getClasspath().from(getExtension().getZomboidProvider().getZomboidClientJar());
 		getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:loader:%s", getProjectLoaderVersion()));
 
-		if (getExtension().getProductionNamespaceEnum() == MappingsNamespace.INTERMEDIARY) {
+		if (getExtension().getProductionNamespaceEnum().get() == MappingsNamespace.INTERMEDIARY) {
 			getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:intermediary:%s", getExtension().getZomboidVersion()));
 		}
 
@@ -120,7 +121,7 @@ public abstract non-sealed class ClientProductionRunTask extends AbstractProduct
 				throw new UnsupportedOperationException("XVFB is only supported on Linux");
 			}
 
-			exec.commandLine("/usr/bin/xvfb-run");
+			exec.commandLine(XVFBExistsValueSource.XVFB);
 			exec.args("-a", getJavaLauncher().get().getExecutablePath());
 
 			return;

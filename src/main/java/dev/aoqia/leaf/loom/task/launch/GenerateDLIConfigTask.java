@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -49,6 +50,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.LoomGradlePlugin;
+import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.MappedZomboidProvider;
 import dev.aoqia.leaf.loom.task.AbstractLoomTask;
@@ -88,6 +90,9 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	@Input
 	protected abstract Property<String> getProductionNamespace();
 
+	@Input
+	protected abstract Property<String> getDefaultMixinRemapType();
+
 	@InputFile
 	@Optional
 	public abstract RegularFileProperty getRemapClasspathFile();
@@ -115,7 +120,8 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 
 		getNativesDirectoryPath().set(getExtension().getFiles().getNativesDirectory(getProject()).getAbsolutePath());
 		getDevLauncherConfig().set(getExtension().getFiles().getDevLauncherConfig());
-		getProductionNamespace().set(getExtension().getProductionNamespaceEnum().toString());
+		getProductionNamespace().set(getExtension().getProductionNamespaceEnum().map(MappingsNamespace::toString));
+		getDefaultMixinRemapType().set(getExtension().getDefaultMixinRemapTypeEnum().map(remapType -> remapType.toString().toLowerCase(Locale.ROOT)));
 	}
 
 	@TaskAction
@@ -126,7 +132,8 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 				.property("leaf.development", "true")
 				.property("log4j.configurationFile", getLog4jConfigPaths().get())
 				.property("log4j2.formatMsgNoLookups", "true")
-				.property("leaf.defaultModDistributionNamespace", getProductionNamespace().get());
+				.property("leaf.defaultModDistributionNamespace", getProductionNamespace().get())
+				.property("leaf.defaultMixinRemapType", getDefaultMixinRemapType().get());
 
         // TODO(leaf): Add any jvm args from the versionInfo manifest
 

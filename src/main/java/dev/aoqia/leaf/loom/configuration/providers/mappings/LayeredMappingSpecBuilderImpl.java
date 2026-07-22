@@ -24,8 +24,8 @@
 
 package dev.aoqia.leaf.loom.configuration.providers.mappings;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.gradle.api.Action;
@@ -39,7 +39,7 @@ import dev.aoqia.leaf.loom.configuration.providers.mappings.file.FileMappingsSpe
 import dev.aoqia.leaf.loom.configuration.providers.mappings.intermediary.IntermediaryMappingsSpec;
 
 public class LayeredMappingSpecBuilderImpl implements LayeredMappingSpecBuilder {
-	private final List<MappingsSpec<?>> layers = new LinkedList<>();
+	private final List<MappingsSpec<?>> layers = new ArrayList<>();
 
 	@Override
 	public LayeredMappingSpecBuilder addLayer(MappingsSpec<?> mappingSpec) {
@@ -60,7 +60,7 @@ public class LayeredMappingSpecBuilderImpl implements LayeredMappingSpecBuilder 
 	}
 
 	public LayeredMappingSpec build() {
-		List<MappingsSpec<?>> builtLayers = new LinkedList<>();
+		List<MappingsSpec<?>> builtLayers = new ArrayList<>(layers.size() + 1);
 		// Intermediary is always the base layer
 		builtLayers.add(new IntermediaryMappingsSpec());
 		builtLayers.addAll(layers);

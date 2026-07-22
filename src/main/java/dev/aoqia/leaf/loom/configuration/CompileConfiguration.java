@@ -186,10 +186,6 @@ public abstract class CompileConfiguration implements Runnable {
 		final ZomboidMetadataProvider metadataProvider = ZomboidMetadataProvider.create(configContext);
 		extension.setMetadataProvider(metadataProvider);
 
-        extension.getProductionNamespace().convention(MappingsNamespace.OFFICIAL.toString());
-
-		extension.getProductionNamespace().finalizeValue();
-
 		var jarConfiguration = extension.getZomboidJarConfiguration().get();
 
 		// Provide the zomboid jars
