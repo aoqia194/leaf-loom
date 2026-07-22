@@ -29,11 +29,10 @@ import java.io.File;
 import javax.inject.Inject;
 
 import org.gradle.api.tasks.Sync;
+import org.gradle.work.DisableCachingByDefault;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.util.Constants;
-
-import org.gradle.work.DisableCachingByDefault;
 
 @DisableCachingByDefault
 public abstract class ExtractNativesTask extends Sync {

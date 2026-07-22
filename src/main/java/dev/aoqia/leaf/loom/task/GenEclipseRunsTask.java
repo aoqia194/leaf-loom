@@ -44,13 +44,12 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
+import org.gradle.work.DisableCachingByDefault;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.leaf.loom.util.Constants;
-
-import org.gradle.work.DisableCachingByDefault;
 
 @DisableCachingByDefault
 public abstract class GenEclipseRunsTask extends AbstractLoomTask {

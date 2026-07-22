@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2022-2026 FabricMC
+ * Copyright (c) 2026 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,38 @@
  * SOFTWARE.
  */
 
-package dev.aoqia.leaf.loom.configuration.processors;
+package dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors;
 
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
-import dev.aoqia.leaf.loom.api.processor.MappingProcessorContext;
-import dev.aoqia.leaf.loom.configuration.ConfigContext;
-import dev.aoqia.leaf.loom.util.LazyCloseable;
-import net.fabricmc.tinyremapper.TinyRemapper;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
-public record MappingProcessorContextImpl(ConfigContext configContext) implements MappingProcessorContext {
-	@Override
-	public LazyCloseable<TinyRemapper> createRemapper(MappingsNamespace from, MappingsNamespace to) {
-		return ContextImplHelper.createRemapper(configContext, from, to);
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.Library;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessor;
+import dev.aoqia.leaf.loom.util.Platform;
+
+public class RuntimeLwjglGraphicsLibraryProcessor extends LibraryProcessor {
+	private static final String LWJGL_OPENGL = "org.lwjgl:lwjgl-opengl";
+	private static final String LWJGL_VULKAN = "org.lwjgl:lwjgl-vulkan";
+
+	public RuntimeLwjglGraphicsLibraryProcessor(Platform platform, LibraryContext context) {
+		super(platform, context);
 	}
 
 	@Override
-	public MappingsNamespace getProductionNamespace() {
-		return configContext().extension().getProductionNamespaceEnum().get();
+	public ApplicationResult getApplicationResult() {
+		return ApplicationResult.CAN_APPLY;
 	}
 
 	@Override
-	public boolean disableObfuscation() {
-		return configContext().extension().disableObfuscation();
+	public Predicate<Library> apply(Consumer<Library> dependencyConsumer) {
+		return library -> {
+			if (library.is(LWJGL_OPENGL) || library.is(LWJGL_VULKAN)) {
+				dependencyConsumer.accept(library.withTarget(Library.Target.RUNTIME));
+				return false;
+			}
+
+			return true;
+		};
 	}
 }

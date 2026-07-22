@@ -53,7 +53,7 @@ public abstract class TracyCapture {
 	 * The path to the tracy-capture executable.
 	 */
 	@InputFile
-    @PathSensitive(PathSensitivity.NONE)
+	@PathSensitive(PathSensitivity.NONE)
 	@Optional
 	public abstract RegularFileProperty getTracyCapture();
 

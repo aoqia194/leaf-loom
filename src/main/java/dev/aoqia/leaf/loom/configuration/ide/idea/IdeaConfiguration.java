@@ -52,8 +52,6 @@ public abstract class IdeaConfiguration implements Runnable {
 			}
 		});
 
-		hookDownloadSources();
-
 		if (!IdeaUtils.isIdeaSync()) {
 			return;
 		}
@@ -63,27 +61,5 @@ public abstract class IdeaConfiguration implements Runnable {
 
 		taskRequests.add(new DefaultTaskExecutionRequest(List.of("ideaSyncTask")));
 		startParameter.setTaskRequests(taskRequests);
-	}
-
-	private void hookDownloadSources() {
-		if (!GradleUtils.isRootProject(getProject())) {
-			return;
-		}
-
-		if (!DownloadSourcesHook.hasInitScript(getProject())) {
-			return;
-		}
-
-		getProject().getTasks().configureEach(task -> {
-			if (task.getName().startsWith(DownloadSourcesHook.INIT_SCRIPT_NAME)) {
-				getProject().allprojects(subProject -> {
-					if (!GradleUtils.isLoomProject(subProject)) {
-						return;
-					}
-
-					new DownloadSourcesHook(subProject, task).tryHook();
-				});
-			}
-		});
 	}
 }

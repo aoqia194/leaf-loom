@@ -50,7 +50,7 @@ public abstract class RenderDocRunTask extends RunGameTask {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RenderDocRunTask.class);
 
 	@InputFile
-    @PathSensitive(PathSensitivity.NONE)
+	@PathSensitive(PathSensitivity.NONE)
 	public abstract RegularFileProperty getRenderDocExecutable();
 
 	@Input

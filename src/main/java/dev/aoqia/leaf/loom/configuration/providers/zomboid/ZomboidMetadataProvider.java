@@ -96,9 +96,11 @@ public final class ZomboidMetadataProvider {
 	private ManifestEntryLocation getVersionEntry() throws IOException {
 		// Custom URL always takes priority
 		if (options.customManifestUrl() != null) {
-			VersionsManifest.Version customVersion = new VersionsManifest.Version();
-			customVersion.url = options.customManifestUrl();
-			return new ManifestEntryLocation(null, options.zomboidVersion(), customVersion);
+			VersionsManifest.Version customVersion = new VersionsManifest.Version(
+					options.zomboidVersion(),
+					options.customManifestUrl()
+			);
+			return new ManifestEntryLocation(null, customVersion);
 		}
 
 		final List<ManifestEntrySupplier> suppliers = new ArrayList<>();
@@ -124,6 +126,7 @@ public final class ZomboidMetadataProvider {
 		throw new RuntimeException("Failed to find Zomboid version: " + options.zomboidVersion());
 	}
 
+	@Nullable
 	private ManifestEntryLocation getManifestEntry(ManifestLocation location, boolean forceDownload) throws IOException {
 		DownloadBuilder builder = download.apply(location.url());
 
@@ -146,10 +149,10 @@ public final class ZomboidMetadataProvider {
 	}
 
 	private ZomboidVersionMeta readVersionMeta() throws IOException {
-		final DownloadBuilder builder = download.apply(versionEntry.entry.url);
+		final DownloadBuilder builder = download.apply(versionEntry.entry.url());
 
 		if (versionEntry.entry.hash != null) {
-			builder.sha1(versionEntry.entry.hash);
+			builder.sha1(versionEntry.entry.hash());
 		} else {
 			builder.defaultCache();
 		}
@@ -163,7 +166,7 @@ public final class ZomboidMetadataProvider {
 	private String getVersionMetaFileName() {
 		// custom version metadata
 		if (versionEntry.manifest == null) {
-			return "zomboid_info_" + Integer.toHexString(versionEntry.entry.url.hashCode()) + ".json";
+			return "zomboid_info_" + Integer.toHexString(versionEntry.entry.url().hashCode()) + ".json";
 		}
 
 		// metadata url taken from versions manifest

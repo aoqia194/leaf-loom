@@ -1,7 +1,7 @@
 /*
  * This file is part of fabric-loom, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2021-2022 FabricMC
+ * Copyright (c) 2021-2026 FabricMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -56,6 +57,7 @@ import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.processor.ProcessorContext;
 import dev.aoqia.leaf.loom.api.processor.SpecContext;
+import dev.aoqia.leaf.loom.configuration.processors.MappingProcessing;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.LazyCloseable;
 import dev.aoqia.leaf.loom.util.Pair;
@@ -200,7 +202,7 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
 				final String className = entry.getKey();
 				final List<InjectedInterface> injectedInterfaces = entry.getValue();
 
-				MappingTree.ClassMapping classMapping = mappings.getClass(className, productionNamespaceId);
+				MappingTree.ClassMapping classMapping = MappingProcessing.getOrCreateClassMapping(mappings, className, productionNamespaceId, context.disableObfuscation());
 
 				if (classMapping == null) {
 					final String modIds = injectedInterfaces.stream().map(InjectedInterface::modId).distinct().collect(Collectors.joining(","));
@@ -215,7 +217,9 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
 		};
 	}
 
-	private static String appendComment(String comment, List<InjectedInterface> injectedInterfaces) {
+	@Nullable
+	@Contract("!null, _ -> !null")
+	private static String appendComment(@Nullable String comment, List<InjectedInterface> injectedInterfaces) {
 		if (injectedInterfaces.isEmpty()) {
 			return comment;
 		}
@@ -234,7 +238,7 @@ public abstract class InterfaceInjectionProcessor implements ZomboidJarProcessor
 			}
 		}
 
-		return comment;
+		return commentBuilder.toString();
 	}
 
 	private record InjectedInterface(String modId, String className, String ifaceName, @Nullable String generics) {

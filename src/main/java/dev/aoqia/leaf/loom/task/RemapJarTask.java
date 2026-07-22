@@ -41,9 +41,12 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.jetbrains.annotations.ApiStatus;
@@ -73,8 +76,10 @@ import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 
+@CacheableTask
 public abstract class RemapJarTask extends AbstractRemapJarTask {
 	@InputFiles
+	@PathSensitive(PathSensitivity.NAME_ONLY)
 	public abstract ConfigurableFileCollection getNestedJars();
 
 	@Input
@@ -273,7 +278,7 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
 					getParameters().getTargetNamespace().get()
 			);
 			ClassTweakerReader reader = ClassTweakerReader.create(remapper);
-			reader.read(input, null); // TODO pass mod id
+			reader.read(input);
 
 			return writer.getOutput();
 		}

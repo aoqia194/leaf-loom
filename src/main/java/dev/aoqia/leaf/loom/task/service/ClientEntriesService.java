@@ -56,10 +56,10 @@ public abstract class ClientEntriesService<O extends ClientEntriesService.Option
 
 		public interface Options extends ClientEntriesService.Options {
 			@InputFiles
-            @PathSensitive(PathSensitivity.ABSOLUTE)
+			@PathSensitive(PathSensitivity.ABSOLUTE)
 			ConfigurableFileCollection getAllSourceFiles();
 			@InputFiles
-            @PathSensitive(PathSensitivity.ABSOLUTE)
+			@PathSensitive(PathSensitivity.ABSOLUTE)
 			ConfigurableFileCollection getSourceDirectories();
 		}
 
@@ -87,7 +87,7 @@ public abstract class ClientEntriesService<O extends ClientEntriesService.Option
 
 		public interface Options extends ClientEntriesService.Options {
 			@InputFiles
-            @PathSensitive(PathSensitivity.ABSOLUTE)
+			@PathSensitive(PathSensitivity.ABSOLUTE)
 			ConfigurableFileCollection getAllOutputDirs();
 		}
 

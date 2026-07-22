@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
-
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.NamedDomainObjectList;
@@ -65,6 +63,7 @@ import dev.aoqia.leaf.loom.api.remapping.RemapperExtension;
 import dev.aoqia.leaf.loom.api.remapping.RemapperParameters;
 import dev.aoqia.leaf.loom.configuration.RemapConfigurations;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
+import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
 import dev.aoqia.leaf.loom.configuration.processors.JarProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpec;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl;
@@ -102,7 +101,9 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	private final Property<String> defaultMixinRemapType;
 	private final Property<Boolean> remapJsrAnnotationsToJetBrains;
 	private final Property<Boolean> runtimeOnlyLog4j;
+	private final Property<Boolean> runtimeOnlyLwjglGraphics;
 	private final Property<Boolean> splitModDependencies;
+	private final Property<Boolean> uncompressNestedJars;
 	private final Property<ZomboidJarConfiguration<?, ?, ?>> zomboidJarConfiguration;
 	private final Property<Boolean> splitEnvironmentalSourceSet;
 	private final InterfaceInjectionExtensionAPI interfaceInjectionExtension;
@@ -183,8 +184,14 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		this.runtimeOnlyLog4j = project.getObjects().property(Boolean.class).convention(false);
 		this.runtimeOnlyLog4j.finalizeValueOnRead();
 
+		this.runtimeOnlyLwjglGraphics = project.getObjects().property(Boolean.class).convention(false);
+		this.runtimeOnlyLwjglGraphics.finalizeValueOnRead();
+
 		this.splitModDependencies = project.getObjects().property(Boolean.class).convention(true);
 		this.splitModDependencies.finalizeValueOnRead();
+
+		this.uncompressNestedJars = project.getObjects().property(Boolean.class).convention(false);
+		this.uncompressNestedJars.finalizeValueOnRead();
 
 		this.interfaceInjectionExtension = project.getObjects().newInstance(InterfaceInjectionExtensionAPI.class);
 		this.interfaceInjectionExtension.getIsEnabled().convention(true);
@@ -414,8 +421,18 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	}
 
 	@Override
+	public Property<Boolean> getRuntimeOnlyLwjglGraphics() {
+		return runtimeOnlyLwjglGraphics;
+	}
+
+	@Override
 	public Property<Boolean> getSplitModDependencies() {
 		return splitModDependencies;
+	}
+
+	@Override
+	public Property<Boolean> getUncompressNestedJars() {
+		return uncompressNestedJars;
 	}
 
 	@Override

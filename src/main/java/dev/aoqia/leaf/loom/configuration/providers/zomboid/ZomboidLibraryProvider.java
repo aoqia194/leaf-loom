@@ -44,6 +44,7 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContex
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.ZomboidLibraryHelper;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.processors.RuntimeLog4jLibraryProcessor;
+import dev.aoqia.leaf.loom.configuration.providers.minecraft.library.processors.RuntimeLwjglGraphicsLibraryProcessor;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
@@ -68,6 +69,10 @@ public class ZomboidLibraryProvider {
 
 		if (extension.getRuntimeOnlyLog4j().get()) {
 			enabledProcessors.add(RuntimeLog4jLibraryProcessor.class.getSimpleName());
+		}
+
+		if (extension.getRuntimeOnlyLwjglGraphics().get()) {
+			enabledProcessors.add(RuntimeLwjglGraphicsLibraryProcessor.class.getSimpleName());
 		}
 
 		final Provider<String> libraryProcessorsProperty = project.getProviders().gradleProperty(Constants.Properties.LIBRARY_PROCESSORS);

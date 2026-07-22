@@ -47,16 +47,17 @@ import org.gradle.work.DisableCachingByDefault;
 
 import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.validator.ClassTweakerValidatingVisitor;
+import net.fabricmc.tinyremapper.TinyRemapper;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.util.TinyRemapperLoggerAdapter;
-import net.fabricmc.tinyremapper.TinyRemapper;
 
 @DisableCachingByDefault
 public abstract class ValidateAccessWidenerTask extends DefaultTask {
 	@SkipWhenEmpty
 	@InputFile
-    @PathSensitive(PathSensitivity.NONE)
+	@PathSensitive(PathSensitivity.NONE)
 	public abstract RegularFileProperty getAccessWidener();
 
 	@Classpath
@@ -91,7 +92,7 @@ public abstract class ValidateAccessWidenerTask extends DefaultTask {
 		final ClassTweakerReader accessWidenerReader = ClassTweakerReader.create(validator);
 
 		try (BufferedReader reader = Files.newBufferedReader(getAccessWidener().get().getAsFile().toPath(), StandardCharsets.UTF_8)) {
-			accessWidenerReader.read(reader, "named");
+			accessWidenerReader.read(reader);
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to read access widener", e);
 		} finally {
