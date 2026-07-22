@@ -45,9 +45,11 @@ import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.specs.Spec;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.JavaExec;
+import org.gradle.work.DisableCachingByDefault;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,7 @@ import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
 import dev.aoqia.leaf.loom.util.Constants;
 
+@DisableCachingByDefault
 public abstract class AbstractRunTask extends JavaExec {
 	private static final CharsetEncoder ASCII_ENCODER = StandardCharsets.US_ASCII.newEncoder();
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRunTask.class);
@@ -75,7 +78,7 @@ public abstract class AbstractRunTask extends JavaExec {
 	protected abstract Property<String> getArgFilePath();
 
 	// We control the classpath, as we use a ArgFile to pass it over the command line: https://docs.oracle.com/javase/7/docs/technotes/tools/windows/javac.html#commandlineargfile
-	@InputFiles
+	@Classpath
 	protected abstract ConfigurableFileCollection getInternalClasspath();
 
 	public AbstractRunTask(Function<Project, RunConfig> configProvider) {

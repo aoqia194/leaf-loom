@@ -36,6 +36,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
 import org.gradle.workers.WorkQueue;
@@ -45,6 +46,7 @@ import dev.aoqia.leaf.loom.LoomGradlePlugin;
 import dev.aoqia.leaf.loom.configuration.classpathgroups.ExternalClasspathGroupDTO;
 import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 
+@DisableCachingByDefault
 public abstract class ExportClasspathTask extends AbstractLoomTask {
 	@Input
 	public abstract Property<String> getClasspathDtoJson();

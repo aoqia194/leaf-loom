@@ -33,6 +33,9 @@ import org.gradle.api.tasks.Sync;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.util.Constants;
 
+import org.gradle.work.DisableCachingByDefault;
+
+@DisableCachingByDefault
 public abstract class ExtractNativesTask extends Sync {
 	@Inject
 	public ExtractNativesTask() {

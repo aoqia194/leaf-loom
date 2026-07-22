@@ -37,6 +37,8 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 
 import dev.aoqia.leaf.loom.api.RemapConfigurationSettings;
@@ -44,8 +46,12 @@ import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 import dev.aoqia.leaf.loom.util.Constants;
 
+import org.gradle.work.DisableCachingByDefault;
+
+@DisableCachingByDefault
 public abstract class GenerateRemapClasspathTask extends AbstractLoomTask {
 	@InputFiles
+    @PathSensitive(PathSensitivity.ABSOLUTE)
 	public abstract ConfigurableFileCollection getRemapClasspath();
 
 	@OutputFile

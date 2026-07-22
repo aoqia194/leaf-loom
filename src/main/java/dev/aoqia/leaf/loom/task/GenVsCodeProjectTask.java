@@ -56,8 +56,11 @@ import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.gradle.SyncTaskBuildService;
 
+import org.gradle.work.DisableCachingByDefault;
+
 // Recommended vscode plugin pack:
 // https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
+@DisableCachingByDefault
 public abstract class GenVsCodeProjectTask extends AbstractLoomTask {
 	// Prevent Gradle from running vscode task asynchronously
 	@ServiceReference(SyncTaskBuildService.NAME)

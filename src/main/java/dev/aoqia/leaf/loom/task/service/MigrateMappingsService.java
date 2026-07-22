@@ -44,11 +44,14 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,10 +79,11 @@ public class MigrateMappingsService extends Service<MigrateMappingsService.Optio
 		@Nested
 		Property<TinyMappingsService.Options> getTargetMappings();
 		@InputDirectory
+        @PathSensitive(PathSensitivity.NONE)
 		DirectoryProperty getInputDir();
 		@Input
 		Property<String> getSourceCompatibility();
-		@InputFiles
+		@Classpath
 		ConfigurableFileCollection getClasspath();
 		@OutputDirectory
 		DirectoryProperty getOutputDir();

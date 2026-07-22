@@ -37,6 +37,9 @@ import org.gradle.api.tasks.TaskAction;
 
 import dev.aoqia.leaf.loom.task.AbstractLoomTask;
 
+import org.gradle.work.DisableCachingByDefault;
+
+@DisableCachingByDefault
 public abstract class GenerateLog4jConfigTask extends AbstractLoomTask {
 	@OutputFile
 	public abstract RegularFileProperty getOutputFile();

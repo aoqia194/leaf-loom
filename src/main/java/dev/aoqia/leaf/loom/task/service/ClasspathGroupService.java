@@ -55,6 +55,9 @@ import dev.aoqia.leaf.loom.util.service.Service;
 import dev.aoqia.leaf.loom.util.service.ServiceFactory;
 import dev.aoqia.leaf.loom.util.service.ServiceType;
 
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
+
 public class ClasspathGroupService extends Service<ClasspathGroupService.Options> {
 	public static ServiceType<Options, ClasspathGroupService> TYPE = new ServiceType<Options, ClasspathGroupService>(Options.class, ClasspathGroupService.class);
 
@@ -65,6 +68,7 @@ public class ClasspathGroupService extends Service<ClasspathGroupService.Options
 
 		@InputFiles
 		@Optional
+        @PathSensitive(PathSensitivity.NONE)
 		ConfigurableFileCollection getExternalClasspathGroups();
 	}
 

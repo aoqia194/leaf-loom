@@ -235,6 +235,10 @@ tasks.wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
+tasks.validatePlugins {
+    enableStricterValidation = true
+}
+
 tasks.register("downloadGradleSources") {
     description = "Downloads the Gradle API sources next to the API jar." +
         "May require you to manually attach the sources jar."

@@ -32,9 +32,12 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.process.CommandLineArgumentProvider;
 import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecResult;
+import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,10 +45,12 @@ import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
 
+@DisableCachingByDefault
 public abstract class RenderDocRunTask extends RunGameTask {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RenderDocRunTask.class);
 
 	@InputFile
+    @PathSensitive(PathSensitivity.NONE)
 	public abstract RegularFileProperty getRenderDocExecutable();
 
 	@Input

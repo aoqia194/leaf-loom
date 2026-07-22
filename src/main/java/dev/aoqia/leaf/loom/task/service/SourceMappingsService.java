@@ -36,6 +36,7 @@ import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Optional;
@@ -63,7 +64,7 @@ public class SourceMappingsService extends Service<SourceMappingsService.Options
 	private static final Logger LOGGER = LoggerFactory.getLogger(SourceMappingsService.class);
 
 	public interface Options extends Service.Options {
-		@InputFiles
+		@Classpath
 		ConfigurableFileCollection getMappings(); // Only a single file
 
 		@Input

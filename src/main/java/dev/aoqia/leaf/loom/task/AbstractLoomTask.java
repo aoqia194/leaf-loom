@@ -26,10 +26,12 @@ package dev.aoqia.leaf.loom.task;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Internal;
+import org.gradle.work.DisableCachingByDefault;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.util.Constants;
 
+@DisableCachingByDefault
 public abstract class AbstractLoomTask extends DefaultTask {
 	public AbstractLoomTask() {
 		setGroup(Constants.TaskGroup.LEAF);

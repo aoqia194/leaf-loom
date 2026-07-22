@@ -38,6 +38,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
 import org.gradle.workers.WorkQueue;
@@ -49,6 +50,7 @@ import dev.aoqia.leaf.loom.util.fmj.gen.LeafModJsonV1Generator;
 /**
  * A task that generates a {@code fabric.mod.json} file using the configured {@link LeafModJsonV1Spec} specification.
  */
+@DisableCachingByDefault
 public abstract class LeafModJsonV1Task extends AbstractLoomTask {
 	/**
 	 * The fabric.mod.json spec.

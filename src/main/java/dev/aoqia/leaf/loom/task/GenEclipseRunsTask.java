@@ -50,6 +50,9 @@ import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.leaf.loom.util.Constants;
 
+import org.gradle.work.DisableCachingByDefault;
+
+@DisableCachingByDefault
 public abstract class GenEclipseRunsTask extends AbstractLoomTask {
 	@Nested
 	protected abstract ListProperty<EclipseRunConfig> getEclipseRunConfigs();

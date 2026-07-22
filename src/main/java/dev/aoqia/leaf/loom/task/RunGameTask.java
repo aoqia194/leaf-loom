@@ -29,6 +29,9 @@ import javax.inject.Inject;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfig;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 
+import org.gradle.work.DisableCachingByDefault;
+
+@DisableCachingByDefault
 public abstract class RunGameTask extends AbstractRunTask {
 	@Inject
 	public RunGameTask(RunConfigSettings settings) {
