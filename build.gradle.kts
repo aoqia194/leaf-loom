@@ -406,8 +406,14 @@ gradlePlugin {
     plugins {
         create("leafLoom") {
             id = "${rootProject.group}.${rootProject.name}"
-            implementationClass = "${rootProject.group}.${rootProject.name}.LoomGradlePlugin"
+            implementationClass = "${rootProject.group}.${rootProject.name}.LoomNoRemapGradlePlugin"
             displayName = rootProject.name
+            tags = listOf("projectzomboid", "zomboid", "leaf")
+        }
+        create("leafLoomRemap") {
+            id = "${rootProject.group}.${rootProject.name}-remap"
+            implementationClass = "${rootProject.group}.${rootProject.name}.LoomRemapGradlePlugin"
+            displayName = "${rootProject.name}-remap"
             tags = listOf("projectzomboid", "zomboid", "leaf")
         }
         create("leafLoomCompanion") {
