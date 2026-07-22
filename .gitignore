@@ -8,7 +8,7 @@
 
 !/.gitattributes
 !/.gitignore
-!/build.gradle*
+!/build.gradle.kts
 !/checkstyle.xml
 !/codenarc.groovy
 !/eclipse-formatter.xml
@@ -19,6 +19,6 @@
 !/LICENSE
 !/NOTES.md
 !/README.md
-!/settings.gradle*
+!/settings.gradle.kts
 
 /src/**/generated
