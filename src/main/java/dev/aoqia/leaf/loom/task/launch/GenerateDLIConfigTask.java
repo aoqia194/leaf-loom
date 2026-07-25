@@ -182,29 +182,6 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 			launchConfig.property("leaf.log.disableAnsi", "false");
 		}
 
-//        versionInfo.arguments().jvm().forEach((arg, argObj) -> {
-//            boolean allowed = true;
-//            for (final var rule : argObj.rules()) {
-//                if (rule.appliesToOS(Platform.CURRENT) && !rule.isAllowed()) {
-//                    allowed = false;
-//                    // break;
-//                }
-//            }
-//
-//            if (!allowed) {
-//                return;
-//            }
-//
-//            final String key;
-//            if (arg.startsWith("-D")) {
-//                key = arg.subSequence(2, arg.indexOf('=')).toString();
-//                final String value = arg.subSequence(arg.indexOf('=') + 1, arg.length()).toString();
-//                launchConfig.property(key, value);
-//            } else if (arg.startsWith("-XX:")) {
-//                key = arg.subSequence(4)
-//            }
-//        });
-
 		Files.writeString(getDevLauncherConfig().getAsFile().get().toPath(), launchConfig.asString(), StandardCharsets.UTF_8);
 	}
 

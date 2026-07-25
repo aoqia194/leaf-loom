@@ -26,6 +26,7 @@ package dev.aoqia.leaf.loom.configuration.ide;
 
 import java.util.Locale;
 
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.util.MirrorUtil;
 
 import org.gradle.api.JavaVersion;
@@ -80,8 +81,9 @@ public class DefaultRunConfigurationSettings {
 		internalRun.getIsFinalised().finalizeValue();
 
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
-		LibraryContext context = new LibraryContext(extension.getZomboidProvider().getVersionInfo(), JavaVersion.current());
-		int javaVersion = extension.getZomboidProvider().getVersionInfo().javaVersion();
+        ZomboidVersionMeta versionInfo = extension.getZomboidProvider().getVersionInfo();
+		LibraryContext context = new LibraryContext(versionInfo, JavaVersion.current());
+		int javaVersion = versionInfo.javaVersion();
 
 		String environment = run.getRuntimeEnvironment().get().toLowerCase(Locale.ROOT);
 
@@ -104,9 +106,6 @@ public class DefaultRunConfigurationSettings {
 			run.getJvmArguments().add("--enable-native-access=ALL-UNNAMED");
 		}
 
-        // Tells the game where to look for natives and libs.
-//        run.getJvmArguments().add("-Djava.library.path=" + run.getWorkingDirectory().get());
-
 		run.getSystemProperties().get().forEach((key, value) -> {
 			if (value.isBlank()) {
 				run.getJvmArguments().add("-D%s".formatted(key));
@@ -114,6 +113,24 @@ public class DefaultRunConfigurationSettings {
 				run.getJvmArguments().add("-D%s=%s".formatted(key, value));
 			}
 		});
+
+        versionInfo.arguments().jvm().forEach((arg, argObj) -> {
+            boolean allowed = false;
+            for (final var rule : argObj.rules()) {
+                if (rule.appliesToOS(Platform.CURRENT) && rule.isAllowed()) {
+                    allowed = true;
+                }
+            }
+
+            if (!allowed) {
+                return;
+            }
+
+            // Only care about system props for now!
+            if (arg.startsWith("-D")) {
+                run.getJvmArguments().add(arg);
+            }
+        });
 
 		finialiseValues(run);
 
