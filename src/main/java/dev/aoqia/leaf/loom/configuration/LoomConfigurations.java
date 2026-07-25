@@ -78,9 +78,6 @@ public abstract class LoomConfigurations implements Runnable {
 		});
 
 		registerNonTransitive(Constants.Configurations.ZOMBOID_NATIVES, Role.RESOLVABLE);
-        // TODO(leaf): Register game libraries to configuration here
-//		registerNonTransitive(Constants.Configurations.ZOMBOID_LIBRARIES, Role.RESOLVABLE);
-
 		registerNonTransitive(Constants.Configurations.LOADER_DEPENDENCIES, Role.RESOLVABLE);
 
 		registerNonTransitive(Constants.Configurations.ZOMBOID, Role.NONE);

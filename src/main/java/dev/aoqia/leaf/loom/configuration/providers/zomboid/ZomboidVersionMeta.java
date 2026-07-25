@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.gson.JsonElement;
 import org.jspecify.annotations.Nullable;
 
 import dev.aoqia.leaf.loom.util.Constants;
@@ -41,7 +42,8 @@ public record ZomboidVersionMeta(
         String gitBranch,
         String gitHash,
         Manifests manifests,
-		String mainClass,
+        Arguments arguments,
+		MainClass mainClass,
 		String releaseTime,
 		String generateTime,
 		AssetIndexes assetIndexes,
@@ -50,7 +52,7 @@ public record ZomboidVersionMeta(
 ) {
 	private static final Map<Platform.OperatingSystem, String> OS_NAMES = Map.of(
 			Platform.OperatingSystem.WINDOWS, "windows",
-			Platform.OperatingSystem.MAC_OS, "osx",
+			Platform.OperatingSystem.MAC_OS, "macos",
 			Platform.OperatingSystem.LINUX, "linux"
 	);
 
@@ -73,30 +75,24 @@ public record ZomboidVersionMeta(
 		return !manifests.server.isEmpty();
 	}
 
-	/**
-	 * Returns true if the version was released after Beta 1.0 (inclusive) but before 1.3 (exclusive).
-	 *
-	 * <p>This includes some versions that only have a client jar or a server jar to match behaviour
-	 * across all versions in the range.
-	 */
-	public boolean isLegacySplitOfficialNamespaceVersion() {
-		// TODO: Allow "official" as the obf namespace on single-env versions in this range by checking the mappings
-		//       to see which one they have.
-		//       Likewise, "clientOfficial"/"serverOfficial" could be allowed older single-env releases
-		//       as an alternative to "official".
-        // TODO(leaf): Remove me.
-		return false;
+	public boolean hasNativesToExtract() {
+		 return libraries.stream().anyMatch(Library::hasNatives);
 	}
 
-	public boolean hasNativesToExtract() {
-		// return libraries.stream().anyMatch(Library::hasNatives);
-        return !isLegacyVersion();
-	}
+    public record MainClass(@Nullable String client, @Nullable String server) {}
 
 	public record AssetIndexes(AssetIndexEntry client, AssetIndexEntry server) {}
 
     public record AssetIndexEntry(AssetIndexEntryValue macos, AssetIndexEntryValue linux, AssetIndexEntryValue windows,
-        @Nullable AssetIndexEntryValue common) {}
+        @Nullable AssetIndexEntryValue common) {
+        public AssetIndexEntryValue getFromOs(Platform.OperatingSystem os) {
+            return switch (os) {
+                case LINUX -> linux();
+                case WINDOWS -> windows();
+                case MAC_OS -> macos();
+            };
+        }
+    }
 
     public record AssetIndexEntryValue(String id, long size, String url, String sha1) {}
 
@@ -192,6 +188,10 @@ public record ZomboidVersionMeta(
 			return classifiers.get(os);
 		}
 	}
+
+    public record Arguments(List<String> game, Map<String, Argument> jvm) {}
+
+    public record Argument(List<Rule> rules) {}
 
 	public record Rule(String action, OS os) {
 		public boolean appliesToOS(Platform platform) {

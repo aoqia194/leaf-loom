@@ -24,12 +24,17 @@
 
 package dev.aoqia.leaf.loom.configuration.providers.zomboid;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.assets.AssetIndex;
+
+import dev.aoqia.leaf.loom.util.Platform;
 
 import org.gradle.api.Project;
 import org.gradle.api.provider.Property;
@@ -49,6 +54,7 @@ public final class ZomboidMetadataProvider {
 
 	private ManifestEntryLocation versionEntry;
 	private ZomboidVersionMeta versionMeta;
+    private AssetIndex clientAssetIndex;
 
 	private ZomboidMetadataProvider(Options options, Function<String, DownloadBuilder> download) {
 		this.options = options;
@@ -88,6 +94,18 @@ public final class ZomboidMetadataProvider {
 
 		return versionMeta;
 	}
+
+    public AssetIndex getClientAssetIndex() {
+        try {
+            if (clientAssetIndex == null) {
+                clientAssetIndex = readClientAssetIndex();
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e.getMessage(), e);
+        }
+
+        return clientAssetIndex;
+    }
 
 	public boolean isUnobfuscated() {
 		return true;
@@ -163,6 +181,19 @@ public final class ZomboidMetadataProvider {
 		return LoomGradlePlugin.GSON.fromJson(json, ZomboidVersionMeta.class);
 	}
 
+    private AssetIndex readClientAssetIndex() throws IOException {
+        File indexFile = new File(options.workingDir()
+            .resolve(versionEntry.entryKey)
+            .resolve(versionEntry.manifest.name() + "_client_asset_index.json").toUri()
+        );
+
+        Platform.OperatingSystem os = Platform.CURRENT.getOperatingSystem();
+        ZomboidVersionMeta.AssetIndexEntryValue index = versionMeta.assetIndexes().client().getFromOs(os);
+
+        String json = download.apply(index.url()).sha1(index.sha1()).downloadString(indexFile.toPath());
+        return LoomGradlePlugin.GSON.fromJson(json, AssetIndex.class);
+    }
+
 	private String getVersionMetaFileName() {
 		// custom version metadata
 		if (versionEntry.manifest == null) {
@@ -181,7 +212,7 @@ public final class ZomboidMetadataProvider {
 		public static Options create(String version, Project project) {
 			final LoomGradleExtension extension = LoomGradleExtension.get(project);
 			final Path userCache = extension.getFiles().getUserCache().toPath();
-			final Path workingDir = ZomboidProvider.zomboidWorkingDirectory(project, version).toPath();
+			final Path workingDir = ZomboidProvider.gameWorkingDirectory(project, version).toPath();
 
 			final ManifestLocations manifestLocations = extension.getVersionsManifests();
 			final Property<String> customMetaUrl = extension.getCustomZomboidMetadata();

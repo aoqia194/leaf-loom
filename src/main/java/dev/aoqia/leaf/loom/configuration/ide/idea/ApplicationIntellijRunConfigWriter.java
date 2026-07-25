@@ -56,14 +56,14 @@ public final class ApplicationIntellijRunConfigWriter extends AbstractIntellijRu
 			xml = new String(input.readAllBytes(), StandardCharsets.UTF_8);
 		}
 
-		String runDir = RunConfigUtils.formatRunDir(run, project, File::getAbsolutePath, "$PROJECT_DIR$/%s"::formatted);
+        String workingDir = run.getWorkingDirectory().get().getAsFile().getAbsolutePath();
 		String folderName = run.getIdeConfigFolder().getOrNull();
 		SourceSet sourceSet = SourceSetHelper.getSourceSetByName(run.getSourceSet().get(), project);
 
 		final String runConfigXml = xml.replace("%NAME%", RunConfigUtils.getDisplayName(run, project))
 				.replace("%MAIN_CLASS%", run.getDevLaunchMainClass().get())
 				.replace("%IDEA_MODULE%", IdeaUtils.getIdeaModuleName(new SourceSetReference(sourceSet, project)))
-				.replace("%RUN_DIRECTORY%", runDir)
+				.replace("%WORKING_DIRECTORY%", workingDir)
 				.replace("%PROGRAM_ARGS%", Arguments.join(run.getProgramArguments().get()).replace("\"", "&quot;"))
 				.replace("%VM_ARGS%", Arguments.join(run.getJvmArguments().get()).replace("\"", "&quot;"))
 				.replace("%IDEA_ENV_VARS%", RunConfigUtils.formatEnvVars(run, "<env name=\"%s\" value=\"%s\"/>"))

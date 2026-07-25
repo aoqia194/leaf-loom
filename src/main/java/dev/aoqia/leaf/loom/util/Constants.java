@@ -30,7 +30,6 @@ import org.objectweb.asm.Opcodes;
 import java.nio.file.Path;
 
 public class Constants {
-    public static final String INDEX_MANIFEST_PATH = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/dist/indexes";
     public static final String VERSION_MANIFESTS = "https://raw.githubusercontent.com/aoqia194/leaf/refs/heads/main/dist/manifests";
 
 	public static final String FABRIC_REPOSITORY = "https://maven.fabricmc.net/";
@@ -159,7 +158,7 @@ public class Constants {
 
 	public static final class Properties {
 		public static final String DONT_REMAP = "leaf.loom.dontRemap";
-		public static final String DISABLE_OBFUSCATION = "fabric.loom.disableObfuscation";
+		public static final String DISABLE_OBFUSCATION = "leaf.loom.disableObfuscation";
 		public static final String DISABLE_REMAPPED_VARIANTS = "leaf.loom.disableRemappedVariants";
 		public static final String DISABLE_PROJECT_DEPENDENT_MODS = "leaf.loom.disableProjectDependentMods";
 		public static final String LIBRARY_PROCESSORS = "leaf.loom.libraryProcessors";
@@ -173,10 +172,6 @@ public class Constants {
 		public static final String DECOMPILE_CACHE_MAX_FILES = "leaf.loom.decompileCacheMaxFiles";
 		public static final String DECOMPILE_CACHE_MAX_AGE = "leaf.loom.decompileCacheMaxAge";
 		/**
-		 * Skip the signature verification of the jar and game resources after copying.
-		 */
-		public static final String ENABLE_GAME_VERIFICATION = "leaf.loom.enableGameVerification";
-		/**
 		 * When using the MojangMappingLayer this will remove names for non root methods by using the intermediary mappings.
 		 */
 		public static final String DROP_NON_INTERMEDIATE_ROOT_METHODS = "leaf.loom.dropNonIntermediateRootMethods";
@@ -189,9 +184,13 @@ public class Constants {
          */
         public static final String ONLY_PROVIDE_JARS = "leaf.loom.onlyProvideJars";
         /*
-         * If true, loom will not validate the game files against their hashes.
+         * Skip validating the game files against their hashes.
          */
-        public static final String IGNORE_GAME_VALIDATION = "leaf.loom.ignoreGameValidation";
+        public static final String ENABLE_GAME_VALIDATION = "leaf.loom.enableGameValidation";
+        /**
+         * When decompiling game files this will accept all class files, not just ones in zombie/*
+         */
+        public static final String DECOMPILE_EVERYTHING = "leaf.loom.decompileEverything";
 	}
 
 	public static final class Manifest {

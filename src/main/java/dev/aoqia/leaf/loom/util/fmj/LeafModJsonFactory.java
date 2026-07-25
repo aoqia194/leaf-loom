@@ -51,6 +51,7 @@ import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
 
 public final class LeafModJsonFactory {
 	public static final String LEAF_MOD_JSON = "leaf.mod.json";
+	public static final String FABRIC_MOD_JSON = "fabric.mod.json";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LeafModJsonFactory.class);
 
@@ -75,13 +76,27 @@ public final class LeafModJsonFactory {
 	}
 
 	public static LeafModJson createFromZip(Path zipPath) {
+        JsonObject jsonObject;
+
 		try {
-			return create(ZipUtils.unpackGson(zipPath, LEAF_MOD_JSON, JsonObject.class), new LeafModJsonSource.ZipSource(zipPath));
+			jsonObject = ZipUtils.unpackGson(zipPath, LEAF_MOD_JSON, JsonObject.class);
 		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to read fabric.mod.json file in zip: " + zipPath, e);
+			throw new UncheckedIOException("Failed to read leaf.mod.json file in zip: " + zipPath, e);
 		} catch (JsonSyntaxException e) {
-			throw new JsonSyntaxException("Failed to parse fabric.mod.json in zip: " + zipPath, e);
+			throw new JsonSyntaxException("Failed to parse leaf.mod.json in zip: " + zipPath, e);
 		}
+
+        if (jsonObject == null) {
+            try {
+                jsonObject = ZipUtils.unpackGson(zipPath, FABRIC_MOD_JSON, JsonObject.class);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed to read fabric.mod.json file in zip: " + zipPath, e);
+            } catch (JsonSyntaxException e) {
+                throw new JsonSyntaxException("Failed to parse fabric.mod.json in zip: " + zipPath, e);
+            }
+        }
+
+        return create(jsonObject, new LeafModJsonSource.ZipSource(zipPath));
 	}
 
 	@Nullable
@@ -93,8 +108,18 @@ public final class LeafModJsonFactory {
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to read zip: " + zipPath, e);
 		} catch (JsonSyntaxException e) {
-			throw new JsonSyntaxException("Failed to parse fabric.mod.json in zip: " + zipPath, e);
+			throw new JsonSyntaxException("Failed to parse leaf.mod.json in zip: " + zipPath, e);
 		}
+
+        if (jsonObject == null) {
+            try {
+                jsonObject = ZipUtils.unpackGsonNullable(zipPath, FABRIC_MOD_JSON, JsonObject.class);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed to read zip: " + zipPath, e);
+            } catch (JsonSyntaxException e) {
+                throw new JsonSyntaxException("Failed to parse fallback fabric.mod.json in zip: " + zipPath, e);
+            }
+        }
 
 		if (jsonObject == null) {
 			return null;
@@ -115,6 +140,9 @@ public final class LeafModJsonFactory {
 	@Nullable
 	public static LeafModJson createFromSourceSetsNullable(Project project, SourceSet... sourceSets) {
 		File file = SourceSetHelper.findFirstFileInResource(LEAF_MOD_JSON, project, sourceSets);
+        if (file == null) {
+            file = SourceSetHelper.findFirstFileInResource(FABRIC_MOD_JSON, project, sourceSets);
+        }
 
 		if (file == null) {
 			return null;
@@ -149,10 +177,10 @@ public final class LeafModJsonFactory {
 	}
 
 	public static boolean isModJar(Path input) {
-		return ZipUtils.contains(input, LEAF_MOD_JSON);
+		return ZipUtils.contains(input, LEAF_MOD_JSON) || ZipUtils.contains(input, FABRIC_MOD_JSON);
 	}
 
 	public static boolean containsMod(FileSystemUtil.Delegate fs) {
-		return Files.exists(fs.getPath(LEAF_MOD_JSON));
+		return Files.exists(fs.getPath(LEAF_MOD_JSON)) || Files.exists(fs.getPath(FABRIC_MOD_JSON));
 	}
 }

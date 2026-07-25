@@ -45,7 +45,7 @@ class LoomMocks {
 		Objects.requireNonNull(minecraftVersionProperty.get())
 
 		def mock = spy(IntermediaryMappingsProvider.class)
-		when(mock.getMinecraftVersion()).thenReturn(minecraftVersionProperty)
+		when(mock.getGameVersion()).thenReturn(minecraftVersionProperty)
 		when(mock.getIntermediaryUrl()).thenReturn(intermediaryUrlProperty)
 		when(mock.getDownloader()).thenReturn(downloaderProperty)
 		when(mock.getRefreshDeps()).thenReturn(refreshDeps)

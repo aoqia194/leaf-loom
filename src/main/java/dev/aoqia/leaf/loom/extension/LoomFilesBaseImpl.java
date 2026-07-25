@@ -78,7 +78,7 @@ public abstract class LoomFilesBaseImpl implements LoomFiles {
 
 	@Override
 	public File getNativesDirectory(Project project) {
-		return createFile(getRootProjectPersistentCache(), "natives/" + LoomGradleExtension.get(project).getZomboidProvider().zomboidVersion());
+		return createFile(getRootProjectPersistentCache(), "natives/" + LoomGradleExtension.get(project).getZomboidProvider().gameVersion());
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +50,10 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+
 import org.gradle.api.JavaVersion;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
@@ -65,13 +70,13 @@ public final class JarWalker {
 	private JarWalker() {
 	}
 
-	public static List<ClassEntry> findClasses(Path jar) throws IOException {
+	public static List<ClassEntry> findClasses(Path jar, boolean decompileEverything) throws IOException {
 		try (FileSystemUtil.Delegate fs = FileSystemUtil.getJarFileSystem(jar)) {
-			return findClasses(fs);
+			return findClasses(fs, decompileEverything);
 		}
 	}
 
-	public static List<ClassEntry> findClasses(FileSystemUtil.Delegate fs) throws IOException {
+	public static List<ClassEntry> findClasses(FileSystemUtil.Delegate fs, boolean decompileEverything) throws IOException {
 		List<String> outerClasses = new ArrayList<>();
 		Map<String, List<String>> innerClasses = new HashMap<>();
 
@@ -90,9 +95,14 @@ public final class JarWalker {
 
 				final String fileName = entry.toString().substring(fs.getRoot().toString().length());
 
-				if (!fileName.endsWith(".class")) {
+                // TODO(leaf): Hacky hacky hack!
+				if (!fileName.endsWith(".class") || fileName.startsWith("META-INF/versions/")) {
 					continue;
 				}
+
+                if (!decompileEverything && !fileName.startsWith("zombie/")) {
+                    continue;
+                }
 
 				String outerClass = findOuterClass(fs, fileName, innerClassesFromOuterCache);
 

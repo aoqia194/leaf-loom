@@ -44,7 +44,7 @@ import dev.aoqia.leaf.loom.util.FileSystemUtil;
 public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String baseHash) {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CachedJarProcessor.class);
 
-	public WorkRequest prepareJob(Path inputJar) throws IOException {
+	public WorkRequest prepareJob(Path inputJar, boolean decompileEverything) throws IOException {
 		boolean isIncomplete = false;
 		boolean hasSomeExisting = false;
 
@@ -68,7 +68,7 @@ public record CachedJarProcessor(CachedFileStore<CachedData> fileStore, String b
 				FileSystemUtil.Delegate incompleteFs = FileSystemUtil.getJarFileSystem(incompleteJar, true);
 				FileSystemUtil.Delegate existingSourcesFs = FileSystemUtil.getJarFileSystem(existingSourcesJar, true);
 				FileSystemUtil.Delegate existingClassesFs = FileSystemUtil.getJarFileSystem(existingClassesJar, true)) {
-			final List<ClassEntry> inputClasses = JarWalker.findClasses(inputFs);
+			final List<ClassEntry> inputClasses = JarWalker.findClasses(inputFs, decompileEverything);
 			final Map<String, String> rawEntryHashes = getEntryHashes(inputClasses, inputFs.getRoot());
 
 			for (ClassEntry entry : inputClasses) {

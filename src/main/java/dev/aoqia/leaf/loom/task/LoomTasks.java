@@ -131,11 +131,6 @@ public abstract class LoomTasks implements Runnable {
 
 		// Must be done in afterEvaluate to allow time for the build script to configure the jar config.
 		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
-			if (extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY) {
-				// Server only, nothing more to do.
-				return;
-			}
-
 			final ZomboidVersionMeta versionInfo = extension.getZomboidProvider().getVersionInfo();
 
 			if (versionInfo == null) {
@@ -204,7 +199,7 @@ public abstract class LoomTasks implements Runnable {
 
 			runTask.configure(t -> {
 				t.setDescription("Starts the '" + config.getName() + "' run configuration");
-				t.dependsOn(config.getRuntimeEnvironment().map(env -> env.equals("client") ? "configureClientLaunch" : "configureLaunch"));
+				t.dependsOn("configureLaunch");
 			});
 
 			if (config.getName().equals("client") && renderDocSupported) {
@@ -226,27 +221,6 @@ public abstract class LoomTasks implements Runnable {
 
 		extension.getRunConfigs().create("client", RunConfiguration::client);
 		extension.getRunConfigs().create("server", RunConfiguration::server);
-
-		// Remove the client or server run config when not required. Done by name to not remove any possible custom run configs
-		GradleUtils.afterSuccessfulEvaluation(getProject(), () -> {
-			String taskName;
-
-			boolean serverOnly = extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.SERVER_ONLY;
-			boolean clientOnly = extension.getZomboidJarConfiguration().get() == ZomboidJarConfiguration.CLIENT_ONLY;
-
-			if (serverOnly) {
-				// Server only, remove the client run config
-				taskName = "client";
-			} else if (clientOnly) {
-				// Client only, remove the server run config
-				taskName = "server";
-			} else {
-				return;
-			}
-
-			extension.getRunConfigs().removeIf(settings -> settings.getName().equals(taskName)
-					|| settings.getName().equals(taskName + "RenderDoc"));
-		});
 	}
 
 	private void configureRenderDocTasks() {
@@ -319,10 +293,6 @@ public abstract class LoomTasks implements Runnable {
 	}
 
 	public static Provider<Task> getIDELaunchConfigureTaskName(Project project) {
-		return project.provider(() -> {
-			final ZomboidJarConfiguration jarConfiguration = LoomGradleExtension.get(project).getZomboidJarConfiguration().get();
-			final String name = jarConfiguration == ZomboidJarConfiguration.SERVER_ONLY ? "configureLaunch" : "configureClientLaunch";
-			return project.getTasks().getByName(name);
-		});
+		return project.provider(() -> project.getTasks().getByName("configureLaunch"));
 	}
 }

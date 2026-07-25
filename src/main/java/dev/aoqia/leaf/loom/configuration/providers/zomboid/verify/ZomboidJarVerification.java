@@ -24,8 +24,6 @@
 
 package dev.aoqia.leaf.loom.configuration.providers.zomboid.verify;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Function;
@@ -41,50 +39,17 @@ import dev.aoqia.leaf.loom.util.Checksum;
 public abstract class ZomboidJarVerification {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZomboidJarVerification.class);
 
-	private final String minecraftVersion;
+	private final String gameVersion;
 
 	@Inject
 	protected abstract Project getProject();
 
 	@Inject
-	public ZomboidJarVerification(String minecraftVersion) {
-		this.minecraftVersion = minecraftVersion;
+	public ZomboidJarVerification(String gameVersion) {
+		this.gameVersion = gameVersion;
 	}
 
-	public void verifyClientJar(Path path) throws IOException, SignatureVerificationFailure {
-		verifyJarSignature(path, KnownJarType.CLIENT);
-	}
-
-	public void verifyServerJar(Path path) throws IOException, SignatureVerificationFailure {
-		verifyJarSignature(path, KnownJarType.SERVER);
-	}
-
-	private void verifyJarSignature(Path path, KnownJarType type) throws IOException, SignatureVerificationFailure {
-		CertificateChain chain = CertificateChain.getRoot("mojangcs");
-		CertificateRevocationList revocationList = CertificateRevocationList.create(getProject(), CertificateRevocationList.CSC3_2010);
-
-		try {
-			revocationList.verify(chain);
-			JarVerifier.verify(path, chain);
-		} catch (SignatureVerificationFailure e) {
-			if (isValidKnownVersion(path, minecraftVersion, type)) {
-				LOGGER.info("Minecraft {} signature verification failed, but is a known version", path.getFileName());
-				return;
-			}
-
-			LOGGER.error("Verification of Minecraft {} signature failed: {}", path.getFileName(), e.getMessage());
-
-			try {
-				Files.delete(path);
-			} catch (IOException ioe) {
-				LOGGER.error("Failed to delete invalid Minecraft jar: {}", path, ioe);
-			}
-
-			throw e;
-		}
-	}
-
-	private boolean isValidKnownVersion(Path path, String version, KnownJarType type) throws IOException, SignatureVerificationFailure {
+	private boolean isValidKnownVersion(Path path, String version, KnownJarType type) throws SignatureVerificationFailure {
 		Map<String, String> knownVersions = type.getKnownVersions();
 		String expectedHash = knownVersions.get(version);
 
@@ -96,11 +61,11 @@ public abstract class ZomboidJarVerification {
 		Checksum.Result hash = Checksum.of(path).sha256();
 
 		if (hash.matchesStr(expectedHash)) {
-			LOGGER.info("Minecraft {} hash matches known version", path.getFileName());
+			LOGGER.info("Game {} hash matches known version", path.getFileName());
 			return true;
 		}
 
-		throw new SignatureVerificationFailure("Hash mismatch for known Minecraft version " + version + ": expected " + expectedHash + ", got " + hash);
+		throw new SignatureVerificationFailure("Hash mismatch for known game version " + version + ": expected " + expectedHash + ", got " + hash);
 	}
 
 	private enum KnownJarType {

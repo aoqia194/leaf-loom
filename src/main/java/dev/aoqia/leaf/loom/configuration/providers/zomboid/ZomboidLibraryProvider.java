@@ -110,15 +110,12 @@ public class ZomboidLibraryProvider {
 		final List<Library> processLibraries = processLibraries(libraries);
 		processLibraries.forEach(this::applyClientLibrary);
 
-		// After Minecraft 1.19-pre1 the natives should be on the runtime classpath.
 		if (!zomboidProvider.getVersionInfo().hasNativesToExtract()) {
 			project.getConfigurations().named(Constants.Configurations.ZOMBOID_RUNTIME_LIBRARIES, configuration -> configuration.extendsFrom(project.getConfigurations().named(Constants.Configurations.ZOMBOID_NATIVES)));
 		}
 	}
 
 	private void provideServerLibraries() {
-//		final BundleMetadata serverBundleMetadata = zomboidProvider.getServerBundleMetadata();
-//		final List<Library> libraries = serverBundleMetadata != null ? ZomboidLibraryHelper.getServerLibraries(serverBundleMetadata) : Collections.emptyList();
 		final List<Library> libraries = Collections.emptyList();
 		final List<Library> processLibraries = processLibraries(libraries);
 		processLibraries.forEach(this::applyServerLibrary);

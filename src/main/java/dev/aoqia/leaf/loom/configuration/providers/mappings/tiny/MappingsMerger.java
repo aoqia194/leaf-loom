@@ -50,16 +50,10 @@ import net.fabricmc.mappingio.tree.MemoryMappingTree;
 public final class MappingsMerger {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MappingsMerger.class);
 
-	public static void mergeAndSaveMappings(Path from, Path out, ZomboidProvider minecraftProvider, IntermediateMappingsService intermediateMappingsService) throws IOException {
+	public static void mergeAndSaveMappings(Path from, Path out, ZomboidProvider provider, IntermediateMappingsService intermediateMappingsService) throws IOException {
 		long start = System.currentTimeMillis();
 		LOGGER.info(":merging mappings");
-
-		if (minecraftProvider.isLegacySplitOfficialNamespaceVersion()) {
-			legacyMergedMergeAndSaveMappings(from, out, intermediateMappingsService);
-		} else {
-			mergeAndSaveMappings(from, out, intermediateMappingsService);
-		}
-
+        mergeAndSaveMappings(from, out, intermediateMappingsService);
 		LOGGER.info(":merged mappings in {}ms", System.currentTimeMillis() - start);
 	}
 

@@ -51,7 +51,6 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.AnnotationsApplyVisit
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.SignatureFixerApplyVisitor;
 import dev.aoqia.leaf.loom.extension.LoomFiles;
 import dev.aoqia.leaf.loom.util.SidedClassVisitor;
@@ -62,12 +61,12 @@ import net.fabricmc.tinyremapper.TinyRemapper;
 public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> implements MappedZomboidProvider.ProviderImpl {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMappedZomboidProvider.class);
 
-	protected final M zomboidProvider;
+	protected final M gameProvider;
 	private final Project project;
 	protected final LoomGradleExtension extension;
 
-	public AbstractMappedZomboidProvider(Project project, M zomboidProvider) {
-		this.zomboidProvider = zomboidProvider;
+	public AbstractMappedZomboidProvider(Project project, M gameProvider) {
+		this.gameProvider = gameProvider;
 		this.project = project;
 		this.extension = LoomGradleExtension.get(project);
 	}
@@ -205,10 +204,10 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 
 	protected String getVersion() {
 		if (extension.disableObfuscation()) {
-			return extension.getZomboidProvider().zomboidVersion();
+			return extension.getZomboidProvider().gameVersion();
 		}
 
-		return "%s-%s".formatted(extension.getZomboidProvider().zomboidVersion(), extension.getMappingConfiguration().mappingsIdentifier());
+		return "%s-%s".formatted(extension.getZomboidProvider().gameVersion(), extension.getMappingConfiguration().mappingsIdentifier());
 	}
 
 	protected String getDependencyNotation(ZomboidJar.Type type) {
@@ -272,7 +271,7 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 
 		final AnnotationsData remappedAnnotations = AnnotationsData.getRemappedAnnotations(getTargetNamespace(), mappingConfiguration, getProject(), configContext.serviceFactory(), toM);
 		final Map<String, String> remappedSignatures = SignatureFixerApplyVisitor.getRemappedSignatures(getTargetNamespace() == MappingsNamespace.INTERMEDIARY, mappingConfiguration, getProject(), configContext.serviceFactory(), toM);
-		final int javaVersion = zomboidProvider.getVersionInfo().javaVersion();
+		final int javaVersion = gameProvider.getVersionInfo().javaVersion();
 		final boolean fixRecords = javaVersion >= 16;
 
 		TinyRemapper remapper = TinyRemapperHelper.getTinyRemapper(getProject(), configContext.serviceFactory(), fromM, toM, fixRecords, (builder) -> {
@@ -327,8 +326,8 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 		return project;
 	}
 
-	public M getZomboidProvider() {
-		return zomboidProvider;
+	public M getGameProvider() {
+		return gameProvider;
 	}
 
 	public sealed interface OutputJar permits RemappedJars, SimpleOutputJar {

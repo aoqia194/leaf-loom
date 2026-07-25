@@ -85,13 +85,13 @@ public interface MappedZomboidProvider {
 	}
 
     interface CompleteJar extends ProviderImpl {
-        default ZomboidJar getZomboidJar() {
+        default ZomboidJar getGameJar() {
             return new ZomboidJar.Complete(getJar(ZomboidJar.Type.COMPLETE));
         }
 
         @Override
         default List<ZomboidJar> getZomboidJars() {
-            return List.of(getZomboidJar());
+            return List.of(getGameJar());
         }
     }
 }

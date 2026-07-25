@@ -40,7 +40,7 @@ import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
  */
 @ApiStatus.Experimental
 public abstract class IntermediateMappingsProvider implements Named {
-	public abstract Property<String> getMinecraftVersion();
+	public abstract Property<String> getGameVersion();
 
 	public abstract Property<Function<String, DownloadBuilder>> getDownloader();
 

@@ -86,14 +86,6 @@ public abstract class RunConfigSettings implements Named, RunConfiguration, RunC
 		RunConfigurationInternal.super.inherit(parent);
 	}
 
-	/**
-	 * Removes the {@code nogui} argument for the server configuration. By default {@code nogui} is specified, this is
-	 * a convenient way to remove it if wanted.
-	 */
-	public void serverWithGui() {
-		getProgramArgs().removeIf("nogui"::equals);
-	}
-
 	// Note: Overridden for backwards compatibility
 	@Override
 	public abstract Property<String> getIdeConfigFolder();

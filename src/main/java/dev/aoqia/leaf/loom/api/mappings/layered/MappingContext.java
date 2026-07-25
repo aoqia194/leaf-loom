@@ -55,7 +55,7 @@ public interface MappingContext {
 	ZomboidProvider zomboidProvider();
 
 	default String zomboidVersion() {
-		return zomboidProvider().zomboidVersion();
+		return zomboidProvider().gameVersion();
 	}
 
 	/**

@@ -96,7 +96,7 @@ public interface LoomGradleExtension extends LoomGradleExtensionAPI {
 		return switch (mappingsNamespace) {
 		case NAMED -> getNamedZomboidProvider().getZomboidJarPaths();
 		case INTERMEDIARY -> getIntermediaryZomboidProvider().getZomboidJarPaths();
-		case OFFICIAL, CLIENT_OFFICIAL, SERVER_OFFICIAL -> getZomboidProvider().getZomboidJars();
+		case OFFICIAL, CLIENT_OFFICIAL, SERVER_OFFICIAL -> getZomboidProvider().getGameJars();
 		};
 	}
 

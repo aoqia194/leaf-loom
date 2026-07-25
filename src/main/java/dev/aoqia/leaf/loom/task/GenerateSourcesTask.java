@@ -313,7 +313,8 @@ public abstract class GenerateSourcesTask extends AbstractLoomTask {
 		getLogger().debug("Decompile cache rules: {}", cacheRules);
 
 		try (var timer = new Timer("Prepare job")) {
-			workRequest = cachedJarProcessor.prepareJob(classesInputJar);
+			workRequest = cachedJarProcessor.prepareJob(classesInputJar,
+                GradleUtils.getBooleanProperty(getProject(), Constants.Properties.DECOMPILE_EVERYTHING));
 		}
 
 		final CachedJarProcessor.WorkJob job = workRequest.job();

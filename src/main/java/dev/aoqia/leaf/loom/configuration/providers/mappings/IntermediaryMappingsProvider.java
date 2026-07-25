@@ -70,7 +70,7 @@ public abstract class IntermediaryMappingsProvider extends IntermediateMappingsP
 
 		// Download and extract intermediary
 		final Path intermediaryJarPath = Files.createTempFile(getName(), ".jar");
-		final String encodedMcVersion = URLEncoder.encode(getMinecraftVersion().get(), StandardCharsets.UTF_8);
+		final String encodedMcVersion = URLEncoder.encode(getGameVersion().get(), StandardCharsets.UTF_8);
 		final String urlRaw = getIntermediaryUrl().get();
 
 		if (project != null && urlRaw.equals(LoomGradleExtensionApiImpl.DEFAULT_INTERMEDIARY_URL)) {
@@ -108,7 +108,7 @@ public abstract class IntermediaryMappingsProvider extends IntermediateMappingsP
 
 	@Override
 	public String getName() {
-		final String encodedMcVersion = URLEncoder.encode(getMinecraftVersion().get(), StandardCharsets.UTF_8);
+		final String encodedMcVersion = URLEncoder.encode(getGameVersion().get(), StandardCharsets.UTF_8);
 		final String urlRaw = getIntermediaryUrl().get();
 
 		if (!LoomGradleExtensionApiImpl.DEFAULT_INTERMEDIARY_URL.equals(urlRaw)) {

@@ -404,29 +404,25 @@ gradlePlugin {
     vcsUrl = property("url").toString()
 
     plugins {
-        create("leafLoom") {
+        register("leafLoom") {
             id = "${rootProject.group}.${rootProject.name}"
             implementationClass = "${rootProject.group}.${rootProject.name}.LoomNoRemapGradlePlugin"
-            displayName = rootProject.name
-            tags = listOf("projectzomboid", "zomboid", "leaf")
         }
-        create("leafLoomRemap") {
+        register("leafLoomRemap") {
             id = "${rootProject.group}.${rootProject.name}-remap"
             implementationClass = "${rootProject.group}.${rootProject.name}.LoomRemapGradlePlugin"
-            displayName = "${rootProject.name}-remap"
-            tags = listOf("projectzomboid", "zomboid", "leaf")
         }
-        create("leafLoomCompanion") {
+        register("leafLoomLegacy") {
+            id = rootProject.name
+            implementationClass = "${rootProject.group}.${rootProject.name}.LoomGradlePlugin"
+        }
+        register("leafLoomCompanion") {
             id = "${rootProject.group}.${rootProject.name}-companion"
             implementationClass = "${rootProject.group}.${rootProject.name}.LoomCompanionGradlePlugin"
-            displayName = "${rootProject.name}-companion"
-            tags = listOf("projectzomboid", "zomboid", "leaf")
         }
-        create("leafLoomRepositories") {
+        register("leafLoomRepositories") {
             id = "${rootProject.group}.${rootProject.name}-repositories"
             implementationClass = "${rootProject.group}.${rootProject.name}.LoomRepositoryPlugin"
-            displayName = "${rootProject.name}-repositories"
-            tags = listOf("projectzomboid", "zomboid", "leaf")
         }
     }
 }

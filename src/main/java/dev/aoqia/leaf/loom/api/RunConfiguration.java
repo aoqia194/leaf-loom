@@ -93,6 +93,11 @@ public interface RunConfiguration extends Named {
 	Property<String> getSourceSet();
 
 	/**
+	 * The absolute working directory for this configuration
+	 */
+	DirectoryProperty getWorkingDirectory();
+
+    /**
 	 * The run directory for this configuration, relative to the root project directory.
 	 */
 	DirectoryProperty getRunDirectory();
@@ -140,6 +145,7 @@ public interface RunConfiguration extends Named {
 		getAppendProjectPathToDisplayName().convention(parent.getAppendProjectPathToDisplayName());
 		getMainClass().convention(parent.getMainClass());
 		getSourceSet().convention(parent.getSourceSet());
+		getWorkingDirectory().convention(parent.getWorkingDirectory());
 		getRunDirectory().convention(parent.getRunDirectory());
 		getGenerateRunConfig().convention(parent.getGenerateRunConfig());
 		getPreferGradleTask().convention(parent.getPreferGradleTask());
@@ -159,6 +165,5 @@ public interface RunConfiguration extends Named {
 	 */
 	default void server() {
 		getRuntimeEnvironment().set("server");
-		getProgramArguments().add("nogui");
 	}
 }

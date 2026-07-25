@@ -52,7 +52,7 @@ class TestPlugin implements Plugin<Project> {
 
 		@Override
 		void provide(Path tinyMappings) throws IOException {
-			if (getMinecraftVersion().get() != "1.2.5") {
+			if (getGameVersion().get() != "1.2.5") {
 				throw new IllegalStateException("This plugin only supports Minecraft 1.2.5")
 			}
 

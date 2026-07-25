@@ -37,11 +37,17 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
+
+import dev.aoqia.leaf.loom.util.Platform;
+
 import org.gradle.api.Project;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.logging.configuration.ConsoleOutput;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
@@ -66,7 +72,7 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	protected abstract Property<String> getVersionInfoJson();
 
 	@Input
-	protected abstract Property<String> getMinecraftVersion();
+	protected abstract Property<String> getGameVersion();
 
 	@Input
 	protected abstract Property<Boolean> getSplitSourceSets();
@@ -79,6 +85,10 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 
 	@Input
 	protected abstract Property<String> getLog4jConfigPaths();
+
+    @InputDirectory
+    @PathSensitive(PathSensitivity.ABSOLUTE)
+    protected abstract DirectoryProperty getRunDirectory();
 
 	@Input
 	@Optional
@@ -110,7 +120,7 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 
 	public GenerateDLIConfigTask() {
 		getVersionInfoJson().set(LoomGradlePlugin.GSON.toJson(getExtension().getZomboidProvider().getVersionInfo()));
-		getMinecraftVersion().set(getExtension().getZomboidProvider().zomboidVersion());
+		getGameVersion().set(getExtension().getZomboidProvider().gameVersion());
 		getSplitSourceSets().set(getExtension().areEnvironmentSourceSetsSplit());
 		getANSISupportedIDE().set(ansiSupportedIde(getProject()));
 		getPlainConsole().set(getProject().getGradle().getStartParameter().getConsoleOutput() == ConsoleOutput.Plain);
@@ -121,8 +131,11 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 		if (getSplitSourceSets().get()) {
 			getClientGameJarPath().set(getGameJarPath("client"));
 			getCommonGameJarPath().set(getGameJarPath("common"));
-		}
+		} else {
+            getCommonGameJarPath().set(getGameJarPath("common"));
+        }
 
+        getRunDirectory().set(getProject().file("run"));
 		getNativesDirectoryPath().set(getExtension().getFiles().getNativesDirectory(getProject()).getAbsolutePath());
 		getDevLauncherConfig().set(getExtension().getFiles().getDevLauncherConfig());
 		getProductionNamespace().set(getExtension().getProductionNamespaceEnum().map(MappingsNamespace::toString));
@@ -134,86 +147,27 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 		final ZomboidVersionMeta versionInfo = LoomGradlePlugin.GSON.fromJson(getVersionInfoJson().get(), ZomboidVersionMeta.class);
 
 		final LaunchConfig launchConfig = new LaunchConfig()
-				.property("leaf.development", "true")
-				.property("log4j.configurationFile", getLog4jConfigPaths().get())
-				.property("log4j2.formatMsgNoLookups", "true")
-				.property("leaf.defaultModDistributionNamespace", getProductionNamespace().get())
-				.property("leaf.defaultMixinRemapType", getDefaultMixinRemapType().get());
-
-        // TODO(leaf): Add any jvm args from the versionInfo manifest
-
-//        for (final var arg : versionInfo.arguments().jvm()) {
-//            if (arg.isJsonPrimitive()) {
-//                String str = arg.getAsJsonPrimitive().getAsString();
-//                String key = str.subSequence(2, str.indexOf('=')).toString();
-//                String value = str.subSequence(str.indexOf('=') + 1, str.length()).toString();
-//
-//                // Skip this because we set it in the runconfig's jvm args.
-//                if (key.startsWith("java.library.path")) {
-//                    continue;
-//                }
-//
-//                launchConfig.property(key, value);
-//            } else if (arg.isJsonObject()) {
-//                final var argument = LoomGradlePlugin.GSON.fromJson(arg, ZomboidVersionMeta.Argument.class);
-//                final var argumentRules = argument.rules();
-//                final var argumentValue = argument.value();
-//
-//                boolean allowed = false;
-//                for (final var rule : argumentRules) {
-//                    if (rule.isAllowed() && rule.appliesToOS(Platform.CURRENT)) {
-//                        allowed = true;
-//                    }
-//                }
-//
-//                if (!allowed) {
-//                    continue;
-//                }
-//
-//                HashMap<String, String> props = new HashMap<>();
-//                if (argumentValue.isJsonPrimitive()) {
-//                    final String str = argumentValue.getAsJsonPrimitive().getAsString();
-//                    final String key = str.subSequence(2, str.indexOf('=')).toString();
-//                    final String value = str.subSequence(str.indexOf('=') + 1, str.length()).toString();
-//                    props.put(key, value);
-//                } else if (argumentValue.isJsonArray()) {
-//                    final var arguments = argumentValue.getAsJsonArray();
-//                    for (final var e : arguments) {
-//                        final String str = e.getAsString();
-//                        final String key = str.subSequence(2, str.indexOf('=')).toString();
-//                        final String value = str.subSequence(str.indexOf('=') + 1, str.length()).toString();
-//                        props.put(key, value);
-//                    }
-//                } else {
-//                    throw new IllegalStateException(
-//                        "values in ZomboidVersionMeta json wasn't a string or list of strings."
-//                    );
-//                }
-//
-//                // Skip this because we set it in the runconfig's jvm args.
-//                props.remove("java.library.path");
-//                props.forEach(launchConfig::property);
-//            } else {
-//                throw new IllegalStateException("arg in ZomboidVersionMeta json wasn't a string or object.");
-//            }
-//        }
+            .property("leaf.development", "true")
+            .property("log4j.configurationFile", getLog4jConfigPaths().get())
+            .property("log4j2.formatMsgNoLookups", "true")
+            .property("leaf.defaultModDistributionNamespace", getProductionNamespace().get())
+            .property("leaf.defaultMixinRemapType", getDefaultMixinRemapType().get())
+            .property("leaf.runDir", getRunDirectory().get().getAsFile().getAbsolutePath());
 
 		if (getRemapClasspathFile().isPresent()) {
 			launchConfig.property("leaf.remapClasspathFile", getRemapClasspathFile().get().getAsFile().getAbsolutePath());
 		}
 
 		if (versionInfo.hasNativesToExtract()) {
-			String nativesPath = getNativesDirectoryPath().get();
-
-			launchConfig
-					.property("client", "java.library.path", nativesPath)
-					.property("client", "org.lwjgl.librarypath", nativesPath);
+            throw new RuntimeException("We shouldn't be here! Report me to a developer pls >w<");
 		}
 
 		if (getSplitSourceSets().get()) {
 			launchConfig.property("client", "leaf.gameJarPath.client", getClientGameJarPath().get());
 			launchConfig.property("leaf.gameJarPath", getCommonGameJarPath().get());
-		}
+		} else {
+            launchConfig.property("leaf.gameJarPath", getCommonGameJarPath().get());
+        }
 
 		try (ScopedServiceFactory serviceFactory = new ScopedServiceFactory()) {
 			ClasspathGroupService classpathGroupService = serviceFactory.get(getClasspathGroupOptions());
@@ -228,6 +182,29 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 			launchConfig.property("leaf.log.disableAnsi", "false");
 		}
 
+//        versionInfo.arguments().jvm().forEach((arg, argObj) -> {
+//            boolean allowed = true;
+//            for (final var rule : argObj.rules()) {
+//                if (rule.appliesToOS(Platform.CURRENT) && !rule.isAllowed()) {
+//                    allowed = false;
+//                    // break;
+//                }
+//            }
+//
+//            if (!allowed) {
+//                return;
+//            }
+//
+//            final String key;
+//            if (arg.startsWith("-D")) {
+//                key = arg.subSequence(2, arg.indexOf('=')).toString();
+//                final String value = arg.subSequence(arg.indexOf('=') + 1, arg.length()).toString();
+//                launchConfig.property(key, value);
+//            } else if (arg.startsWith("-XX:")) {
+//                key = arg.subSequence(4)
+//            }
+//        });
+
 		Files.writeString(getDevLauncherConfig().getAsFile().get().toPath(), launchConfig.asString(), StandardCharsets.UTF_8);
 	}
 
@@ -238,13 +215,17 @@ public abstract class GenerateDLIConfigTask extends AbstractLoomTask {
 	}
 
 	private String getGameJarPath(String env) {
-		MappedZomboidProvider.Split split = (MappedZomboidProvider.Split) getExtension().getNamedZomboidProvider();
+        ZomboidJar jar = switch (getExtension().getNamedZomboidProvider()) {
+            case MappedZomboidProvider.CompleteJar p -> p.getGameJar();
+            case MappedZomboidProvider.Split p -> switch (env) {
+                case "client" -> p.getClientOnlyJar();
+                case "common" -> p.getCommonJar();
+                default -> throw new UnsupportedOperationException();
+            };
+            default -> throw new RuntimeException("Unsupported provider when getting game jar path for DLI config");
+        };
 
-		return switch (env) {
-		case "client" -> split.getClientOnlyJar().getPath().toAbsolutePath().toString();
-		case "common" -> split.getCommonJar().getPath().toAbsolutePath().toString();
-		default -> throw new UnsupportedOperationException();
-		};
+        return jar.getPath().toAbsolutePath().toString();
 	}
 
 	private static boolean ansiSupportedIde(Project project) {

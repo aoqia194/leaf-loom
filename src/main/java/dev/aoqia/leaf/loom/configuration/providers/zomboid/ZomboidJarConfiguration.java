@@ -49,67 +49,12 @@ public record ZomboidJarConfiguration<
 				ProcessedNamedZomboidProviderFactory<M, N> processedNamedZomboidProviderFactory,
 				DecompileConfigurationFactory<Q> decompileConfigurationFactory,
 				List<String> supportedEnvironments) {
-	public static final ZomboidJarConfiguration<
-			MergedZomboidProvider,
-				NamedZomboidProvider.MergedImpl,
-			MappedZomboidProvider> MERGED = new ZomboidJarConfiguration<>(
-				MergedZomboidProvider::new,
-				IntermediaryZomboidProvider.MergedImpl::new,
-				NamedZomboidProvider.MergedImpl::new,
-				ProcessedNamedZomboidProvider.MergedImpl::new,
-				SingleJarDecompileConfiguration::new,
-				List.of("client", "server")
-			);
-	public static final ZomboidJarConfiguration<
-			LegacyMergedZomboidProvider,
-				NamedZomboidProvider.LegacyMergedImpl,
-			MappedZomboidProvider> LEGACY_MERGED = new ZomboidJarConfiguration<>(
-				LegacyMergedZomboidProvider::new,
-				IntermediaryZomboidProvider.LegacyMergedImpl::new,
-				NamedZomboidProvider.LegacyMergedImpl::new,
-				ProcessedNamedZomboidProvider.LegacyMergedImpl::new,
-				SingleJarDecompileConfiguration::new,
-				List.of("client", "server")
-			);
-	public static final ZomboidJarConfiguration<
-			SingleJarZomboidProvider,
-				NamedZomboidProvider.SingleJarImpl,
-			MappedZomboidProvider> SERVER_ONLY = new ZomboidJarConfiguration<>(
-				SingleJarZomboidProvider::server,
-				IntermediaryZomboidProvider.SingleJarImpl::server,
-				NamedZomboidProvider.SingleJarImpl::server,
-				ProcessedNamedZomboidProvider.SingleJarImpl::server,
-				SingleJarDecompileConfiguration::new,
-				List.of("server")
-			);
-	public static final ZomboidJarConfiguration<
-			SingleJarZomboidProvider,
-				NamedZomboidProvider.SingleJarImpl,
-			MappedZomboidProvider> CLIENT_ONLY = new ZomboidJarConfiguration<>(
-				SingleJarZomboidProvider::client,
-				IntermediaryZomboidProvider.SingleJarImpl::client,
-				NamedZomboidProvider.SingleJarImpl::client,
-				ProcessedNamedZomboidProvider.SingleJarImpl::client,
-				SingleJarDecompileConfiguration::new,
-				List.of("client")
-			);
-	public static final ZomboidJarConfiguration<
-			SplitZomboidProvider,
-				NamedZomboidProvider.SplitImpl,
-				MappedZomboidProvider.Split> SPLIT = new ZomboidJarConfiguration<>(
-				SplitZomboidProvider::new,
-				IntermediaryZomboidProvider.SplitImpl::new,
-				NamedZomboidProvider.SplitImpl::new,
-				ProcessedNamedZomboidProvider.SplitImpl::new,
-				SplitDecompileConfiguration::new,
-				List.of("client", "server")
-			);
     public static final ZomboidJarConfiguration<
-            CompleteJarZomboidProvider,
+            ZomboidProvider,
             NamedZomboidProvider.CompleteJarImpl,
             MappedZomboidProvider
         > COMPLETE = new ZomboidJarConfiguration<>(
-            CompleteJarZomboidProvider::new,
+            ZomboidProvider::new,
             IntermediaryZomboidProvider.CompleteJarImpl::new,
             NamedZomboidProvider.CompleteJarImpl::new,
             ProcessedNamedZomboidProvider.CompleteJarImpl::new,

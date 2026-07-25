@@ -101,13 +101,13 @@ public class MappingConfiguration {
 
 		final TinyJarInfo jarInfo = TinyJarInfo.get(inputJar);
 		jarInfo.minecraftVersionId().ifPresent(id -> {
-			if (!zomboidProvider.zomboidVersion().equals(id)) {
+			if (!zomboidProvider.gameVersion().equals(id)) {
 				LOGGER.warn("The mappings ({}) were not built for PZ version {}, proceed with caution.",
-                    dependency.getDepString(), zomboidProvider.zomboidVersion());
+                    dependency.getDepString(), zomboidProvider.gameVersion());
 			}
 		});
 
-		final String mappingsIdentifier = createMappingsIdentifier(mappingsName, version, getMappingsClassifier(dependency, jarInfo.v2()), zomboidProvider.zomboidVersion());
+		final String mappingsIdentifier = createMappingsIdentifier(mappingsName, version, getMappingsClassifier(dependency, jarInfo.v2()), zomboidProvider.gameVersion());
 		final Path workingDir = zomboidProvider.dir(mappingsIdentifier).toPath();
 
 		var mappingProvider = new MappingConfiguration(mappingsIdentifier, workingDir);
@@ -198,7 +198,7 @@ public class MappingConfiguration {
 				Files.copy(baseTinyMappings, tinyMappings, StandardCopyOption.REPLACE_EXISTING);
 			}
 		} else {
-			final List<Path> minecraftJars = minecraftProvider.getZomboidJars();
+			final List<Path> minecraftJars = minecraftProvider.getGameJars();
 
 			if (minecraftJars.size() != 1) {
 				throw new UnsupportedOperationException("V1 mappings only support single jar minecraft providers");

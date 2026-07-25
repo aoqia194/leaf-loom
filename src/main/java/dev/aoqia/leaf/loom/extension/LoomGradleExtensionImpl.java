@@ -35,8 +35,6 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import dev.aoqia.leaf.loom.LoomNoRemapGradlePlugin;
-import dev.aoqia.leaf.loom.task.NestJarsAction;
-import dev.aoqia.leaf.loom.task.RemapJarTask;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFile;
 import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
@@ -123,6 +121,7 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 		disableObfuscation = project.getObjects().property(Boolean.class);
 		dontRemap = project.getObjects().property(Boolean.class);
 
+        // TODO:
 		if (project.getPluginManager().hasPlugin(LoomNoRemapGradlePlugin.NAME)) {
 			disableObfuscation.set(true);
 			disableObfuscation.finalizeValue();
@@ -323,13 +322,13 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 
 	@Override
 	protected <T extends IntermediateMappingsProvider> void configureIntermediateMappingsProviderInternal(T provider) {
-		provider.getMinecraftVersion().set(getProject().provider(() -> getZomboidProvider().zomboidVersion()));
-		provider.getMinecraftVersion().disallowChanges();
+		provider.getGameVersion().set(getProject().provider(() -> getZomboidProvider().gameVersion()));
+		provider.getGameVersion().disallowChanges();
 
 		provider.getDownloader().set(this::download);
 		provider.getDownloader().disallowChanges();
 
-		provider.getUseSplitOfficialNamespaces().set(getProject().provider(() -> getZomboidProvider().isLegacySplitOfficialNamespaceVersion()));
+		provider.getUseSplitOfficialNamespaces().set(false);
 		provider.getUseSplitOfficialNamespaces().disallowChanges();
 	}
 

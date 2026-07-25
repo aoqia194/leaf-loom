@@ -41,14 +41,15 @@ public final class VineflowerDecompiler implements LoomInternalDecompiler {
 		Path sourcesDestination = context.sourcesDestination();
 		Path linemapDestination = context.linemapDestination();
 
-		final Map<String, Object> options = new HashMap<>(
+		Map<String, Object> options = new HashMap<>(
 				Map.of(
 					IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1",
 					IFernflowerPreferences.BYTECODE_SOURCE_MAPPING, "1",
 					IFernflowerPreferences.REMOVE_SYNTHETIC, "1",
 					IFernflowerPreferences.LOG_LEVEL, "trace",
 					IFernflowerPreferences.THREADS, String.valueOf(context.numberOfThreads()),
-					IFernflowerPreferences.INDENT_STRING, "\t"
+					IFernflowerPreferences.INDENT_STRING, "\t",
+                    IFernflowerPreferences.INCLUDED_CLASSES, "zombie.*"
 				)
 		);
 

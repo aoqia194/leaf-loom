@@ -133,7 +133,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		this.accessWidener = project.getObjects().fileProperty();
 		this.fabricModJsonPath = project.getObjects().fileProperty();
 		this.versionsManifests = new ManifestLocations();
-		this.versionsManifests.add("zomboid", MirrorUtil.getClientVersionManifests(project), -2);
+		this.versionsManifests.add("zomboid", MirrorUtil.getVersionManifests(project), -2);
 //		this.versionsManifests.add("fabric_experimental", MirrorUtil.getExperimentalVersions(project), -1);
 		this.customMetadata = project.getObjects().property(String.class);
 		this.knownIndyBsms = project.getObjects().setProperty(String.class).convention(Set.of(
@@ -441,7 +441,11 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 	@Override
 	public void splitEnvironmentSourceSets() {
-		splitZomboidJar();
+        if (true) {
+            throw new RuntimeException("Split environment source sets are not implemented.");
+        }
+
+//		splitZomboidJar();
 
 		splitEnvironmentalSourceSet.set(true);
 
@@ -531,7 +535,7 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 
 	@Override
 	public Provider<String> getZomboidVersion() {
-		return getProject().provider(() -> LoomGradleExtension.get(getProject()).getZomboidProvider().zomboidVersion());
+		return getProject().provider(() -> LoomGradleExtension.get(getProject()).getZomboidProvider().gameVersion());
 	}
 
 	@Override

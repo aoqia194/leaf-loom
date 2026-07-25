@@ -26,6 +26,8 @@ package dev.aoqia.leaf.loom.configuration.ide;
 
 import java.util.Locale;
 
+import dev.aoqia.leaf.loom.util.MirrorUtil;
+
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
@@ -33,7 +35,6 @@ import org.gradle.api.tasks.SourceSet;
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.RunConfiguration;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryContext;
 import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.Platform;
@@ -58,9 +59,10 @@ public class DefaultRunConfigurationSettings {
 				configName += Strings.capitalizeCamelCaseName(sourceSet) + " ";
 			}
 
-			configName += "Minecraft " + Strings.capitalizeCamelCaseName(run.getName());
+			configName += "Zomboid " + Strings.capitalizeCamelCaseName(run.getName());
 			return configName;
 		}));
+        run.getWorkingDirectory().set(MirrorUtil.getGameJavaPath(project).toFile());
 		run.getRunDirectory().set(project.file("run"));
 		run.getGenerateRunConfig().convention(GradleUtils.isRootProject(project));
 		run.getPreferGradleTask().convention(false);
@@ -102,6 +104,9 @@ public class DefaultRunConfigurationSettings {
 			run.getJvmArguments().add("--enable-native-access=ALL-UNNAMED");
 		}
 
+        // Tells the game where to look for natives and libs.
+//        run.getJvmArguments().add("-Djava.library.path=" + run.getWorkingDirectory().get());
+
 		run.getSystemProperties().get().forEach((key, value) -> {
 			if (value.isBlank()) {
 				run.getJvmArguments().add("-D%s".formatted(key));
@@ -125,6 +130,7 @@ public class DefaultRunConfigurationSettings {
 		run.getAppendProjectPathToDisplayName().finalizeValue();
 		run.getMainClass().finalizeValue();
 		run.getSourceSet().finalizeValue();
+		run.getWorkingDirectory().finalizeValue();
 		run.getRunDirectory().finalizeValue();
 		run.getGenerateRunConfig().finalizeValue();
 		run.getPreferGradleTask().finalizeValue();

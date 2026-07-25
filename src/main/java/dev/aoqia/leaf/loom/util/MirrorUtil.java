@@ -35,7 +35,7 @@ public class MirrorUtil {
             return Path.of(String.valueOf(ext.get("loom_game_path")));
         }
 
-        final var envVar = System.getenv("LEAF_GAME_PATH");
+        final var envVar = System.getenv("LEAF_CLIENT_GAME_PATH");
         if (envVar != null) {
             return Path.of(envVar);
         }
@@ -43,22 +43,27 @@ public class MirrorUtil {
         return Constants.getDefaultGamePath();
     }
 
-	public static String getClientVersionManifests(ExtensionAware aware) {
+    public static Path getGameJavaPath(ExtensionAware aware) {
+        // TODO(leaf): Replace this method with JAR path in version manifest
+        Path gamePath = getGamePath(aware);
+
+        Platform.OperatingSystem os = Platform.CURRENT.getOperatingSystem();
+        if (os.isWindows()) {
+            return gamePath;
+        } else if (os.isLinux()) {
+            return gamePath.resolve("projectzomboid");
+        } else {
+            return gamePath.resolve("Contents/Java");
+        }
+    }
+
+	public static String getVersionManifests(ExtensionAware aware) {
         final var ext = aware.getExtensions().getExtraProperties();
-		if (ext.has("loom_client_version_manifests")) {
+		if (ext.has("loom_version_manifests")) {
 			return String.valueOf(ext.get("loom_version_manifests"));
 		}
 
 		return String.format("%s/index.json", Constants.VERSION_MANIFESTS);
-	}
-
-    public static String getServerVersionManifests(ExtensionAware aware) {
-        final var ext = aware.getExtensions().getExtraProperties();
-		if (ext.has("loom_server_version_manifests")) {
-			return String.valueOf(ext.get("loom_version_manifests"));
-		}
-
-		return String.format("%s/server/%s/index.json", Constants.VERSION_MANIFESTS, getOsStringForUrl());
 	}
 
     public static String getOsStringForUrl() throws RuntimeException {

@@ -37,22 +37,17 @@ import dev.aoqia.leaf.loom.configuration.ConfigContext;
 import dev.aoqia.leaf.loom.configuration.mods.dependency.LocalMavenHelper;
 import dev.aoqia.leaf.loom.configuration.processors.ZomboidJarProcessorManager;
 import dev.aoqia.leaf.loom.configuration.processors.ProcessorContextImpl;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.CompleteJarZomboidProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.LegacyMergedZomboidProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.MergedZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidSourceSets;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarEnvType;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.SingleJarZomboidProvider;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.SplitZomboidProvider;
 
 public abstract class ProcessedNamedZomboidProvider<M extends ZomboidProvider, P extends NamedZomboidProvider<M>> extends NamedZomboidProvider<M> {
 	private final P parentProvider;
 	private final ZomboidJarProcessorManager jarProcessorManager;
 
 	public ProcessedNamedZomboidProvider(P parentProvide, ZomboidJarProcessorManager jarProcessorManager) {
-		super(parentProvide.getProject(), parentProvide.getZomboidProvider());
+		super(parentProvide.getProject(), parentProvide.getGameProvider());
 		this.parentProvider = parentProvide;
 		this.jarProcessorManager = Objects.requireNonNull(jarProcessorManager);
 	}
@@ -179,79 +174,14 @@ public abstract class ProcessedNamedZomboidProvider<M extends ZomboidProvider, P
 		return jar.forPath(getProcessedPath(jar));
 	}
 
-	public static final class MergedImpl extends ProcessedNamedZomboidProvider<MergedZomboidProvider, NamedZomboidProvider.MergedImpl> implements Merged {
-		public MergedImpl(NamedZomboidProvider.MergedImpl parentProvide, ZomboidJarProcessorManager jarProcessorManager) {
-			super(parentProvide, jarProcessorManager);
-		}
-
-		@Override
-		public ZomboidJar getMergedJar() {
-			return getProcessedJar(getParentProvider().getMergedJar());
-		}
-	}
-
-	public static final class LegacyMergedImpl extends ProcessedNamedZomboidProvider<LegacyMergedZomboidProvider, NamedZomboidProvider.LegacyMergedImpl> implements Merged {
-		public LegacyMergedImpl(NamedZomboidProvider.LegacyMergedImpl parentProvider, ZomboidJarProcessorManager jarProcessorManager) {
-			super(parentProvider, jarProcessorManager);
-		}
-
-		@Override
-		public ZomboidJar getMergedJar() {
-			return getProcessedJar(getParentProvider().getMergedJar());
-		}
-	}
-
-	public static final class SplitImpl extends ProcessedNamedZomboidProvider<SplitZomboidProvider, NamedZomboidProvider.SplitImpl> implements Split {
-		public SplitImpl(NamedZomboidProvider.SplitImpl parentProvide, ZomboidJarProcessorManager jarProcessorManager) {
-			super(parentProvide, jarProcessorManager);
-		}
-
-		@Override
-		public ZomboidJar getCommonJar() {
-			return getProcessedJar(getParentProvider().getCommonJar());
-		}
-
-		@Override
-		public ZomboidJar getClientOnlyJar() {
-			return getProcessedJar(getParentProvider().getClientOnlyJar());
-		}
-	}
-
-	public static final class SingleJarImpl extends ProcessedNamedZomboidProvider<SingleJarZomboidProvider, NamedZomboidProvider.SingleJarImpl> implements SingleJar {
-		private final SingleJarEnvType env;
-
-		private SingleJarImpl(NamedZomboidProvider.SingleJarImpl parentProvide, ZomboidJarProcessorManager jarProcessorManager, SingleJarEnvType env) {
-			super(parentProvide, jarProcessorManager);
-			this.env = env;
-		}
-
-		public static ProcessedNamedZomboidProvider.SingleJarImpl server(NamedZomboidProvider.SingleJarImpl parentProvide, ZomboidJarProcessorManager jarProcessorManager) {
-			return new ProcessedNamedZomboidProvider.SingleJarImpl(parentProvide, jarProcessorManager, SingleJarEnvType.SERVER);
-		}
-
-		public static ProcessedNamedZomboidProvider.SingleJarImpl client(NamedZomboidProvider.SingleJarImpl parentProvide, ZomboidJarProcessorManager jarProcessorManager) {
-			return new ProcessedNamedZomboidProvider.SingleJarImpl(parentProvide, jarProcessorManager, SingleJarEnvType.CLIENT);
-		}
-
-		@Override
-		public ZomboidJar getEnvOnlyJar() {
-			return getProcessedJar(getParentProvider().getEnvOnlyJar());
-		}
-
-		@Override
-		public SingleJarEnvType env() {
-			return env;
-		}
-	}
-
-    public static final class CompleteJarImpl extends ProcessedNamedZomboidProvider<CompleteJarZomboidProvider, NamedZomboidProvider.CompleteJarImpl> implements CompleteJar {
+    public static final class CompleteJarImpl extends ProcessedNamedZomboidProvider<ZomboidProvider, NamedZomboidProvider.CompleteJarImpl> implements CompleteJar {
         public CompleteJarImpl(NamedZomboidProvider.CompleteJarImpl parentProvide, ZomboidJarProcessorManager jarProcessorManager) {
             super(parentProvide, jarProcessorManager);
         }
 
         @Override
-        public ZomboidJar getZomboidJar() {
-            return getProcessedJar(getParentProvider().getZomboidJar());
+        public ZomboidJar getGameJar() {
+            return getProcessedJar(getParentProvider().getGameJar());
         }
     }
 }

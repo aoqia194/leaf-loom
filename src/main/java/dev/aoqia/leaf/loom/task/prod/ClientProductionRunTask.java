@@ -97,7 +97,7 @@ public abstract non-sealed class ClientProductionRunTask extends AbstractProduct
 		getAssetsDir().set(new File(getExtension().getFiles().getUserCache(), "assets"));
 		getMainClass().convention("dev.aoqia.leaf.loader.impl.launch.knot.KnotClient");
 
-		getClasspath().from(getExtension().getZomboidProvider().getZomboidClientJar());
+		getClasspath().from(getExtension().getZomboidProvider().getGameJar());
 		getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:loader:%s", getProjectLoaderVersion()));
 
 		if (getExtension().getProductionNamespaceEnum().get() == MappingsNamespace.INTERMEDIARY) {
@@ -148,6 +148,7 @@ public abstract non-sealed class ClientProductionRunTask extends AbstractProduct
 	protected void configureProgramArgs(ExecSpec exec) {
 		super.configureProgramArgs(exec);
 
+        // TODO(leaf): Assets dont exist here :<
 		exec.args(
 				"--assetIndex", getAssetsIndex().get(),
 				"--assetsDir", getAssetsDir().get().getAsFile().getAbsolutePath(),

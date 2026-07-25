@@ -103,19 +103,17 @@ public final class IntermediateMappingsService extends Service<IntermediateMappi
 		return createOptions(project, minecraftProvider, intermediaryTiny);
 	}
 
-	private static Provider<Options> createOptions(Project project, ZomboidProvider minecraftProvider, Path intermediaryTiny) {
+	private static Provider<Options> createOptions(Project project, ZomboidProvider provider, Path intermediaryTiny) {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
 		final IntermediateMappingsProvider intermediateProvider = extension.getIntermediateMappingsProvider();
 		// When merging legacy versions there will be multiple named namespaces, so use intermediary as the common src ns
 		// Newer versions will use intermediary as the src ns
-		final String expectedSrcNs = minecraftProvider.isLegacySplitOfficialNamespaceVersion()
-				? MappingsNamespace.INTERMEDIARY.toString() // >=beta 1.0 and <1.3
-				: MappingsNamespace.OFFICIAL.toString(); // >=1.3 or <b1.0
+		final String expectedSrcNs = MappingsNamespace.OFFICIAL.toString();
 
 		return TYPE.create(project, options -> {
 			options.getIntermediaryTiny().set(intermediaryTiny.toFile());
 			options.getExpectedSrcNs().set(expectedSrcNs);
-			options.getMinecraftVersion().set(intermediateProvider.getMinecraftVersion());
+			options.getMinecraftVersion().set(intermediateProvider.getGameVersion());
 		});
 	}
 

@@ -260,22 +260,6 @@ public interface LoomGradleExtensionAPI {
 	@ApiStatus.Experimental
 	Property<ZomboidJarConfiguration<?, ?, ?>> getZomboidJarConfiguration();
 
-	default void serverOnlyZomboidJar() {
-		getZomboidJarConfiguration().set(ZomboidJarConfiguration.SERVER_ONLY);
-	}
-
-	default void clientOnlyZomboidJar() {
-		getZomboidJarConfiguration().set(ZomboidJarConfiguration.CLIENT_ONLY);
-	}
-
-	default void splitZomboidJar() {
-		getZomboidJarConfiguration().set(ZomboidJarConfiguration.SPLIT);
-	}
-
-    default void mergedZomboidJar() {
-        getZomboidJarConfiguration().set(ZomboidJarConfiguration.MERGED);
-    }
-
     default void completeZomboidJar() {
         getZomboidJarConfiguration().set(ZomboidJarConfiguration.COMPLETE);
     }

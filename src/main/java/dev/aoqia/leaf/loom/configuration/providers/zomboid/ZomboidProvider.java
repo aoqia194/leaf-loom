@@ -25,46 +25,41 @@
 package dev.aoqia.leaf.loom.configuration.providers.zomboid;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+import dev.aoqia.leaf.loom.configuration.providers.zomboid.assets.AssetIndex;
+import dev.aoqia.leaf.loom.util.Constants;
 import dev.aoqia.leaf.loom.util.MirrorUtil;
 
+import dev.aoqia.leaf.loom.util.Platform;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
+
+import org.apache.commons.io.FilenameUtils;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.ConfigContext;
-import dev.aoqia.leaf.loom.configuration.providers.BundleMetadata;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.verify.ZomboidJarVerification;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.verify.SignatureVerificationFailure;
 import dev.aoqia.leaf.loom.util.Check;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.download.DownloadExecutor;
-import dev.aoqia.leaf.loom.util.download.GradleDownloadProgressListener;
-import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
-import dev.aoqia.leaf.loom.util.gradle.ProgressGroup;
 
-public abstract class ZomboidProvider {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ZomboidProvider.class);
-
+public class ZomboidProvider {
 	private final ZomboidMetadataProvider metadataProvider;
-
-	private File zomboidClientJar;
-	private File zomboidServerJar;
-
 	private final ConfigContext configContext;
+
+	private File gameJar;
 
 	public ZomboidProvider(ZomboidMetadataProvider metadataProvider, ConfigContext configContext) {
 		this.metadataProvider = metadataProvider;
 		this.configContext = configContext;
+
+        if (isLegacyVersion()) {
+            throw new RuntimeException("Complete JAR provider not supported for legacy PZ versions.");
+        }
 	}
 
 	protected boolean provideClient() {
@@ -76,74 +71,59 @@ public abstract class ZomboidProvider {
 	}
 
 	public void provide() throws Exception {
-		initFiles();
+        if (!provideClient() || !provideServer()) {
+            throw new UnsupportedOperationException("This provider only provides both the client and server!");
+        }
 
         final int requiredMajorJavaVersion = getVersionInfo().javaVersion();
         final JavaVersion requiredJavaVersion = JavaVersion.toVersion(requiredMajorJavaVersion);
 
         if (!JavaVersion.current().isCompatibleWith(requiredJavaVersion)) {
             throw new IllegalStateException("Zomboid %s requires Java %s but Gradle is using %s"
-                .formatted(zomboidVersion(), requiredJavaVersion, JavaVersion.current()));
+                .formatted(gameVersion(), requiredJavaVersion, JavaVersion.current()));
         }
 
-        setup(getProject());
+        Project project = getProject();
+        setup(project);
+//        validateFiles(project);
 
-        if (!GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ENABLE_GAME_VERIFICATION)) {
-            LOGGER.info("Skipping game verification!");
-        } else {
-            verifyFiles();
-        }
-
-		final ZomboidLibraryProvider libraryProvider = new ZomboidLibraryProvider(this, configContext.project());
+		final ZomboidLibraryProvider libraryProvider = new ZomboidLibraryProvider(this, project);
 		libraryProvider.provide();
 	}
 
-	protected void initFiles() {
-		if (provideClient()) {
-			zomboidClientJar = file("zomboid-client.jar");
-		}
+    protected void setup(Project project) {
+        Path gamePath = MirrorUtil.getGameJavaPath(project);
+        this.gameJar = gamePath.resolve("projectzomboid.jar").toFile();
 
-		if (provideServer()) {
-			zomboidServerJar = file("zomboid-server.jar");
-		}
-	}
-
-    private void setup(Project project) {
-//        if (provideClient()) {
-//            // Add discovered files to compile libraries (which also adds to runtime)
-//            final Path gameInstallPath = MirrorUtil.getClientGamePath(project);
-//            project.getDependencies().add(Constants.Configurations.ZOMBOID_CLIENT_COMPILE_LIBRARIES,
-//                project.files(libsPath));
-//        }
+        // Find all other game lib jars in the root game folder and add them as compile libraries
+//        project.getDependencies().add(Constants.Configurations.ZOMBOID_COMPILE_LIBRARIES,
+//            project.fileTree(gamePath).include("*.jar").exclude("projectzomboid.jar", "pzexe.jar"));
     }
 
-    private void verifyFiles() {
+    public void validateFiles(Project project) throws IOException {
+        Path gamePath = MirrorUtil.getGamePath(project);
 
+        AssetIndex assetIndex = getClientAssetIndex();
+        for (AssetIndex.Object object : assetIndex.getObjects()) {
+            Path path = Path.of(FilenameUtils.separatorsToSystem(object.path()));
+            String hash = object.hash();
+            Path filePath = gamePath.resolve(path);
+
+            // Disable game validation is an option to speed up on slow HDD
+            if (!GradleUtils.getBooleanProperty(project, Constants.Properties.ENABLE_GAME_VALIDATION)) {
+                continue;
+            }
+
+            if (!filePath.toFile().exists()) {
+                throw new FileNotFoundException("Game file '%s' does not exist".formatted(filePath));
+            }
+
+            // TODO(leaf): Implement. See CopyGameFile#isHashValid
+        }
     }
-
-	private void verifyJars() throws IOException, SignatureVerificationFailure {
-		if (!GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ENABLE_GAME_VERIFICATION)) {
-			LOGGER.info("Skipping game jar verification!");
-			return;
-		}
-
-		LOGGER.info("Verifying Zomboid jars");
-
-		ZomboidJarVerification verification = getProject().getObjects().newInstance(ZomboidJarVerification.class, zomboidVersion());
-
-		if (provideClient()) {
-			verification.verifyClientJar(zomboidClientJar.toPath());
-		}
-
-		if (provideServer()) {
-            verification.verifyServerJar(zomboidServerJar.toPath());
-		}
-
-		LOGGER.info("Jar verification complete");
-	}
 
 	public File workingDir() {
-		return zomboidWorkingDirectory(configContext.project(), zomboidVersion());
+		return gameWorkingDirectory(configContext.project(), gameVersion());
 	}
 
 	public File dir(String path) {
@@ -160,23 +140,22 @@ public abstract class ZomboidProvider {
 		return file(path).toPath();
 	}
 
-	public File getZomboidClientJar() {
-		Check.require(provideClient(), "Not configured to provide client jar");
-		return zomboidClientJar;
+	public File getGameJar() {
+		Check.require(provideClient(), "Not configured to provide game jar");
+		return gameJar;
 	}
 
-	public File getZomboidServerJar() {
-		Check.require(provideServer(), "Not configured to provide server jar");
-		return zomboidServerJar;
-	}
-
-	public String zomboidVersion() {
+	public String gameVersion() {
 		return Objects.requireNonNull(metadataProvider, "Metadata provider not setup").getZomboidVersion();
 	}
 
 	public ZomboidVersionMeta getVersionInfo() {
 		return Objects.requireNonNull(metadataProvider, "Metadata provider not setup").getVersionMeta();
 	}
+
+    public AssetIndex getClientAssetIndex() {
+        return Objects.requireNonNull(metadataProvider, "Metadata provider not setup").getClientAssetIndex();
+    }
 
 	/**
 	 * @return true if the game version is older than 41.78.*
@@ -185,17 +164,13 @@ public abstract class ZomboidProvider {
 		return getVersionInfo().isLegacyVersion();
 	}
 
-	/**
-	 * Returns true if the minecraft version is between Beta 1.0 (inclusive) and 1.3 (exclusive),
-	 * which splits the {@code official} mapping namespace into env-specific variants.
-	 */
-	public boolean isLegacySplitOfficialNamespaceVersion() {
-		return getVersionInfo().isLegacySplitOfficialNamespaceVersion();
-	}
+	public List<Path> getGameJars() {
+        return List.of(gameJar.toPath());
+    }
 
-	public abstract List<Path> getZomboidJars();
-
-	public abstract MappingsNamespace getOfficialNamespace();
+	public MappingsNamespace getOfficialNamespace() {
+        return MappingsNamespace.NAMED;
+    }
 
 	protected Project getProject() {
 		return configContext.project();
@@ -209,7 +184,7 @@ public abstract class ZomboidProvider {
 		return getExtension().refreshDeps();
 	}
 
-	public static File zomboidWorkingDirectory(Project project, String version) {
+	public static File gameWorkingDirectory(Project project, String version) {
 		LoomGradleExtension extension = LoomGradleExtension.get(project);
 		File workingDir = new File(extension.getFiles().getUserCache(), version);
 		workingDir.mkdirs();
