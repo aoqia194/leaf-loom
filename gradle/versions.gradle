@@ -31,7 +31,7 @@ def generateVersionConstants(def sourceSet, def String catalogName, def sourcesN
 	}
 
 	sourceSet.java.srcDir task
-	spotlessGroovyGradle.dependsOn task // Not quite sure why this is needed, but it fixes a warning.
+//	spotlessGroovyGradle.dependsOn task // Not quite sure why this is needed, but it fixes a warning.
 	compileKotlin.dependsOn task
 	sourcesJar.dependsOn task
 }

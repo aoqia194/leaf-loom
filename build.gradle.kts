@@ -1,4 +1,3 @@
-import com.diffplug.spotless.LineEnding
 import groovy.json.JsonOutput
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -49,7 +48,7 @@ plugins {
 //    codenarc
 //    checkstyle
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.spotless)
+//    alias(libs.plugins.spotless)
     alias(libs.plugins.retry)
 
     // Generating the Gradle plugin marker POM
@@ -335,66 +334,64 @@ tasks.withType<Test>().configureEach {
     )
 }
 
-spotless {
-    setLineEndings(LineEnding.UNIX)
+//spotless {
+//    setLineEndings(LineEnding.UNIX)
+//
+//    java {
+//        targetExclude("**/generated/**")
+//
+//        importOrder("java|javax", "", "\\#", "$group", "\\#$group")
+//        removeUnusedImports()
+//        forbidWildcardImports()
+//
+//        cleanthat()
+//        eclipse().configFile(file("eclipse-formatter.xml"))
+//        // NOTE(aoqia): It's a nice feature but it causes some issues, so it will remain disabled for now.
+////            .sortMembersEnabled(true)
+//        formatAnnotations()
+//
+//        trimTrailingWhitespace()
+//        endWithNewline()
+//        licenseHeaderFile(file("HEADER")).yearSeparator("-")
+//    }
+//
+//    groovy {
+//        importOrder("java|javax", "groovy", "", "\\#", "$group", "\\#$group")
+//
+//        trimTrailingWhitespace()
+//        endWithNewline()
+//        licenseHeaderFile(file("HEADER")).yearSeparator("-")
+//        removeSemicolons()
+//
+//        greclipse()
+//    }
+//
+//    groovyGradle {
+//        target("src/**/*.gradle", "*.gradle")
+//        // Exclude build.gradle because it keeps pestering me about it!
+//        targetExclude("**/build.gradle")
+//
+//        trimTrailingWhitespace()
+//        endWithNewline()
+//        greclipse()
+//    }
+//
+//    kotlin {
+//        targetExclude("**/build.gradle.kts")
+//        targetExclude("src/test/resources/projects/*/**")
+//
+//        ktlint()
+//
+//        trimTrailingWhitespace()
+//        endWithNewline()
+//        licenseHeaderFile(file("HEADER")).yearSeparator("-")
+//    }
+//}
 
-    java {
-        targetExclude("**/generated/**")
-
-        importOrder("java|javax", "", "\\#", "$group", "\\#$group")
-        removeUnusedImports()
-        forbidWildcardImports()
-
-        cleanthat()
-        eclipse().configFile(file("eclipse-formatter.xml"))
-        // NOTE(aoqia): It's a nice feature but it causes some issues, so it will remain disabled for now.
-//            .sortMembersEnabled(true)
-        formatAnnotations()
-
-        trimTrailingWhitespace()
-        endWithNewline()
-        licenseHeaderFile(file("HEADER")).yearSeparator("-")
-    }
-
-    groovy {
-        importOrder("java|javax", "groovy", "", "\\#", "$group", "\\#$group")
-
-        trimTrailingWhitespace()
-        endWithNewline()
-        licenseHeaderFile(file("HEADER")).yearSeparator("-")
-        removeSemicolons()
-
-        greclipse()
-    }
-
-    groovyGradle {
-        target("src/**/*.gradle", "*.gradle")
-        // Exclude build.gradle because it keeps pestering me about it!
-        targetExclude("**/build.gradle")
-
-        trimTrailingWhitespace()
-        endWithNewline()
-        greclipse()
-    }
-
-    kotlin {
-        targetExclude("**/build.gradle.kts")
-        targetExclude("src/test/resources/projects/*/**")
-
-        ktlint()
-
-        trimTrailingWhitespace()
-        endWithNewline()
-        licenseHeaderFile(file("HEADER")).yearSeparator("-")
-    }
-}
-
-// TODO(aoqia): Enable and setup CodeNarc after initial formatting
 // codenarc {
 //     configFile = file("codenarc.groovy")
 // }
 
-// TODO(aoqia): Setup checkstyle
 // checkstyle {
 //     configFile = file("checkstyle.xml")
 // }
