@@ -12,7 +12,6 @@ var groupUrl = rootProject.group.toString().replace(".", "/")
 // Environment variables
 val env = System.getenv()!!
 val isCiEnv = env["CI"].toBoolean()
-// TODO(aoqia): Update gpg keys and maven info on the repositories
 val gpgKeyPassphrase = env["GPG_PASSPHRASE_KEY"]
 val gpgKeyPublic = env["GPG_PUBLIC_KEY"]
 val gpgKeyPrivate = env["GPG_PRIVATE_KEY"]
@@ -425,7 +424,6 @@ gradlePlugin {
 }
 
 publishing {
-    // TODO(aoqia): Wrap this in an if CI to stop configuring publishing unnecessarily
     publications.withType<MavenPublication>().configureEach {
         pom {
             name = rootProject.name
@@ -487,16 +485,20 @@ jreleaser {
 
     signing {
         active = Active.ALWAYS
-        armored = true
-        passphrase = gpgKeyPassphrase
-        publicKey = gpgKeyPublic
-        secretKey = gpgKeyPrivate
+
+        pgp {
+            active = Active.ALWAYS
+            armored = true
+            passphrase = gpgKeyPassphrase
+            publicKey = gpgKeyPublic
+            secretKey = gpgKeyPrivate
+        }
     }
 
     deploy {
         maven {
             pomchecker {
-                version = "1.14.0"
+                version = "1.15.0"
                 failOnWarning = false // annoying
                 failOnError = true
                 strict = true
@@ -549,7 +551,6 @@ jreleaser {
             changelog {
                 formatted = Active.ALWAYS
                 preset = "conventional-commits"
-                extraProperties.put("categorizeScopes", "true")
             }
         }
     }
