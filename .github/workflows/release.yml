@@ -28,7 +28,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Build
-        run: ./gradlew build -x test -S
+        run: ./gradlew build -x test -S -Pleaf.loom.ignoreMissingFiles=true
 
       - name: Deploy
         run: ./gradlew publish -x test -S
