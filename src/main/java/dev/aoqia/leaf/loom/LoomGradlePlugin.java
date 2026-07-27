@@ -49,7 +49,7 @@ import dev.aoqia.leaf.loom.util.LibraryLocationLogger;
 import dev.aoqia.leaf.loom.util.OneDrive;
 
 public class LoomGradlePlugin implements Plugin<PluginAware> {
-	public static final String NAME = "loom";
+	public static final String NAME = "dev.aoqia.leaf.loom";
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final String LOOM_VERSION = Objects.requireNonNullElse(LoomGradlePlugin.class.getPackage().getImplementationVersion(), "0.0.0+unknown");
 

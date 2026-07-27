@@ -34,12 +34,6 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-import dev.aoqia.leaf.loom.LoomNoRemapGradlePlugin;
-import dev.aoqia.leaf.loom.util.Constants;
-import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFile;
-import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
-import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
-
 import org.gradle.api.Project;
 import org.gradle.api.configuration.BuildFeatures;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -49,6 +43,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 
 import dev.aoqia.leaf.loom.LoomGradleExtension;
+import dev.aoqia.leaf.loom.LoomRemapGradlePlugin;
 import dev.aoqia.leaf.loom.api.mappings.intermediate.IntermediateMappingsProvider;
 import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.configuration.InstallerData;
@@ -63,8 +58,12 @@ import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.library.LibraryProcessorManager;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.IntermediaryZomboidProvider;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.mapped.NamedZomboidProvider;
+import dev.aoqia.leaf.loom.util.Constants;
+import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFile;
+import dev.aoqia.leaf.loom.util.copygamefile.CopyGameFileBuilder;
 import dev.aoqia.leaf.loom.util.download.Download;
 import dev.aoqia.leaf.loom.util.download.DownloadBuilder;
+import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 
 public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl implements LoomGradleExtension {
 	private final Project project;
@@ -122,7 +121,7 @@ public abstract class LoomGradleExtensionImpl extends LoomGradleExtensionApiImpl
 		dontRemap = project.getObjects().property(Boolean.class);
 
         // TODO:
-		if (project.getPluginManager().hasPlugin(LoomNoRemapGradlePlugin.NAME)) {
+		if (!project.getPluginManager().hasPlugin(LoomRemapGradlePlugin.NAME)) {
 			disableObfuscation.set(true);
 			disableObfuscation.finalizeValue();
 		} else {

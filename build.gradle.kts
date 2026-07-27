@@ -402,7 +402,7 @@ gradlePlugin {
     plugins {
         register("leafLoom") {
             id = "${rootProject.group}.${rootProject.name}"
-            implementationClass = "${rootProject.group}.${rootProject.name}.LoomNoRemapGradlePlugin"
+            implementationClass = "${rootProject.group}.${rootProject.name}.LoomGradlePlugin"
         }
         register("leafLoomRemap") {
             id = "${rootProject.group}.${rootProject.name}-remap"
