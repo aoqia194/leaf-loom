@@ -39,8 +39,6 @@ import java.util.stream.Collectors;
 
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJar;
 
-import dev.aoqia.leaf.loom.util.Platform;
-
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
