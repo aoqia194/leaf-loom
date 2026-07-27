@@ -507,9 +507,9 @@ jreleaser {
             mavenCentral {
                 create("sonatype") {
                     applyMavenCentralRules = true
-                    active = Active.ALWAYS
+                    active = Active.RELEASE
                     snapshotSupported = true
-                    authorization = Http.Authorization.BEARER
+                    authorization = Http.Authorization.BASIC
                     username = mavenUsername
                     password = mavenPassword
                     url = "https://central.sonatype.com/api/v1/publisher"
