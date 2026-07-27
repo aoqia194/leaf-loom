@@ -408,10 +408,6 @@ gradlePlugin {
             id = "${rootProject.group}.${rootProject.name}-remap"
             implementationClass = "${rootProject.group}.${rootProject.name}.LoomRemapGradlePlugin"
         }
-        register("leafLoomLegacy") {
-            id = rootProject.name
-            implementationClass = "${rootProject.group}.${rootProject.name}.LoomGradlePlugin"
-        }
         register("leafLoomCompanion") {
             id = "${rootProject.group}.${rootProject.name}-companion"
             implementationClass = "${rootProject.group}.${rootProject.name}.LoomCompanionGradlePlugin"
