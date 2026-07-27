@@ -10,8 +10,7 @@ dev-launch-injector = "0.2.1+build.8"
 fabric-log4j-util = "1.0.2"
 jetbrains-annotations = "26.0.2"
 native-support = "1.0.1"
-# TODO(aoqia): Change to leaf-installer when setup
-fabric-installer = "1.0.3"
+leaf-installer = "1.6.0"
 
 # Dev tools
 renderdoc = "1.37"
@@ -29,7 +28,7 @@ dev-launch-injector = { module = "net.fabricmc:dev-launch-injector", version.ref
 fabric-log4j-util = { module = "net.fabricmc:fabric-log4j-util", version.ref = "fabric-log4j-util" }
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
 native-support = { module = "net.fabricmc:fabric-loom-native-support", version.ref = "native-support" }
-fabric-installer = { module = "net.fabricmc:fabric-installer", version.ref = "fabric-installer" }
+leaf-installer = { module = "dev.aoqia.leaf:installer", version.ref = "leaf-installer" }
 
 # Dev tools
 renderdoc = { module = "org.renderdoc:renderdoc", version.ref = "renderdoc" } # Not a maven dependency

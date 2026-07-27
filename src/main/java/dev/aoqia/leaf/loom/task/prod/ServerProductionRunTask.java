@@ -81,7 +81,7 @@ public abstract non-sealed class ServerProductionRunTask extends AbstractProduct
 		getLoaderVersion().convention(getProjectLoaderVersion());
 		getMinecraftVersion().convention(getExtension().getZomboidVersion());
 		getInstallPropertiesJar().convention(getProject().getLayout().getBuildDirectory().file("server_properties.jar"));
-		getInstallerVersion().convention(LoomVersions.FABRIC_INSTALLER.version());
+		getInstallerVersion().convention(LoomVersions.LEAF_INSTALLER.version());
 
 		getMainClass().convention("dev.aoqia.leaf.installer.ServerLauncher");
 		getClasspath().from(detachedConfigurationProvider("dev.aoqia.leaf:installer:%s:server", getInstallerVersion()));
