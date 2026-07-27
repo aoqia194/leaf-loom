@@ -1,11 +1,11 @@
 # Leaf Loom
 
-A [Gradle](https://gradle.org/) plugin to setup a development environment for Project Zomboid mods. Primarily used in
+A [Gradle](https://gradle.org/) plugin to set up a development environment for Project Zomboid mods. Primarily used in
 the Leaf toolchain.
 
 * Has built in support for tiny mappings (Used by [Yarn](https://github.com/aoqia194/leaf-yarn))
-* Utilises the Fernflower and CFR decompilers to generate source code with comments.
-* Designed to support modern versions of Project Zomboid (Tested with 41.78.16 and upwards)
+* Utilises the Vineflower and CFR decompilers to generate source code with comments.
+* Designed to support modern versions of Project Zomboid (Tested with 41.78.16 and upwards, including unstable versions)
 * Built in support for IntelliJ IDEA, Eclipse and Visual Studio Code to generate run configurations for Zomboid.
 * Loom targets the latest version of Gradle 7 or newer
 * Supports Java 17 upwards
