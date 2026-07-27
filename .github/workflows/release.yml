@@ -21,6 +21,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: 25
+          distribution: temurin
+          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
       - name: Fetch Build Output
         uses: actions/download-artifact@v8
         with:
@@ -28,7 +38,7 @@ jobs:
           path: build/
 
       - name: Deploy
-        run: ./gradlew publish -S
+        run: ./gradlew publish -x test -S
 
       - name: Release Plugin (Sonatype Maven Central)
         env:
