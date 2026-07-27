@@ -3,14 +3,10 @@ name: Release
 on: workflow_dispatch
 
 jobs:
-  build:
-    name: Build
-    uses: ./.github/workflows/build.yml
-
   release:
     name: Release
-    needs: build
     runs-on: ubuntu-latest
+    environment: publishing
 
     permissions:
       contents: write
@@ -31,11 +27,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Fetch Build Output
-        uses: actions/download-artifact@v8
-        with:
-          name: build-output
-          path: build/
+      - name: Build
+        run: ./gradlew build -x test -S
 
       - name: Deploy
         run: ./gradlew publish -x test -S

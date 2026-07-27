@@ -37,12 +37,3 @@ jobs:
 
       - name: Build
         run: ./gradlew build -x test -S
-
-      - name: Upload Build Output
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: build/
-          retention-days: 7
-          if-no-files-found: error
-          overwrite: true
