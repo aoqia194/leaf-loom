@@ -127,7 +127,9 @@ public class DefaultRunConfigurationSettings {
             }
 
             // Only care about system props for now!
-            if (arg.startsWith("-D")) {
+            // TODO(leaf): Is it OK to keep headless for dev env (which has console)?
+            //   We definitely need to make sure it is removed for prod env as it hides the loader exception UI.
+            if (arg.startsWith("-D") && !arg.startsWith("-Djava.awt.headless")) {
                 run.getJvmArguments().add(arg);
             }
         });
