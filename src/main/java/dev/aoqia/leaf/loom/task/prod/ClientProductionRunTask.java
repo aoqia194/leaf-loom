@@ -148,7 +148,6 @@ public abstract non-sealed class ClientProductionRunTask extends AbstractProduct
 	protected void configureProgramArgs(ExecSpec exec) {
 		super.configureProgramArgs(exec);
 
-        // TODO(leaf): Assets dont exist here :<
 		exec.args(
 				"--assetIndex", getAssetsIndex().get(),
 				"--assetsDir", getAssetsDir().get().getAsFile().getAbsolutePath(),

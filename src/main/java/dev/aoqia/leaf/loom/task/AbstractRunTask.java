@@ -198,21 +198,6 @@ public abstract class AbstractRunTask extends JavaExec {
 			super.setClasspath(getInternalClasspath());
 		}
 
-        // NOTE(leaf): The game doesn't like us setting the working directory anywhere.
-        // It requires the working directory to be the folder containing game assets/natives.
-        // We can get around this by setting workingDir to assets folder, then setting cachedir/etc as runDir.
-        // TODO(leaf): Implement
-
-//        this.setWorkingDir(getInternalRunDir().get());
-//
-//        // Ensure that the run dir was created.
-//        try {
-//            LOGGER.debug("Creating run dir with path {}", getGameRunDir().get());
-//            Files.createDirectories(Path.of(getGameRunDir().get()));
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-
 		setWorkingDir(getInternalRunDir());
 		environment(getInternalEnvironmentVars().get());
 

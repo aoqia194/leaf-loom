@@ -95,7 +95,7 @@ public final class JarWalker {
 
 				final String fileName = entry.toString().substring(fs.getRoot().toString().length());
 
-                // TODO(leaf): Hacky hacky hack!
+                // FIXME(leaf): Hacky hacky hack!
 				if (!fileName.endsWith(".class") || fileName.startsWith("META-INF/versions/")) {
 					continue;
 				}

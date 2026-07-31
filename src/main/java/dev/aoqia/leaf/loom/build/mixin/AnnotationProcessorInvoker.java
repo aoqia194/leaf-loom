@@ -145,7 +145,6 @@ public abstract class AnnotationProcessorInvoker<T extends Task> {
 						configs.named(Constants.Configurations.MAPPINGS_FINAL)
 				);
 
-                // TODO(leaf): Was commented out on older leaf-loom build
 				// Add Mixin and mixin extensions (fabric-mixin-compile-extensions pulls mixin itself too)
 				project.getDependencies().add(processorConfig.getName(),
 						LoomVersions.MIXIN_COMPILE_EXTENSIONS.mavenNotation());

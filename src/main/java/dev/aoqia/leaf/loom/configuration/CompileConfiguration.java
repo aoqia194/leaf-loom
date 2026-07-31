@@ -207,7 +207,7 @@ public abstract class CompileConfiguration implements Runnable {
 
 			// Resolve the mapping files from the configuration
 			final DependencyInfo mappingsDep = DependencyInfo.create(getProject(), Configurations.MAPPINGS);
-		final MappingConfiguration mappingConfiguration = MappingConfiguration.create(getProject(), configContext.serviceFactory(), mappingsDep, zomboidProvider);
+		    final MappingConfiguration mappingConfiguration = MappingConfiguration.create(getProject(), configContext.serviceFactory(), mappingsDep, zomboidProvider);
 			extension.setMappingConfiguration(mappingConfiguration);
 			mappingConfiguration.applyToProject(getProject(), mappingsDep);
 		}
