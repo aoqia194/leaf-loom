@@ -38,9 +38,11 @@ import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.api.tasks.TaskProvider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.aoqia.leaf.loom.LoomGradleExtension;
 import dev.aoqia.leaf.loom.api.RunConfiguration;
-import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidVersionMeta;
 import dev.aoqia.leaf.loom.task.launch.GenerateDLIConfigTask;
 import dev.aoqia.leaf.loom.task.launch.GenerateLog4jConfigTask;
@@ -51,9 +53,6 @@ import dev.aoqia.leaf.loom.util.LoomVersions;
 import dev.aoqia.leaf.loom.util.Platform;
 import dev.aoqia.leaf.loom.util.gradle.GradleUtils;
 import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class LoomTasks implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoomTasks.class);
@@ -77,6 +76,12 @@ public abstract class LoomTasks implements Runnable {
 		if (!extension.disableObfuscation()) {
 			registerMigrateMappingsTasks();
 		}
+
+        // Used for clearing loom cache from IDE when there are lots of
+        // versions.
+        getTasks().register("clearLoomCache", ClearLoomCacheTask.class, t -> {
+            t.setDescription("Clears the leaf-loom gradle caches.");
+        });
 
 		var generateLog4jConfig = getTasks().register("generateLog4jConfig", GenerateLog4jConfigTask.class, t -> {
 			t.setDescription("Generate the log4j config file");
