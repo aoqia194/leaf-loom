@@ -204,6 +204,11 @@ publishTasks.configureEach {
     mustRunAfter(publishTasks.matching { it.name < this.name })
 }
 
+// Workaround for https://youtrack.jetbrains.com/issue/KT-46466
+tasks.withType<AbstractPublishToMaven>().configureEach {
+    dependsOn(tasks.withType<Sign>())
+}
+
 tasks.jar {
     manifest {
         attributes("Implementation-Version" to project.version)
