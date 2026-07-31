@@ -20,7 +20,6 @@ test-retry = "1.6.2"
 # checkstyle = "13.4.1"
 # codenarc = "3.7.0"
 gradle-plugin-publish = "2.1.1"
-jreleaser = "1.25.0"
 
 [libraries]
 
@@ -53,7 +52,6 @@ kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 retry = { id = "org.gradle.test-retry", version.ref = "test-retry" }
 gradle-plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-plugin-publish" }
-jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
 
 [bundles]
 
