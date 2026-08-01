@@ -37,7 +37,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Release
-        run: ./gradlew build publish -x test -S
+        run: ./gradlew publish -x test -S
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_PRIVATE_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_PASSPHRASE_KEY }}
