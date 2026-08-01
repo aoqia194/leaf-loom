@@ -210,7 +210,7 @@ tasks.withType<AbstractPublishToMaven>().configureEach {
 }
 
 tasks.withType<Sign>().configureEach {
-    onlyIf { isCiBuild && !isSnapshot }
+    enabled = isCiBuild && !isSnapshot
 }
 
 tasks.jar {
@@ -484,7 +484,7 @@ publishing {
 }
 
 signing {
-    isRequired = !isSnapshot
+    isRequired = isCiBuild and !isSnapshot
 
     val signingKey = providers.gradleProperty("signingKey")
     val signingPassword = providers.gradleProperty("signingPassword")
