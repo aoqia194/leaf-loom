@@ -210,7 +210,7 @@ tasks.withType<AbstractPublishToMaven>().configureEach {
 }
 
 tasks.withType<Sign>().configureEach {
-    onlyIf { !isSnapshot }
+    onlyIf { isCiBuild && !isSnapshot }
 }
 
 tasks.jar {
@@ -277,7 +277,7 @@ tasks.named<Test>("test") {
 
     testLogging {
         // Log everything to the console
-        setEvents(TestLogEvent.values().toList())
+        setEvents(TestLogEvent.entries)
     }
 }
 
