@@ -209,6 +209,10 @@ tasks.withType<AbstractPublishToMaven>().configureEach {
     dependsOn(tasks.withType<Sign>())
 }
 
+tasks.withType<Sign>().configureEach {
+    onlyIf { !isSnapshot }
+}
+
 tasks.jar {
     manifest {
         attributes("Implementation-Version" to project.version)
