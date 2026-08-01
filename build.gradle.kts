@@ -466,16 +466,6 @@ publishing {
         }
     }
 
-    publications {
-        register<MavenPublication>("maven") {
-            groupId = rootProject.group.toString()
-            artifactId = rootProject.name
-            version = rootProject.version.toString()
-
-            from(components["java"])
-        }
-    }
-
     repositories {
         maven {
             name = "leaf"
