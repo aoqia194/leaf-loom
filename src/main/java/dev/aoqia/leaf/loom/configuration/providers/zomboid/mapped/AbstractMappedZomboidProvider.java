@@ -92,7 +92,7 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 
 	public List<ZomboidJar> provide(ProvideContext context) throws Exception {
 		final List<RemappedJars> remappedJars = getRemappedJars();
-		final List<ZomboidJar> minecraftJars = remappedJars.stream()
+		final List<ZomboidJar> gameJars = remappedJars.stream()
 				.map(RemappedJars::outputJar)
 				.toList();
 
@@ -103,7 +103,7 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 		if (shouldRefreshOutputs(context)) {
 			try {
 				remapInputs(remappedJars, context.configContext());
-				createBackupJars(minecraftJars);
+				createBackupJars(gameJars);
 			} catch (Throwable t) {
 				cleanOutputs(remappedJars);
 
@@ -122,7 +122,7 @@ public abstract class AbstractMappedZomboidProvider<M extends ZomboidProvider> i
 			}
 		}
 
-		return minecraftJars;
+		return gameJars;
 	}
 
 	// Create two copies of the remapped jar, the backup jar is used as the input of genSources

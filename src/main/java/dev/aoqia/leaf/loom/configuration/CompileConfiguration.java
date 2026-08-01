@@ -132,11 +132,8 @@ public abstract class CompileConfiguration implements Runnable {
 					setupZomboid(configContext);
 				}
 
-                // NOTE(leaf): If we only want to provide jars, don't setup mixin or other tasks!
-                if (!GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
-                    var dependencyManager = new LoomDependencyManager(getProject(), serviceFactory, extension);
-                    dependencyManager.handleDependencies();
-                }
+                var dependencyManager = new LoomDependencyManager(getProject(), serviceFactory, extension);
+                dependencyManager.handleDependencies();
 			} catch (Exception e) {
 				ExceptionUtil.processException(e, DaemonUtils.Context.fromProject(getProject()));
 				disownLock();
@@ -146,15 +143,14 @@ public abstract class CompileConfiguration implements Runnable {
 			releaseLock();
 			extension.setRefreshDeps(previousRefreshDeps);
 
-            // NOTE(leaf): If we only want to provide jars, don't setup mixin or other tasks!
-            if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
-                return;
-            }
-
 			MixinExtension mixin = LoomGradleExtension.get(getProject()).getMixin();
 			if (mixin.getUseLegacyMixinAp().get()) {
 				setupMixinAp(mixin);
 			}
+
+            if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.MINIMAL_SETUP)) {
+                return;
+            }
 
 			configureDecompileTasks(configContext);
 			configureTestTask();
@@ -193,8 +189,7 @@ public abstract class CompileConfiguration implements Runnable {
 		extension.setZomboidProvider(zomboidProvider);
 		zomboidProvider.provide();
 
-        // NOTE(leaf): If we only want to provide jars, don't setup anything else!
-        if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
+        if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.MINIMAL_SETUP)) {
             return;
         }
 

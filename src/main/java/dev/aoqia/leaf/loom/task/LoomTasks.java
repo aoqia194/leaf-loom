@@ -65,11 +65,9 @@ public abstract class LoomTasks implements Runnable {
 
 	@Override
 	public void run() {
-        // NOTE(leaf): If only provide jars then dont setup tasks or anything else.
-        // TODO(leaf): Is this even needed here anymore?
-//        if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.ONLY_PROVIDE_JARS)) {
-//            return;
-//        }
+        if (GradleUtils.getBooleanProperty(getProject(), Constants.Properties.MINIMAL_SETUP)) {
+            return;
+        }
 
 		LoomGradleExtension extension = LoomGradleExtension.get(getProject());
 

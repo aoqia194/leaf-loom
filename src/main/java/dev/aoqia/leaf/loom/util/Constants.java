@@ -172,17 +172,13 @@ public class Constants {
 		public static final String DECOMPILE_CACHE_MAX_FILES = "leaf.loom.decompileCacheMaxFiles";
 		public static final String DECOMPILE_CACHE_MAX_AGE = "leaf.loom.decompileCacheMaxAge";
 		/**
-		 * When using the MojangMappingLayer this will remove names for non root methods by using the intermediary mappings.
+		 * When using the MojangMappingLayer this will remove names for non-root methods by using the intermediary mappings.
 		 */
 		public static final String DROP_NON_INTERMEDIATE_ROOT_METHODS = "leaf.loom.dropNonIntermediateRootMethods";
 		/**
 		 * Set to true in all {@link dev.aoqia.leaf.loom.task.RenderDocRunTask} can be used to determine at runtime if running with loom's renderdoc setup.
 		 */
 		public static final String RENDER_DOC = "leaf.loom.renderdoc.enabled";
-        /**
-         * Skip setting up mixin and decompile/test tasks, and only set up the game provider jars.
-         */
-        public static final String ONLY_PROVIDE_JARS = "leaf.loom.onlyProvideJars";
         /*
          * Skip validating the game files against their hashes.
          */
@@ -191,6 +187,10 @@ public class Constants {
          * When decompiling game files this will accept all class files, not just ones in zombie/*
          */
         public static final String DECOMPILE_EVERYTHING = "leaf.loom.decompileEverything";
+        /**
+         * When loom is applied as a plugin to a project, ignore the fact that there may be missing required game files.
+         */
+        public static final String MINIMAL_SETUP = "leaf.loom.minimalSetup";
 	}
 
 	public static final class Manifest {
