@@ -6,11 +6,13 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
 import java.util.Properties
 
-// Project variables
-var groupUrl = rootProject.group.toString().replace(".", "/")
-
 val isCiBuild = providers.environmentVariable("CI").map { it.toBoolean() }.orElse(false).get()
 val isSnapshot = providers.gradleProperty("isSnapshot").map { it.toBoolean() }.orElse(false).get()
+
+var groupUrl = rootProject.group.toString().replace(".", "/")
+
+val baseVersion = project.version.toString()
+project.version = if (isSnapshot) "$baseVersion-SNAPSHOT" else if (!isCiBuild) "$baseVersion.local" else baseVersion
 
 // We must build against the version of Kotlin Gradle ships with.
 val props = Properties()
@@ -50,17 +52,8 @@ plugins {
     signing
 }
 
-val baseVersion = project.version.toString()
-project.version = if (isSnapshot) "$baseVersion-SNAPSHOT" else baseVersion
-
 base {
     archivesName = project.name
-}
-
-allprojects {
-    if (!isCiBuild) {
-        version = "${version}.local"
-    }
 }
 
 configurations.configureEach {
