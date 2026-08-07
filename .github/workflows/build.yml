@@ -2,13 +2,6 @@ name: Build
 
 on:
   push:
-    paths:
-      - 'buildSrc/**'
-      - 'gradle/**'
-      - 'src/**'
-      - 'build.gradle.kts'
-      - 'gradle.properties'
-      - 'settings.gradle.kts'
   pull_request:
     branches:
       - main
@@ -27,6 +20,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
+        with:
+          filters: |
+            code:
+              - 'buildSrc/**'
+              - 'gradle/**'
+              - 'src/**'
+              - '*.gradle.kts'
+              - 'gradle.properties'
   build:
     name: Build
     runs-on: ubuntu-latest
