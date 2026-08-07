@@ -43,21 +43,16 @@ jobs:
           ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MAVEN_PASSWORD }}
           ORG_GRADLE_PROJECT_isSnapshot: ${{ github.event.inputs.is_snapshot || false }}
 
-  changelog:
-    name: Changelog
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-    permissions:
-      contents: write
-    steps:
       - name: Generate Changelog
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         id: cliff
         uses: orhun/git-cliff-action@v4
         with:
-          config: "${{ github.workspace }}/.cliff.toml"
-          args: --latest --strip header
+          config: ".cliff.toml"
+          args: --latest -vv
 
       - name: Create GitHub Release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v3
         with:
           body: ${{ steps.cliff.outputs.content }}
