@@ -50,6 +50,8 @@ jobs:
         with:
           config: ".cliff.toml"
           args: --latest -vv
+        env:
+          GITHUB_REPO: ${{ github.repository }}
 
       - name: Create GitHub Release
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
