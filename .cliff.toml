@@ -3,9 +3,6 @@ owner = "aoqia194"
 repo = "leaf-loom"
 
 [changelog]
-header = """
-# Changelog
-"""
 body = """
 {%- macro remote_url() -%}
   https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}

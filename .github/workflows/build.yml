@@ -2,8 +2,13 @@ name: Build
 
 on:
   push:
-    branches:
-      - main
+    paths:
+      - 'buildSrc/**'
+      - 'gradle/**'
+      - 'src/**'
+      - 'build.gradle.kts'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
   pull_request:
     branches:
       - main
