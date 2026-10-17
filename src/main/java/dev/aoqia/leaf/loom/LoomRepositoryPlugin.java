@@ -63,7 +63,7 @@ public class LoomRepositoryPlugin implements Plugin<PluginAware> {
 
         repositories.maven(repo -> {
 			repo.setName("Leaf");
-			repo.setUrl(MirrorUtil.getLeafRepository(target));
+			repo.setUrl(MirrorUtil.getLeafReleaseRepository(target));
 		});
 
 		repositories.maven(repo -> {

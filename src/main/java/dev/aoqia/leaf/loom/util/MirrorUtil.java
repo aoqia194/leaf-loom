@@ -88,12 +88,21 @@ public class MirrorUtil {
 		return Constants.FABRIC_REPOSITORY;
 	}
 
-    public static String getLeafRepository(ExtensionAware aware) {
+    public static String getLeafReleaseRepository(ExtensionAware aware) {
         final var ext = aware.getExtensions().getExtraProperties();
 		if (ext.has("loom_leaf_repository")) {
 			return String.valueOf(ext.get("loom_leaf_repository"));
 		}
 
 		return Constants.LEAF_REPOSITORY;
+	}
+
+    public static String getLeafSnapshotRepository(ExtensionAware aware) {
+        final var ext = aware.getExtensions().getExtraProperties();
+		if (ext.has("loom_leaf_snapshot_repository")) {
+			return String.valueOf(ext.get("loom_leaf_snapshot_repository"));
+		}
+
+		return Constants.LEAF_SNAPSHOT_REPOSITORY;
 	}
 }
