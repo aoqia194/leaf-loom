@@ -67,7 +67,6 @@ import dev.aoqia.leaf.loom.configuration.IncludeConfigurations;
 import dev.aoqia.leaf.loom.configuration.RemapConfigurations;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
 import dev.aoqia.leaf.loom.configuration.mods.ArtifactMetadata;
-import dev.aoqia.leaf.loom.configuration.processors.JarProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpec;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingSpecBuilderImpl;
 import dev.aoqia.leaf.loom.configuration.providers.mappings.LayeredMappingsFactory;
@@ -88,8 +87,6 @@ import dev.aoqia.leaf.loom.util.gradle.SourceSetHelper;
  */
 public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionAPI {
 	protected final DeprecationHelper deprecationHelper;
-	@Deprecated()
-	protected final ListProperty<JarProcessor> jarProcessors;
 	protected final ConfigurableFileCollection log4jConfigs;
 	protected final RegularFileProperty accessWidener;
 	protected final RegularFileProperty fabricModJsonPath;
@@ -127,8 +124,6 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	protected final Map<LayeredMappingSpec, LayeredMappingsFactory> layeredMappingsDependencyMap = new HashMap<>();
 
 	protected LoomGradleExtensionApiImpl(Project project, LoomFiles directories) {
-		this.jarProcessors = project.getObjects().listProperty(JarProcessor.class)
-				.empty();
 		this.log4jConfigs = project.files(directories.getDefaultLog4jConfigFile());
 		this.accessWidener = project.getObjects().fileProperty();
 		this.fabricModJsonPath = project.getObjects().fileProperty();
@@ -180,7 +175,6 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 		this.zomboidJarConfiguration.finalizeValueOnRead();
 
 		this.accessWidener.finalizeValueOnRead();
-		this.getGameJarProcessors().finalizeValueOnRead();
 
 		this.remapJsrAnnotationsToJetBrains = project.getObjects().property(Boolean.class).convention(true);
 		this.remapJsrAnnotationsToJetBrains.finalizeValueOnRead();
@@ -235,11 +229,6 @@ public abstract class LoomGradleExtensionApiImpl implements LoomGradleExtensionA
 	@Override
 	public void decompilers(Action<NamedDomainObjectContainer<DecompilerOptions>> action) {
 		action.execute(decompilers);
-	}
-
-	@Override
-	public ListProperty<JarProcessor> getGameJarProcessors() {
-		return jarProcessors;
 	}
 
 	@Override

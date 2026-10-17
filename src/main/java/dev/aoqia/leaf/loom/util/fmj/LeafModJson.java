@@ -35,7 +35,7 @@ import com.google.gson.JsonObject;
 import org.jspecify.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
-public abstract sealed class LeafModJson permits LeafModJsonV0, LeafModJsonV1, LeafModJsonV2, LeafModJson.Mockable {
+public abstract sealed class LeafModJson permits LeafModJsonV1, LeafModJsonV2, LeafModJson.Mockable {
 	protected final JsonObject jsonObject;
 	private final LeafModJsonSource source;
 

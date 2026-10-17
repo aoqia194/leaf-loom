@@ -28,12 +28,12 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 
-import dev.aoqia.leaf.loom.api.mappings.layered.MappingsNamespace;
 import dev.aoqia.leaf.loom.util.IOStringConsumer;
 
-public record DecompilationMetadata(int numberOfThreads, Path javaDocs, Collection<Path> libraries, IOStringConsumer logger, Map<String, String> options, String runtimeNamespace) {
-	@Deprecated
-	public DecompilationMetadata(int numberOfThreads, Path javaDocs, Collection<Path> libraries, IOStringConsumer logger, Map<String, String> options) {
-		this(numberOfThreads, javaDocs, libraries, logger, options, MappingsNamespace.NAMED.toString());
-	}
-}
+public record DecompilationMetadata(
+    int numberOfThreads,
+    Path javaDocs,
+    Collection<Path> libraries,
+    IOStringConsumer logger,
+    Map<String, String> options,
+    String runtimeNamespace) {}

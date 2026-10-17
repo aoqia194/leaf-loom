@@ -54,7 +54,6 @@ import dev.aoqia.leaf.loom.api.processor.ZomboidJarProcessor;
 import dev.aoqia.leaf.loom.api.remapping.RemapperExtension;
 import dev.aoqia.leaf.loom.api.remapping.RemapperParameters;
 import dev.aoqia.leaf.loom.configuration.ide.RunConfigSettings;
-import dev.aoqia.leaf.loom.configuration.processors.JarProcessor;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ManifestLocations;
 import dev.aoqia.leaf.loom.configuration.providers.zomboid.ZomboidJarConfiguration;
 import dev.aoqia.leaf.loom.task.GenerateSourcesTask;
@@ -88,14 +87,6 @@ public interface LoomGradleExtensionAPI {
 	NamedDomainObjectContainer<DecompilerOptions> getDecompilerOptions();
 
 	void decompilers(Action<NamedDomainObjectContainer<DecompilerOptions>> action);
-
-	@Deprecated()
-	ListProperty<JarProcessor> getGameJarProcessors();
-
-	@Deprecated()
-	default void addJarProcessor(JarProcessor processor) {
-		getGameJarProcessors().add(processor);
-	}
 
 	ListProperty<ZomboidJarProcessor<?>> getZomboidJarProcessors();
 
@@ -158,14 +149,6 @@ public interface LoomGradleExtensionAPI {
 
 	@ApiStatus.Experimental
 	ManifestLocations getVersionsManifests();
-
-	/**
-	 * @deprecated use {@linkplain #getCustomZomboidMetadata} instead
-	 */
-	@Deprecated
-	default Property<String> getCustomZomboidManifest() {
-		return getCustomZomboidMetadata();
-	}
 
 	Property<String> getCustomZomboidMetadata();
 

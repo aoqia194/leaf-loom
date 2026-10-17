@@ -75,40 +75,7 @@ public abstract class ModSettings implements Named {
 			}
 		}
 
-		sourceSet(sourceSet, project);
-	}
-
-	/**
-	 * Add {@link SourceSet}'s output directories from the current project to be grouped with the named mod.
-	 *
-	 * @param name the name of the source set
-	 */
-	public void sourceSet(String name) {
-		sourceSet(name, getProject());
-	}
-
-	/**
-	 * Add {@link SourceSet}'s output directories from the supplied project to be grouped with the named mod.
-	 * @deprecated Replaced with {@link #sourceSet(String, String)} to avoid passing a project reference.
-	 */
-	@Deprecated
-	public void sourceSet(SourceSet sourceSet, Project project) {
-		ensureCompanion(project);
-
 		sourceSet(sourceSet.getName(), project.getPath());
-	}
-
-	/**
-	 * Add {@link SourceSet}'s output directories from the supplied project to be grouped with the named mod.
-	 *
-	 * @param name the name of the source set
-	 * @deprecated Replaced with {@link #sourceSet(String, String)} to avoid passing a project reference.
-	 */
-	@Deprecated
-	public void sourceSet(String name, Project project) {
-		ensureCompanion(project);
-
-		sourceSet(name, project.getPath());
 	}
 
 	/**

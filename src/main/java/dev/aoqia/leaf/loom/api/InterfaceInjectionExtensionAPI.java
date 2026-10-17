@@ -24,9 +24,7 @@
 
 package dev.aoqia.leaf.loom.api;
 
-import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.SourceSet;
 
 public interface InterfaceInjectionExtensionAPI {
 	/**
@@ -39,12 +37,6 @@ public interface InterfaceInjectionExtensionAPI {
 	Property<Boolean> getEnableDependencyInterfaceInjection();
 
 	Property<Boolean> getIsEnabled();
-
-	/**
-	 * @deprecated now uses the source sets defined in {@link LoomGradleExtensionAPI#getMods()}
-	 */
-	@Deprecated(forRemoval = true)
-	ListProperty<SourceSet> getInterfaceInjectionSourceSets();
 
 	default boolean isEnabled() {
 		return getIsEnabled().get();

@@ -64,12 +64,7 @@ public final class ZomboidJarProcessorManager {
 		final LoomGradleExtension extension = LoomGradleExtension.get(project);
 		List<ZomboidJarProcessor<?>> processors = new ArrayList<>(extension.getZomboidJarProcessors().get());
 
-		for (JarProcessor legacyProcessor : extension.getGameJarProcessors().get()) {
-			processors.add(project.getObjects().newInstance(LegacyJarProcessorWrapper.class, legacyProcessor));
-		}
-
 		SpecContext specContext;
-
 		if (extension.disableObfuscation()) {
 			specContext = DeobfSpecContext.create(project);
 		} else {

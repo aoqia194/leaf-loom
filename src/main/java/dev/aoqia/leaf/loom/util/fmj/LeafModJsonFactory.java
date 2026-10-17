@@ -68,7 +68,6 @@ public final class LeafModJsonFactory {
 		}
 
 		return switch (schemaVersion) {
-		case 0 -> new LeafModJsonV0(jsonObject, source);
 		case 1 -> new LeafModJsonV1(jsonObject, source);
 		case 2 -> new LeafModJsonV2(jsonObject, source);
 		default -> throw new UnsupportedOperationException(String.format("This version of loom doesn't support the newer leaf.mod.json schema version of (%s) Please update loom to be able to read this.", schemaVersion));

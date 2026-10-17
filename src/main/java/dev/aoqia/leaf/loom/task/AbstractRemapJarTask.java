@@ -313,13 +313,6 @@ public abstract class AbstractRemapJarTask extends Jar {
 		}
 	}
 
-	@Deprecated
-	@InputFile
-	@PathSensitive(PathSensitivity.NONE)
-	public RegularFileProperty getInput() {
-		return getInputFile();
-	}
-
 	private SourceSet getClientSourceSet() {
 		Check.require(LoomGradleExtension.get(getProject()).areEnvironmentSourceSetsSplit(), "Cannot get client sourceset as project is not split");
 		return SourceSetHelper.getSourceSetByName(getClientOnlySourceSetName().get(), getProject());
