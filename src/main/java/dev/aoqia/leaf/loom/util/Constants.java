@@ -130,8 +130,8 @@ public class Constants {
 	}
 
 	public static final class Knot {
-		public static final String KNOT_CLIENT = "dev.aoqia.leaf.loader.launch.knot.KnotClient";
-		public static final String KNOT_SERVER = "dev.aoqia.leaf.loader.launch.knot.KnotServer";
+		public static final String KNOT_CLIENT = "dev.aoqia.leaf.loader.impl.launch.knot.KnotClient";
+		public static final String KNOT_SERVER = "dev.aoqia.leaf.loader.impl.launch.knot.KnotServer";
 
 		private Knot() {
 		}
